@@ -154,7 +154,9 @@ def main():
     past_check=json.loads((OUT/'preseason_history_audit.json').read_text())
     checked('All 1404 supplied historical game/team count sums agree',past_check['all_game_teams_present_in_both'] and past_check['game_team_rows']==1404 and past_check['disagreeing_game_team_rows']==0)
     checked('Predictor allowlist excludes post-outcome fields',set(source['numeric_features'])=={'x','y','distance','angle','period_number','seconds','home','prior_rate','log_prior_n','preseason_rate','preseason_log_n'} and source['categorical_features']==['player_id','team_id'])
-    predictions=pd.read_csv(DATA/'comparison_predictions.csv.gz')
+    # Preserve the saved binary64 values; rounding nearly tied tree scores can
+    # change rank-based AUC even when Brier/log loss are unchanged to 15 digits.
+    predictions=pd.read_csv(DATA/'comparison_predictions.csv.gz',float_precision='round_trip')
     truth=table[table.split.ne('train')].set_index('source_row')
     checked('Every compared prediction uses identical source keys and outcomes',not predictions.source_row.duplicated().any() and set(predictions.source_row)==set(truth.index))
     for q in predictions.to_dict('records'):
