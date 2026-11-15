@@ -1,0 +1,14 @@
+{
+  "only_data_source": "Data (1).zip",
+  "window": "2022-2024 season_type=2",
+  "player_game_rows": 15581,
+  "game_team_rows": 1404,
+  "all_game_teams_present_in_both": true,
+  "disagreeing_game_team_rows": 0,
+  "counts": {
+    "2022": 436,
+    "2023": 484,
+    "2024": 484
+  },
+  "feature_definition": "Player sums are used as fixed recorded preseason counts; no source values are repaired. Any disagreements here are a limitation of those supplied historical records."
+}

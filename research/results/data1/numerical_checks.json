@@ -1,0 +1,97 @@
+{
+  "synthetic_only": true,
+  "spectral_checks": [
+    {
+      "basis_per_axis": 24,
+      "domain_half_widths": [
+        36.0,
+        38.0
+      ],
+      "maximum_covariance_error": 0.03540248377869426,
+      "mean_covariance_error": 0.0014282193321565675,
+      "minimum_prior_variance": 0.9645975162213057,
+      "maximum_prior_variance": 0.9992407523546964
+    },
+    {
+      "basis_per_axis": 24,
+      "domain_half_widths": [
+        48.0,
+        50.0
+      ],
+      "maximum_covariance_error": 0.003214564200950898,
+      "mean_covariance_error": 0.0005440925531967279,
+      "minimum_prior_variance": 0.9967854357990491,
+      "maximum_prior_variance": 0.9974266351425134
+    },
+    {
+      "basis_per_axis": 32,
+      "domain_half_widths": [
+        36.0,
+        38.0
+      ],
+      "maximum_covariance_error": 0.03470903454684415,
+      "mean_covariance_error": 0.001325791875691027,
+      "minimum_prior_variance": 0.9652909654531558,
+      "maximum_prior_variance": 0.9997799761672548
+    },
+    {
+      "basis_per_axis": 32,
+      "domain_half_widths": [
+        48.0,
+        50.0
+      ],
+      "maximum_covariance_error": 0.0009454379270008584,
+      "mean_covariance_error": 0.000135253523457605,
+      "minimum_prior_variance": 0.9990545620729991,
+      "maximum_prior_variance": 0.9992564498231039
+    },
+    {
+      "basis_per_axis": 40,
+      "domain_half_widths": [
+        36.0,
+        38.0
+      ],
+      "maximum_covariance_error": 0.03459012017799146,
+      "mean_covariance_error": 0.0013048141567481937,
+      "minimum_prior_variance": 0.9654098798220085,
+      "maximum_prior_variance": 0.9999165510878613
+    },
+    {
+      "basis_per_axis": 40,
+      "domain_half_widths": [
+        48.0,
+        50.0
+      ],
+      "maximum_covariance_error": 0.0004129606329138502,
+      "mean_covariance_error": 5.2647785685461867e-05,
+      "minimum_prior_variance": 0.9995870393670861,
+      "maximum_prior_variance": 0.9997255758222341
+    },
+    {
+      "basis_per_axis": 64,
+      "domain_half_widths": [
+        36.0,
+        38.0
+      ],
+      "maximum_covariance_error": 0.034526731052861415,
+      "mean_covariance_error": 0.0012946263373059394,
+      "minimum_prior_variance": 0.9654732689471386,
+      "maximum_prior_variance": 0.9999765554128244
+    },
+    {
+      "basis_per_axis": 64,
+      "domain_half_widths": [
+        48.0,
+        50.0
+      ],
+      "maximum_covariance_error": 0.00016412470685867042,
+      "mean_covariance_error": 9.951360614749877e-06,
+      "minimum_prior_variance": 0.9998358752931413,
+      "maximum_prior_variance": 0.9999727263283174
+    }
+  ],
+  "finite_positive_covariances": true,
+  "zero_sum_player_marginal_variance_check": true,
+  "posterior_transform_check": "Average probabilities after inverse-logit; inverse-logit of average logits is different.",
+  "approximation_limit": "A finite Dirichlet-domain basis is not the exact stationary GP. Errors here use length 8 ft only; basis/domain/length sensitivity is evaluated on the real Data1 benchmark."
+}

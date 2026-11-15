@@ -1,0 +1,45 @@
+{
+  "gpu_type": "H100 requested; completed results verified on NVIDIA H100 80GB. Later H200 workers were stopped before results completed.",
+  "source": "Data (1).zip",
+  "measured_gpu_usd_lower_bound": 16.55560545079681,
+  "guarded_gpu_usd": 20.65560545079681,
+  "total_budget_ceiling_usd": 40,
+  "successful_runs": 65,
+  "boosting_candidates_fitted": 225,
+  "basis": "Measured completed in-function GPU allocation times times the H100 rate; interrupted work, CPU/RAM/startup and credits are reported separately from this lower bound.",
+  "original_target_gpu_usd": 20,
+  "original_measured_gpu_target_met": false,
+  "budget_stop": {
+    "stopped_utc": "2026-11-15T19:37:27.074992+00:00",
+    "reason": "User reported only USD1 of Modal credit remaining, superseding the earlier minimum-spend target. Stop all paid GPU work and finish locally.",
+    "remaining_credit_usd_reported_by_user": 1,
+    "all_study_apps_stopped": true,
+    "active_study_tasks": 0,
+    "completed_run_records": 66,
+    "interrupted_runs": [
+      "precision32-a99-20261210",
+      "precision32-a99-20261211",
+      "precision32-a99-20261212",
+      "precision32-a99-20261213"
+    ],
+    "completed_function_gpu_usd_lower_bound": 16.55560545079681,
+    "billing_note": "Interrupted allocations are included in Modal resource usage, not in the completed-result timer."
+  },
+  "modal_billing": {
+    "retrieved_utc": "2026-11-15T19:40:05.679902+00:00",
+    "attribution": "Only description wnba-atlas-data1-20261115 or source=data1/run=20261115 tags",
+    "by_resource": {
+      "Network Egress": 0.0007562700000000001,
+      "Memory": 0.6115360299999999,
+      "H100": 18.772620389999997,
+      "CPU": 0.9061998400000001
+    },
+    "total_usd_before_credits": 20.291112529999996,
+    "interval_starts_utc": [
+      "2026-11-15T17:00:00",
+      "2026-11-15T18:00:00",
+      "2026-11-15T19:00:00"
+    ],
+    "basis": "Modal billing report gross resource usage before credits; may include partial current-hour buckets and reporting delay. Not cash paid after credits."
+  }
+}

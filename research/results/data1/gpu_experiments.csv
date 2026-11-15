@@ -1,0 +1,67 @@
+id,family,status,fold,basis,draws_per_chain,tune_per_chain,candidate_models,gpu_seconds,gpu_usd_lower_bound,budget_guard_usd,sampling_checks_pass
+boost-august-2026-v214,GPU tree comparison,complete,august,,,,45,247.90222457,0.27194874035329003,0.0,
+boost-july-2026-v214,GPU tree comparison,complete,july,,,,45,316.65719601,0.34737294402297003,0.0,
+boost-main-2026,GPU runtime failure,cancelled_native_cuda_failure,,,,,0,0.0,0.0,4.1,
+boost-main-2026-v214,GPU tree comparison,complete,main,,,,45,250.756744031,0.27508014820200705,0.0,
+boost-main-2027-v214,GPU tree comparison,complete,main,,,,45,273.90687801400003,0.30047584518135806,0.0,
+boost-main-2028-v214,GPU tree comparison,complete,main,,,,45,261.24107498600006,0.28658145925964207,0.0,
+context24-august,Bayesian HSGP,complete,august,24.0,3000.0,3000.0,0,202.197500187,0.22181065770513902,0.0,True
+context24-july,Bayesian HSGP,complete,july,24.0,3000.0,3000.0,0,199.90447964199998,0.21929521416727402,0.0,False
+context24-main,Bayesian HSGP,complete,main,24.0,3000.0,3000.0,0,239.734805013,0.262989081099261,0.0,False
+context32-main,Bayesian HSGP,complete,main,32.0,3000.0,3000.0,0,258.121110869,0.28315885862329304,0.0,True
+context32-repeat-20261116,Bayesian HSGP,complete,main,32.0,6000.0,4000.0,0,389.160311993,0.426908862256321,0.0,True
+context32-repeat-20261117,Bayesian HSGP,complete,main,32.0,6000.0,4000.0,0,390.41954193,0.42829023749721,0.0,True
+context32-repeat-20261118,Bayesian HSGP,complete,main,32.0,6000.0,4000.0,0,551.1811241,0.6046456931377001,0.0,True
+context32-warped,Bayesian HSGP,complete,main,32.0,3000.0,3000.0,0,381.485690327,0.418489802288719,0.0,True
+location24-main,Bayesian HSGP,complete,main,24.0,3000.0,3000.0,0,160.274759834,0.17582141153789801,0.0,True
+pilot-player16,Bayesian HSGP,complete,main,16.0,500.0,500.0,0,72.17575431099999,0.079176802479167,0.0,False
+player24-august,Bayesian HSGP,complete,august,24.0,3000.0,3000.0,0,174.75238391,0.19170336514927,0.0,False
+player24-july,Bayesian HSGP,complete,july,24.0,3000.0,3000.0,0,172.75959361,0.18951727419017,0.0,True
+player24-length1,Bayesian HSGP,complete,main,24.0,3000.0,3000.0,0,182.878260734,0.20061745202519804,0.0,False
+player24-main,Bayesian HSGP,complete,main,24.0,3000.0,3000.0,0,177.325744212,0.19452634140056402,0.0,True
+player24-shrinkage025,Bayesian HSGP,complete,main,24.0,3000.0,3000.0,0,242.39658094499998,0.265909049296665,0.0,False
+player24-shrinkage100,Bayesian HSGP,complete,main,24.0,3000.0,3000.0,0,179.521605101,0.19693520079579702,0.0,False
+player24-warped,Bayesian HSGP,complete,main,24.0,3000.0,3000.0,0,292.03256652799996,0.320359725481216,0.0,True
+player32-amplitude050,Bayesian HSGP,complete,main,32.0,3000.0,3000.0,0,186.36044864399997,0.204437412162468,0.0,True
+player32-amplitude200,Bayesian HSGP,complete,main,32.0,3000.0,3000.0,0,189.26616356099993,0.20762498142641694,0.0,True
+player32-length1,Bayesian HSGP,complete,main,32.0,3000.0,3000.0,0,187.02159706199998,0.205162691977014,0.0,True
+player32-main,Bayesian HSGP,complete,main,32.0,3000.0,3000.0,0,187.301949272,0.20547023835138403,0.0,True
+player32-repeat-20261116,Bayesian HSGP,complete,main,32.0,6000.0,4000.0,0,296.49051239000005,0.3252500920918301,0.0,False
+player32-repeat-20261117,Bayesian HSGP,complete,main,32.0,6000.0,4000.0,0,293.718345426,0.322209024932322,0.0,False
+player32-repeat-20261118,Bayesian HSGP,complete,main,32.0,6000.0,4000.0,0,289.005092113,0.31703858604796104,0.0,True
+player32-wide-domain,Bayesian HSGP,complete,main,32.0,3000.0,3000.0,0,199.84573110699998,0.219230767024379,0.0,True
+player40-main,Bayesian HSGP,complete,main,40.0,3000.0,3000.0,0,232.374963273,0.254915334710481,0.0,True
+precision32-20261201,Bayesian HSGP,complete,main,32.0,8000.0,5000.0,0,488.052591459,0.5353936928305231,0.0,True
+precision32-20261202,Bayesian HSGP,complete,main,32.0,8000.0,5000.0,0,372.214190346,0.40831896680956203,0.0,False
+precision32-20261203,Bayesian HSGP,complete,main,32.0,8000.0,5000.0,0,490.109691519,0.5376503315963431,0.0,True
+precision32-20261204,Bayesian HSGP,complete,main,32.0,8000.0,5000.0,0,562.15484929,0.6166838696711301,0.0,False
+precision32-20261205,Bayesian HSGP,complete,main,32.0,8000.0,5000.0,0,493.35303113199996,0.541208275151804,0.0,False
+precision32-20261206,Bayesian HSGP,complete,main,32.0,8000.0,5000.0,0,398.52428405200004,0.43718113960504407,0.0,False
+precision32-20261207,Bayesian HSGP,complete,main,32.0,8000.0,5000.0,0,631.35846437,0.69260023541389,0.0,False
+precision32-20261208,Bayesian HSGP,complete,main,32.0,8000.0,5000.0,0,373.268590393,0.40947564366112105,0.0,False
+precision32-20261209,Bayesian HSGP,complete,main,32.0,8000.0,5000.0,0,494.361365137,0.5423144175552891,0.0,False
+spatial24-buffer0-fold0,Bayesian HSGP,complete,spatial,24.0,2000.0,2000.0,0,156.687176631,0.17188583276420702,0.0,True
+spatial24-buffer0-fold1,Bayesian HSGP,complete,spatial,24.0,2000.0,2000.0,0,155.730618537,0.170836488535089,0.0,True
+spatial24-buffer0-fold2,Bayesian HSGP,complete,spatial,24.0,2000.0,2000.0,0,119.920055248,0.131552300607056,0.0,True
+spatial24-buffer0-fold3,Bayesian HSGP,complete,spatial,24.0,2000.0,2000.0,0,138.840467659,0.15230799302192302,0.0,True
+spatial24-buffer2-fold0,Bayesian HSGP,complete,spatial,24.0,2000.0,2000.0,0,110.540794662,0.12126325174421401,0.0,True
+spatial24-buffer2-fold1,Bayesian HSGP,complete,spatial,24.0,2000.0,2000.0,0,104.00751750799999,0.11409624670627601,0.0,True
+spatial24-buffer2-fold2,Bayesian HSGP,complete,spatial,24.0,2000.0,2000.0,0,117.763547444,0.129186611546068,0.0,True
+spatial24-buffer2-fold3,Bayesian HSGP,complete,spatial,24.0,2000.0,2000.0,0,156.715964286,0.17191741282174203,0.0,True
+spatial24-buffer4-fold0,Bayesian HSGP,complete,spatial,24.0,2000.0,2000.0,0,95.657176781,0.10493592292875702,0.0,True
+spatial24-buffer4-fold1,Bayesian HSGP,complete,spatial,24.0,2000.0,2000.0,0,93.96050899000001,0.10307467836203002,0.0,True
+spatial24-buffer4-fold2,Bayesian HSGP,complete,spatial,24.0,2000.0,2000.0,0,109.038859395,0.11961562875631501,0.0,True
+spatial24-buffer4-fold3,Bayesian HSGP,complete,spatial,24.0,2000.0,2000.0,0,158.88563978000002,0.17429754683866003,0.0,False
+spatial32-buffer0-fold0,Bayesian HSGP,complete,spatial,32.0,2000.0,2000.0,0,175.870635842,0.19293008751867402,0.0,True
+spatial32-buffer0-fold1,Bayesian HSGP,complete,spatial,32.0,2000.0,2000.0,0,145.03278062799998,0.159100960348916,0.0,True
+spatial32-buffer0-fold2,Bayesian HSGP,complete,spatial,32.0,2000.0,2000.0,0,120.749428247,0.132462122786959,0.0,True
+spatial32-buffer0-fold3,Bayesian HSGP,complete,spatial,32.0,2000.0,2000.0,0,127.590918427,0.13996723751441903,0.0,True
+spatial32-buffer2-fold0,Bayesian HSGP,complete,spatial,32.0,2000.0,2000.0,0,160.563939285,0.17613864139564503,0.0,True
+spatial32-buffer2-fold1,Bayesian HSGP,complete,spatial,32.0,2000.0,2000.0,0,114.635648114,0.12575530598105802,0.0,True
+spatial32-buffer2-fold2,Bayesian HSGP,complete,spatial,32.0,2000.0,2000.0,0,119.52456632299999,0.131118449256331,0.0,True
+spatial32-buffer2-fold3,Bayesian HSGP,complete,spatial,32.0,2000.0,2000.0,0,132.796050122,0.14567726698383401,0.0,True
+spatial32-buffer4-fold0,Bayesian HSGP,complete,spatial,32.0,2000.0,2000.0,0,75.958813546,0.08332681845996201,0.0,True
+spatial32-buffer4-fold1,Bayesian HSGP,complete,spatial,32.0,2000.0,2000.0,0,96.243105348,0.10557868656675601,0.0,False
+spatial32-buffer4-fold2,Bayesian HSGP,complete,spatial,32.0,2000.0,2000.0,0,155.969215338,0.17109822922578602,0.0,True
+spatial32-buffer4-fold3,Bayesian HSGP,complete,spatial,32.0,2000.0,2000.0,0,165.447534934,0.181495945822598,0.0,True
+xgboost-gpu-smoke214,GPU compatibility check,complete,main,,,,0,2.0108633860000005,0.002205917134442001,0.0,

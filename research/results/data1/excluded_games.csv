@@ -1,0 +1,9 @@
+game_id,date,scope,attempts,makes,reason
+401736112,2025-05-16,regular,135,61,Player field-goal-attempt attribution disagrees between event and box-score files; neither is silently corrected.
+401736137,2025-05-25,regular,136,71,Player field-goal-attempt attribution disagrees between event and box-score files; neither is silently corrected.
+401736145,2025-05-29,regular,151,74,Player field-goal-attempt attribution disagrees between event and box-score files; neither is silently corrected.
+401736155,2025-06-01,regular,131,54,Player field-goal-attempt attribution disagrees between event and box-score files; neither is silently corrected.
+401736217,2025-06-29,regular,131,53,Player field-goal-attempt attribution disagrees between event and box-score files; neither is silently corrected.
+401736227,2025-07-06,regular,126,58,Player field-goal-attempt attribution disagrees between event and box-score files; neither is silently corrected.
+401736274,2025-07-27,regular,131,59,Player field-goal-attempt attribution disagrees between event and box-score files; neither is silently corrected.
+401736355,2025-08-26,regular,134,64,Player field-goal-attempt attribution disagrees between event and box-score files; neither is silently corrected.

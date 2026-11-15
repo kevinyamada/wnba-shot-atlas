@@ -1,0 +1,19 @@
+{
+  "half_court_shots_shown": 38441,
+  "shots_outside_view": 94,
+  "inside_2ft_attempts": 508,
+  "outside_2ft_attempts": 4380,
+  "exactly_on_line_attempts_excluded_from_ratio": 140,
+  "inside_2ft_area": 153.8,
+  "outside_2ft_area": 166.425,
+  "outside_inside_density_ratio": 7.967978766061182,
+  "game_bootstrap_95_interval": [
+    7.251302709832531,
+    8.815166297678982
+  ],
+  "coordinate_sensitivity_ratio_range": [
+    6.407561133659261,
+    7.137130023202634
+  ],
+  "sensitivity_note": "Artificial coordinate perturbations; a sensitivity check, not observed movement or a confidence interval."
+}

@@ -1,0 +1,18 @@
+{
+  "only_data_source": "Data (1).zip",
+  "source_events": 121342,
+  "attempted_shooter_pairs": 5504,
+  "all_player_boxes_including_zero_attempts": 7140,
+  "outer_join_finds_no_omitted_positive_attempt_player": true,
+  "disagreeing_player_game_totals": 18,
+  "excluded_game_list_complete": true,
+  "player_box_sums_match_all_team_boxes": {
+    "field_goals_attempted": true,
+    "field_goals_made": true,
+    "fg_points": true
+  },
+  "preseason_2022_2024_keys_unique": true,
+  "preseason_counts_nonnegative_and_makes_le_attempts": true,
+  "nonshot_coordinates_outside_court_bounds": 24687,
+  "scope": "Independent source qualification. Final result and live-site verification run after the completed analysis and publication."
+}

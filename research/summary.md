@@ -1,218 +1,232 @@
-# WNBA spatial shooting study
+# WNBA shot study — Data (1) update
 
-Kevin Yamada · Updated November 13, 2026
+Kevin Yamada · November 15, 2026
 
-The public page shows where shots occur, who scored the most field goal points in each square, and how well different models predict makes. This is an exploratory study of the 2025 WNBA season. It does not measure expected threat yet.
+The current [interactive page](https://kevinyamada.github.io/wnba-shot-atlas/) describes recorded shot locations and compares conditional make and field goal point predictions. **Every basketball input comes from the supplied Data (1).zip.** This update replaces the older public-download results. Git history retains the previous work; it is not mixed into these results.
 
-## Data and checks
+**CatBoost context** is selected using August 10–26 validation log loss. On the previously examined August 27–September 11 benchmark, its Brier score is **0.232506**, versus **0.233794** for the distance baseline. The paired game-bootstrap difference is **-0.001288**, with 95% interval **[-0.002620, 0.000140]**. Negative differences favor the selected model. This interval includes zero, so these games do not clearly distinguish its error from the distance baseline. These are modest within-season comparisons, not evidence of performance in a new season.
 
-The public wehoop / ESPN release was downloaded on November 13. The original desktop archive was unavailable during this update. Every saved game and team field goal total and every saved player region total matches the new release. This is strong aggregate agreement, but it is not proof that the files are identical row by row.
+## Source, scope and known conflicts
 
-| Check | Result |
-| :--- | ---: |
-| Source play rows | 121,342 |
-| Regular season games | 286 |
-| Regular season attempts | 38,535 |
-| Made field goals | 16,926 |
-| Field goal points | 38,533 |
-| Attempts shown on the half court | 38,441 |
-| Longer attempts outside the view | 94 |
-| Two point attempts | 24,679 |
-| Three point attempts | 13,856 |
-| Game and team box score comparisons | 624 |
-| Duplicate game and play number keys | 0 |
-| Missing shooter names in regular season shots | 0 |
-| Current shot score sequence conflicts | 0 |
+Original archive: `Data (1).zip`, 1,937,912,926 bytes. SHA-256: `22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120`. All 45 files were read and inventoried. See the [complete archive and literature review](ARCHIVE_REVIEW.md), [45-file manifest](results/archive_manifest.csv), and [source audit](results/data1/source_audit.json).
 
-The 624 comparisons include regular season, playoff, and special games. The article excludes the All Star game and the Commissioner's Cup final. Free throws are excluded. A missed shooting foul that is not an official field goal attempt is also outside this target.
+The original WNBA event table has 121,342 records and 42,193 attempts in 312 games. Standard regular-season descriptive totals are **38,535 attempts, 16,926 makes, 38,533 FG points, 286 games**. The All-Star game and standalone Cup final are excluded, as are playoffs from descriptive regular-season maps. The half-court view contains 38,441 attempts; 94 longer attempts remain in the season totals. Free throws are outside this target.
 
-The new release includes `points_attempted`. Its two or three point labels match all 624 team box score totals for three point attempts and makes, and every made shot's point value. This resolves the missing attempt value problem in the earlier extraction. Sorting the public play feed by game and play number also gives zero conflicts between field goal points and the change in the scoreboard. The earlier count of 27 regular games with score inconsistencies must not be reused for this release. This check alone does not validate possessions or every event's timing.
+All 624 game/team combinations agree with the supplied boxes for FGA, FGM and FG points. An independent outer player join, including zero-attempt boxes, reproduces **18 player/game FGA disagreements in eight games**. Makes and FG points agree. No missed shot is silently reassigned. Descriptive maps retain the raw events with this caveat; every model and its within-season player histories excludes all eight games. That post-game quality restriction is not a feature available to a live forecaster. There are also **88 shot-score-update conflicts**, affecting 27 regular-season games. Score margin and sequence-derived features are excluded. Correct season totals do not validate possessions or event ordering.
 
-Source hashes and download URLs are in [source_audit.json](results/source_audit.json). The main row grain is one recorded field goal attempt. All model prediction labels were joined back to the source using the game and play number key. Brier score and log loss were recalculated directly from probabilities.
+| Interval | Attempts | Games | Use |
+| --- | ---: | ---: | --- |
+| May 16–Aug 9 | 25,751 | 191 | Parameters and preprocessing |
+| Aug 10–26 | 5,995 | 45 | Settings, model selection, separate calibration |
+| Aug 27–Sep 11 | 5,626 | 42 | Reused later-game benchmark |
+| Sep 14–Oct 10 | 3,311 | 24 | Reused playoff transfer benchmark |
 
-## Coordinates and the sparse band
+No games cross temporal splits. All models stay fitted through August 9; there is no unequal refit using validation outcomes. The original project already examined the later and playoff samples. They are **not untouched tests**. The supplied college 2026 files are not extra WNBA seasons. A new season test requires new supplied WNBA data.
 
-Coordinates are recorded in whole feet. Let `sign` be 1 for the home team and −1 for the away team. The transformation is `x = 41.75 − sign × coordinate_x`, `y = sign × coordinate_y`. The basket is at (0, 0), x runs toward half court, and y runs sideways. The display has y on its horizontal axis. The visible court is x from −5.25 to 41.75 feet and y from −25 to 25 feet.
+## Coordinates and descriptive findings
 
-The 2025 WNBA rule book gives an arc radius of 22 feet 1.75 inches, with the corner lines 3 feet inside each sideline. This gives lateral corner boundaries at ±22 feet on a 50 foot court. We use the geometric intersection of the arc and these segments. Line thickness and coordinate rounding prevent this geometry from identifying a player's exact foot position. Official attempt values are used for points calculations.
+For home shots let sign = 1, otherwise −1. Use x = 41.75 − sign × coordinate_x and y = sign × coordinate_y. The basket is (0,0); x points toward half court and y sideways. Display bounds are x ∈ [−5.25,41.75], y ∈ [−25,25]. Recorded locations are on a whole-foot grid. The court convention uses radius 22 + 1.75/12 ft, corner y = ±22 ft and their geometric intersection. Geometry is an explicit analytic convention, not an authoritative missed-shot value label.
 
-Signed distance is the shortest distance to either the curved arc or a corner segment. Negative means inside. Reflection, boundary, and known distance checks pass. No recorded attempt is removed to create an empty band.
+Signed distance is the shortest distance to the arc or finite corner segment. There are **508** attempts in [−2,0) ft and **4,380** in (0,2] ft. Areas estimated on a 0.05 ft half-court grid are **153.8** and **166.425** sq ft. The outside/inside density ratio is **7.967979**; a 2,000-resample game bootstrap over 286 games gives **[7.251303, 8.815166]**. The 140 attempts recorded exactly on the line are excluded from this ratio, but the histogram puts them in the first outside bin. This binning is not official three-point classification.
 
-There are 508 attempts in [−2, 0) feet and 4,380 in (0, 2] feet. The areas are 153.8 and 166.425 square feet, estimated on a 0.05 foot grid clipped to the half court. The density ratio is **7.968**, with a game bootstrap 95% interval of **7.273 to 8.830** from 1,000 resamples of 286 games. The 140 attempts recorded exactly on the line are excluded from this ratio. For the histogram, the bin convention places those points in the first outside bin. That convention does not classify them as official three point attempts.
+One hundred artificial half-foot coordinate perturbations give ratios **6.408–7.137**. This is a sensitivity range, not a confidence interval or observed player movement. The sparse inside band describes shot selection; it does not demonstrate that players stepped backwards or identify a causal reward effect.
 
-Artificially perturbing coordinates by up to half a foot gives ratios around **6.26 to 7.14** across 100 scenarios. This is a sensitivity check, not inferred player movement or an uncertainty interval. The sparse band is robust, while its precise size depends on location resolution. The data supports fewer attempts just inside the line. It does not establish that individual players took a step backwards.
+Every website square groups actual events by x/y, team and athlete. Frequency uses attempts per square foot on a log color scale. Raw make rates stripe cells with fewer than 20 attempts. Leaders use actual FG points, show tied leaders and reflect scoring volume rather than shooting skill. Player names and team labels are read from the same supplied boxes. The GP map sets player effect to zero and contextual inputs to training means. Its pointwise intervals and interval-width map express model uncertainty for that reference, not a player ability ranking or a simultaneous credible band.
 
-The frequency chart uses attempts per square foot and a log colour scale, with zero counts left blank. The raw make rate chart stripes cells with fewer than 20 attempts. A smaller square does not create more accurate coordinates. Player leaders are ranked by observed field goal points, with all joint leaders shown. This measures scoring volume in the selected area, not shooting skill. Team filters count only attempts recorded for that team.
+### Where attempts and made baskets occur
 
-## Two different evaluation questions
+| region | attempts | makes | points | attempt_share | made_basket_share | make_rate |
+| --- | --- | --- | --- | --- | --- | --- |
+| Beyond half court | 94 | 0 | 0 | 0.002439 | 0.000000 | 0.000000 |
+| Long interior | 2870 | 1127 | 2254 | 0.074478 | 0.066584 | 0.392683 |
+| Middle interior | 5360 | 2095 | 4190 | 0.139094 | 0.123774 | 0.390858 |
+| Near rim | 9475 | 6072 | 12144 | 0.245880 | 0.358738 | 0.640844 |
+| Near the line | 1853 | 690 | 2001 | 0.048086 | 0.040766 | 0.372369 |
+| Outside arc | 11739 | 3904 | 11712 | 0.304632 | 0.230651 | 0.332567 |
+| Outside corner | 388 | 156 | 468 | 0.010069 | 0.009217 | 0.402062 |
+| Short interior | 6756 | 2882 | 5764 | 0.175321 | 0.170271 | 0.426584 |
 
-| Sample | Dates or scope | Half court attempts | Role |
-| :--- | :--- | ---: | :--- |
-| Training | Through August 9 | 26,686 | Fit all new models |
-| Validation | August 10 to 26 | 6,129 | Select settings and model family |
-| Later games | August 27 onward | 5,626 | Report the existing benchmark |
-| Playoffs | 2025 playoffs | 3,311 | Additional transfer check |
+These are explicitly defined geometric regions, not authoritative two/three-point attempt labels. Attempt share answers where recorded shots are taken; made-basket share answers where made baskets occur; make rate conditions on taking a shot in that region. Those denominators answer different questions. [Team regions](results/data1/cpu/team_regions.csv), [player regions](results/data1/cpu/player_regions.csv) and the interactive squares retain count-based comparisons. Differences mix opportunity, role, selection and shooting; they are not causal player skill estimates.
 
-Games do not cross the temporal splits. Models remain fitted on the original training sample when evaluated. We do not refit on validation and then compare against a different training size. Context boosting was selected by validation log loss. The later game and playoff samples have already been examined during development, including the earlier GP work. They are no longer untouched final tests.
+## Model definitions and selection
 
-For spatial validation, only the 26,686 early season attempts are used. Four fixed regions are defined by x = 16 feet and y = 0. Each region is held out once. Training locations whose nearest observed held out location is within 0, 2, or 4 feet are removed. The measured nearest separation exceeds the buffer in every fold. All rates, trends, variograms, and model fits are recomputed within each fold. The geometry of the held out locations is used to define the buffer, but their outcomes are not used for fitting.
+The distance baseline bins radius at 0,4,8,12,16,20,22+1.75/12,24,28,100 ft and uses Beta(1,1)-smoothed make counts. The constant baseline is the training make rate. Spatial logistic uses additive cubic splines and their tensor interactions; contextual logistic adds standardized context and one-hot shooter/team effects. C is selected from 0.1,1,10 using validation loss. Contextual logistic does not automatically improve predictions, as its reported validation error shows.
 
-The spatial settings are fixed for this diagnostic: IDW power 2, SPDE range 8 and sigma 0.7, and spatial boosting depth 3. This is not nested tuning of the final temporal winner. Games can occur on both sides of a spatial fold. It asks how well the model transfers to a missing area, not how well it predicts a future game. Four large regions are a first diagnostic; they do not establish performance across every possible partition. The buffers are a sensitivity study, not a claim that dependence ends at four feet.
+IDW averages smoothed rates in the 16 nearest populated two-foot cells, with powers 1,2,3 selected on validation. Kriging instead uses smoothed cell logits. Ordinary/universal kriging use fitted exponential residual variograms of training cells with at least 20 attempts, removing approximate sampling noise; universal kriging includes distance trend. Gaussian transformed-rate kriging is an approximation to a binary likelihood. SPDE represents a Matérn-like field on an extended triangular mesh, using a binomial conditional Laplace fit. Range 4/8/16 ft and sigma 0.3/0.7/1.5 are selected on validation with 3 ft spacing. This is not INLA or integration over SPDE hyperparameters. The [mesh refinements](results/data1/cpu/mesh_refinement.csv) compare 3,2,1.5 ft at fixed selected hyperparameters; local predictions can change even if aggregate loss barely changes.
 
-## Model definitions
+The Bayesian GP uses a noncentered two-dimensional Matérn-5/2 spectral approximation. For modes ω and anisotropic lengths ℓ, spectral density is η² × 4πΓ(3.5)5^2.5/Γ(2.5) × product(ℓ)/(5 + sum((ωℓ)²))^3.5. Product sine bases are normalized by the domain half-widths. The Bernoulli/binomial likelihood uses logit p = intercept + spatial field + optional player effect + optional context. It assumes conditionally independent attempts given those effects; within-game dependence and unmeasured defenders or shot difficulty are not fully modeled. Grouping identical location/player trials is likelihood-equivalent up to parameter-independent binomial constants; contextual models retain individual trials.
 
-### Distance baseline and IDW
+Default priors are intercept Normal(0,1), independent truncated-Normal(8,3) lengths between 3 and 20 ft, amplitude HalfNormal(1), player SD HalfNormal(0.5), standardized context coefficients Normal(0,0.35). Player effects sum to zero and are rescaled to preserve their marginal SD; the effects are correlated under this constraint. New-player effects are integrated over their distribution. Posterior predictions average inverse-logit probabilities, not logits. Four vectorized NUTS chains initially use target acceptance 0.96 and depth limit 11. Longer wide-domain replications revealed divergences, so the remaining precision fits use target acceptance 0.99 and 6,000 warmup steps per chain. Divergent fits are retained but never promoted. Main fits use 3,000 warmup and 3,000 retained draws per chain; longer replications use 6,000 or 8,000 retained draws. Up to 3,000 evenly spaced retained draws form reported predictions, giving all chains equal representation.
 
-The distance baseline uses fixed bands at 0, 4, 8, 12, 16, 20, 22.1458, 24, 28, and 100 feet. Each observed band has a Beta(1, 1) prior and posterior mean (makes + 1) / (attempts + 2). An unobserved band falls back to the training sample's make rate.
+Sensitivity checks vary basis 24/32/40 per axis, lower length bound 1 vs 3 ft, player SD prior 0.25/0.5/1, amplitude prior 0.5/1/2, radial asinh coordinate warp and domain half-widths (36,38) vs (48,50). A finite basis on a bounded domain is not the exact stationary GP. Independent closed-form Matérn comparisons at fixed locations are in [numerical checks](results/data1/numerical_checks.json); these check length 8 ft and do not replace empirical basis/domain/length sensitivity.
 
-IDW uses two foot cells and Jeffreys smoothed rates (makes + 0.5) / (attempts + 1). It averages the 16 nearest cell rates with weights proportional to inverse distance raised to a power. Powers 1, 2, and 3 are compared on validation. This interpolation does not provide a full Bayesian posterior and does not automatically account for different cell sample sizes in its distance weights.
+Only fits with rank R-hat < 1.01, minimum bulk ESS ≥ 400, zero divergences and zero depth-limit hits are eligible. **41 of 59** saved GP runs pass. Failed diagnostics are retained and excluded from promotion; a successful process alone does not establish valid sampling. Within each configuration the representative uses the most retained draws, then highest bulk ESS, never the best predictive seed. Configuration selection uses validation log loss. Independent replication differences are in [stability results](results/data1/gp_replication_stability.csv).
 
-### Ordinary and universal kriging
+Selected GP: **context32-warped**. Maximum R-hat **1.003035**, minimum bulk ESS **2599.3**, divergences **0**, depth-limit hits **0**. [Selection receipt](results/data1/selection_receipt.json) records the choice before new later-period scores are calculated. [Posterior predictive checks](results/data1/gp_predictive_check.csv) compare simulated training make totals by distance with observed totals; they assess in-sample fit, not forecast accuracy.
 
-Cell logits are approximated by
+GPU CatBoost and XGBoost compare spatial-only and contextual features. Each of three main seeds searches nine depth/regularization combinations per binary family and nine joint-outcome configurations, with early stopping on validation only. Main family predictions average the three selected seed fits. CatBoost depths 4/6/8, XGBoost depths 3/5/7, penalties 3/10/30, learning rate .035, maximum 2,500 trees, early-stopping patience 150. XGBoost uses minimum child weight 30, row subsample .85 and column subsample .9. Categorical ID levels are learned from training, with unknown levels handled explicitly. CatBoost GPU training is nondeterministic despite a fixed seed.
 
-$$z_j=\log\frac{k_j+0.5}{n_j-k_j+0.5},\qquad v_j\approx\frac1{k_j+0.5}+\frac1{n_j-k_j+0.5}.$$
+Context fields are period, seconds remaining in that period, home status, strictly lagged eligible regular-season player counts, fixed 2022–2024 regular-season-coded box counts, and shooter/team IDs for trees/logistic. Rate priors use (makes+22)/(attempts+50), with log(1+attempts) for volume. Histories are constant within a game and use earlier games only; playoff histories freeze at regular-season end. All earlier eligible regular attempts, including longer shots outside the half-court modeling view, enter history counts. During validation and later-game evaluation, these covariates update after each completed earlier game, including earlier games in that same evaluation interval. Parameters stay fixed: this is sequential game prediction with available history, not a simultaneous forecast of an entire future block. The 2022–2024 player sums also match all 1,404 corresponding supplied game/team FGA, FGM and three-point-make totals. Past box season_type=2 includes specially coded games; this is a fixed pre-2025 history definition, not future information. Period clock is not a shot clock. Current-game boxes, descriptions, scoring labels, assists, score margin, salaries, protected attributes and full-2025 aggregates are not predictors.
 
-Ordinary kriging uses a constant mean. Universal kriging adds distance and squared distance, scaled by 25 feet. After weighted trend fitting, residual semivariances are corrected by subtracting the approximate sampling noise. Only pairs of cells with at least 20 attempts each enter the variogram fit. Two foot lag bins extend to 32 feet and require more than 30 pairs. Negative corrected empirical values are retained because they can occur from sampling variability.
+The equal-weight ensemble averages distance, SPDE, selected GP, CatBoost context and XGBoost context. A separate Platt transformation fits intercept and slope to validation predictions, with logistic C=1000. Its validation score would be in-sample and is omitted. It is a secondary comparator, not a model promoted by comparing its fitted validation error with out-of-sample rows.
 
-A constrained exponential covariance is fitted by weighted least squares. The fitted residual sill and length scale for universal kriging are 0.06753 and 2.62631 feet. This length scale is not the same convention as the SPDE practical range. Generalized least squares then estimates the trend using this covariance and the observation noise variances. Predictions transform the fitted logit mean back with the logistic function. They do not integrate transformed Gaussian uncertainty, and no kriging probability intervals are claimed. The Gaussian approximation to cell logits is a benchmark, not an exact binomial model. A stationary covariance may be a poor description across the rim and the perimeter.
+## Identical-shot temporal comparisons
 
-### Bayesian GP from the earlier analysis
+### Validation — settings and primary choice
 
-The retained model uses
+| model | shots | brier | log_loss | auc |
+| --- | --- | --- | --- | --- |
+| CatBoost context | 5995 | 0.231479 | 0.655316 | 0.636100 |
+| XGBoost context | 5995 | 0.231636 | 0.655723 | 0.636985 |
+| Equal-weight ensemble | 5995 | 0.231690 | 0.655843 | 0.636301 |
+| Bayesian GP | 5995 | 0.231948 | 0.656346 | 0.635529 |
+| Joint 0/2/3 points | 5995 | 0.232287 | 0.657077 | 0.632254 |
+| CatBoost spatial | 5995 | 0.232542 | 0.657545 | 0.630068 |
+| XGBoost spatial | 5995 | 0.232647 | 0.657843 | 0.629932 |
+| SPDE | 5995 | 0.232846 | 0.658329 | 0.629499 |
+| Ordinary kriging | 5995 | 0.233356 | 0.659350 | 0.627295 |
+| Universal kriging | 5995 | 0.233394 | 0.659430 | 0.627442 |
+| Spatial logistic | 5995 | 0.233498 | 0.659627 | 0.627579 |
+| Distance baseline | 5995 | 0.233607 | 0.659950 | 0.623629 |
+| Context logistic | 5995 | 0.234224 | 0.661095 | 0.630362 |
+| IDW | 5995 | 0.235564 | 0.664189 | 0.623152 |
+| Joint outcome logistic | 5995 | 0.236596 | 0.668339 | 0.625644 |
+| Constant baseline | 5995 | 0.248229 | 0.689608 | 0.500000 |
 
-$$k_{jp}\sim\operatorname{Binomial}(n_{jp},p_{jp}),\qquad
-\operatorname{logit}(p_{jp})=\beta_0+f(s_j)+\alpha_p.$$
+### Later regular-season benchmark
 
-The intercept has a Normal(0, 1) prior. The spatial field uses a Matérn 5/2 covariance with a Hilbert space GP approximation. Each length scale has a Normal(8, 3) prior truncated to 3 through 20 feet. The field amplitude has a HalfNormal(1) prior. Player effects follow Normal(0, sigma_player), with sigma_player having a HalfNormal(0.5) prior. Sparse players are partially pooled toward the population mean. These effects are associations after the included adjustment, not causal shooting talent.
-
-The displayed surface is the posterior make probability with the player effect set to zero. It is not the actual player mix at each location, nor an average over new player effects. Each square displays the nearest saved grid prediction to its centre, with a pointwise 95% credible interval for the probability. The interval is not a binary outcome prediction interval or a simultaneous band for the entire court.
-
-The retained 24 by 24 basis fit used four chains with 2,000 tuning and 2,000 retained draws per chain. Maximum Rhat was 1.003902, minimum bulk ESS was 485.53, and there were zero divergences. A 16 versus 24 basis comparison changed evaluation probabilities by 0.00256 on average and 0.01566 at most. Prior predictive checks produced broad probabilities around a mean of 0.5. Such checks identify implausible assumptions; passing them does not prove calibration or model truth.
-
-These outputs were retained from the earlier run, not rerun in this update. The original raw desktop file and event predictions were unavailable for a fresh paired comparison. Therefore the GP is shown separately from the new comparison table. Historical metrics, diagnostics, prior checks, and surface values are in `reference/`. `gp_model.py` provides the model code for a new run on the public source.
-
-### Binomial SPDE
-
-The new SPDE model has a binomial likelihood at each observed integer location and a Normal(0, 2) intercept prior. The Matérn field has smoothness nu = 1 in two dimensions. Piecewise linear basis functions on the triangulation interpolate the latent field to shot locations.
-
-With lumped mass matrix C, stiffness matrix G, range rho, and field scale sigma,
-
-$$\kappa=\sqrt{8}/\rho,\qquad \tau=(\sqrt{4\pi}\,\kappa\sigma)^{-1},$$
-
-$$Q=\tau^2\left(\kappa^4 C+2\kappa^2G+GC^{-1}G\right).$$
-
-The mesh extends beyond the court to reduce boundary effects. This does not prove the domain is large enough; a larger domain sensitivity check remains useful. The primary three foot mesh has 841 nodes. The precision matrix is sparse. A Newton solver finds the posterior mode, and the inverse Hessian provides a conditional Gaussian approximation. Fifteen point Gauss Hermite quadrature integrates the logistic probability under that approximation.
-
-Ranges 4, 8, and 16 feet and sigma values 0.3, 0.7, and 1.5 were compared on validation. The selected setting is range 16 and sigma 0.3. These hyperparameters are fixed after selection. This is a **conditional Laplace approximation implemented in Python**, not an INLA fit, and it does not integrate hyperparameter uncertainty. The formula links the continuous SPDE prior to the finite element model; finite domain marginal variances need not exactly equal the infinite domain sigma squared.
-
-The two and 1.5 foot meshes have 1,936 and 3,364 nodes. Refinement changed local predictions, even though validation scores were similar. We retain the prespecified three foot result in the primary table and do not claim complete mesh convergence. The page uses the earlier GP for its Bayesian probability map. Refinement metrics are in `mesh_refinement.csv`.
-
-Numerical checks cover positive definite symmetric prior precision, interpolation weights summing to one, sparse posterior variance calculations matching a dense inverse on a synthetic example, finite bounded probabilities, and a small mode gradient. These are implementation checks, not proof of the Laplace approximation's statistical accuracy.
-
-A fuller INLA analysis could assign PC priors through statements such as P(range < r0) = p_r and P(sigma > sigma0) = p_sigma, then integrate their uncertainty. The distance and scale choices should be elicited in feet and checked using simulated prior surfaces. We have not fitted this extension. The metre scale priors from an air quality exercise should not be copied onto a basketball court.
-
-### Boosting and the ensemble
-
-CatBoost compares depths 3 and 5, with 600 iterations, learning rate 0.035, L2 regularization 10, and seed 2026. The spatial version uses x, y, distance, and angle. The context version adds shooter, team, period, game clock, and home status. No made or missed descriptions, assist descriptions, or other outcome text are predictors. Both selected depth 3.
-
-The temporal ensemble gives equal weight to the distance baseline, SPDE, and context boosting. The spatial diagnostic replaces context boosting with spatial boosting. We did not choose ensemble weights on the later game sample. This is a small comparison of plausible models, not an exhaustive search for the best possible algorithm.
-
-## Results
-
-Brier score is the average squared error in the predicted make probability. Log loss penalizes confident wrong predictions more heavily. Lower is better. Neither should be described as a percentage accuracy.
-
-| Model | Validation Brier | Later games Brier | Playoff Brier |
-| :--- | ---: | ---: | ---: |
-| Context boosting | 0.23164 | 0.23286 | 0.23167 |
-| Distance baseline | 0.23314 | 0.23378 | 0.23294 |
-| Ensemble | 0.23178 | 0.23261 | 0.23176 |
-| IDW | 0.23495 | 0.23436 | 0.23489 |
-| Ordinary kriging | 0.23286 | 0.23315 | 0.23335 |
-| SPDE | 0.23235 | 0.23313 | 0.23260 |
-| Spatial boosting | 0.23212 | 0.23284 | 0.23311 |
-| Universal kriging | 0.23287 | 0.23317 | 0.23328 |
-
-The ensemble improves later game Brier from 0.233775 to 0.232610, a small relative reduction of about 0.50%. A paired game bootstrap with 2,000 resamples gives an ensemble minus baseline difference of −0.001165, with a 95% interval from −0.001960 to −0.000390. This is conditional on the inspected benchmark and the chosen models. It does not remove the effects of model search or turn the sample into a fresh final test. Context boosting wins validation and also has the lowest playoff Brier in this comparison.
-
-| Model | Spatial Brier, 0 ft | Spatial Brier, 2 ft | Spatial Brier, 4 ft |
-| :--- | ---: | ---: | ---: |
-| Distance baseline | 0.23183 | 0.23272 | 0.24452 |
-| IDW | 0.23449 | 0.24007 | 0.24595 |
-| Ordinary kriging | 0.23432 | 0.24467 | 0.25006 |
-| SPDE | 0.23279 | 0.23630 | 0.24816 |
-| Spatial boosting | 0.23150 | 0.23322 | 0.24265 |
-| Spatial ensemble | 0.23095 | 0.23305 | 0.24303 |
-| Universal kriging | 0.23455 | 0.23821 | 0.24481 |
-
-Spatial scores pool all held out shots across the four folds. No independence based confidence interval is inferred from just four fold scores. The full fold table includes sample counts and measured separation. Ordinary and universal kriging should be assessed by these results rather than preferred because they are course methods.
-
-Calibration tables report predicted and observed make rates in fixed probability bins, as well as separately for two and three point attempts. Bins with few attempts should not be read as precise estimates. All model settings, temporal metrics, spatial fold metrics, bootstrap results, and numerical checks are published alongside the code.
-
-## Expected points and expected threat
-
-For an attempt with recorded value v in {2, 3}, a simple field goal points prediction is v times the predicted make probability. We now evaluate this using the verified source attempt value, rather than guessing a missed shot's value from coordinates. This is a plug in prediction conditional on an attempted shot and its recorded value. It is not the counterfactual value of choosing a two instead of a three.
-
-For the ensemble in later games, predicted points average 0.99325 per attempt and observed points average 1.00729. RMSE is 1.15385 points, compared with 1.15602 for the distance baseline. These are small differences. The complete comparison is in `expected_points_metrics.csv`. The make models do not include attempt value explicitly; a separate model by attempt type is a reasonable next comparison, particularly near the line.
-
-Free throws, offensive rebounds, continuation after misses, and future possession outcomes are excluded from this quantity. A location chart also gives P(location | recorded shot), not P(shot | the ball is at that location). The latter needs a denominator of shooting opportunities or possessions observed there.
-
-Karun Singh's xT assigns value to states by combining an immediate scoring component with transitions into future states. A basketball version needs validated possessions, nonshot actions, turnovers, rebounds, fouls, and an explicit reward definition. The current play feed does not record every pass or movement. Even with consistent score updates, the last ten rows are not automatically the last ten on court actions. Sequence models and action credit assignment should wait for that audit.
-
-## Connection to STA465
-
-| Course idea | Role in this project |
-| :--- | :--- |
-| Spatial objects and coordinate systems | Court coordinates, units, bounds, and geometry checks; no geographic latitude or longitude projection is needed |
-| EDA and spatial variation | Attempt density, make rates, separate team maps, and coordinate sensitivity |
-| IDW | A simple local interpolation benchmark |
-| Variograms | Residual dependence after removing a distance trend and approximate sampling noise |
-| Ordinary and universal kriging | Constant versus distance dependent mean models on transformed cell rates |
-| Spatial validation and buffers | Held out court regions with nearby training observations removed |
-| Gaussian processes and priors | Smooth latent log odds, player pooling, prior predictive and sampling checks |
-| SPDE and mesh | A finite element approximation to a Matérn prior with a binomial likelihood |
-| Ensemble | Equal weight prediction averaging, checked against simpler baselines |
-| Besag and BYM2 from HW2 | A possible areal model if the court is divided into adjacent cells; not fitted here |
-
-The air quality model in HW2 used a continuous response and location based spatial structure. The disease mapping example used Poisson counts and an exposure. Field goal outcomes need a Bernoulli or binomial likelihood. Copying a Gaussian or Poisson response model without adapting the target would change the scientific question. A BYM2 extension could model binomial cell rates with a scaled structured component and an independent component, but mesh SPDE and BYM2 are different models, not interchangeable labels.
-
-## Next research steps
-
-1. Reserve an untouched season or future game block before further tuning. Use rolling temporal validation within the development seasons and report calibration alongside Brier and log loss.
-2. Refit the GP on the verified public release, retain event predictions, and compare it with all other models on identical event keys. Test sensitivity to prior choices, mesh spacing, and the outer mesh boundary. An INLA SPDE fit can provide an independent implementation comparison.
-3. Model make probability separately or hierarchically by recorded shot value, then extend expected points to possession rewards only after validating rebounds, fouls, free throws, and possession endings.
-4. Confirm whether richer action or tracking data exists before attempting shot versus nonshot probabilities or the previous ten actions model. Record what each row represents and manually review a sample of possessions.
-
-No Modal credits were used. The new CPU comparisons completed locally in the managed workspace. The desktop was offline, so its files and VS Code session were not changed. No claim of a maximum achievable accuracy is made.
-
-## Reproduce the update
-
-From this repository, use Python 3.12 in a virtual environment:
-
-```bash
-python -m pip install -r research/requirements.txt
-python research/prepare_data.py
-python research/spatial_summary.py
-python research/verify_methods.py
-python research/run_comparisons.py
-python research/refine_mesh.py
-python research/evaluate_predictions.py
-python research/export_site_data.py
+| model | shots | brier | log_loss | auc |
+| --- | --- | --- | --- | --- |
+| Equal-weight ensemble | 5626 | 0.232260 | 0.656983 | 0.635686 |
+| Validation-calibrated ensemble | 5626 | 0.232346 | 0.657181 | 0.635686 |
+| XGBoost context | 5626 | 0.232365 | 0.657235 | 0.634027 |
+| CatBoost context | 5626 | 0.232506 | 0.657492 | 0.634969 |
+| Bayesian GP | 5626 | 0.232649 | 0.657768 | 0.632753 |
+| CatBoost spatial | 5626 | 0.232841 | 0.658161 | 0.630917 |
+| XGBoost spatial | 5626 | 0.232813 | 0.658164 | 0.631033 |
+| Ordinary kriging | 5626 | 0.233060 | 0.658678 | 0.628090 |
+| Universal kriging | 5626 | 0.233093 | 0.658760 | 0.627372 |
+| SPDE | 5626 | 0.233105 | 0.658776 | 0.628866 |
+| Joint 0/2/3 points | 5626 | 0.233322 | 0.659347 | 0.630973 |
+| Distance baseline | 5626 | 0.233794 | 0.660248 | 0.622539 |
+| IDW | 5626 | 0.234248 | 0.661303 | 0.622459 |
+| Spatial logistic | 5626 | 0.234595 | 0.662079 | 0.620188 |
+| Context logistic | 5626 | 0.235962 | 0.664923 | 0.618612 |
+| Constant baseline | 5626 | 0.246821 | 0.686778 | 0.500000 |
+| Joint outcome logistic | 5626 | 0.242070 | 0.689196 | 0.605443 |
+
+### Playoff transfer benchmark
+
+| model | shots | brier | log_loss | auc |
+| --- | --- | --- | --- | --- |
+| Equal-weight ensemble | 3311 | 0.231720 | 0.655986 | 0.631922 |
+| CatBoost context | 3311 | 0.231817 | 0.656174 | 0.632492 |
+| XGBoost context | 3311 | 0.231869 | 0.656284 | 0.631992 |
+| Validation-calibrated ensemble | 3311 | 0.232141 | 0.656945 | 0.631922 |
+| Spatial logistic | 3311 | 0.232469 | 0.657631 | 0.620270 |
+| SPDE | 3311 | 0.232524 | 0.657722 | 0.625948 |
+| Bayesian GP | 3311 | 0.232665 | 0.658107 | 0.628008 |
+| CatBoost spatial | 3311 | 0.232771 | 0.658169 | 0.624244 |
+| XGBoost spatial | 3311 | 0.232897 | 0.658515 | 0.623186 |
+| Distance baseline | 3311 | 0.232965 | 0.658571 | 0.620093 |
+| Universal kriging | 3311 | 0.233115 | 0.658965 | 0.624054 |
+| Ordinary kriging | 3311 | 0.233173 | 0.659088 | 0.623400 |
+| Joint 0/2/3 points | 3311 | 0.233327 | 0.659507 | 0.628373 |
+| IDW | 3311 | 0.234727 | 0.662479 | 0.618988 |
+| Context logistic | 3311 | 0.235006 | 0.663082 | 0.613370 |
+| Joint outcome logistic | 3311 | 0.236918 | 0.672005 | 0.619042 |
+| Constant baseline | 3311 | 0.245842 | 0.684808 | 0.500000 |
+
+[Calibration bins](results/data1/calibration.csv), [paired game-bootstrap differences](results/data1/game_bootstrap.csv), and [all eligible GP specifications](results/data1/all_gp_benchmarks.csv) remain inspectable. The bootstrap samples whole games with replacement, uses 2,000 replicates and pools errors by shot count. Intervals are conditional on fitted models and the observed games; they do not include model-selection uncertainty or guarantee transfer to another season. Multiple model comparisons are exploratory, not multiplicity-adjusted hypothesis tests.
+
+## Observed-outcome expected FG points
+
+The source lacks authoritative 2/3 attempt values for every miss. Joint models directly estimate P(0),P(2),P(3), so P(make)=P(2)+P(3) and E[FG points]=2P(2)+3P(3). No inferred geometric miss labels or external corrected attempt values enter the calculation. This target is the observed location/context-dependent scoring mix conditional on an attempt. It does not identify a counterfactual shot type, free-throw reward, or future possession value.
+
+| model | shots | rmse | mae | mean_expected | mean_observed |
+| --- | --- | --- | --- | --- | --- |
+| Joint GPU outcome model | 5626 | 1.155226 | 1.088510 | 1.018660 | 1.007288 |
+| Distance outcome baseline | 5626 | 1.155618 | 1.091411 | 0.994319 | 1.007288 |
+| Constant outcome baseline | 5626 | 1.167612 | 1.120126 | 0.991924 | 1.007288 |
+| Joint outcome logistic | 5626 | 1.176340 | 1.086758 | 0.962608 | 1.007288 |
+
+The distance outcome baseline adds one pseudocount to each of 0/2/3 in the same radial bins. Joint logistic uses its multiclass validation loss to choose C. Joint GPU models use multiclass validation loss, then average their three seed probability vectors. [Point metrics](results/data1/points_metrics.csv) and [paired MSE intervals](results/data1/points_game_bootstrap.csv) report all periods. The joint GPU model only slightly improves later-game point RMSE over the distance outcome baseline (1.155226 vs 1.155618); its paired MSE difference interval includes zero. Joint logistic is worse than the distance baseline on this benchmark. These results do not establish a clear expected-points improvement or optimal basketball decision-making.
+
+## Spatial transfer and rolling-origin checks
+
+Only the 25,751 early-season training shots enter spatial cross-validation. Fixed regions divide x at 16 ft and y at 0. Hold out each region, then remove training locations within 0,2,4 ft of any held-out location. Every measured nearest separation strictly exceeds its buffer. Games may occur on both sides. This tests missing-area transfer, not future-game prediction; four regions do not cover every possible partition.
+
+All fold-specific outcomes, rate estimates, trends and variograms are refitted within the retained training area. Settings are fixed for this diagnostic: IDW power 2, spatial logistic C=1, SPDE range 8/sigma .7/spacing 3 and GP defaults with location only. GP folds omit player effects and histories so held-out-location labels cannot leak through those summaries. A GP row is pooled only when all four folds pass sampling diagnostics. These location-only CV results do not spatially validate the contextual temporal winner.
+
+| model | 0 ft | 2 ft | 4 ft |
+| --- | --- | --- | --- |
+| Distance baseline | 0.231758 | 0.232624 | 0.244227 |
+| IDW | 0.234540 | 0.240531 | 0.246115 |
+| Ordinary kriging | 0.234091 | 0.244241 | 0.249831 |
+| SPDE | 0.232638 | 0.236495 | 0.248027 |
+| Spatial GP (24) | 0.237184 | 0.233758 | — |
+| Spatial GP (32) | 0.237113 | 0.233743 | — |
+| Spatial logistic | 0.256864 | 0.239226 | 0.249710 |
+| Universal kriging | 0.234480 | 0.237932 | 0.244048 |
+
+The distance baseline has the lowest pooled Brier score at 0 and 2 ft; universal kriging has the lowest at 4 ft. Spatial GP 4 ft results are omitted because not all four fits pass sampling checks. The GP is not uniformly better at missing-area transfer. Nonmonotonic scores across buffers can occur because the retained training set and extrapolation change.
+
+[Rolling-origin comparisons](results/data1/rolling_origin.csv) train before July 1 or July 21 and validate on the following supplied interval. They assess consistency earlier in the same season. Context CatBoost improves on distance in both intervals. The July contextual GP and August player GP fail diagnostics; their flagged rows remain visible for transparency and do not support conclusions about reliable Bayesian performance. These checks do not become a new season or erase the reused-benchmark limitation.
+
+## GPU execution and cost
+
+Completed Modal results ran on verified **NVIDIA H100 80GB** GPUs, up to four concurrently. A later H100 request was assigned H200 hardware; those four higher-acceptance workers were stopped before completing results. The completed-run allocation lower bound is **US$16.56**, across **65 successful runs**, including **225 boosting candidates**, GP prior/basis/domain/warp checks, buffered spatial folds and independent posterior replications. Diagnostic failures still consume compute and remain recorded. The initial small pilot did not pass the strict R-hat threshold and was not promoted.
+
+XGBoost 3.0.2 initially hit a native CUDA virtual-memory failure. It was stopped, and the working study pinned 2.1.4 after a separate H100 smoke check. Native jobs run in an isolated subprocess, preventing automatic replay of a full search after a native crash. After observing actual run times, later workers use a 1,800-second hard timeout (1,700 seconds for the child) and a US$2.10 full-timeout reservation, allowing more concurrent jobs within the same ceiling. On coordinator restart, every already submitted call is recovered by its ID before further work, preventing duplicate fits. A US$4.10 reservation remained in the budget guard for the earlier unrecovered task. It is a conservative guard, not an extra invoice item.
+
+The lower-bound meter multiplies measured in-function allocation time by US$0.001097 per H100 second; it excludes pre-function startup, CPU, RAM, storage, and credits. The separate project-filtered Modal usage export in [compute record](results/data1/compute_usage.json) reports **US$20.29** gross resource usage before credits, including interrupted work and CPU/RAM/startup.
+
+| resource | USD before credits |
+| --- | --- |
+| Network Egress | 0.000756 |
+| Memory | 0.611536 |
+| H100 | 18.772620 |
+| CPU | 0.906200 |
+
+The original scheduler targeted US$22 measured GPU work with a US$32 guarded GPU limit and **US$40** total ceiling. **The user then reported only US$1 of remaining Modal credit. All study apps were stopped and zero active tasks were confirmed.** This later instruction supersedes the earlier minimum-spend target: the completed-result timer remains below US$20, and no claim is made that it reached that target. Gross billed GPU usage is a separate measure. The final four higher-acceptance fits are interrupted, unavailable for inference, and not counted as successful results. All remaining analysis and verification runs on the desktop CPU. The budget-stop record disables further paid runs. Usage is not a claim about cash charged after credits.
+
+GPU image: Python 3.12, NumPy 2.2.6, pandas 2.2.3, SciPy 1.15.3, scikit-learn 1.6.1, JAX 0.6.2, NumPyro 0.18.0, ArviZ 0.21.0, CatBoost 1.2.8, XGBoost 2.1.4. CPU reference analysis ran with Python 3.13 and the versions in requirements.txt. Seeded bootstrap checks are reproducible in the same numerical environment; GPU inference and tree fits can vary slightly across hardware/runtime versions.
+
+## Reproduce and verify
+
+Raw source files, extracted paper text, individual predictions, posterior arrays, browser profiles and full workspace billing exports are excluded from Git. Public tables contain aggregates, source hashes, diagnostics and sanitized run metadata. The original archive is never changed.
+
+```powershell
+# From the repository root, with the supplied archive and installed dependencies.
+py -3.13 -m pip install -r research/requirements.txt
+py -3.13 research/audit_archive.py --source "$env:USERPROFILE\Downloads\Data (1).zip"
+py -3.13 research/review_archive_text.py --source "$env:USERPROFILE\Downloads\Data (1).zip"
+py -3.13 research/audit_additional_tables.py --source "$env:USERPROFILE\Downloads\Data (1).zip"
+py -3.13 research/prepare_data.py --source "$env:USERPROFILE\Downloads\Data (1).zip"
+py -3.13 research/source_crosscheck.py --source "$env:USERPROFILE\Downloads\Data (1).zip"
+py -3.13 research/review_history.py --source "$env:USERPROFILE\Downloads\Data (1).zip"
+py -3.13 research/run_comparisons.py
+# Modal SDK must be installed and authenticated in the chosen interpreter.
+$env:PYTHONUTF8='1'; $env:PYTHONIOENCODING='utf-8'; $env:NO_COLOR='1'
+# Historical GPU invocation, disabled by the current compute_stop.json.
+# Do not restart paid work under the current credit limit.
+# python -m modal run --detach research/modal_study.py --stage full
+py -3.13 research/check_numerics.py
+py -3.13 research/verify_methods.py
+py -3.13 research/summarize_data1.py
+# Refresh project-filtered Modal billing (using an interpreter with Modal SDK).
+py -3.13 research/billing_data1.py --modal-python <path-to-modal-python>
+py -3.13 research/report_data1.py
+py -3.13 research/export_site_data.py --source "$env:USERPROFILE\Downloads\Data (1).zip"
+# Publish reviewed files, wait for Pages to build, THEN verify the finished result.
+py -3.13 research/check_site.py --url https://kevinyamada.github.io/wnba-shot-atlas/ --final
+py -3.13 research/evaluate_predictions.py --source "$env:USERPROFILE\Downloads\Data (1).zip"
 ```
 
-The preparation step downloads two public Parquet files if they are absent and verifies their hashes. If the release changes, stop and review the changed data rather than silently replacing the hash. The raw data and event predictions are excluded from version control. The website publishes only aggregated shot counts and saved model summaries.
+Serving the website alone needs no raw data or Python analysis dependencies: run `python -m http.server 8001` from the root and open http://localhost:8001/.
 
-The archived GP is optional and uses the separate dependencies in `requirements_gp.txt`. To fit it again, install those in a separate environment and run `python research/gp_model.py --players --basis 24 --draws 2000 --tune 2000`. Its outputs go into `results/gp/`. The website will continue to use the documented historical surface until the new run has been checked and explicitly promoted. Results may differ slightly between numerical libraries or systems.
+The [final verification record](results/data1/final_verification.json) is generated after analysis and publication. It independently reopens all original archive members, reconstructs source labels and lagged features, checks metrics and cell aggregates, and compares the live data artifact with the verified local file. A final metadata-only commit may add that record; its `analysis_commit` identifies the analyzed implementation. Subsequent read-only checks verify the latest GitHub/Pages commit.
 
-## Sources
+## Research implications
 
-* [Public WNBA pipeline and data provenance](https://github.com/sportsdataverse/wehoop-wnba-data)
-* [2025 WNBA official rule book](https://cdn.wnba.com/sites/4/2025/04/2025-WNBA-Official-Rule-Book.pdf), Rule 1 and the court diagram
-* [Karun Singh, Introducing Expected Threat](https://karun.in/blog/expected-threat.html)
-* [David Sumpter, Explaining Expected Threat](https://soccermatics.medium.com/explaining-expected-threat-cbc775d97935)
-* [Christopher Fonnesbeck, Bayesian Spatial Modeling for Evaluating Hockey Goaltending Performance](https://www.pymc-labs.com/blog-posts/bayesian-spatial-modeling-for-evaluating-hockey-goaltending-performance)
-* [Lindgren, Rue, and Lindström, 2011: the SPDE approach](https://doi.org/10.1111/j.1467-9868.2011.00777.x)
-* [R INLA documentation for Matérn SPDE models and PC priors](https://www.r-inla.org/learnmore/docs/reference/inla.spde2.pcmatern.html)
-* [Roberts et al., 2017: cross validation for structured data](https://florianhartig.github.io/publications/roberts2017cross/)
-
-The page's interaction was inspired by these explanatory articles. Its code, visual design, and WNBA analysis were created for this project.
+The strongest current deliverable remains an auditable description of where attempts and made FG points occur, with cautious conditional prediction benchmarks. Full expected threat requires validated possessions, nonshot opportunities and actor roles. Real shot clock, defensive pressure and tracking are unavailable. Role definitions need agreement and a pre-prediction estimation rule. The [research-group questions](DATA_REQUESTS.md) are a prepared draft only. The archive's papers inform methods and data requirements; none supplies additional model observations.

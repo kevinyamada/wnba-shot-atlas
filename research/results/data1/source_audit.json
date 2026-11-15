@@ -1,0 +1,99 @@
+{
+  "source_filename": "Data (1).zip",
+  "archive_sha256": "22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120",
+  "archive_bytes": 1937912926,
+  "only_data_source": "Data (1).zip",
+  "inputs": [
+    {
+      "member": "Data/Wehoop/original/wehoop_wnba_pbp.csv",
+      "sha256": "6b161957936f107a978f6dd725c3126b1f96806503a37f78dbc9107b9c914d12",
+      "bytes": 46020110
+    },
+    {
+      "member": "Data/Wehoop/WNBA_Team/wnba_team_box.csv",
+      "sha256": "0b92514ebe3ade04b175a8a6bc8d935f6205a1a0f8dfd5f113fde61504b60a0e",
+      "bytes": 4143367
+    },
+    {
+      "member": "Data/Wehoop/WNBA_player/wnba_player_box.csv",
+      "sha256": "c8ca431907eabd5810e6e206a95bf1940ee896ce908a955ddbff89be2e3e6b69",
+      "bytes": 53852605
+    }
+  ],
+  "source_rows": 121342,
+  "all_attempts": 42193,
+  "regular_attempts": 38535,
+  "regular_games": 286,
+  "regular_makes": 16926,
+  "regular_points": 38533,
+  "all_game_team_boxes_reconcile": true,
+  "all_shooter_boxes_reconcile": false,
+  "retained_model_shooter_boxes_reconcile": true,
+  "excluded_games_for_shooter_disagreement": 8,
+  "mismatched_player_game_totals": 18,
+  "game_team_checks": 624,
+  "player_game_checks": 5504,
+  "score_update_conflicts": 88,
+  "regular_games_with_score_conflicts": 27,
+  "splits": {
+    "playoffs": {
+      "shots": 3311,
+      "games": 24,
+      "start": "2025-09-14",
+      "end": "2025-10-10"
+    },
+    "test": {
+      "shots": 5626,
+      "games": 42,
+      "start": "2025-08-27",
+      "end": "2025-09-11"
+    },
+    "train": {
+      "shots": 25751,
+      "games": 191,
+      "start": "2025-05-16",
+      "end": "2025-08-09"
+    },
+    "validation": {
+      "shots": 5995,
+      "games": 45,
+      "start": "2025-08-10",
+      "end": "2025-08-26"
+    }
+  },
+  "numeric_features": [
+    "x",
+    "y",
+    "distance",
+    "angle",
+    "period_number",
+    "seconds",
+    "home",
+    "prior_rate",
+    "log_prior_n",
+    "preseason_rate",
+    "preseason_log_n"
+  ],
+  "categorical_features": [
+    "player_id",
+    "team_id"
+  ],
+  "prior_season_feature_window": "2022-2024 regular-season-coded box scores in the supplied archive only, fixed before 2025",
+  "history_rule": "Only completed earlier regular-season games; constant within game; frozen at regular-season end for playoffs.",
+  "excluded_features": [
+    "outcome descriptions",
+    "made",
+    "points",
+    "score_value",
+    "scoring_play",
+    "current-game box scores",
+    "future-season totals",
+    "assists",
+    "conflicting score margin",
+    "inferred two/three attempt values",
+    "college records",
+    "salary"
+  ],
+  "evaluation_limit": "The 2025 evaluation periods have already been examined. They are reused benchmarks, not an untouched final season.",
+  "expected_points_target": "Observed 0/2/3 field-goal outcome mix; missed-shot attempt values are not authoritatively supplied."
+}

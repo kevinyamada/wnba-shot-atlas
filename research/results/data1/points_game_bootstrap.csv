@@ -1,0 +1,9 @@
+split,model,baseline,mse_difference,lower,upper,games,shots
+test,Constant outcome baseline,Distance outcome baseline,0.02786557155724163,0.01733428993269523,0.03904608844754611,42,5626
+test,Distance outcome baseline,Distance outcome baseline,0.0,0.0,0.0,42,5626
+test,Joint outcome logistic,Distance outcome baseline,0.048324147601184024,0.03194511916481049,0.06468744946158145,42,5626
+test,Joint GPU outcome model,Distance outcome baseline,-0.0009063019890988382,-0.0101857589992366,0.00832426448577369,42,5626
+playoffs,Constant outcome baseline,Distance outcome baseline,0.029803546733535115,0.019267016087826907,0.040741906916771674,24,3311
+playoffs,Distance outcome baseline,Distance outcome baseline,0.0,0.0,0.0,24,3311
+playoffs,Joint outcome logistic,Distance outcome baseline,0.020426935298698445,-0.006669556401641924,0.04851008133827397,24,3311
+playoffs,Joint GPU outcome model,Distance outcome baseline,0.0023793902616249343,-0.0065373861733167195,0.011143619381112744,24,3311

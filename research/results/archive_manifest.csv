@@ -1,0 +1,46 @@
+path,bytes,sha256,status,rows_read,malformed_records,pages,text_characters
+Data/BBall Data Dictionary.xlsx,232974,8d7ee1a593dda0485988841adf8b469ed9e47053fd50fb9c5e598ec9f5fbfc21,read_all_bytes,,,,
+Data/Across The Timeline/All-Time Regular Season Records.csv,2284,7abc8cbdfe3aaa28ca12ea7757f7329e42d36ae259158e913f954b1ec56b7167,read_all_records,25,0,,
+Data/Basketball Reference/Per100Poss/Per100Poss_2013.txt,19459,e24d2e95ba2b683c209274048ea17286c157f93a0805fd7db5f9cba9dbd47dfe,read_all_bytes,,,,19459
+Data/Basketball Reference/Per100Poss/Per100Poss_2014.txt,19662,ee36aea4f9eef24084def47b595e9270e13442f8c9a19ebccab0307c0e5c2061,read_all_bytes,,,,19662
+Data/Basketball Reference/Per100Poss/Per100Poss_2015.txt,21999,56ebda568426076225431672062173d787126a1e706c00e2c6771a5dc5a1f9f4,read_all_bytes,,,,21999
+Data/Basketball Reference/Per100Poss/Per100Poss_2016.txt,21541,5cbe315972f25133e5cda49a00f11c455ed1a1b0c972c5fdd3481fb3645e9407,read_all_bytes,,,,21541
+Data/Basketball Reference/Per100Poss/Per100Poss_2017.txt,22017,677bb32531ebc2d83961265b42605b076705a9516bd8a13cf491da2f05f8cdde,read_all_bytes,,,,22017
+Data/Basketball Reference/Per100Poss/Per100Poss_2018.txt,21426,51b689ab42a8f0fbecb71cc428057bfa905e4f7effb143fddd5af57615110d82,read_all_bytes,,,,21426
+Data/Basketball Reference/Per100Poss/Per100Poss_2019.txt,20931,2853dc2ba00a6149b124df512e04878f4b17374eb53fa21404a1b59afcb6e6b6,read_all_bytes,,,,20931
+Data/Basketball Reference/Per100Poss/Per100Poss_2020.txt,19952,6106eda1479a5f89a139a6c71e16a011ebf675c53ec933b743d65c6bf6f1d1ca,read_all_bytes,,,,19952
+Data/Basketball Reference/Per100Poss/Per100Poss_2021.txt,22503,8b04cb4498cd8da4f02e3291c78f09159bcef725e2901a002d1d56d9b61030a2,read_all_bytes,,,,22503
+Data/Basketball Reference/Per100Poss/Per100Poss_2022.txt,24337,8f312a7dfc3ba04b0418f611cdb80bf017a4b96e726e8de3cae1a3b747aa4415,read_all_bytes,,,,24337
+Data/Basketball Reference/Per100Poss/Per100Poss_2023.txt,21619,60fb14dd4d7e6abdfdf0b6de2c8f6b02fd6de7bbe9f8c4638921f9788726eccf,read_all_bytes,,,,21616
+Data/Basketball Reference/Per100Poss/Per100Poss_2024.txt,22738,79ca94d9182bf4322df0c49bc191b6b34627eb9ada678656e108de04d40589a4,read_all_bytes,,,,22729
+Data/Basketball Reference/Per100Poss/Per100Poss_2025.txt,28830,0468a4a505d8b1db10a454e012fe64a62ac0f67be0b3cd0be8434ad3b7f04e49,read_all_bytes,,,,28823
+Data/Papers to read/Injury in WBALL background with references.docx,29264,7ba4034f2c2587176fe9d34c7d1e50eee5ec42c45929f529100a01745c3866da,read_all_bytes,,,,8273
+Data/Papers to read/Basketball Review papers/AI in basketball.pdf,742088,4c18f621f7cb310a5416c338a50e2b7a78376a530269b84fa13438061398d3de,read_all_bytes,,,43,141301
+Data/Papers to read/Basketball Review papers/Basketball Analytics and the use of data science to descrive and predict the performance of a NBA team.pdf,2332481,0f6423e7044ff2abbabd78df656059a31a8e43fc017da3ca372e76cb91b01863,read_all_bytes,,,120,130878
+"Data/Papers to read/Basketball Review papers/Burnett Thesis, The Impact of Data Analytics.pdf",1252092,72e04886dfa1a08fea45ecce8a0adab4fb62ddf173c9fd16f86f1c7e878c9eea,read_all_bytes,,,44,70498
+"Data/Papers to read/Basketball Review papers/Hobbs et al., Playing unpredictably, measuring the entropy.pdf",1573762,10d26bff2a25e9d97744a35a5ae8dabd8f635d6198e8be1d481573c19ee589d2,read_all_bytes,,,13,30151
+Data/Papers to read/Basketball Review papers/Sports analytics â€” Evaluation of basketball players and team performance.pdf,1892957,cc2e76b3c8ce7f8a6a06ee733678625695c9160a7205018284a1526b8cc5ab9a,read_all_bytes,,,19,85452
+Data/Papers to read/Basketball Review papers/Wang et al The Effect of Basketball Analytics on performance.pdf,726575,776b5f329a9592bb762b2c25387648939ec1c382fe6f829b41b4f053a96d6266,read_all_bytes,,,21,55916
+"Data/Papers to read/Basketball Review papers/Zuccalotto et al., Big data analytics for modeling scoring.pdf",1208766,f6d8f186a0dce5057354b43ad46336033eb0d554d8b8dd2b004b2f9202855f6e,read_all_bytes,,,21,71328
+Data/Papers to read/Other cool analyses and methods/AI and analytics in sports Leveraging BERTopic to map the past and chart the future.pdf,590177,256d41b502a9368fa135eb1198c955f93187c112a90b507b7c87c80fd7245571,read_all_bytes,,,32,68074
+Data/Papers to read/Women's Basketball Papers/Agha_etal_2024.pdf,370816,11ddd9fdc90dc3bc3103b7e4d54d236dd8200bd58c127df6029b11bc6ddc1c92,read_all_bytes,,,18,47524
+Data/Papers to read/Women's Basketball Papers/Campaz LATENT STRUCTURE OF SITUATIONAL EFFICIENCY VARIABLES IN ELITE WOMENâ€™S BASKETBALL.pdf,1357057,2993b75341c1ed4d41996545ff492827b31a32c015708b8b0c8dab521a863c84,read_all_bytes,,,61,127548
+"Data/Papers to read/Women's Basketball Papers/Cotta- Ortaga et al., analysis of game situations in the 3point shot in womens basketball.pdf",643713,3afb16e6760e3679277272b09d9eec5b3c418222be87e6250ca895d6879de39a,read_all_bytes,,,16,53284
+"Data/Papers to read/Women's Basketball Papers/Courel Ibanez, Profiling high performers in elite womenâ€™s basketball, Functional roles and normative benchmarks from 10 seasons of Spanish First Division data.pdf",4103695,1ceafaee1ab71375e02180335cc037a33ebba3876034b759f614b06805146034,read_all_bytes,,,13,55444
+"Data/Papers to read/Women's Basketball Papers/Ibanez et al. Profiling high performers in elite women's basketball, Functional roles and normative benchmarks from 10 seasons of Spanish First Division data.pdf",1125173,86f3328ce46002a648326d40838557c1c352d2188b7d10b86ba94b7f241a0512,read_all_bytes,,,23,55404
+"Data/Papers to read/Women's Basketball Papers/Ibanez et al., Redefining player roles in professional womenâ€™s basketball from traditional positions to functional profiles.pdf",2132552,2d29c7af49a6ca848fba538ac120ffd12383f9945018839ecfa2cab0996c4a2e,read_all_bytes,,,18,59766
+"Data/Papers to read/Women's Basketball Papers/Javadpour et al., Optimizing the best play in basketball using deep learning.pdf",495216,fe9f40decdd5fc7d4855b1e027ac949a2581c13f48b32831d7979fab5f0a2c06,read_all_bytes,,,7,26562
+Data/Papers to read/Women's Basketball Papers/Jepsen_2023.pdf,333046,027cd55340c7900e0dfa97c787970ce32959d16bd70fc1656a93a8d20d42271f,read_all_bytes,,,21,52720
+"Data/Papers to read/Women's Basketball Papers/Juliano and Thakkar, R Analytics Tool to Study the Performance of the D1 Womenâ€™s Basketball Team at Sacred Heart University.pdf",725097,02799f3edb1946c4f5451363a087c44953de4cbfe671433b34bf87e4a3668ec1,read_all_bytes,,,1,3486
+Data/Papers to read/Women's Basketball Papers/Network analysis and link prediction in.pdf,909102,769baa3b9a9bbdabffbb23883dcbeb394311a45a8dac1b8052ee831bab0ee268,read_all_bytes,,,15,33791
+"Data/Papers to read/Women's Basketball Papers/what's the latest in sports analytics for women's professional basketball - Mar 22, 2026.csv",145444,f6a6843d2d1407e84e96005e7b51e4c51807b5e26eb2d01f1b809e073e323756,read_all_records,70,0,,
+Data/Salary (HerHoop)/wnba_player_salaries.csv,146926,624a78bd79de601d0197d77252f7f039903da090fd4c67cfe91477ade70f668d,read_all_records,915,0,,
+Data/Salary (HerHoop)/wnba_player_salaries_long.csv,48461,2867f1562236c6f93481a9b74ea93d86d3d5af659e1cfb531676e79074f5d807,read_all_records,288,0,,
+Data/Salary (HerHoop)/wnba_team_salary_summary.csv,5046,37713cb6493d61dd9bbbceb9c4d25868f8b86103d07d4f06b244f37fc7a2ea31,read_all_records,91,0,,
+Data/Wehoop/original/wehoop_wbb_pbp.csv,797687873,cdcf83dcba72a94c75fa31757373760c9f470ebd802774dc1b2e764d572d3008,read_all_records,1993401,0,,
+Data/Wehoop/original/parsed/wehoop_wbb_pbp_parsed_1.csv,956302383,343a71fa4561e70976bfd4f0048509ff9def12dbcf3270e233293eba57548daf,read_all_records,1993401,0,,
+Data/Wehoop/original/parsed/wehoop_wnba_pbp_parsed.csv,56355376,2d908a960e6bfc6e40d92da545cb549a47c4d22a28482646f093766b19ab6d09,review_required,121165,2,,
+Data/Wehoop/original/wehoop_wnba_pbp.csv,46020110,6b161957936f107a978f6dd725c3126b1f96806503a37f78dbc9107b9c914d12,read_all_records,121342,0,,
+Data/Wehoop/WNBA_player/wnba_player_box.csv,53852605,c8ca431907eabd5810e6e206a95bf1940ee896ce908a955ddbff89be2e3e6b69,read_all_records,120980,0,,
+Data/Wehoop/WNBA_player/wnba_player_demographics.csv,127550,48d257cfd6a42944389645253c3c7f3520cec6524fbdb9d03ae9c1c4152ac593,read_all_records,1145,0,,
+Data/Wehoop/WNBA_Team/wnba_team_box.csv,4143367,0b92514ebe3ade04b175a8a6bc8d935f6205a1a0f8dfd5f113fde61504b60a0e,read_all_records,10134,0,,

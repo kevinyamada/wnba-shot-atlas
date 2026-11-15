@@ -1,0 +1,51 @@
+{
+  "source_archive_sha256": "22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120",
+  "only_data_source": "Data (1).zip",
+  "selection_data": "August 10-26, 2025, eligible attempts only",
+  "selected_gp_id": "context32-warped",
+  "selected_gp_configuration": {
+    "id": "context32-warped",
+    "basis": 32,
+    "players": true,
+    "context": true,
+    "draws": 3000,
+    "tune": 3000,
+    "seed": 20261115,
+    "fold": "main",
+    "warped": true
+  },
+  "selected_model": "CatBoost context",
+  "gp_seed_rule": "Highest retained-draw count, then bulk ESS, within the same configuration; not the best-performing seed.",
+  "tree_seed_rule": "Equal mean of the three validation-selected seed fits.",
+  "ensemble_components": [
+    "Distance baseline",
+    "SPDE",
+    "Bayesian GP",
+    "CatBoost context",
+    "XGBoost context"
+  ],
+  "ensemble_weights": [
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2
+  ],
+  "training_cutoff": "2025-08-09",
+  "calibration_cutoff": "2025-08-26",
+  "test_not_used_for_selection": true,
+  "evaluation_limit": "The 2025 evaluation periods have already been examined. They are reused benchmarks, not an untouched final season.",
+  "gp_diagnostics": {
+    "max_rhat": 1.003035,
+    "minimum_bulk_ess": 2599.335583,
+    "minimum_tail_ess": 4284.014825,
+    "divergences": 0,
+    "mean_acceptance": 0.967192556441415,
+    "max_tree_depth_hits": 0,
+    "sampling_checks_pass": true
+  },
+  "gpu_function_seconds": 15091.709617864,
+  "gpu_usd_lower_bound": 16.55560545079681,
+  "guard_gpu_usd": 20.65560545079681,
+  "compute_stage": "Stopped on the user's later credit limit; evaluate completed runs only."
+}

@@ -1,46 +1,51 @@
 # WNBA Shot Atlas
 
-An interactive study of where WNBA shots happen and how spatial models predict makes. Built with Python, JavaScript, HTML, and CSS using the 2025 season.
+An interactive study of recorded WNBA shot locations, conditional make probabilities and observed field goal point outcomes. **All basketball inputs in this update come from the supplied Data (1).zip.**
 
-**[Explore the live app](https://kevinyamada.github.io/wnba/) · [Read the methods and audit](research/summary.md) · [Inspect saved results](research/results/)**
+**[Explore the live app](https://kevinyamada.github.io/wnba-shot-atlas/) · [Methods and results](research/summary.md) · [Archive and literature review](research/ARCHIVE_REVIEW.md)**
 
-## What you can explore
+The descriptive sample contains 38,535 regular-season attempts in 286 games, with 38,441 attempts in the half-court view. Explore teams, 1/2/4-foot squares, actual field goal scoring leaders, observed make rates, Bayesian predictions and posterior uncertainty. The app also compares distance, logistic, IDW, kriging, SPDE, four-chain Bayesian GP, GPU boosting and ensemble models.
 
-- Shot density, make rates, and field goal scoring leaders across the half court.
-- Team filters and 1, 2, or 4 foot cells, with keyboard selection.
-- Distance baselines, IDW, kriging, Gaussian process, SPDE, and boosting comparisons.
-- Temporal evaluation, buffered spatial validation, calibration, and court geometry checks.
+## Source and limitations
 
-The source contains 38,535 regular season attempts across 286 games; 38,441 fit in the displayed half court. The app uses saved aggregates and runs without a server backend or API key.
+The original 45-file archive has SHA-256 `22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120`. It supplies 2025 WNBA events, historical player/team boxes and supporting tables and papers. No external basketball release or additional season enters the active pipeline.
 
-## Run the app locally
+All 624 game/team shot totals reconcile. Eighteen player/game attempt totals disagree across eight games; those games remain in descriptive maps and are excluded uniformly from model fitting and evaluation. The source also contains 88 shot-score-update conflicts, so score margin and possession models are excluded. [Review the exclusions](research/results/data1/excluded_games.csv).
 
-From this repository's root:
+The model cohorts contain 25,751 training attempts, 5,995 validation attempts, 5,626 later regular-season attempts and 3,311 playoff attempts. All are previously examined 2025 benchmarks. They do not establish performance in an untouched season. Missing missed-shot values are handled by a joint 0/2/3 outcome model, rather than invented attempt labels. This does not yet estimate expected threat or causal shot-selection effects.
+
+## View locally
 
 ```bash
 python -m http.server 8001
 ```
 
-Open http://localhost:8001/. Serve the files over HTTP so the browser can load `assets/data.json`.
+Open http://localhost:8001/. Viewing needs no raw source, model fitting, API key or server backend. HTTP is required for loading `assets/data.json`.
 
-## Research and reproducibility
+## Reproduce the analysis
 
-The [methods note](research/summary.md#reproduce-the-update) lists the Python 3.12 environment and full reproduction commands. Raw source files and event predictions are downloaded or generated locally and excluded from Git. Retained tables, source hashes, and verification outputs are included. Fitting the optional Bayesian model is separate from viewing the app.
+The [methods note](research/summary.md#reproduce-and-verify) gives complete commands and numerical environments. Start with the exact supplied archive. Preparation verifies its checksum and performs no network data download. Raw tables, paper text, event predictions, posterior arrays and full billing exports stay outside Git.
 
-These are exploratory results. Location summaries describe recorded attempts, and field goal points exclude free throws and future possession outcomes. Later evaluation periods have already been examined during development. This project does not yet estimate expected threat or causal shot-selection effects.
+The GPU study uses Modal H100 80GB devices, up to four concurrently, and records source hashes, diagnostics, seed stability, validation-only choices and cost. [Compute usage](research/results/data1/compute_usage.json) distinguishes measured GPU allocation from gross Modal resource usage before credits. The original target was at least US$20 useful GPU work, with a US$40 total ceiling. A later user update reported only US$1 credit remaining: all paid study apps were stopped, and remaining work runs on the desktop CPU. The compute record distinguishes completed-result time from total resource usage, including interrupted jobs.
+
+The [final verification record](research/results/data1/final_verification.json) is generated **after** analysis and publication. It reopens the original ZIP, checks all 45 hashes, independently rebuilds row labels and historical predictors, recomputes metrics, verifies every website aggregate, and checks the live data and browser interactions.
 
 ## Repository guide
 
 | Path | Purpose |
 | --- | --- |
-| `index.html`, `style.css`, `app.js` | Interactive article and court explorer |
-| `assets/data.json` | Published aggregates and model summaries |
-| `research/` | Data preparation, geometry, models, evaluation, and methods |
-| `research/results/` | Saved comparisons and verification outputs |
-| `research/reference/` | Retained earlier analysis summaries |
+| `index.html`, `style.css`, `app.js` | Interactive article and accessible court explorer |
+| `assets/data.json` | Data1 aggregates, selected GP surface and model tables |
+| `research/prepare_data1.py` | Archive-only source preparation and reconciliation |
+| `research/data1_cpu.py` | Reference models, spatial folds, mesh refinement and descriptive analysis |
+| `research/gpu_models.py`, `research/modal_study.py` | Bounded H100 model study |
+| `research/summarize_data1.py` | Validation-only selection, keyed evaluation and game bootstraps |
+| `research/verify_data1.py`, `research/check_site.py` | Final independent source/results and real-browser checks |
+| `research/results/data1/` | Current public aggregate outputs and audit records |
+| `research/DATA_REQUESTS.md` | Prepared research-group questions; not sent |
 
-## Source and publication
+## Publication
 
-Kevin Yamada. Extracted from the existing [portfolio project at commit 1b4ddf6](https://github.com/kevinyamada/kevinyamada.github.io/tree/1b4ddf662053b9f4c331443fc5775788e319b4da/wnba) so the work has its own browsable repository. The live app remains hosted at its original portfolio URL. This repository is a standalone snapshot; changes here do not automatically update that deployment.
+This repository deploys its root from `main` to **https://kevinyamada.github.io/wnba-shot-atlas/** through GitHub Pages. It began as an extraction of the older portfolio project. This archive-only update replaces the older public-download outputs in the current branch; Git history preserves the earlier work.
 
-Data: [SportsDataverse / wehoop WNBA data](https://github.com/sportsdataverse/wehoop-wnba-data), sourced from ESPN. The [methods note](research/summary.md#sources) retains research references and data provenance. This is an independent project, unaffiliated with the WNBA or ESPN.
+Kevin Yamada · University of Toronto. Independent research, unaffiliated with the WNBA or ESPN. The supplied event tables identify SportsDataverse/wehoop and ESPN as upstream providers.

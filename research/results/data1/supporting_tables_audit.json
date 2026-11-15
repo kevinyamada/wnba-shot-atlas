@@ -1,0 +1,503 @@
+{
+  "only_source": "Data (1).zip",
+  "table_checks": [
+    {
+      "file": "Data/Across The Timeline/All-Time Regular Season Records.csv",
+      "rows": 25,
+      "columns": [
+        "Unnamed: 0",
+        "Team",
+        "# Seasons",
+        "Wins",
+        "Losses",
+        "Games",
+        "Win Percentage",
+        "20 Win Seasons",
+        "% of 20 Win Seasons",
+        "Winning Seasons",
+        "% of Winning Seasons"
+      ],
+      "exact_duplicate_rows": 0,
+      "missing_by_column": {
+        "Unnamed: 0": 0,
+        "Team": 0,
+        "# Seasons": 0,
+        "Wins": 0,
+        "Losses": 0,
+        "Games": 0,
+        "Win Percentage": 0,
+        "20 Win Seasons": 0,
+        "% of 20 Win Seasons": 0,
+        "Winning Seasons": 0,
+        "% of Winning Seasons": 0
+      },
+      "wins_plus_losses_equal_games": true,
+      "win_percent_matches_counts": true,
+      "asof_date_explicit_in_columns": false,
+      "modelling_use": "Historical franchise context only; cumulative records have no shot-level availability timestamp."
+    },
+    {
+      "file": "Data/Basketball Reference/Per100Poss/Per100Poss_2013.txt",
+      "data_rows": 156,
+      "columns": 28,
+      "duplicate_header_names": [
+        "G",
+        "MP"
+      ],
+      "all_rows_have_expected_fields": true,
+      "unit": "per 100 possessions; games and minutes are separate counting fields",
+      "fg_components_differ_by_more_than_rounding": 0,
+      "fg_rate_outside_0_1": 0,
+      "three_rate_outside_0_1": 0,
+      "blank_fg_rate_when_attempts_zero": 1,
+      "modelling_use": "Excluded from pre-shot features: season-end grain, duplicate headers and player-stint rows require explicit handling. Past box scores provide ID-based prior features instead."
+    },
+    {
+      "file": "Data/Basketball Reference/Per100Poss/Per100Poss_2014.txt",
+      "data_rows": 158,
+      "columns": 28,
+      "duplicate_header_names": [
+        "G",
+        "MP"
+      ],
+      "all_rows_have_expected_fields": true,
+      "unit": "per 100 possessions; games and minutes are separate counting fields",
+      "fg_components_differ_by_more_than_rounding": 0,
+      "fg_rate_outside_0_1": 0,
+      "three_rate_outside_0_1": 0,
+      "blank_fg_rate_when_attempts_zero": 1,
+      "modelling_use": "Excluded from pre-shot features: season-end grain, duplicate headers and player-stint rows require explicit handling. Past box scores provide ID-based prior features instead."
+    },
+    {
+      "file": "Data/Basketball Reference/Per100Poss/Per100Poss_2015.txt",
+      "data_rows": 177,
+      "columns": 28,
+      "duplicate_header_names": [
+        "G",
+        "MP"
+      ],
+      "all_rows_have_expected_fields": true,
+      "unit": "per 100 possessions; games and minutes are separate counting fields",
+      "fg_components_differ_by_more_than_rounding": 0,
+      "fg_rate_outside_0_1": 0,
+      "three_rate_outside_0_1": 0,
+      "blank_fg_rate_when_attempts_zero": 0,
+      "modelling_use": "Excluded from pre-shot features: season-end grain, duplicate headers and player-stint rows require explicit handling. Past box scores provide ID-based prior features instead."
+    },
+    {
+      "file": "Data/Basketball Reference/Per100Poss/Per100Poss_2016.txt",
+      "data_rows": 174,
+      "columns": 28,
+      "duplicate_header_names": [
+        "G",
+        "MP"
+      ],
+      "all_rows_have_expected_fields": true,
+      "unit": "per 100 possessions; games and minutes are separate counting fields",
+      "fg_components_differ_by_more_than_rounding": 0,
+      "fg_rate_outside_0_1": 0,
+      "three_rate_outside_0_1": 0,
+      "blank_fg_rate_when_attempts_zero": 1,
+      "non_numeric_or_repeated_header_rows": 1,
+      "modelling_use": "Excluded from pre-shot features: season-end grain, duplicate headers and player-stint rows require explicit handling. Past box scores provide ID-based prior features instead."
+    },
+    {
+      "file": "Data/Basketball Reference/Per100Poss/Per100Poss_2017.txt",
+      "data_rows": 178,
+      "columns": 28,
+      "duplicate_header_names": [
+        "G",
+        "MP"
+      ],
+      "all_rows_have_expected_fields": true,
+      "unit": "per 100 possessions; games and minutes are separate counting fields",
+      "fg_components_differ_by_more_than_rounding": 0,
+      "fg_rate_outside_0_1": 0,
+      "three_rate_outside_0_1": 0,
+      "blank_fg_rate_when_attempts_zero": 2,
+      "modelling_use": "Excluded from pre-shot features: season-end grain, duplicate headers and player-stint rows require explicit handling. Past box scores provide ID-based prior features instead."
+    },
+    {
+      "file": "Data/Basketball Reference/Per100Poss/Per100Poss_2018.txt",
+      "data_rows": 173,
+      "columns": 28,
+      "duplicate_header_names": [
+        "G",
+        "MP"
+      ],
+      "all_rows_have_expected_fields": true,
+      "unit": "per 100 possessions; games and minutes are separate counting fields",
+      "fg_components_differ_by_more_than_rounding": 0,
+      "fg_rate_outside_0_1": 0,
+      "three_rate_outside_0_1": 0,
+      "blank_fg_rate_when_attempts_zero": 3,
+      "modelling_use": "Excluded from pre-shot features: season-end grain, duplicate headers and player-stint rows require explicit handling. Past box scores provide ID-based prior features instead."
+    },
+    {
+      "file": "Data/Basketball Reference/Per100Poss/Per100Poss_2019.txt",
+      "data_rows": 169,
+      "columns": 28,
+      "duplicate_header_names": [
+        "G",
+        "MP"
+      ],
+      "all_rows_have_expected_fields": true,
+      "unit": "per 100 possessions; games and minutes are separate counting fields",
+      "fg_components_differ_by_more_than_rounding": 0,
+      "fg_rate_outside_0_1": 0,
+      "three_rate_outside_0_1": 0,
+      "blank_fg_rate_when_attempts_zero": 1,
+      "non_numeric_or_repeated_header_rows": 1,
+      "modelling_use": "Excluded from pre-shot features: season-end grain, duplicate headers and player-stint rows require explicit handling. Past box scores provide ID-based prior features instead."
+    },
+    {
+      "file": "Data/Basketball Reference/Per100Poss/Per100Poss_2020.txt",
+      "data_rows": 162,
+      "columns": 28,
+      "duplicate_header_names": [
+        "G",
+        "MP"
+      ],
+      "all_rows_have_expected_fields": true,
+      "unit": "per 100 possessions; games and minutes are separate counting fields",
+      "fg_components_differ_by_more_than_rounding": 0,
+      "fg_rate_outside_0_1": 0,
+      "three_rate_outside_0_1": 0,
+      "blank_fg_rate_when_attempts_zero": 4,
+      "non_numeric_or_repeated_header_rows": 1,
+      "modelling_use": "Excluded from pre-shot features: season-end grain, duplicate headers and player-stint rows require explicit handling. Past box scores provide ID-based prior features instead."
+    },
+    {
+      "file": "Data/Basketball Reference/Per100Poss/Per100Poss_2021.txt",
+      "data_rows": 183,
+      "columns": 28,
+      "duplicate_header_names": [
+        "G",
+        "MP"
+      ],
+      "all_rows_have_expected_fields": true,
+      "unit": "per 100 possessions; games and minutes are separate counting fields",
+      "fg_components_differ_by_more_than_rounding": 0,
+      "fg_rate_outside_0_1": 0,
+      "three_rate_outside_0_1": 0,
+      "blank_fg_rate_when_attempts_zero": 7,
+      "non_numeric_or_repeated_header_rows": 1,
+      "modelling_use": "Excluded from pre-shot features: season-end grain, duplicate headers and player-stint rows require explicit handling. Past box scores provide ID-based prior features instead."
+    },
+    {
+      "file": "Data/Basketball Reference/Per100Poss/Per100Poss_2022.txt",
+      "data_rows": 198,
+      "columns": 28,
+      "duplicate_header_names": [
+        "G",
+        "MP"
+      ],
+      "all_rows_have_expected_fields": true,
+      "unit": "per 100 possessions; games and minutes are separate counting fields",
+      "fg_components_differ_by_more_than_rounding": 0,
+      "fg_rate_outside_0_1": 0,
+      "three_rate_outside_0_1": 0,
+      "blank_fg_rate_when_attempts_zero": 4,
+      "modelling_use": "Excluded from pre-shot features: season-end grain, duplicate headers and player-stint rows require explicit handling. Past box scores provide ID-based prior features instead."
+    },
+    {
+      "file": "Data/Basketball Reference/Per100Poss/Per100Poss_2023.txt",
+      "data_rows": 175,
+      "columns": 28,
+      "duplicate_header_names": [
+        "G",
+        "MP"
+      ],
+      "all_rows_have_expected_fields": true,
+      "unit": "per 100 possessions; games and minutes are separate counting fields",
+      "fg_components_differ_by_more_than_rounding": 0,
+      "fg_rate_outside_0_1": 0,
+      "three_rate_outside_0_1": 0,
+      "blank_fg_rate_when_attempts_zero": 1,
+      "non_numeric_or_repeated_header_rows": 1,
+      "modelling_use": "Excluded from pre-shot features: season-end grain, duplicate headers and player-stint rows require explicit handling. Past box scores provide ID-based prior features instead."
+    },
+    {
+      "file": "Data/Basketball Reference/Per100Poss/Per100Poss_2024.txt",
+      "data_rows": 183,
+      "columns": 28,
+      "duplicate_header_names": [
+        "G",
+        "MP"
+      ],
+      "all_rows_have_expected_fields": true,
+      "unit": "per 100 possessions; games and minutes are separate counting fields",
+      "fg_components_differ_by_more_than_rounding": 0,
+      "fg_rate_outside_0_1": 0,
+      "three_rate_outside_0_1": 0,
+      "blank_fg_rate_when_attempts_zero": 1,
+      "modelling_use": "Excluded from pre-shot features: season-end grain, duplicate headers and player-stint rows require explicit handling. Past box scores provide ID-based prior features instead."
+    },
+    {
+      "file": "Data/Basketball Reference/Per100Poss/Per100Poss_2025.txt",
+      "data_rows": 234,
+      "columns": 28,
+      "duplicate_header_names": [
+        "G",
+        "MP"
+      ],
+      "all_rows_have_expected_fields": true,
+      "unit": "per 100 possessions; games and minutes are separate counting fields",
+      "fg_components_differ_by_more_than_rounding": 0,
+      "fg_rate_outside_0_1": 0,
+      "three_rate_outside_0_1": 0,
+      "blank_fg_rate_when_attempts_zero": 2,
+      "non_numeric_or_repeated_header_rows": 1,
+      "modelling_use": "Excluded from pre-shot features: season-end grain, duplicate headers and player-stint rows require explicit handling. Past box scores provide ID-based prior features instead."
+    },
+    {
+      "file": "Data/Papers to read/Women's Basketball Papers/what's the latest in sports analytics for women's professional basketball - Mar 22, 2026.csv",
+      "rows": 70,
+      "columns": [
+        "Title",
+        "Takeaway",
+        "Authors",
+        "Year",
+        "Citations",
+        "Abstract",
+        "Study Type",
+        "Journal",
+        "Journal SJR Quartile",
+        "DOI",
+        "Consensus Link"
+      ],
+      "exact_duplicate_rows": 20,
+      "missing_by_column": {
+        "Title": 0,
+        "Takeaway": 0,
+        "Authors": 1,
+        "Year": 0,
+        "Citations": 0,
+        "Abstract": 3,
+        "Study Type": 40,
+        "Journal": 1,
+        "Journal SJR Quartile": 8,
+        "DOI": 1,
+        "Consensus Link": 0
+      },
+      "distinct_nonmissing_dois": 49,
+      "duplicate_nonmissing_dois": 20,
+      "study_years": {
+        "2025": 19,
+        "2024": 19,
+        "2023": 16,
+        "2022": 13,
+        "2026": 3
+      },
+      "modelling_use": "Literature-search metadata, not shot observations or independent validation datasets."
+    },
+    {
+      "file": "Data/Salary (HerHoop)/wnba_player_salaries.csv",
+      "rows": 915,
+      "columns": [
+        "salary_year",
+        "stats_year",
+        "player_name",
+        "first_name",
+        "last_name",
+        "team",
+        "contract_id",
+        "year_signed",
+        "signed_as",
+        "active",
+        "comments",
+        "base_salary",
+        "cap_hit",
+        "status",
+        "timeoff_bonus",
+        "gp",
+        "gs",
+        "mp_decimal_per_game",
+        "pts_per_game",
+        "ast_per_game",
+        "trb_per_game",
+        "stl_per_game",
+        "blk_s_per_game",
+        "tov_per_game",
+        "fg_pct",
+        "fg3m_pct",
+        "ft_pct"
+      ],
+      "exact_duplicate_rows": 0,
+      "missing_by_column": {
+        "salary_year": 0,
+        "stats_year": 0,
+        "player_name": 0,
+        "first_name": 0,
+        "last_name": 0,
+        "team": 0,
+        "contract_id": 915,
+        "year_signed": 210,
+        "signed_as": 210,
+        "active": 0,
+        "comments": 905,
+        "base_salary": 9,
+        "cap_hit": 9,
+        "status": 0,
+        "timeoff_bonus": 9,
+        "gp": 0,
+        "gs": 0,
+        "mp_decimal_per_game": 14,
+        "pts_per_game": 14,
+        "ast_per_game": 14,
+        "trb_per_game": 14,
+        "stl_per_game": 14,
+        "blk_s_per_game": 14,
+        "tov_per_game": 14,
+        "fg_pct": 23,
+        "fg3m_pct": 105,
+        "ft_pct": 72
+      },
+      "salary_year_counts": {
+        "2022": 202,
+        "2021": 191,
+        "2023": 184,
+        "2024": 180,
+        "2025": 158
+      },
+      "stats_year_counts": {
+        "2024": 338,
+        "2022": 202,
+        "2021": 191,
+        "2023": 184
+      },
+      "salary_year_differs_from_stats_year": 158,
+      "modelling_use": "Excluded: contract/salary seasons and full-season performance are different grains and no verified pre-shot contract snapshot is supplied."
+    },
+    {
+      "file": "Data/Salary (HerHoop)/wnba_player_salaries_long.csv",
+      "rows": 288,
+      "columns": [
+        "player_name",
+        "first_name",
+        "last_name",
+        "team",
+        "contract_id",
+        "year_signed",
+        "signed_as",
+        "active",
+        "season",
+        "season_type",
+        "comments",
+        "gp",
+        "gs",
+        "mp_decimal_per_game",
+        "pts_per_game",
+        "ast_per_game",
+        "trb_per_game",
+        "stl_per_game",
+        "blk_s_per_game",
+        "tov_per_game",
+        "fg_pct",
+        "fg3m_pct",
+        "ft_pct",
+        "salary_year",
+        "base_salary",
+        "cap_hit",
+        "status",
+        "timeoff_bonus"
+      ],
+      "exact_duplicate_rows": 0,
+      "missing_by_column": {
+        "player_name": 0,
+        "first_name": 0,
+        "last_name": 0,
+        "team": 0,
+        "contract_id": 288,
+        "year_signed": 74,
+        "signed_as": 74,
+        "active": 0,
+        "season": 0,
+        "season_type": 0,
+        "comments": 281,
+        "gp": 0,
+        "gs": 0,
+        "mp_decimal_per_game": 0,
+        "pts_per_game": 0,
+        "ast_per_game": 0,
+        "trb_per_game": 0,
+        "stl_per_game": 0,
+        "blk_s_per_game": 0,
+        "tov_per_game": 0,
+        "fg_pct": 0,
+        "fg3m_pct": 16,
+        "ft_pct": 9,
+        "salary_year": 0,
+        "base_salary": 0,
+        "cap_hit": 0,
+        "status": 0,
+        "timeoff_bonus": 0
+      },
+      "season_counts": {
+        "2024": 288
+      },
+      "salary_year_counts": {
+        "2025": 150,
+        "2024": 63,
+        "2023": 27,
+        "2026": 18,
+        "2022": 13,
+        "2027": 10,
+        "2021": 7
+      },
+      "salary_year_differs_from_stats_season": 225,
+      "modelling_use": "Excluded: contract/salary seasons and full-season performance are different grains and no verified pre-shot contract snapshot is supplied."
+    },
+    {
+      "file": "Data/Salary (HerHoop)/wnba_team_salary_summary.csv",
+      "rows": 91,
+      "columns": [
+        "year",
+        "Team",
+        "Total Salaries",
+        "Total Players",
+        "Cap Room",
+        "Guaranteed Salaries"
+      ],
+      "exact_duplicate_rows": 0,
+      "missing_by_column": {
+        "year": 0,
+        "Team": 0,
+        "Total Salaries": 0,
+        "Total Players": 0,
+        "Cap Room": 0,
+        "Guaranteed Salaries": 0
+      },
+      "year_counts": {
+        "2021": 13,
+        "2022": 13,
+        "2023": 13,
+        "2024": 13,
+        "2025": 13,
+        "2026": 13,
+        "2027": 13
+      },
+      "modelling_use": "Excluded: contract/salary seasons and full-season performance are different grains and no verified pre-shot contract snapshot is supplied."
+    },
+    {
+      "file": "Data/Wehoop/WNBA_player/wnba_player_demographics.csv",
+      "rows": 1145,
+      "duplicate_person_ids": 0,
+      "missing_person_ids": 0,
+      "position_counts": {
+        "Guard": 438,
+        "Forward": 305,
+        "Center": 157,
+        "NaN": 85,
+        "Forward-Center": 66,
+        "Guard-Forward": 59,
+        "Center-Forward": 20,
+        "Forward-Guard": 14,
+        "F-": 1
+      },
+      "modelling_use": "NBA PERSON_ID demographic records are not automatically joined to ESPN athlete IDs. Protected and medical characteristics are not features in this shooting study."
+    }
+  ],
+  "dictionary_note": "Five sheets provide a mixed-source variable catalogue, not a definitive event schema. Some 3PA definitions say points attempted; the supplied box-score counts and scoring identities establish attempts versus points.",
+  "point_in_time_rule": "Only 2022-2024 ID-matched game box counts and completed earlier eligible 2025 games supply player-history features."
+}

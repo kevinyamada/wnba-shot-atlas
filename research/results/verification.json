@@ -1,9 +1,0 @@
-{
-  "manual_brier_and_log_loss_reproduced": true,
-  "prediction_labels_match_source_event_keys": true,
-  "temporal_games_disjoint": true,
-  "all_spatial_separations_exceed_buffer": true,
-  "all_spatial_folds_partition_training_shots": true,
-  "interactive_indiana_example_matches_raw_rows": true,
-  "modal_dollars_spent": 0
-}

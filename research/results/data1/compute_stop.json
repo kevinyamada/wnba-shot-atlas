@@ -1,0 +1,16 @@
+{
+  "stopped_utc": "2026-11-15T19:37:27.074992+00:00",
+  "reason": "User reported only USD1 of Modal credit remaining, superseding the earlier minimum-spend target. Stop all paid GPU work and finish locally.",
+  "remaining_credit_usd_reported_by_user": 1,
+  "all_study_apps_stopped": true,
+  "active_study_tasks": 0,
+  "completed_run_records": 66,
+  "interrupted_runs": [
+    "precision32-a99-20261210",
+    "precision32-a99-20261211",
+    "precision32-a99-20261212",
+    "precision32-a99-20261213"
+  ],
+  "completed_function_gpu_usd_lower_bound": 16.55560545079681,
+  "billing_note": "Interrupted allocations are included in Modal resource usage, not in the completed-result timer."
+}

@@ -3,4 +3,10 @@ __pycache__/
 .venv/
 research/data/
 research/results/gp/
+research/results/data1/experiments/
+research/results/data1/compute_ledger.json
+research/results/data1/**/*.csv.gz
+*.npz
+*.cbm
 .DS_Store
+research/results/data1/development_site_checks.json
