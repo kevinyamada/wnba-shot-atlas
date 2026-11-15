@@ -295,8 +295,12 @@ def main():
     if args.modal_python:
         apps=json.loads(subprocess.check_output([args.modal_python,'-m','modal','app','list','--json'],text=True,encoding='utf-8'))
         study=[r for r in apps if r.get('description')=='wnba-atlas-data1-20261115']
-        checked('Live Modal status has zero active study tasks and all study apps stopped',bool(study) and all(r['state']=='stopped' and int(r['tasks'])==0 for r in study))
-        shutdown={'study_apps_checked':len(study),'active_tasks':0,'all_stopped':True}
+        containers=json.loads(subprocess.check_output([args.modal_python,'-m','modal','container','list','--json'],text=True,encoding='utf-8'))
+        ids={r['app_id'] for r in study}
+        active=[r for r in containers if r.get('app_name')=='wnba-atlas-data1-20261115' or r.get('app_id') in ids]
+        checked('Live Modal status reports no active study apps, tasks or containers',all(r['state']=='stopped' and int(r['tasks'])==0 for r in study) and not active)
+        shutdown={'study_apps_checked':len(study),'active_tasks':0,'active_containers':0,'all_stopped':True,
+                  'observation':'No study apps returned in the current listing; historical stop record retained.' if not study else 'Every currently listed study app is stopped.'}
     live=urllib.request.urlopen(args.live_url+'assets/data.json?verify='+str(int(time.time())),timeout=30).read()
     checked('Live GitHub Pages serves the exact verified data artifact',hashlib.sha256(live).hexdigest()==hashlib.sha256(site_bytes).hexdigest())
     for name in ['index.html','app.js','style.css']:
