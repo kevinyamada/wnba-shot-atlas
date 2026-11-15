@@ -248,6 +248,11 @@ def main():
     checked('Every website cell/team/player aggregate matches fresh raw event counts',len(counts)==len(site['cells']) and all(np.array_equal(counts[tuple(r[:4])],r[4:]) for r in site['cells']))
     checked('Website season totals match Data1',len(regular)==38535 and len(half)==38441 and sum(q['made'] for q in regular)==16926 and sum(q['points'] for q in regular)==38533)
     checked('Website map and all model tables are the published current results',np.allclose(np.array(site['gp']),surface[['x','y','mean','lower','upper']].to_numpy(),atol=.00000051) and site['metrics']==metrics.to_dict('records') and site['selection']==selection and site['source']==source)
+    checked('Website expected-point tables and uncertainty comparisons match verified result files',site['pointsMetrics']==pd.read_csv(OUT/'points_metrics.csv').to_dict('records') and site['pointsBootstrap']==pd.read_csv(OUT/'points_game_bootstrap.csv').to_dict('records') and site['bootstrap']==pd.read_csv(OUT/'game_bootstrap.csv').to_dict('records'))
+    for r in site['spatialCV']:
+        a=cv[cv.model.eq(r['model'])&cv.buffer_ft.eq(r['buffer'])]
+        assert len(a)==4 and np.isclose(r['brier'],np.average(a.brier,weights=a.shots)) and np.isclose(r['log_loss'],np.average(a.log_loss,weights=a.shots))
+    CHECKS.append('Every published pooled spatial score has four correctly weighted folds')
     # Independent finite-segment/arc distance implementation for the density ratio.
     radius=22+1.75/12;join=math.sqrt(radius**2-22**2);angle=math.asin(22/radius)
     def offset(q):
@@ -268,6 +273,10 @@ def main():
     gx,gy=np.meshgrid(np.arange(-5.225,41.75,.05),np.arange(-24.975,25,.05));gd=vector_offset(gx,gy)
     ai=((gd>=-2)&(gd<0)).sum()*.0025;ao=((gd>0)&(gd<=2)).sum()*.0025
     assert np.isclose(ai,site['arc']['inside_2ft_area']) and np.isclose(ao,site['arc']['outside_2ft_area'])
+    counts=np.histogram(distances,np.arange(-4,4,1))[0];areas=np.histogram(gd,np.arange(-4,4,1))[0]*.0025
+    for r,n,area in zip(site['arcBins'],counts,areas):
+        assert r['attempts']==n and np.isclose(r['area_sqft'],area) and np.isclose(r['attempts_per_sqft'],n/area)
+    CHECKS.append('Every plotted arc-density bin matches fresh raw counts and independent court areas')
     arc_games=defaultdict(lambda:np.zeros(2,dtype=int))
     for q,d in zip(regular,distances):arc_games[q['game_id']]+=np.array([int(-2<=d<0),int(0<d<=2)])
     values=np.array([arc_games[g] for g in sorted(arc_games)]);rng=np.random.default_rng(2026)
@@ -290,6 +299,11 @@ def main():
         shutdown={'study_apps_checked':len(study),'active_tasks':0,'all_stopped':True}
     live=urllib.request.urlopen(args.live_url+'assets/data.json?verify='+str(int(time.time())),timeout=30).read()
     checked('Live GitHub Pages serves the exact verified data artifact',hashlib.sha256(live).hexdigest()==hashlib.sha256(site_bytes).hexdigest())
+    for name in ['index.html','app.js','style.css']:
+        public=urllib.request.urlopen(args.live_url+name+'?verify='+str(int(time.time())),timeout=30).read().replace(b'\r\n',b'\n')
+        local=(HERE.parent/name).read_bytes().replace(b'\r\n',b'\n')
+        assert public==local,name
+    CHECKS.append('Live HTML, JavaScript and styles match the reviewed repository files')
     browser=json.loads((OUT/'live_site_checks.json').read_text())
     checked('Live desktop/mobile UI checks passed',browser['all_pass'] and browser['javascript_errors']==0 and browser['url']==args.live_url)
     tracked=subprocess.check_output(['git','ls-files'],cwd=HERE.parent,text=True).splitlines()
