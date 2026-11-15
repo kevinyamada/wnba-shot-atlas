@@ -62,6 +62,13 @@ def main():
           'kriging':json.loads((CPU/'model_parameters.json').read_text())['Universal kriging'],
           'source':source,'selection':selection,'compute':compute,
           'pointsMetrics':points_metrics,'pointsBootstrap':points_bootstrap}
+    followup=OUT/'followup'
+    if (followup/'local_metrics.csv').exists() and not args.preview:
+        receipt=json.loads((followup/'local_model_receipt.json').read_text(encoding='utf-8'))
+        assert receipt['archive_sha256']==source['archive_sha256'] and receipt['no_cloud_gpu_used']
+        data['localFollowup']={'metrics':pd.read_csv(followup/'local_metrics.csv').to_dict('records'),
+                              'paired':pd.read_csv(followup/'local_game_bootstrap.csv').to_dict('records'),
+                              'receipt':receipt,'sourceInvestigation':json.loads((followup/'archive_investigation.json').read_text(encoding='utf-8'))}
     train=pd.read_csv(HERE/'data/data1/model_shots.csv.gz').query("split == 'train'")[['x','y']].drop_duplicates().copy()
     train['fold']=train.x.ge(16).astype(int)*2+train.y.ge(0).astype(int)
     train['nearest']=cKDTree(train[train.fold.eq(0)][['x','y']]).query(train[['x','y']])[0]

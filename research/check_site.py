@@ -20,7 +20,7 @@ def main():
     ap=argparse.ArgumentParser();ap.add_argument('--url',required=True);ap.add_argument('--final',action='store_true');args=ap.parse_args()
     root=HERE/'data/site_check';root.mkdir(parents=True,exist_ok=True)
     chrome=next(p for p in [Path(os.environ.get('PROGRAMFILES','C:/Program Files'))/'Google/Chrome/Application/chrome.exe',Path('C:/Program Files (x86)/Google/Chrome/Application/chrome.exe')] if p.exists())
-    process=subprocess.Popen([str(chrome),'--headless=new','--disable-gpu','--remote-debugging-port=9337','--remote-allow-origins=*',f'--user-data-dir={root / "profile"}','--window-size=1440,1000',args.url],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+    process=subprocess.Popen([str(chrome),'--headless=new','--disable-gpu','--remote-debugging-port=9337','--remote-allow-origins=*',f'--user-data-dir={root / "profile"}','--window-size=1440,1000','about:blank'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     ws=None
     try:
         for _ in range(100):
@@ -44,7 +44,8 @@ def main():
             r=call('Runtime.evaluate',{'expression':expression,'returnByValue':True,'awaitPromise':True})
             assert 'exceptionDetails' not in r,r
             return r['result'].get('value')
-        call('Runtime.enable');call('Page.enable');call('Log.enable')
+        call('Runtime.enable');call('Page.enable');call('Log.enable');call('Network.enable')
+        call('Network.setCacheDisabled',{'cacheDisabled':True});call('Page.navigate',{'url':args.url})
         for _ in range(100):
             if js('document.body.dataset.ready === "true"'):break
             time.sleep(.2)
@@ -62,6 +63,7 @@ def main():
         check('Arrow-key selection',"(()=>{const before=current;document.querySelector('#court').dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowUp',bubbles:true}));return current.i===before.i+1&&current.j===before.j&&!document.querySelector('#unpin').hidden;})()")
         check('Tap selection and clear',"(()=>{cells[20].el.dispatchEvent(new MouseEvent('click',{bubbles:true}));if(current!==cells[20]||!pinned)return false;document.querySelector('#unpin').click();return !pinned&&document.querySelector('#unpin').hidden;})()")
         check('Every evaluation table',"(()=>{for(const split of ['validation','test','playoffs']){document.querySelector('#evaluation').value=split;results();if(document.querySelectorAll('#results tr').length!==D.metrics.filter(r=>r.split===split).length||!document.querySelector('#result-note').textContent.includes(Number(D.metrics.find(r=>r.split===split).shots).toLocaleString('en-CA')))return false;}return true;})()")
+        check('Desktop CPU follow-up tables',"(()=>{if(!D.localFollowup||!D.localFollowup.receipt.no_cloud_gpu_used)return false;for(const split of ['test','playoffs']){document.querySelector('#followup-period').value=split;followupResults();const expected=D.localFollowup.metrics.filter(r=>r.split===split),rows=[...document.querySelectorAll('#followup-results tr')];if(rows.length!==expected.length||rows.length!==6)return false;for(let i=0;i<rows.length;i++){const cells=rows[i].children;if(cells[0].textContent!==expected[i].model||cells[1].textContent!==expected[i].brier.toFixed(5)||cells[2].textContent!==expected[i].log_loss.toFixed(5))return false;}}return true;})()")
         check('Mesh, variogram, and all buffers',"(()=>{for(const kind of ['buffer','mesh','variogram']){document.querySelector('#geometry').value=kind;for(const buffer of [0,2,4]){document.querySelector('#buffer').value=buffer;geometry();if(!document.querySelector('#geometry-chart').children.length||!document.querySelector('#geometry-note').textContent)return false;}}return true;})()")
         check('Finite SVG geometry',"[...document.querySelectorAll('svg *')].every(e=>[...e.attributes].every(a=>!/(NaN|Infinity|undefined)/.test(a.value)))")
         check('No broken or empty links',"[...document.querySelectorAll('a')].every(a=>a.getAttribute('href')&& !a.href.includes('/wnba/'))")
@@ -75,7 +77,7 @@ def main():
             (root/(name+'.png')).write_bytes(base64.b64decode(shot['data']))
         errors=[e for e in events if e.get('method')=='Runtime.exceptionThrown' or (e.get('method')=='Log.entryAdded' and e.get('params',{}).get('entry',{}).get('level')=='error' and 'favicon' not in (e.get('params',{}).get('entry',{}).get('url','')+e.get('params',{}).get('entry',{}).get('text','')))]
         assert not errors,errors
-        result={'url':args.url,'checks':tests,'all_pass':True,'javascript_errors':0,'viewport_widths':[1440,390],
+        result={'url':args.url,'completed_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'cache_disabled':True,'checks':tests,'all_pass':True,'javascript_errors':0,'viewport_widths':[1440,390],
                 'stage':'final live verification' if args.final else 'development browser check'}
         out=HERE/'results/data1'/('live_site_checks.json' if args.final else 'development_site_checks.json')
         out.write_text(json.dumps(result,indent=2));print(json.dumps(result,indent=2))

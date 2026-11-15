@@ -227,6 +227,10 @@ Serving the website alone needs no raw data or Python analysis dependencies: run
 
 The [final verification record](results/data1/final_verification.json) is generated after analysis and publication. It independently reopens all original archive members, reconstructs source labels and lagged features, checks metrics and cell aggregates, and compares the live data artifact with the verified local file. A final metadata-only commit may add that record; its `analysis_commit` identifies the analyzed implementation. Subsequent read-only checks verify the latest GitHub/Pages commit.
 
+## Additional desktop modelling
+
+The [desktop follow-up](LOCAL_FOLLOWUP.md) investigates the source disagreements using the files already in the archive, then compares a matched CPU refit with the original training cutoff and tests the effect of retaining disputed games in identity-free models. Those checks are separate from the frozen primary table and use no additional cloud GPU work.
+
 ## Research implications
 
 The strongest current deliverable remains an auditable description of where attempts and made FG points occur, with cautious conditional prediction benchmarks. Full expected threat requires validated possessions, nonshot opportunities and actor roles. Real shot clock, defensive pressure and tracking are unavailable. Role definitions need agreement and a pre-prediction estimation rule. The [research-group questions](DATA_REQUESTS.md) are a prepared draft only. The archive's papers inform methods and data requirements; none supplies additional model observations.

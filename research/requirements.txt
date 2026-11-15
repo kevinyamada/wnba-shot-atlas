@@ -6,3 +6,4 @@ scikit-learn==1.9.1
 matplotlib==3.11.2
 pypdf==6.21.4
 websocket-client==1.8.0
+catboost==1.2.10

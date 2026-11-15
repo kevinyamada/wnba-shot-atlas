@@ -14,6 +14,8 @@ All 624 game/team shot totals reconcile. Eighteen player/game attempt totals dis
 
 The model cohorts contain 25,751 training attempts, 5,995 validation attempts, 5,626 later regular-season attempts and 3,311 playoff attempts. All are previously examined 2025 benchmarks. They do not establish performance in an untouched season. Missing missed-shot values are handled by a joint 0/2/3 outcome model, rather than invented attempt labels. This does not yet estimate expected threat or causal shot-selection effects.
 
+The [desktop follow-up](research/LOCAL_FOLLOWUP.md) gives concrete source-disagreement examples and additional CPU refit and source-exclusion sensitivity results. It uses the same Data (1) archive.
+
 ## View locally
 
 ```bash

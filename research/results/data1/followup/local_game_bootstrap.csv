@@ -1,0 +1,9 @@
+split,model,baseline,shots,games,brier_difference,lower,upper,single_game_interval_is_not_inferential
+validation,Identity-free HGB included games,Identity-free HGB excluded games,5995,45,2.231447162636713e-05,-0.0004172649455150158,0.00046180794201173474,False
+test,CPU CatBoost refit,CPU CatBoost reference,5626,42,2.4204851267114956e-05,-0.00026299303262364055,0.0003135256678685601,False
+test,Distance refit,Distance reference,5626,42,2.0394591733582938e-05,-0.00010050934097815687,0.000135354317105642,False
+test,Identity-free HGB included games,Identity-free HGB excluded games,5626,42,-2.106843631976775e-06,-0.0005115022469956512,0.00047674922220637927,False
+playoffs,CPU CatBoost refit,CPU CatBoost reference,3311,24,-0.0004283874485760823,-0.0007556947049880964,-0.00010248781175299257,False
+playoffs,Distance refit,Distance reference,3311,24,8.965256952172611e-05,-3.4302495670479424e-05,0.00020664598132774778,False
+playoffs,Identity-free HGB included games,Identity-free HGB excluded games,3311,24,-0.000500366950078472,-0.0010240452905598955,-4.291421775475531e-06,False
+excluded-game validation,Identity-free HGB included games,Identity-free HGB excluded games,134,1,-0.00017394274349383728,-0.00017394274349383693,-0.00017394274349383693,True

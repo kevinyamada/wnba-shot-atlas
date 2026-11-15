@@ -1,0 +1,191 @@
+{
+  "only_data_source": "Data (1).zip",
+  "archive_sha256": "22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120",
+  "runtime": "desktop CPU; no Modal calls",
+  "python": "3.13.5",
+  "catboost": "1.2.10",
+  "scikit_learn": "1.9.1",
+  "threads": 4,
+  "base_commit": "d820eb57cbd02ed53d0c187aefabc74a530b0b98",
+  "model_table_sha256": "9eb699205330e1729cee5e1f0beae77733e82725719d6eda520da1210e6ab338",
+  "refit_rule": "Same CPU algorithm, three frozen GPU-validation-selected parameter sets and fixed tree counts; fit through August 9 versus August 26. No late-game tuning or early stopping.",
+  "identity_free_rule": "Same fixed feature set excludes player ID, names, all player histories, outcome descriptions, score margin and inferred attempt values. Tune on eligible validation only, then hold settings fixed when adding the seven excluded early-season games.",
+  "evaluation_limit": "Reused 2025 benchmark; the follow-up is a sensitivity study, not an untouched test or a reason to replace the frozen primary table.",
+  "fits": [
+    {
+      "model": "CPU CatBoost reference",
+      "seed": 2026,
+      "train_shots": 25751,
+      "train_games": 191,
+      "last_training_date": "2025-08-09",
+      "parameters": {
+        "iterations": 101,
+        "depth": 8,
+        "l2_leaf_reg": 10.0,
+        "learning_rate": 0.035,
+        "loss_function": "Logloss",
+        "boosting_type": "Plain",
+        "task_type": "CPU",
+        "thread_count": 4,
+        "random_seed": 2026,
+        "verbose": false,
+        "allow_writing_files": false
+      },
+      "seconds": 15.092070800019428,
+      "validation_not_scored_after_refit": false
+    },
+    {
+      "model": "CPU CatBoost reference",
+      "seed": 2027,
+      "train_shots": 25751,
+      "train_games": 191,
+      "last_training_date": "2025-08-09",
+      "parameters": {
+        "iterations": 190,
+        "depth": 6,
+        "l2_leaf_reg": 10.0,
+        "learning_rate": 0.035,
+        "loss_function": "Logloss",
+        "boosting_type": "Plain",
+        "task_type": "CPU",
+        "thread_count": 4,
+        "random_seed": 2027,
+        "verbose": false,
+        "allow_writing_files": false
+      },
+      "seconds": 17.34624559999793,
+      "validation_not_scored_after_refit": false
+    },
+    {
+      "model": "CPU CatBoost reference",
+      "seed": 2028,
+      "train_shots": 25751,
+      "train_games": 191,
+      "last_training_date": "2025-08-09",
+      "parameters": {
+        "iterations": 135,
+        "depth": 6,
+        "l2_leaf_reg": 10.0,
+        "learning_rate": 0.035,
+        "loss_function": "Logloss",
+        "boosting_type": "Plain",
+        "task_type": "CPU",
+        "thread_count": 4,
+        "random_seed": 2028,
+        "verbose": false,
+        "allow_writing_files": false
+      },
+      "seconds": 12.637678799976129,
+      "validation_not_scored_after_refit": false
+    },
+    {
+      "model": "CPU CatBoost refit",
+      "seed": 2026,
+      "train_shots": 31746,
+      "train_games": 236,
+      "last_training_date": "2025-08-26",
+      "parameters": {
+        "iterations": 101,
+        "depth": 8,
+        "l2_leaf_reg": 10.0,
+        "learning_rate": 0.035,
+        "loss_function": "Logloss",
+        "boosting_type": "Plain",
+        "task_type": "CPU",
+        "thread_count": 4,
+        "random_seed": 2026,
+        "verbose": false,
+        "allow_writing_files": false
+      },
+      "seconds": 12.831532100011827,
+      "validation_not_scored_after_refit": true
+    },
+    {
+      "model": "CPU CatBoost refit",
+      "seed": 2027,
+      "train_shots": 31746,
+      "train_games": 236,
+      "last_training_date": "2025-08-26",
+      "parameters": {
+        "iterations": 190,
+        "depth": 6,
+        "l2_leaf_reg": 10.0,
+        "learning_rate": 0.035,
+        "loss_function": "Logloss",
+        "boosting_type": "Plain",
+        "task_type": "CPU",
+        "thread_count": 4,
+        "random_seed": 2027,
+        "verbose": false,
+        "allow_writing_files": false
+      },
+      "seconds": 17.649394899985055,
+      "validation_not_scored_after_refit": true
+    },
+    {
+      "model": "CPU CatBoost refit",
+      "seed": 2028,
+      "train_shots": 31746,
+      "train_games": 236,
+      "last_training_date": "2025-08-26",
+      "parameters": {
+        "iterations": 135,
+        "depth": 6,
+        "l2_leaf_reg": 10.0,
+        "learning_rate": 0.035,
+        "loss_function": "Logloss",
+        "boosting_type": "Plain",
+        "task_type": "CPU",
+        "thread_count": 4,
+        "random_seed": 2028,
+        "verbose": false,
+        "allow_writing_files": false
+      },
+      "seconds": 12.294906399998581,
+      "validation_not_scored_after_refit": true
+    }
+  ],
+  "cohorts": {
+    "early_eligible": 25751,
+    "through_august_26_eligible": 31746,
+    "early_including_discrepant_games": 26686
+  },
+  "started_utc": "2026-11-15T21:37:02.504437+00:00",
+  "identity_free_parameters": {
+    "learning_rate": 0.05,
+    "max_iter": 300,
+    "max_leaf_nodes": 15,
+    "max_depth": 6,
+    "min_samples_leaf": 100,
+    "l2_regularization": 80.0,
+    "max_bins": 63,
+    "early_stopping": false,
+    "random_state": 20261115,
+    "categorical_features": "from_dtype"
+  },
+  "identity_free_features": [
+    "x",
+    "y",
+    "distance",
+    "angle",
+    "period_number",
+    "seconds",
+    "home",
+    "team_id"
+  ],
+  "identity_free_added_training_shots": 935,
+  "identity_free_added_training_games": 7,
+  "identity_free_validation_shots": 5995,
+  "completed_utc": "2026-11-15T21:38:33.653902+00:00",
+  "elapsed_seconds": 93.88866080000298,
+  "prediction_rows": 77870,
+  "models": [
+    "CPU CatBoost reference",
+    "CPU CatBoost refit",
+    "Distance reference",
+    "Distance refit",
+    "Identity-free HGB excluded games",
+    "Identity-free HGB included games"
+  ],
+  "no_cloud_gpu_used": true
+}
