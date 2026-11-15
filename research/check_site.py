@@ -47,7 +47,7 @@ def main():
         call('Runtime.enable');call('Page.enable');call('Log.enable');call('Network.enable')
         call('Network.setCacheDisabled',{'cacheDisabled':True});call('Page.navigate',{'url':args.url})
         for _ in range(100):
-            if js('document.body.dataset.ready === "true"'):break
+            if js('Boolean(document.body && document.body.dataset.ready === "true")'):break
             time.sleep(.2)
         else:raise RuntimeError('App did not finish loading')
         tests=[]
