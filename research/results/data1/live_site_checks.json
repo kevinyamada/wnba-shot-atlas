@@ -1,5 +1,7 @@
 {
   "url": "https://kevinyamada.github.io/wnba-shot-atlas/",
+  "completed_utc": "2026-11-15T21:55:01Z",
+  "cache_disabled": true,
   "checks": [
     "Source identity and visible totals",
     "Thirteen archive-sourced teams",
@@ -9,6 +11,7 @@
     "Arrow-key selection",
     "Tap selection and clear",
     "Every evaluation table",
+    "Desktop CPU follow-up tables",
     "Mesh, variogram, and all buffers",
     "Finite SVG geometry",
     "No broken or empty links",

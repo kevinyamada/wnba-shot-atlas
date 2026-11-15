@@ -1,0 +1,25 @@
+{
+  "all_checks_pass": true,
+  "checks": [
+    "Primary original-archive final verification has passed for this source",
+    "Every local prediction has a unique model/source key",
+    "All local prediction labels and event keys match archive-verified source rows",
+    "All local probabilities are finite and bounded",
+    "Every CPU Brier score, log loss, AUC, count and mean recomputes independently",
+    "All paired game-bootstrap differences and intervals recompute; single-game cases are flagged",
+    "No refit score is reported on its own validation training data",
+    "Frozen settings, chronological cutoffs, CPU-only training and saved model predictions verify",
+    "Identity-free sensitivity excludes every uncertain shooter/history/outcome field",
+    "The 935 added attempts are precisely the seven earlier excluded games",
+    "Identity-free settings were selected on eligible validation loss",
+    "All 18 named discrepancy examples independently match the raw ZIP and boxes",
+    "Description/ID contradiction is an actual archive record",
+    "Published desktop tables, intervals and receipt match checked files",
+    "Follow-up source is the same original archive and no cloud GPU is used"
+  ],
+  "archive_sha256": "22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120",
+  "completed_utc": "2026-11-15T21:58:49.129945+00:00",
+  "analysis_commit": "8d59ab176ee2fea32c276f4b1ec0bdf955c28665",
+  "only_data_source": "Data (1).zip",
+  "compute": "desktop CPU only"
+}
