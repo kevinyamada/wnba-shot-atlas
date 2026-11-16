@@ -1,7 +1,7 @@
-"""Bounded desktop-CPU follow-up using only existing Data (1) observations.
+"""Bounded desktop CPU follow up using only existing Data (1) observations.
 
 Two questions: does adding earlier validation games help a fixed primary model,
-and do player-count-discrepant games materially affect identity-free models?
+and do player count discrepant games materially affect identity free models?
 The published original comparison and GP surface remain the frozen baseline.
 """
 from __future__ import annotations
@@ -73,7 +73,7 @@ def main():
         q=a[KEYS].copy();q['model']=name;q['prediction']=np.asarray(p,float)
         assert not q.source_row.duplicated().any() and np.isfinite(q.prediction).all()
         tables.append(q)
-    # Matched CPU reference/refit, avoiding a CPU-versus-GPU confound.
+    # Matched CPU reference/refit, avoiding a CPU versus GPU confound.
     for label,training,evaluation in [('CPU CatBoost reference',train,hold),('CPU CatBoost refit',refit,later)]:
         predictions=[]
         for seed in [2026,2027,2028]:

@@ -1,4 +1,4 @@
-"""Independent raw-source, restart, target, model and publication verification."""
+"""Independent raw source, restart, target, model and publication verification."""
 import os
 for name in ['OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS']:os.environ[name]='4'
 from pathlib import Path
@@ -80,7 +80,7 @@ def main():
     for r in old_periods.itertuples():
         q=quality[r.game_id,r.period_number];assert flags(r.flags)==q['flags'] and r.scope==q['scope'] and r.rows==len(period_rows[r.game_id,r.period_number]) and r.score_snapshot_conflicts==q['snapshot'] and r.cumulative_score_conflicts==q['cumulative']
     boxes={(number(r['game_id']),number(r['team_id'])):number(r['team_score']) for r in teams if number(r['season'])==2025}
-    check('Fresh source parsing independently rebuilds every period-quality flag and all 624 team scores',len(boxes)==624 and all(team_points[k]==v for k,v in boxes.items()) and len(quality)==1257)
+    check('Fresh source parsing independently rebuilds every period quality flag and all 624 team scores',len(boxes)==624 and all(team_points[k]==v for k,v in boxes.items()) and len(quality)==1257)
     observed={r['_type'] for r in raw if re.search('technical|flagrant|clear path|away from|take foul|overturned|double personal',r['type_text'],flags=re.I)}
     check('Hazard catalog covers every observed special/review label family',observed==HAZARD==set(rule['hazard_type_ids']))
     episodes=pd.read_csv(OLD/'all_episodes.csv.gz',float_precision='round_trip');original_states=pd.read_csv(OLD/'all_states.csv.gz',dtype={'offense_team_id':str,'defense_team_id':str},float_precision='round_trip').set_index('state_id')
@@ -90,7 +90,7 @@ def main():
         if not q['flags'] or not q['flags']<=SOFT or q['scope']=='special':continue
         rows=period_rows[p];last=max(i for i,r in enumerate(rows) if r['_type'] in HAZARD);last_clock=rows[last]['_seconds'];anchors=[]
         # Look backwards to the preceding significant opportunity, rather than
-        # sharing the recovery implementation's pending-miss loop.
+        # sharing the recovery implementation's pending miss loop.
         for i in range(last+1,len(rows)):
             r=rows[i]
             if r['_type']!=155 or r['_seconds']>=last_clock:continue
@@ -128,7 +128,7 @@ def main():
         for c in FEATURES+['remaining_points','episode_points','game_id','source_row','split','eligible']:assert a[c].eq(reference[c]).all(),(policy,c)
         assert a.cohort.eq(np.where(reference.eligible,'original','recovered')).all()
         selected[policy]=a;expected_episodes[policy]=new
-    check('Every recovery decision independently satisfies the last-hazard, live-rebound, owner-corroboration and original-parser-anchor rules')
+    check('Every recovery decision independently satisfies the last hazard, live rebound, owner corroboration and original parser anchor rules')
     check('Both expanded samples retain every original row and copy all features and labels without editing',set(selected['second_rebound'].index)<=set(selected['first_rebound'].index))
     ledger=pd.read_csv(OLD/'event_ledger.csv.gz',float_precision='round_trip');ledger['position']=np.arange(len(ledger));positions=ledger.set_index('source_row').position.to_dict()
     for r in ledger.itertuples():
@@ -158,7 +158,7 @@ def main():
         sign=1 if int(r.offense_team_id)==number(q['home_team_id']) else -1
         assert r.home==int(sign==1) and r.score_margin==sign*(number(q['home_score'])-number(q['away_score']))
         assert np.isclose(r.elapsed_seconds,ep.loc[r.episode_id,'start_seconds']-r.seconds_remaining)
-    check('Every expanded-state reward target, past field-goal/free-throw/rebound count, clock and source score margin independently recomputes')
+    check('Every expanded state reward target, past field goal/free throw/rebound count, clock and source score margin independently recomputes')
     check('Predictors exclude future rewards, eligibility, terminal actions, player IDs and invented spatial movement',fit['features']==FEATURES and not set(FEATURES)&{'remaining_points','episode_points','cohort','eligible','recovery_eligible','end_reason','end_seconds','athlete_id','text','coordinate_x'})
     for policy,a in selected.items():
         for split,lo,hi in [('train','2025-05-01','2025-08-09'),('validation','2025-08-10','2025-08-26'),('test','2025-08-27','2025-09-11'),('playoffs','2025-09-14','2025-10-10')]:
@@ -237,12 +237,12 @@ def main():
     for r in boot.itertuples():
         a=subset(predictions[r.policy],r);d,ci=interval(a,r.model,r.baseline)
         assert len(a)==r.states and a.game_id.nunique()==r.games and np.isclose(d,r.mse_difference,atol=1e-12) and np.allclose(ci,[r.lower,r.upper],atol=1e-12)
-    check('Every paired game-bootstrap effect and interval independently recomputes')
+    check('Every paired game bootstrap effect and interval independently recomputes')
     first=predictions['first_rebound'];second=predictions['second_rebound'];common=first.loc[second.index]
     for r in pd.read_csv(OUT/'policy_sensitivity.csv').itertuples():
         a=subset(common,r).copy();a['stricter']=second.loc[a.index,r.model].to_numpy();d,ci=interval(a,r.model,'stricter')
         assert len(a)==r.states and np.isclose(d,r.mse_difference,atol=1e-12) and np.allclose(ci,[r.lower,r.upper],atol=1e-12)
-    check('Stricter-policy effects compare identical shared states and independently reproduce')
+    check('Stricter policy effects compare identical shared states and independently reproduce')
     cal=pd.read_csv(OUT/'calibration.csv')
     for (policy,split,stage,model),a in cal.groupby(['policy','split','stage','model']):
         p=predictions[policy];p=p[p.split.eq(split)&p.stage.eq(stage)]
@@ -256,7 +256,7 @@ def main():
             relative=path.relative_to(HERE.parent).as_posix();data=urllib.request.urlopen('https://kevinyamada.github.io/wnba-shot-atlas/'+relative+'?verify='+str(time.time_ns()),timeout=40).read()
             assert data==path.read_bytes() if path.suffix=='.png' else data.replace(b'\r\n',b'\n')==path.read_bytes().replace(b'\r\n',b'\n'),relative
         check('All recovery web assets, result tables and figures match the live publication')
-        browser=json.loads((BASE/'live_site_checks.json').read_text(encoding='utf-8'));check('Main app and meeting walkthrough pass final real-browser checks',browser['all_pass'] and 'Recovery controls and tables' in browser['checks'] and 'Meeting walkthrough controls and layout' in browser['checks'])
+        browser=json.loads((BASE/'live_site_checks.json').read_text(encoding='utf-8'));check('Main app and meeting walkthrough pass final real browser checks',browser['all_pass'] and 'Recovery controls and tables' in browser['checks'] and 'Meeting walkthrough controls and layout' in browser['checks'])
         head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=HERE.parent,text=True).strip();remote=subprocess.check_output(['git','ls-remote','origin','refs/heads/main'],cwd=HERE.parent,text=True).split()[0];check('Checked analysis commit matches GitHub main',head==remote)
     record={'all_checks_pass':True,'checks':checks,'only_data_source':'Data (1).zip','archive_sha256':rule['archive_sha256'],'compute':'desktop CPU only',
         'analysis_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=HERE.parent,text=True).strip(),'completed_utc':pd.Timestamp.now(tz='UTC').isoformat(),'stage':'final after publication' if args.live else 'development'}

@@ -1,4 +1,4 @@
-"""Check the supplied pre-2025 count features against supplied team totals."""
+"""Check the supplied pre 2025 count features against supplied team totals."""
 from pathlib import Path
 import argparse
 import json

@@ -1,6 +1,6 @@
-"""One fixed training-only clock baseline to explain frozen-model results.
+"""One fixed training only clock baseline to explain frozen model results.
 
-This is a post-hoc diagnostic, not a fresh test or model reselection.
+This is a post hoc diagnostic, not a fresh test or model reselection.
 """
 from pathlib import Path
 import hashlib,json,time

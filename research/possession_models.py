@@ -1,4 +1,4 @@
-"""Desktop CPU expected remaining points on audited, recorded-event states."""
+"""Desktop CPU expected remaining points on audited, recorded event states."""
 from __future__ import annotations
 import os
 for name in ['OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS']:os.environ[name]='4'
@@ -64,7 +64,7 @@ class MarkovValue:
                 else:reward=r.remaining_points;absorbed[i]+=1
                 rewards[i]+=reward
         # Positive absorbing pseudocounts regularize sparse states and make the
-        # finite chain proper. Their rewards shrink to a training-stage mean.
+        # finite chain proper. Their rewards shrink to a training stage mean.
         prior=np.array([self.fallback[k.split('|')[0]] for k in self.labels])
         self.P=transitions/(counts[:,None]+self.alpha)
         self.r=(rewards+self.alpha*prior)/(counts+self.alpha)
@@ -143,7 +143,7 @@ def main():
                'state_table_sha256':hashlib.sha256((PRIVATE/'model_states.csv.gz').read_bytes()).hexdigest(),
                'versions':{'python':platform.python_version(),'numpy':np.__version__,'pandas':pd.__version__,'scikit_learn':sklearn.__version__},
                'selected_settings':{name:next((r['setting'] for r in sorted(candidates,key=lambda r:r['validation_entry_mse']) if r['model']==name),'training stage mean') for name in names}}
-    # Freeze the choice before producing later-game and playoff scores.
+    # Freeze the choice before producing later game and playoff scores.
     (OUT/'model_selection_receipt.json').write_text(json.dumps(selection,indent=2),encoding='utf-8')
     saved=[];metrics=[];calibration=[];boot=[]
     for split,a in s[s.split.ne('train')].groupby('split'):

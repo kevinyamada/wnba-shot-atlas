@@ -57,7 +57,7 @@ def main():
         assert r.score_margin==(margin if r.home else -margin)
     check('Every target is the independently summed future ordinary reward; all margins match source snapshots')
     empty=episodes[episodes.eligible&~episodes.episode_id.isin(ledger.episode_id)]
-    check('Unobserved-between-boundary intervals explicitly have zero recorded reward',len(empty)==16 and empty.points.eq(0).all() and empty.end_reason.eq('jump_ball').all())
+    check('Unobserved between boundary intervals explicitly have zero recorded reward',len(empty)==16 and empty.points.eq(0).all() and empty.end_reason.eq('jump_ball').all())
     check('Feature allowlist excludes future rewards, actor IDs, text and invented movement coordinates',receipt['features']==FEATURES and not set(FEATURES)&{'remaining_points','episode_points','end_seconds','end_reason','eligible','quality_flags','source_row','game_id','athlete_id_1','text','coordinate_x','coordinate_y'})
     # Reconstruct truncated actual games; compare observed features before joining
     # the final reward and quality labels. Quality itself is retrospective.
@@ -78,9 +78,9 @@ def main():
                 if key(s) in reference:
                     assert [s[c] for c in FEATURES]==[reference[key(s)][c] for c in FEATURES]
                     comparisons+=1
-    check('Actual-game prefix reconstructions preserve all shared feature values',comparisons>1000)
+    check('Actual game prefix reconstructions preserve all shared feature values',comparisons>1000)
     subprocess.run([sys.executable,str(HERE/'test_possession_reconstruction.py')],check=True)
-    check('Eight synthetic boundary, free-throw, rebound and prefix scenarios pass')
+    check('Eight synthetic boundary, free throw, rebound and prefix scenarios pass')
     expected={'train':('2025-05-01','2025-08-09'),'validation':('2025-08-10','2025-08-26'),'test':('2025-08-27','2025-09-11'),'playoffs':('2025-09-14','2025-10-10')}
     for split,(lo,hi) in expected.items():
         a=states[states.split.eq(split)];assert a.date.between(lo,hi).all()
@@ -88,7 +88,7 @@ def main():
     check('Games are disjoint and every state respects chronological cutoffs')
     joined=pred.merge(states[['state_id','episode_id','source_row','game_id','split','stage','remaining_points']],on='state_id',suffixes=('','_source'),validate='one_to_one')
     for c in ['episode_id','source_row','game_id','split','stage','remaining_points']:assert joined[c].eq(joined[c+'_source']).all()
-    check('All saved predictions have unique source-verified state keys and targets',len(pred)==len(states[states.split.ne('train')]) and not pred.state_id.duplicated().any())
+    check('All saved predictions have unique source verified state keys and targets',len(pred)==len(states[states.split.ne('train')]) and not pred.state_id.duplicated().any())
     names=list(pred.columns[7:]);metrics=pd.read_csv(OUT/'metrics.csv')
     for r in metrics.itertuples():
         a=pred[pred.split.eq(r.split)];a=a if r.stage=='all_states' else a[a.stage.eq(r.stage)]
@@ -108,7 +108,7 @@ def main():
         rng=np.random.default_rng(20261122);w=rng.multinomial(len(g),np.full(len(g),1/len(g)),size=2000)
         interval=np.quantile((w@g['sum'].to_numpy())/(w@g['count'].to_numpy()),[.025,.975])
         assert np.isclose(d.mean(),r.mse_difference) and np.allclose(interval,[r.lower,r.upper],atol=1e-12)
-    check('Every paired whole-game bootstrap interval independently recomputes')
+    check('Every paired whole game bootstrap interval independently recomputes')
     calibration=pd.read_csv(OUT/'calibration.csv')
     for (split,stage,model),a in calibration.groupby(['split','stage','model']):
         b=pred[pred.split.eq(split)&pred.stage.eq(stage)]
@@ -154,15 +154,15 @@ def main():
         a=pred[pred.split.eq(q.split)&pred.stage.eq(q.stage)].merge(states[['state_id','seconds_remaining']],on='state_id')
         a=a[(np.digitize(a.seconds_remaining,EDGES)-1)==q.clock_bin]
         assert len(a)==q.states and np.isclose(a[receipt['selected_model']].mean(),q.mean_predicted) and np.isclose(a.remaining_points.mean(),q.mean_observed)
-    check('All displayed clock-bin values are aggregates of actual verified states')
+    check('All displayed clock bin values are aggregates of actual verified states')
     site=json.loads((HERE.parent/'assets/data.json').read_text(encoding='utf-8'))['possessionValue']
     check('Website EPV data matches every checked aggregate and receipt',site['audit']==audit and site['selection']==receipt and site['metrics']==metrics.to_dict('records') and site['bootstrap']==pd.read_csv(OUT/'game_bootstrap.csv').to_dict('records') and site['summary']==summary.to_dict('records') and site['calibration']==calibration.to_dict('records') and site['markov']==json.loads((OUT/'markov_diagnostics.json').read_text()))
     if args.final:
         for f in ['final_verification.json','followup/final_followup_verification.json']:
             record=json.loads((HERE/'results/data1'/f).read_text(encoding='utf-8'));assert record['all_checks_pass'] and record['archive_sha256']==digest
-        check('Primary and desktop follow-up final source checks have passed')
+        check('Primary and desktop follow up final source checks have passed')
         live=urllib.request.urlopen('https://kevinyamada.github.io/wnba-shot-atlas/assets/data.json?epv-final=1',timeout=45).read()
-        check('Live GitHub Pages data is byte-identical to the checked publication',live==(HERE.parent/'assets/data.json').read_bytes())
+        check('Live GitHub Pages data is byte identical to the checked publication',live==(HERE.parent/'assets/data.json').read_bytes())
         browser=json.loads((HERE/'results/data1/live_site_checks.json').read_text(encoding='utf-8'))
         check('Final live browser checks include every possession control and table',browser['all_pass'] and 'Possession EPV controls and tables' in browser['checks'])
     result={'all_checks_pass':True,'checks':checks,'archive_sha256':digest,'only_data_source':'Data (1).zip','compute':'desktop CPU only','actual_game_prefix_feature_comparisons':comparisons,

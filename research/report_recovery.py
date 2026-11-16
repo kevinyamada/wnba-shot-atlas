@@ -1,5 +1,6 @@
-"""Export source-backed recovery figures, a case pack and meeting materials."""
+"""Export source backed recovery figures, a case pack and meeting materials."""
 from pathlib import Path
+from prose import clean_markdown
 import argparse,json,zipfile
 import numpy as np
 import pandas as pd
@@ -50,7 +51,7 @@ def main():
     fig,ax=plt.subplots(figsize=(8.4,4.1));labels=['Original strict sample','First confirmed restart','Second restart · stricter'];values=[first.original_entry_states,first.total_entry_states,second.total_entry_states]
     ax.barh(labels,values,color=['#a1a9aa','#28677a','#7a9177']);ax.invert_yaxis();ax.set_xlim(0,max(values)*1.16)
     for i,v in enumerate(values):ax.text(v+200,i,f'{int(v):,}',va='center')
-    ax.set_xlabel('Recorded episode-entry states, across all chronological splits');ax.set_title('More of the existing archive can be used after a clear restart',loc='left',pad=15)
+    ax.set_xlabel('Recorded episode entry states, across all chronological splits');ax.set_title('More of the existing archive can be used after a clear restart',loc='left',pad=15)
     fig.tight_layout();fig.savefig(OUT/'recovery_coverage.png',dpi=180);plt.close(fig)
     fig,axes=plt.subplots(1,2,figsize=(11,4.6),sharey=True)
     labels=[]
@@ -59,7 +60,7 @@ def main():
         for i,(split,cohort) in enumerate([('test','all'),('test','original'),('playoffs','all'),('playoffs','original')]):
             r=boot[boot.policy.eq('first_rebound')&boot.split.eq(split)&boot.cohort.eq(cohort)&boot.stage.eq('entry')&boot.model.eq('Expanded context')&boot.baseline.eq(baseline)].iloc[0]
             ax.errorbar(r.mse_difference,i,xerr=[[r.mse_difference-r.lower],[r.upper-r.mse_difference]],fmt='o',color='#28677a',capsize=3)
-        ax.axvline(0,color='#555',linewidth=1);ax.set_title(title,fontsize=11);ax.set_xlabel('Expanded-context error minus reference error\nNegative = lower squared error · 95% game-bootstrap interval',fontsize=8)
+        ax.axvline(0,color='#555',linewidth=1);ax.set_title(title,fontsize=11);ax.set_xlabel('Expanded context error minus reference error\nNegative = lower squared error · 95% game bootstrap interval',fontsize=8)
         ax.xaxis.set_major_locator(MaxNLocator(4));ax.xaxis.set_major_formatter(FormatStrFormatter('%.3f'));ax.tick_params(axis='x',labelsize=9)
     axes[0].set_yticks(range(4),labels);axes[0].invert_yaxis();fig.tight_layout();fig.savefig(OUT/'recovery_prediction_comparison.png',dpi=180);plt.close(fig)
     fig,ax=plt.subplots(figsize=(8.5,4.3));x=np.arange(4);order=['train','validation','test','playoffs']
@@ -74,21 +75,21 @@ def main():
         'limits':['Ordinary tails after the last special/review event; hazardous plays remain excluded.',
                   'Eligibility is retrospective, and inferred episodes are not official possession labels.',
                   'Added records skew toward later period clocks. These are reused 2025 benchmarks.',
-                  'No pass or movement locations, causal player credit, or fresh-season claims are inferred.']}
+                  'No pass or movement locations, causal player credit, or fresh season claims are inferred.']}
     (HERE.parent/'assets/recovery.json').write_text(json.dumps(public,separators=(',',':'),allow_nan=False),encoding='utf-8')
     entry=metrics[metrics.policy.eq('first_rebound')&metrics.cohort.eq('all')&metrics.stage.eq('entry')&metrics.split.ne('validation')][['split','model','states','games','rmse','mae']]
     pair=boot[boot.policy.eq('first_rebound')&boot.cohort.eq('all')&boot.stage.eq('entry')&boot.model.eq('Expanded context')][['split','baseline','mse_difference','lower','upper']]
     text=f'''# Recovering ordinary event sequences from Data (1)
 
-This is a conservative extension of the existing event-based possession-value prototype. It adds **{int(first.added_entry_states):,} recorded episode-entry states**, bringing the total from **{int(first.original_entry_states):,} to {int(first.total_entry_states):,}** ({100*first.added_entry_states/first.original_entry_states:.1f}% more). It uses no new basketball data and no paid GPU work. Original source rows, original model weights, original predictions, and `assets/data.json` remain unchanged.
+This is a conservative extension of the existing event based possession value prototype. It adds **{int(first.added_entry_states):,} recorded episode entry states**, bringing the total from **{int(first.original_entry_states):,} to {int(first.total_entry_states):,}** ({100*first.added_entry_states/first.original_entry_states:.1f}% more). It uses no new basketball data and no paid GPU work. Original source rows, original model weights, original predictions, and `assets/data.json` remain unchanged.
 
 ## What changed
 
-The original screening excluded a whole period if it contained any special-foul/free-throw or overturned-review event. Of 595 excluded source periods, 485 had only those soft exclusions. One is out of the standard-game scope, leaving **{int(first.candidate_periods)} candidate periods**. Hard score, ordering, clock and unknown-jump-winner exclusions remain in place.
+The original screening excluded a whole period if it contained any special foul/free throw or overturned review event. Of 595 excluded source periods, 485 had only those soft exclusions. One is out of the standard game scope, leaving **{int(first.candidate_periods)} candidate periods**. Hard score, ordering, clock and unknown jump winner exclusions remain in place.
 
-We now exclude the hazardous sequence and use only a clearly observed **tail after the final hazard**. A restart requires an ordinary missed field goal after that hazard, an opposite-team defensive rebound at a strictly lower period clock, that team's next recorded offensive action as corroboration, and an episode anchored at that rebound by the original parser. A second policy waits for a second such restart. No special free throw is treated as an ordinary automatic transfer, and no ambiguous right to possession is guessed. Special-point rewards remain in the separate ledger.
+We now exclude the hazardous sequence and use only a clearly observed **tail after the final hazard**. A restart requires an ordinary missed field goal after that hazard, an opposite team defensive rebound at a strictly lower period clock, that team's next recorded offensive action as corroboration, and an episode anchored at that rebound by the original parser. A second policy waits for a second such restart. No special free throw is treated as an ordinary automatic transfer, and no ambiguous right to possession is guessed. Special point rewards remain in the separate ledger.
 
-The first policy has a supported restart in {int(first.periods_with_restart)} periods and adds usable states in **{int(first.periods_with_added_states)}**. All individual episode flags for unexplained transfers, incomplete free throws or uncertain ownership remain exclusions. A restart can exist while all following episodes still fail those checks. The stricter second policy adds **{int(second.added_entry_states):,} entry states**; its full state set is a subset of the first policy. These are partial-period tails, not recovered full quarters or official possession counts.
+The first policy has a supported restart in {int(first.periods_with_restart)} periods and adds usable states in **{int(first.periods_with_added_states)}**. All individual episode flags for unexplained transfers, incomplete free throws or uncertain ownership remain exclusions. A restart can exist while all following episodes still fail those checks. The stricter second policy adds **{int(second.added_entry_states):,} entry states**; its full state set is a subset of the first policy. These are partial period tails, not recovered full quarters or official possession counts.
 
 ![Recovery coverage](results/data1/recovery/recovery_coverage.png)
 
@@ -96,29 +97,29 @@ The first policy has a supported restart in {int(first.periods_with_restart)} pe
 
 The [complete hazard catalog](results/data1/recovery/hazard_catalog.csv) records every affected source row. The [case index](results/data1/recovery/source_case_index.csv) covers every observed hazard type with a deterministic source example; the [selected event snippets](results/data1/recovery/source_case_events.csv) show the recorded clocks, teams, event types and scores around hazards and restarts. Cases with no supported restart remain excluded. A case's selected hazard may precede another hazard in that period; the rule always waits until after the **last** one. These examples and synthetic tests validate handling and provenance, not an official interpretation of every overturned call.
 
-All 624 game/team final scores, all ordinary episode rewards, the 299 separately audited special free-throw points, and retained source score margins are checked independently. All selected features and targets are copied from the frozen event reconstruction without relabelling. Future episode labels, final quality flags and restart eligibility never enter model predictors. Eligibility itself uses retrospective source completeness; it is not a live availability guarantee.
+All 624 game/team final scores, all ordinary episode rewards, the 299 separately audited special free throw points, and retained source score margins are checked independently. All selected features and targets are copied from the frozen event reconstruction without relabelling. Future episode labels, final quality flags and restart eligibility never enter model predictors. Eligibility itself uses retrospective source completeness; it is not a live availability guarantee.
 
-## Fixed-setting CPU comparisons
+## Fixed setting CPU comparisons
 
-Training still ends August 9, 2025. The original context settings (300 Poisson-loss histogram trees, depth 3, L2 penalty 100, learning rate 0.04, minimum leaf 100), Markov alpha 1, and simple-clock prior strength 50 are fixed before recovery scoring. The first policy trains on {fit['fits'][0]['training_states']:,} states; the second on {fit['fits'][1]['training_states']:,}. No new parameter search or winner selection is performed. The CPU fits and evaluation took {fit['elapsed_seconds']:.1f} seconds. The original primary shot and EPV comparisons remain frozen.
+Training still ends August 9, 2025. The original context settings (300 Poisson loss histogram trees, depth 3, L2 penalty 100, learning rate 0.04, minimum leaf 100), Markov alpha 1, and simple clock prior strength 50 are fixed before recovery scoring. The first policy trains on {fit['fits'][0]['training_states']:,} states; the second on {fit['fits'][1]['training_states']:,}. No new parameter search or winner selection is performed. The CPU fits and evaluation took {fit['elapsed_seconds']:.1f} seconds. The original primary shot and EPV comparisons remain frozen.
 
-“Frozen” means fitted on the original strict training subset; “expanded” means fitted with the additional qualified training tails using the same settings. Each row within a chosen policy, stage, split and evaluation cohort uses identical state keys and labels. Original-only evaluation isolates the training effect on unchanged cases; recovered-only evaluation describes the added cases. Neither creates a fresh season test.
+“Frozen” means fitted on the original strict training subset; “expanded” means fitted with the additional qualified training tails using the same settings. Each row within a chosen policy, stage, split and evaluation cohort uses identical state keys and labels. Original only evaluation isolates the training effect on unchanged cases; recovered only evaluation describes the added cases. Neither creates a fresh season test.
 
 {md(entry)}
 
-For the expanded context model, the following paired differences use 2,000 whole-game bootstrap samples. Negative favours expanded context. Intervals describe uncertainty conditional on the chosen reconstructed subset, and do not cover boundary uncertainty, selection bias or a new season.
+For the expanded context model, the following paired differences use 2,000 whole game bootstrap samples. Negative favours expanded context. Intervals describe uncertainty conditional on the chosen reconstructed subset, and do not cover boundary uncertainty, selection bias or a new season.
 
 {md(pair)}
 
-On the later regular benchmark, expanded context improves on frozen context on both the expanded sample and unchanged original sample. Its comparison with the frozen simple-clock model includes zero. Playoff differences also remain uncertain. The supported conclusion is a larger auditable sample and a modest conditional refit improvement, **not** a demonstrated general advantage over a simple clock rule. The [stricter-policy sensitivity](results/data1/recovery/policy_sensitivity.csv) compares refits on identical shared states rather than comparing errors from different samples.
+On the later regular benchmark, expanded context improves on frozen context on both the expanded sample and unchanged original sample. Its comparison with the frozen simple clock model includes zero. Playoff differences also remain uncertain. The supported conclusion is a larger auditable sample and a modest conditional refit improvement, **not** a demonstrated general advantage over a simple clock rule. The [stricter policy sensitivity](results/data1/recovery/policy_sensitivity.csv) compares refits on identical shared states rather than comparing errors from different samples.
 
 ![Paired prediction comparisons](results/data1/recovery/recovery_prediction_comparison.png)
 
 ## Coverage and interpretation
 
-Recovered tails have less period time remaining on average. They do not represent a random sample of the excluded quarters. Average outcomes, team coverage and prediction difficulty can therefore change with the sampling rule. The earlier “485 exclusions” finding was a scope diagnosis, not a promise that all those periods could be used. No model is promoted by looking for the best reused-sample result.
+Recovered tails have less period time remaining on average. They do not represent a random sample of the excluded quarters. Average outcomes, team coverage and prediction difficulty can therefore change with the sampling rule. The earlier “485 exclusions” finding was a scope diagnosis, not a promise that all those periods could be used. No model is promoted by looking for the best reused sample result.
 
-![Period-clock distribution](results/data1/recovery/recovery_clock_distribution.png)
+![Period clock distribution](results/data1/recovery/recovery_clock_distribution.png)
 
 [Cohort counts and means](results/data1/recovery/recovery_cohorts.csv), [all metrics](results/data1/recovery/metrics.csv), [all paired intervals](results/data1/recovery/game_bootstrap.csv), [calibration](results/data1/recovery/calibration.csv), [period decisions](results/data1/recovery/recovery_periods.csv), [rule receipt](results/data1/recovery/recovery_rule_receipt.json), and [fit receipt](results/data1/recovery/fit_receipt.json) are public. Individual predictions and new model weights remain in ignored `research/data/`.
 
@@ -135,19 +136,19 @@ py -3.13 research/report_recovery.py --source "$env:USERPROFILE/Downloads/Data (
 py -3.13 research/verify_recovery.py --source "$env:USERPROFILE/Downloads/Data (1).zip" --live
 ```
 
-The final command runs after publication. It independently reconstructs source restart evidence, every target and feature count, unchanged original rows, chronological splits, model inference, Markov values, metrics, intervals, shared-state sensitivity, case snippets and published assets. Twelve new synthetic tests cover every hazard type, technical and retained-possession sequences, dead-ball rebounds, same-clock exclusions, unsupported restarts and hard failures; the earlier eight parser tests also remain required. [Final recovery verification](results/data1/recovery/final_verification.json).
+The final command runs after publication. It independently reconstructs source restart evidence, every target and feature count, unchanged original rows, chronological splits, model inference, Markov values, metrics, intervals, shared state sensitivity, case snippets and published assets. Twelve new synthetic tests cover every hazard type, technical and retained possession sequences, dead ball rebounds, same clock exclusions, unsupported restarts and hard failures; the earlier eight parser tests also remain required. [Final recovery verification](results/data1/recovery/final_verification.json).
 
-Full spatial pass and movement valuation remains beyond this archive. This extension deliberately estimates only ordinary recorded-event tails. It does not invent pass trajectories, movement endpoints, shot clock or causal action credit.
+Full spatial pass and movement valuation remains beyond this archive. This extension deliberately estimates only ordinary recorded event tails. It does not invent pass trajectories, movement endpoints, shot clock or causal action credit.
 '''
-    (HERE/'RECOVERY.md').write_text(text,encoding='utf-8')
+    (HERE/'RECOVERY.md').write_text(clean_markdown(text),encoding='utf-8')
     brief=f'''# Meeting brief: work completed with the existing archive
 
 ## What is ready
 
-- The shooting-location study, prediction comparisons and event-based remaining-points prototype are implemented and audited using **only Data (1).zip**.
+- The shooting location study, prediction comparisons and event based remaining points prototype are implemented and audited using **only Data (1).zip**.
 - Special situations no longer force us to discard an entire period when a later ordinary sequence has a clear, corroborated restart. The hazardous plays themselves remain excluded.
-- This adds **{int(first.added_entry_states):,} episode-entry states**, increasing the sample from **{int(first.original_entry_states):,} to {int(first.total_entry_states):,}**. A stricter second-restart check adds **{int(second.added_entry_states):,}**. These are inferred episodes and partial-period tails, not official possession counts.
-- CPU refits with the same model settings lower the context model's error on the later regular benchmark. They still do not clearly outperform a simple clock-based rule, and playoff gains remain uncertain.
+- This adds **{int(first.added_entry_states):,} episode entry states**, increasing the sample from **{int(first.original_entry_states):,} to {int(first.total_entry_states):,}**. A stricter second restart check adds **{int(second.added_entry_states):,}**. These are inferred episodes and partial period tails, not official possession counts.
+- CPU refits with the same model settings lower the context model's error on the later regular benchmark. They still do not clearly outperform a simple clock based rule, and playoff gains remain uncertain.
 - Source examples, three recovery charts, a printable meeting walkthrough and independent verification are available. All computations ran on the desktop CPU; Modal stayed off.
 
 ## What the findings mean
@@ -156,7 +157,7 @@ The project now uses more of the supplied archive, and we can explain much of th
 
 ## A short update to say aloud
 
-“I completed the first analysis using only the supplied archive. I then investigated why some records were excluded and why the model gains were small. I added a conservative way to resume after special events once an ordinary miss, rebound and following action clearly establish control. That gives us {int(first.added_entry_states):,} more episode-entry records without changing the source. The refitted context model improves on its previous version in the later regular sample, but it still performs about like a simple clock rule. My next question is what the group wants to learn beyond that, and whether richer action records are available for passes and movement.”
+“I completed the first analysis using only the supplied archive. I then investigated why some records were excluded and why the model gains were small. I added a conservative way to resume after special events once an ordinary miss, rebound and following action clearly establish control. That gives us {int(first.added_entry_states):,} more episode entry records without changing the source. The refitted context model improves on its previous version in the later regular sample, but it still performs about like a simple clock rule. My next question is what the group wants to learn beyond that, and whether richer action records are available for passes and movement.”
 
 ## Decisions and requests for the group
 
@@ -167,11 +168,11 @@ The project now uses more of the supplied archive, and we can explain much of th
 
 ## Walkthrough
 
-Open the [meeting page](https://kevinyamada.github.io/wnba-shot-atlas/meeting/) for the demo and a print-friendly view. Show the original court explorer, then the recovered sample and matched prediction comparisons, then one source discrepancy. Keep the distinction clear: verified calculations and a larger auditable sample are achieved; a general predictive advantage and full spatial action value are not established.
+Open the [meeting page](https://kevinyamada.github.io/wnba-shot-atlas/meeting/) for the demo and a print friendly view. Show the original court explorer, then the recovered sample and matched prediction comparisons, then one source discrepancy. Keep the distinction clear: verified calculations and a larger auditable sample are achieved; a general predictive advantage and full spatial action value are not established.
 
 [Recovery methods and results](RECOVERY.md) · [Earlier diagnostic findings](MEETING_DIAGNOSTICS.md) · [Final recovery checks](results/data1/recovery/final_verification.json)
 '''
-    (HERE/'MEETING_BRIEF.md').write_text(brief,encoding='utf-8')
+    (HERE/'MEETING_BRIEF.md').write_text(clean_markdown(brief),encoding='utf-8')
     print('RECOVERY_REPORT_AND_MEETING_BRIEF_READY',flush=True)
     print('SOURCE_CASE_TYPES',len(notes),'SOURCE_SNIPPET_ROWS',len(traces),flush=True)
 

@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "WNBA: desktop CPU follow-up",
+      "label": "WNBA: desktop CPU follow up",
       "type": "process",
       "command": "py",
       "args": ["-3.13", "${workspaceFolder}/research/local_followup.py", "--source", "${env:USERPROFILE}/Downloads/Data (1).zip"],

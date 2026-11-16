@@ -1,6 +1,6 @@
 """Conservative statistical control episodes from the supplied archive only.
 
-This is a source-audited prototype, not an official possession feed or spatial
+This is a source audited prototype, not an official possession feed or spatial
 xT. Rewards are recorded scoring values, never unreliable scoreboard deltas.
 """
 from __future__ import annotations

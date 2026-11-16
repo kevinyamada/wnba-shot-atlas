@@ -1,12 +1,12 @@
 # Diagnostics before the meeting
 
-All new calculations ran on the desktop CPU using only Data (1).zip. No models were refitted, no model settings were changed, and all five frozen inputs remain byte-identical. This is an exploratory explanation of existing results, not a new test or selection exercise.
+All new calculations ran on the desktop CPU using only Data (1).zip. No models were refitted, no model settings were changed, and all five frozen inputs remain byte identical. This is an exploratory explanation of existing results, not a new test or selection exercise.
 
 ## What the data screening means
 
-1257 periods are in the source; 662 pass the conservative period checks. Of the 595 excluded periods, **485 are excluded only because of special-foul/free-throw or overturned-review rules**. Those events may be legitimate basketball events. Exclusion does not prove the whole period is wrong. Handling these cases more carefully is possible future work with the existing archive; their correctness must be established before changing the main sample.
+1257 periods are in the source; 662 pass the conservative period checks. Of the 595 excluded periods, **485 are excluded only because of special foul/free throw or overturned review rules**. Those events may be legitimate basketball events. Exclusion does not prove the whole period is wrong. Handling these cases more carefully is possible future work with the existing archive; their correctness must be established before changing the main sample.
 
-Standard regular-season/playoff games account for 1249 periods; 659 pass. A period may pass while an individual episode inside it still fails an ownership or free-throw sequence check. These coverage figures therefore describe period screening, not the final fraction of official possessions retained. No official possession denominator is available. Both teams share the period label; coverage differences are not team performance rankings.
+Standard regular season/playoff games account for 1249 periods; 659 pass. A period may pass while an individual episode inside it still fails an ownership or free throw sequence check. These coverage figures therefore describe period screening, not the final fraction of official possessions retained. No official possession denominator is available. Both teams share the period label; coverage differences are not team performance rankings.
 
 ![Period coverage by team](results/data1/meeting/coverage_by_team.png)
 
@@ -22,7 +22,7 @@ Reasons overlap; do not sum that table as if each period had exactly one reason.
 
 ## Where predictions help or fail
 
-Only the already selected context model and the fixed Markov comparison are diagnosed against the training state-mean baseline. Groups are the three existing state types, with a period-clock split at 24 seconds, an existing model bin boundary. Twenty-four seconds here refers to **time left in the period**, not an observed shot clock. All groups are shown; none selects a new winner. Whole games are bootstrapped 2,000 times using the original seed and paired errors. Subgroup intervals are exploratory and unadjusted for multiple comparisons. They do not cover uncertainty in inferred possession boundaries.
+Only the already selected context model and the fixed Markov comparison are diagnosed against the training state mean baseline. Groups are the three existing state types, with a period clock split at 24 seconds, an existing model bin boundary. Twenty four seconds here refers to **time left in the period**, not an observed shot clock. All groups are shown; none selects a new winner. Whole games are bootstrapped 2,000 times using the original seed and paired errors. Subgroup intervals are exploratory and unadjusted for multiple comparisons. They do not cover uncertainty in inferred possession boundaries.
 
 ![Entry error by clock](results/data1/meeting/entry_error_by_clock.png)
 
@@ -47,13 +47,13 @@ Different state types have different outcome distributions, so error differences
 
 ## Interpretation and next work
 
-The current result remains an audited prototype with uncertain overall improvement for the validation-selected model. The most useful next work is to explain the model's errors and improve supported event handling before paying for more model searches. More special-case handling can potentially retain additional current-archive periods, but cannot create the unrecorded passes and movement required for spatial action valuation. A genuinely new season is still needed for a fresh benchmark.
+The current result remains an audited prototype with uncertain overall improvement for the validation selected model. The most useful next work is to explain the model's errors and improve supported event handling before paying for more model searches. More special case handling can potentially retain additional current archive periods, but cannot create the unrecorded passes and movement required for spatial action valuation. A genuinely new season is still needed for a fresh benchmark.
 
-The [plain-English meeting brief](MEETING_BRIEF.md) separates completed work, provisional findings, and concrete requests. The [run receipt](results/data1/meeting/diagnostics_receipt.json) records source and frozen-input hashes. Final checks are saved in [verification](results/data1/meeting/final_verification.json) after publication.
+The [plain English meeting brief](MEETING_BRIEF.md) separates completed work, provisional findings, and concrete requests. The [run receipt](results/data1/meeting/diagnostics_receipt.json) records source and frozen input hashes. Final checks are saved in [verification](results/data1/meeting/final_verification.json) after publication.
 
 ## Can a simple clock rule explain the gain?
 
-One additional diagnostic baseline uses only recorded state type and the existing six period-clock bins. It estimates training-bin means, shrunk with a fixed 50-observation state-type prior. It is fitted only through August 9. No settings are tuned against validation or later results. Its design follows the preceding diagnosis on already examined data, so it is explicitly exploratory and does not replace the originally selected model. The existing fitted models and published website data remain unchanged.
+One additional diagnostic baseline uses only recorded state type and the existing six period clock bins. It estimates training bin means, shrunk with a fixed 50 observation state type prior. It is fitted only through August 9. No settings are tuned against validation or later results. Its design follows the preceding diagnosis on already examined data, so it is explicitly exploratory and does not replace the originally selected model. The existing fitted models and published website data remain unchanged.
 
 | split | model | states | rmse | mae |
 | --- | --- | --- | --- | --- |
@@ -70,7 +70,7 @@ One additional diagnostic baseline uses only recorded state type and the existin
 | playoffs | Context boosting EPV | 1963 | 1.1554 | 1.0938 |
 | playoffs | Markov EPV | 1963 | 1.1548 | 1.0936 |
 
-Here differences compare each existing model with the simple clock average. Negative favours the existing model. Both the selected context model and Markov intervals include zero in later regular games and playoffs, so neither establishes an additional entry-state improvement beyond this simple clock rule on these reused samples.
+Here differences compare each existing model with the simple clock average. Negative favours the existing model. Both the selected context model and Markov intervals include zero in later regular games and playoffs, so neither establishes an additional entry state improvement beyond this simple clock rule on these reused samples.
 
 | split | model | mse_difference | lower | upper |
 | --- | --- | --- | --- | --- |
@@ -81,7 +81,7 @@ Here differences compare each existing model with the simple clock average. Nega
 | playoffs | Context boosting EPV | 0.0017 | -0.0073 | 0.0105 |
 | playoffs | Markov EPV | 0.0003 | -0.0055 | 0.0054 |
 
-[Training-bin values](results/data1/meeting/clock_baseline_training.csv), [settings receipt](results/data1/meeting/clock_baseline_receipt.json), and [all comparisons](results/data1/meeting/clock_baseline_comparisons.csv). The diagnostic recipe is in `meeting_clock_baseline.py`; it adds one inexpensive training-only baseline, not a new search.
+[Training bin values](results/data1/meeting/clock_baseline_training.csv), [settings receipt](results/data1/meeting/clock_baseline_receipt.json), and [all comparisons](results/data1/meeting/clock_baseline_comparisons.csv). The diagnostic recipe is in `meeting_clock_baseline.py`; it adds one inexpensive training only baseline, not a new search.
 
 ## Reproduce on the desktop
 

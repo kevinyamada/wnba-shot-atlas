@@ -1,5 +1,6 @@
-"""Desktop-only diagnostics of frozen Data1 results; no new model fits."""
+"""Desktop only diagnostics of frozen Data1 results; no new model fits."""
 from pathlib import Path
+from prose import clean_markdown
 import argparse,hashlib,json,subprocess,time,zipfile
 import numpy as np
 import pandas as pd
@@ -100,15 +101,15 @@ def main():
     ax.set_xlabel('Periods passing the strict checks (%)');ax.set_title('The screened sample covers teams unevenly\nRegular season + playoffs; both teams share each period’s source checks',loc='left',pad=12)
     fig.tight_layout();fig.savefig(OUT/'coverage_by_team.png',dpi=180);plt.close(fig)
     fig,axes=plt.subplots(1,2,figsize=(11.5,5.8),sharex=True)
-    descriptions={'all':'All entry states','2_to_24_seconds':'2–24 seconds left','over_24_seconds':'More than 24 seconds left'}
-    for ax,split,title in zip(axes,['test','playoffs'],['Later regular-season games','Playoffs']):
+    descriptions={'all':'All entry states','2_to_24_seconds':'2 to 24 seconds left','over_24_seconds':'More than 24 seconds left'}
+    for ax,split,title in zip(axes,['test','playoffs'],['Later regular season games','Playoffs']):
         a=results[results.split.eq(split)&results.stage.eq('entry')];positions=[];labels=[]
         for i,band in enumerate(descriptions):
             for j,model in enumerate([selected,'Markov EPV']):
                 r=a[a.clock_group.eq(band)&a.model.eq(model)].iloc[0];y=i*2.5+j;positions.append(y);labels.append(('Context' if j==0 else 'Markov')+f' · n={r.states:,}')
                 ax.errorbar(r.mse_difference,y,xerr=[[r.mse_difference-r.lower],[r.upper-r.mse_difference]],fmt='o',color=COLORS[model],capsize=3)
             ax.text(.02,i*2.5-.45,descriptions[band],transform=ax.get_yaxis_transform(),fontsize=9,va='center',color='#666')
-        ax.set_yticks(positions,labels);ax.set_ylim(6.8,-.9);ax.axvline(0,color='#555',linewidth=1);ax.set_title(title);ax.set_xlabel('Error difference vs simple average\nNegative = lower error · 95% game-bootstrap interval',fontsize=9)
+        ax.set_yticks(positions,labels);ax.set_ylim(6.8,-.9);ax.axvline(0,color='#555',linewidth=1);ax.set_title(title);ax.set_xlabel('Error difference vs simple average\nNegative = lower error · 95% game bootstrap interval',fontsize=9)
     fig.suptitle('Does the model help throughout a period, or mostly near its end?',x=.03,ha='left',fontsize=13);fig.tight_layout(rect=(0,0,1,.95));fig.savefig(OUT/'entry_error_by_clock.png',dpi=180);plt.close(fig)
     fig,ax=plt.subplots(figsize=(8.5,4.8));plot_metrics=pd.read_csv(OUT/'clock_baseline_metrics.csv') if (OUT/'clock_baseline_metrics.csv').exists() else metrics
     display_models=['Stage mean','Simple clock average',selected,'Markov EPV'] if (OUT/'clock_baseline_metrics.csv').exists() else ['Stage mean',selected,'Markov EPV']
@@ -125,21 +126,21 @@ def main():
         'standard_game_periods':len(q),'standard_game_passing_periods':int(q.passes.sum()),'min_team_coverage':float(coverage.coverage_fraction.min()),'max_team_coverage':float(coverage.coverage_fraction.max()),
         'checks':['ZIP digest matches the exact supplied archive','All 624 team point totals independently reconcile','Every raw event belongs to exactly one audited period',
             'All team and monthly coverage denominators reconcile','All overall model errors match the frozen public metrics','Overall paired intervals reproduce the published bootstrap',
-            'Clock subgroup counts and weighted error differences reconcile with their overall groups','Five frozen inputs are byte-unchanged'],
+            'Clock subgroup counts and weighted error differences reconcile with their overall groups','Five frozen inputs are byte unchanged'],
         'limitations':['Exploratory subgroup diagnosis on reused 2025 data; no model reselection','Period screening is a parser scope/consistency restriction, not proof every excluded record is wrong',
             'Teams share each period quality label; this is data coverage, not team quality','Intervals condition on the reconstructed subset and do not measure boundary uncertainty'],
         'elapsed_seconds':time.monotonic()-started,'completed_utc':pd.Timestamp.now(tz='UTC').isoformat()}
     (OUT/'diagnostics_receipt.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
     small=results[results.split.isin(['test','playoffs'])&results.stage.eq('entry')][['split','clock_group','model','states','model_rmse','baseline_rmse','mse_difference','lower','upper']]
-    (HERE/'MEETING_DIAGNOSTICS.md').write_text(f'''# Diagnostics before the meeting
+    (HERE/'MEETING_DIAGNOSTICS.md').write_text(clean_markdown(f'''# Diagnostics before the meeting
 
-All new calculations ran on the desktop CPU using only Data (1).zip. No models were refitted, no model settings were changed, and all five frozen inputs remain byte-identical. This is an exploratory explanation of existing results, not a new test or selection exercise.
+All new calculations ran on the desktop CPU using only Data (1).zip. No models were refitted, no model settings were changed, and all five frozen inputs remain byte identical. This is an exploratory explanation of existing results, not a new test or selection exercise.
 
 ## What the data screening means
 
-{len(quality)} periods are in the source; {int(quality.passes.sum())} pass the conservative period checks. Of the {int((~quality.passes).sum())} excluded periods, **{int(only_special_reviews.sum())} are excluded only because of special-foul/free-throw or overturned-review rules**. Those events may be legitimate basketball events. Exclusion does not prove the whole period is wrong. Handling these cases more carefully is possible future work with the existing archive; their correctness must be established before changing the main sample.
+{len(quality)} periods are in the source; {int(quality.passes.sum())} pass the conservative period checks. Of the {int((~quality.passes).sum())} excluded periods, **{int(only_special_reviews.sum())} are excluded only because of special foul/free throw or overturned review rules**. Those events may be legitimate basketball events. Exclusion does not prove the whole period is wrong. Handling these cases more carefully is possible future work with the existing archive; their correctness must be established before changing the main sample.
 
-Standard regular-season/playoff games account for {len(q)} periods; {int(q.passes.sum())} pass. A period may pass while an individual episode inside it still fails an ownership or free-throw sequence check. These coverage figures therefore describe period screening, not the final fraction of official possessions retained. No official possession denominator is available. Both teams share the period label; coverage differences are not team performance rankings.
+Standard regular season/playoff games account for {len(q)} periods; {int(q.passes.sum())} pass. A period may pass while an individual episode inside it still fails an ownership or free throw sequence check. These coverage figures therefore describe period screening, not the final fraction of official possessions retained. No official possession denominator is available. Both teams share the period label; coverage differences are not team performance rankings.
 
 ![Period coverage by team](results/data1/meeting/coverage_by_team.png)
 
@@ -149,7 +150,7 @@ Reasons overlap; do not sum that table as if each period had exactly one reason.
 
 ## Where predictions help or fail
 
-Only the already selected context model and the fixed Markov comparison are diagnosed against the training state-mean baseline. Groups are the three existing state types, with a period-clock split at 24 seconds, an existing model bin boundary. Twenty-four seconds here refers to **time left in the period**, not an observed shot clock. All groups are shown; none selects a new winner. Whole games are bootstrapped 2,000 times using the original seed and paired errors. Subgroup intervals are exploratory and unadjusted for multiple comparisons. They do not cover uncertainty in inferred possession boundaries.
+Only the already selected context model and the fixed Markov comparison are diagnosed against the training state mean baseline. Groups are the three existing state types, with a period clock split at 24 seconds, an existing model bin boundary. Twenty four seconds here refers to **time left in the period**, not an observed shot clock. All groups are shown; none selects a new winner. Whole games are bootstrapped 2,000 times using the original seed and paired errors. Subgroup intervals are exploratory and unadjusted for multiple comparisons. They do not cover uncertainty in inferred possession boundaries.
 
 ![Entry error by clock](results/data1/meeting/entry_error_by_clock.png)
 
@@ -161,19 +162,19 @@ Different state types have different outcome distributions, so error differences
 
 ## Interpretation and next work
 
-The current result remains an audited prototype with uncertain overall improvement for the validation-selected model. The most useful next work is to explain the model's errors and improve supported event handling before paying for more model searches. More special-case handling can potentially retain additional current-archive periods, but cannot create the unrecorded passes and movement required for spatial action valuation. A genuinely new season is still needed for a fresh benchmark.
+The current result remains an audited prototype with uncertain overall improvement for the validation selected model. The most useful next work is to explain the model's errors and improve supported event handling before paying for more model searches. More special case handling can potentially retain additional current archive periods, but cannot create the unrecorded passes and movement required for spatial action valuation. A genuinely new season is still needed for a fresh benchmark.
 
-The [plain-English meeting brief](MEETING_BRIEF.md) separates completed work, provisional findings, and concrete requests. The [run receipt](results/data1/meeting/diagnostics_receipt.json) records source and frozen-input hashes. Final checks are saved in [verification](results/data1/meeting/final_verification.json) after publication.
-''',encoding='utf-8')
+The [plain English meeting brief](MEETING_BRIEF.md) separates completed work, provisional findings, and concrete requests. The [run receipt](results/data1/meeting/diagnostics_receipt.json) records source and frozen input hashes. Final checks are saved in [verification](results/data1/meeting/final_verification.json) after publication.
+'''),encoding='utf-8')
     if (OUT/'clock_baseline_metrics.csv').exists():
         clock=pd.read_csv(OUT/'clock_baseline_metrics.csv');clock_pairs=pd.read_csv(OUT/'clock_baseline_comparisons.csv')
         with (HERE/'MEETING_DIAGNOSTICS.md').open('a',encoding='utf-8') as f:
-            f.write('\n## Can a simple clock rule explain the gain?\n\nOne additional diagnostic baseline uses only recorded state type and the existing six period-clock bins. It estimates training-bin means, shrunk with a fixed 50-observation state-type prior. It is fitted only through August 9. No settings are tuned against validation or later results. Its design follows the preceding diagnosis on already examined data, so it is explicitly exploratory and does not replace the originally selected model. The existing fitted models and published website data remain unchanged.\n\n')
-            f.write(md(clock[clock.stage.eq('entry')][['split','model','states','rmse','mae']]))
-            f.write('\n\nHere differences compare each existing model with the simple clock average. Negative favours the existing model. Both the selected context model and Markov intervals include zero in later regular games and playoffs, so neither establishes an additional entry-state improvement beyond this simple clock rule on these reused samples.\n\n')
-            f.write(md(clock_pairs[clock_pairs.stage.eq('entry')&clock_pairs.split.ne('validation')][['split','model','mse_difference','lower','upper']]))
-            f.write('\n\n[Training-bin values](results/data1/meeting/clock_baseline_training.csv), [settings receipt](results/data1/meeting/clock_baseline_receipt.json), and [all comparisons](results/data1/meeting/clock_baseline_comparisons.csv). The diagnostic recipe is in `meeting_clock_baseline.py`; it adds one inexpensive training-only baseline, not a new search.\n')
-            f.write('''\n## Reproduce on the desktop\n\nFrom the existing VS Code checkout after the main possession study:\n\n```powershell\n$env:PYTHONUTF8='1'; $env:PYTHONIOENCODING='utf-8'\npy -3.13 research/meeting_clock_baseline.py\npy -3.13 research/meeting_diagnostics.py --source "$env:USERPROFILE/Downloads/Data (1).zip"\npy -3.13 research/verify_meeting_diagnostics.py --source "$env:USERPROFILE/Downloads/Data (1).zip" --live\n```\n\nThe last command checks published files and is run after publication. No Modal invocation or external basketball download is part of these commands.\n''')
+            f.write(clean_markdown('\n## Can a simple clock rule explain the gain?\n\nOne additional diagnostic baseline uses only recorded state type and the existing six period clock bins. It estimates training bin means, shrunk with a fixed 50 observation state type prior. It is fitted only through August 9. No settings are tuned against validation or later results. Its design follows the preceding diagnosis on already examined data, so it is explicitly exploratory and does not replace the originally selected model. The existing fitted models and published website data remain unchanged.\n\n'))
+            f.write(clean_markdown(md(clock[clock.stage.eq('entry')][['split','model','states','rmse','mae']])))
+            f.write(clean_markdown('\n\nHere differences compare each existing model with the simple clock average. Negative favours the existing model. Both the selected context model and Markov intervals include zero in later regular games and playoffs, so neither establishes an additional entry state improvement beyond this simple clock rule on these reused samples.\n\n'))
+            f.write(clean_markdown(md(clock_pairs[clock_pairs.stage.eq('entry')&clock_pairs.split.ne('validation')][['split','model','mse_difference','lower','upper']])))
+            f.write(clean_markdown('\n\n[Training bin values](results/data1/meeting/clock_baseline_training.csv), [settings receipt](results/data1/meeting/clock_baseline_receipt.json), and [all comparisons](results/data1/meeting/clock_baseline_comparisons.csv). The diagnostic recipe is in `meeting_clock_baseline.py`; it adds one inexpensive training only baseline, not a new search.\n'))
+            f.write(clean_markdown('''\n## Reproduce on the desktop\n\nFrom the existing VS Code checkout after the main possession study:\n\n```powershell\n$env:PYTHONUTF8='1'; $env:PYTHONIOENCODING='utf-8'\npy -3.13 research/meeting_clock_baseline.py\npy -3.13 research/meeting_diagnostics.py --source "$env:USERPROFILE/Downloads/Data (1).zip"\npy -3.13 research/verify_meeting_diagnostics.py --source "$env:USERPROFILE/Downloads/Data (1).zip" --live\n```\n\nThe last command checks published files and is run after publication. No Modal invocation or external basketball download is part of these commands.\n'''))
     print('MEETING_DIAGNOSTICS_COMPLETE',json.dumps(report,indent=2),flush=True)
     print(small.to_string(index=False),flush=True)
 

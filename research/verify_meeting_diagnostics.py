@@ -1,4 +1,4 @@
-"""Independent source and frozen-prediction checks for the meeting diagnostics."""
+"""Independent source and frozen prediction checks for the meeting diagnostics."""
 from pathlib import Path
 from collections import defaultdict,Counter
 import argparse,csv,hashlib,io,json,subprocess,time,urllib.request,zipfile
@@ -33,7 +33,7 @@ def main():
         if r['team_id'].strip().lower() not in ['','na','nan','null']:team_points[gid,int(float(r['team_id']))]+=int(float(r['score_value']))
         if gid==401736112 and fga and int(float(r['athlete_id_1']))==4398674:howard+=1
     boxes={(int(r['game_id']),int(r['team_id'])):int(float(r['team_score'])) for r in teams if int(r['season'])==2025}
-    check('Fresh standard-library CSV parsing reproduces all 624 final team scores',len(boxes)==624 and all(team_points[k]==v for k,v in boxes.items()))
+    check('Fresh standard library CSV parsing reproduces all 624 final team scores',len(boxes)==624 and all(team_points[k]==v for k,v in boxes.items()))
     q=pd.read_csv(BASE/'possession/period_quality.csv').fillna({'flags':''});by_team=defaultdict(lambda:[0,0]);by_month=defaultdict(lambda:[0,0]);reasons=Counter();reason_events=Counter();comparisons=defaultdict(list);special_only=0
     for r in q.itertuples():
         p=periods[r.game_id,r.period_number];passed=r.flags=='';assert r.scope==p['scope'] and r.rows==p['events']
@@ -57,7 +57,7 @@ def main():
     s=pd.read_csv(PRIVATE/'model_states.csv.gz',float_precision='round_trip');p=pd.read_csv(PRIVATE/'predictions.csv.gz',float_precision='round_trip')
     a=p.merge(s[['state_id','seconds_remaining','remaining_points','split','stage']],on='state_id',suffixes=('','_source'),validate='one_to_one')
     for c in ['remaining_points','split','stage']:assert a[c].eq(a[c+'_source']).all()
-    check('Every diagnostic prediction joins to its verified source-state target',len(a)==len(s[s.split.ne('train')]))
+    check('Every diagnostic prediction joins to its verified source state target',len(a)==len(s[s.split.ne('train')]))
     for r in pd.read_csv(OUT/'model_by_stage_clock.csv').itertuples():
         b=a[a.split.eq(r.split)&a.stage.eq(r.stage)]
         if r.clock_group=='2_to_24_seconds':b=b[b.seconds_remaining.le(24)]
@@ -72,7 +72,7 @@ def main():
         b=a[a.split.eq(r.split)&a.stage.eq(r.stage)];v=b[r.model].to_numpy();assert len(b)==r.states
         assert np.allclose([v.mean(),v.std(),*np.quantile(v,[.05,.95]),b.remaining_points.mean(),b.remaining_points.std(ddof=0)],
             [r.mean_prediction,r.sd_prediction,r.prediction_05,r.prediction_95,r.mean_observed,r.sd_observed],atol=1e-12)
-    check('Every reported prediction-spread statistic recomputes')
+    check('Every reported prediction spread statistic recomputes')
     clock=json.loads((OUT/'clock_baseline_receipt.json').read_text(encoding='utf-8'));train=s[s.split.eq('train')]
     check('Clock baseline uses only earlier training targets and fixed settings',clock['features']==['stage','seconds_remaining'] and clock['prior_strength']==50 and clock['training_last_date']==train.date.max()=='2025-08-09' and clock['training_states']==len(train))
     edges=clock['clock_edges_seconds'];bucket=lambda t:sum(t>=e for e in edges)-1
@@ -82,7 +82,7 @@ def main():
     for r in pd.read_csv(OUT/'clock_baseline_training.csv').itertuples():assert np.isclose(r.expected_points,values[r.stage,r.clock_bin],atol=1e-12) and r.count==len(bins[r.stage,r.clock_bin])
     a['Simple clock average']=[values.get((r.stage,bucket(r.seconds_remaining)),stage_means[r.stage]) for r in a.itertuples()]
     saved=pd.read_csv(PRIVATE/'meeting_clock_predictions.csv.gz',float_precision='round_trip').set_index('state_id')
-    check('Training-bin sums and every saved clock prediction independently reproduce',len(a)==len(saved) and np.allclose(a['Simple clock average'],saved.loc[a.state_id,'Simple clock average'],atol=1e-12))
+    check('Training bin sums and every saved clock prediction independently reproduce',len(a)==len(saved) and np.allclose(a['Simple clock average'],saved.loc[a.state_id,'Simple clock average'],atol=1e-12))
     for r in pd.read_csv(OUT/'clock_baseline_metrics.csv').itertuples():
         b=a[a.split.eq(r.split)&a.stage.eq(r.stage)];d=b[r.model]-b.remaining_points
         assert len(b)==r.states and np.isclose(np.sqrt(np.mean(d**2)),r.rmse,atol=1e-12) and np.isclose(np.mean(abs(d)),r.mae,atol=1e-12)
@@ -90,7 +90,7 @@ def main():
         b=a[a.split.eq(r.split)&a.stage.eq(r.stage)];d=(b[r.model]-b.remaining_points)**2-(b['Simple clock average']-b.remaining_points)**2
         g=pd.DataFrame({'game':b.game_id,'d':d}).groupby('game').d.agg(['sum','count']);rng=np.random.default_rng(20261122);w=rng.multinomial(len(g),np.full(len(g),1/len(g)),size=2000)
         ci=np.quantile((w@g['sum'].to_numpy())/(w@g['count'].to_numpy()),[.025,.975]);assert np.isclose(d.mean(),r.mse_difference,atol=1e-12) and np.allclose(ci,[r.lower,r.upper],atol=1e-12)
-    check('All simple-clock comparisons, errors and intervals independently recompute')
+    check('All simple clock comparisons, errors and intervals independently recompute')
     check('All five original model, prediction and website artifacts remain unchanged',all(digest(HERE.parent/rel)==value for rel,value in receipt['frozen_inputs_unchanged'].items()))
     for name in ['coverage_by_team.png','entry_error_by_clock.png','error_by_state.png']:
         assert (OUT/name).read_bytes().startswith(b'\x89PNG\r\n\x1a\n')

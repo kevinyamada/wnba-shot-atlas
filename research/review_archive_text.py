@@ -1,4 +1,4 @@
-"""Create private reading extracts and a complete tabular-source inventory."""
+"""Create private reading extracts and a complete tabular source inventory."""
 from pathlib import Path
 import csv
 import io

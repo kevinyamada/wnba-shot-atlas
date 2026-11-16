@@ -1,4 +1,4 @@
-"""Fixed-setting CPU recovery refits and matched frozen-model comparisons."""
+"""Fixed setting CPU recovery refits and matched frozen model comparisons."""
 import os
 for key in ['OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS']:os.environ[key]='4'
 from pathlib import Path

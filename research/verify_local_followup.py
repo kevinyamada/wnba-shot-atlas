@@ -1,4 +1,4 @@
-"""Independent final verification of the source investigation and CPU follow-up."""
+"""Independent final verification of the source investigation and CPU follow up."""
 from pathlib import Path
 from collections import defaultdict
 import argparse
@@ -26,13 +26,13 @@ def main():
         checks.append(name);print('CHECK',name,flush=True)
     receipt=json.loads((OUT/'local_model_receipt.json').read_text(encoding='utf-8'))
     original=json.loads((HERE/'results/data1/final_verification.json').read_text(encoding='utf-8'))
-    passed('Primary original-archive final verification has passed for this source',original['all_checks_pass'] and receipt['archive_sha256']==original['archive_sha256'])
+    passed('Primary original archive final verification has passed for this source',original['all_checks_pass'] and receipt['archive_sha256']==original['archive_sha256'])
     predictions=pd.read_csv(PRIVATE/'local_predictions.csv.gz',float_precision='round_trip')
     table=pd.read_csv(HERE/'data/data1/model_shots.csv.gz',dtype={'player_id':str,'team_id':str},float_precision='round_trip')
     all_shots=pd.read_csv(HERE/'data/data1/all_shots.csv.gz',low_memory=False).set_index('source_row')
     passed('Every local prediction has a unique model/source key',not predictions.duplicated(['source_row','model']).any())
     joined=predictions.merge(all_shots[['game_id','game_play_number','made','points']],left_on='source_row',right_index=True,how='left',validate='many_to_one',suffixes=('','_source'))
-    passed('All local prediction labels and event keys match archive-verified source rows',all(joined[c].eq(joined[c+'_source']).all() for c in ['game_id','game_play_number','made','points']))
+    passed('All local prediction labels and event keys match archive verified source rows',all(joined[c].eq(joined[c+'_source']).all() for c in ['game_id','game_play_number','made','points']))
     passed('All local probabilities are finite and bounded',np.isfinite(predictions.prediction).all() and predictions.prediction.between(0,1).all())
     metrics=pd.read_csv(OUT/'local_metrics.csv')
     for r in metrics.to_dict('records'):
@@ -51,7 +51,7 @@ def main():
         interval=np.quantile((w@g['sum'].to_numpy())/(w@g['count'].to_numpy()),[.025,.975])
         assert np.isclose(difference.mean(),r['brier_difference']) and np.allclose(interval,[r['lower'],r['upper']],atol=1e-12)
         assert bool(r['single_game_interval_is_not_inferential'])==(len(g)==1)
-    checks.append('All paired game-bootstrap differences and intervals recompute; single-game cases are flagged')
+    checks.append('All paired game bootstrap differences and intervals recompute; single game cases are flagged')
     passed('No refit score is reported on its own validation training data',not ((metrics.model.str.endswith('refit'))&metrics.split.eq('validation')).any())
     for model,count in [('CPU CatBoost reference',25751),('CPU CatBoost refit',31746)]:
         fits=[r for r in receipt['fits'] if r['model']==model]
@@ -71,15 +71,15 @@ def main():
             m=CatBoostClassifier();m.load_model(str(PRIVATE/(model.lower().replace(' ','_')+f'_{seed}.cbm')))
             values.append(m.predict_proba(features[columns],thread_count=4)[:,1])
         assert np.allclose(np.mean(values,axis=0),sample.prediction,atol=1e-12,rtol=1e-12)
-    checks.append('Frozen settings, chronological cutoffs, CPU-only training and saved model predictions verify')
-    passed('Identity-free sensitivity excludes every uncertain shooter/history/outcome field',set(receipt['identity_free_features'])=={'x','y','distance','angle','period_number','seconds','home','team_id'} and receipt['identity_free_added_training_shots']==935 and receipt['identity_free_added_training_games']==7)
+    checks.append('Frozen settings, chronological cutoffs, CPU only training and saved model predictions verify')
+    passed('Identity free sensitivity excludes every uncertain shooter/history/outcome field',set(receipt['identity_free_features'])=={'x','y','distance','angle','period_number','seconds','home','team_id'} and receipt['identity_free_added_training_shots']==935 and receipt['identity_free_added_training_games']==7)
     raw_train=all_shots[all_shots.split.eq('train')&all_shots.scope.eq('regular')&all_shots.x.between(-5.25,41.75)]
     extra=raw_train.loc[raw_train.index.difference(table.loc[table.split.eq('train'),'source_row'])]
     excluded=set(pd.read_csv(HERE/'results/data1/excluded_games.csv').game_id)
     passed('The 935 added attempts are precisely the seven earlier excluded games',len(raw_train)==26686 and len(extra)==935 and extra.game_id.nunique()==7 and set(extra.game_id)<=excluded and extra.date.max()<'2025-08-10')
     selected=pd.read_csv(OUT/'identity_free_validation.csv').sort_values('validation_log_loss').iloc[0]
     expected=metrics[metrics.model.eq('Identity-free HGB excluded games')&metrics.split.eq('validation')].iloc[0]
-    passed('Identity-free settings were selected on eligible validation loss',np.isclose(selected.validation_log_loss,expected.log_loss) and selected.l2_regularization==receipt['identity_free_parameters']['l2_regularization'])
+    passed('Identity free settings were selected on eligible validation loss',np.isclose(selected.validation_log_loss,expected.log_loss) and selected.l2_regularization==receipt['identity_free_parameters']['l2_regularization'])
     # Fresh stdlib parsing verifies the discrepancy examples, independent of
     # the investigator's pandas groupby and name parser.
     with zipfile.ZipFile(args.source) as z:
@@ -101,7 +101,7 @@ def main():
     passed('Description/ID contradiction is an actual archive record',int(raw['game_id'])==row.game_id and int(float(raw['athlete_id_1']))==row.athlete_id and raw['text'].startswith(row.text_name+' misses'))
     site=json.loads((HERE.parent/'assets/data.json').read_text(encoding='utf-8'))['localFollowup']
     passed('Published desktop tables, intervals and receipt match checked files',site['metrics']==metrics.to_dict('records') and site['paired']==pd.read_csv(OUT/'local_game_bootstrap.csv').to_dict('records') and site['receipt']==receipt)
-    passed('Follow-up source is the same original archive and no cloud GPU is used',receipt['no_cloud_gpu_used'] and site['sourceInvestigation']['only_data_source']=='Data (1).zip')
+    passed('Follow up source is the same original archive and no cloud GPU is used',receipt['no_cloud_gpu_used'] and site['sourceInvestigation']['only_data_source']=='Data (1).zip')
     result={'all_checks_pass':True,'checks':checks,'archive_sha256':receipt['archive_sha256'],'completed_utc':pd.Timestamp.now(tz='UTC').isoformat(),
             'analysis_commit':original['analysis_commit'],'only_data_source':'Data (1).zip','compute':'desktop CPU only'}
     (OUT/'final_followup_verification.json').write_text(json.dumps(result,indent=2),encoding='utf-8')

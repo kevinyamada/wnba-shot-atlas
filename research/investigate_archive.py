@@ -73,7 +73,7 @@ def main():
     aliases=identities[~identities.exact_unique_roster_match].groupby(['athlete_id','box_name','text_name'],dropna=False).size().reset_index(name='records')
     aliases.to_csv(OUT/'unmatched_display_names.csv',index=False)
     # Only exact textual statements are called explicit. Absence of 'three
-    # point' is not promoted to an authoritative two-point attempt label.
+    # point' is not promoted to an authoritative two point attempt label.
     lower=s.text.fillna('').str.lower()
     explicit_three=lower.str.contains(r'\bthree[ -]point\b',regex=True)
     explicit_two=lower.str.contains(r'\btwo[ -]point\b',regex=True)

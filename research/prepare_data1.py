@@ -1,6 +1,6 @@
 """Data (1).zip is the only source. No downloads or inferred attempt values.
 
-Field-goal outcomes are observed makes/misses and actual 0/2/3 points.
+Field goal outcomes are observed makes/misses and actual 0/2/3 points.
 Conflicting score sequences are audited and never enter the predictors.
 """
 from __future__ import annotations
@@ -84,7 +84,7 @@ def main():
     assert len(check) == 624 and check._merge.eq("both").all()
     assert check[["attempts_difference", "makes_difference", "points_difference"]].eq(0).all().all()
     check.to_csv(out / "team_box_reconciliation.csv", index=False)
-    # Names and prior-season features come from the same archive, using ESPN IDs.
+    # Names and prior season features come from the same archive, using ESPN IDs.
     names = players[players.season.eq(2025)][["game_id", "athlete_id", "athlete_display_name"]].drop_duplicates()
     assert not names.duplicated(["game_id", "athlete_id"]).any()
     s = s.merge(names, left_on=["game_id", "athlete_id_1"], right_on=["game_id", "athlete_id"], how="left", validate="many_to_one")

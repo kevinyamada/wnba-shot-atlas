@@ -1,4 +1,4 @@
-"""Independent source qualification using outer joins, including zero-attempt players."""
+"""Independent source qualification using outer joins, including zero attempt players."""
 from pathlib import Path
 import argparse
 import json

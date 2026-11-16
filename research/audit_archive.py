@@ -1,7 +1,7 @@
-"""Read and inventory every member of the user-supplied archive, without modifying it.
+"""Read and inventory every member of the user supplied archive, without modifying it.
 
 Full paper/dictionary extracts stay in ignored data/. Only source metadata and
-quality checks are suitable for publication. No season-end stats enter predictors.
+quality checks are suitable for publication. No season end stats enter predictors.
 """
 from __future__ import annotations
 import argparse

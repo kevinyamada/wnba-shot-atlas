@@ -7,8 +7,8 @@ from scipy.special import expit
 
 
 def main():
-    # Compare the implemented spectral approximation against the closed-form
-    # anisotropic Matérn-5/2 covariance at fixed court locations.
+    # Compare the implemented spectral approximation against the closed form
+    # anisotropic Matérn 5/2 covariance at fixed court locations.
     points=np.array([[0,0],[2,0],[10,5],[20,-10],[35,20],[-5,-25]],float)
     ell=np.array([8.,8.]);r=np.linalg.norm((points[:,None]-points[None,:])/ell,axis=2)
     exact=(1+np.sqrt(5)*r+5*r*r/3)*np.exp(-np.sqrt(5)*r)
@@ -22,7 +22,7 @@ def main():
             cov=(phi*psd)@phi.T
             assert np.linalg.eigvalsh(cov).min()>0 and np.isfinite(cov).all()
             rows.append({'basis_per_axis':basis,'domain_half_widths':domain,'maximum_covariance_error':float(abs(cov-exact).max()),'mean_covariance_error':float(abs(cov-exact).mean()),'minimum_prior_variance':float(np.diag(cov).min()),'maximum_prior_variance':float(np.diag(cov).max())})
-    # Zero-sum effects have the requested marginal variance and are correlated.
+    # Zero sum effects have the requested marginal variance and are correlated.
     rng=np.random.default_rng(20261115);z=rng.normal(size=(100000,100));a=(z-z.mean(axis=1,keepdims=True))*np.sqrt(100/99)
     assert abs(a.sum(axis=1)).max()<1e-12 and np.allclose(a.var(axis=0),1,atol=.02)
     latent=np.array([-2.,0.,3.]);assert abs(expit(latent).mean()-expit(latent.mean()))>.02

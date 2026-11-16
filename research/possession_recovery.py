@@ -1,8 +1,8 @@
-"""Recover ordinary tails of source-clean periods after explicit resynchronization.
+"""Recover ordinary tails of source clean periods after explicit resynchronization.
 
 The frozen primary reconstruction is never rewritten. Special/review sequences
 remain excluded; recovery begins after the final hazard and a corroborated live
-miss -> defensive rebound. A second-rebound policy supplies a stricter check.
+miss -> defensive rebound. A second rebound policy supplies a stricter check.
 """
 from pathlib import Path
 from collections import Counter

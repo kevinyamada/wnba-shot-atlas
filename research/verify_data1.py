@@ -70,7 +70,7 @@ def main():
             if entry.is_dir():continue
             with z.open(entry) as f:h=digest(f)
             assert h==members[entry.filename]['sha256'] and entry.file_size==members[entry.filename]['bytes'],entry.filename
-        CHECKS.append('All 45 member byte counts and SHA-256 hashes independently match')
+        CHECKS.append('All 45 member byte counts and SHA256 hashes independently match')
         manifest=list(csv.DictReader((HERE/'results/archive_manifest.csv').open(encoding='utf-8')))
         checked('Public manifest agrees with current inventory',len(manifest)==45 and all(all(str(row[k])==str(members[row['path']].get(k,'')) for k in row) for row in manifest))
         def load(suffix):
@@ -81,7 +81,7 @@ def main():
         teams=load('/WNBA_Team/wnba_team_box.csv')
     keys=set();raw={};by_game=defaultdict(list);player_counts=defaultdict(lambda:np.zeros(3,dtype=int));team_counts=defaultdict(lambda:np.zeros(3,dtype=int));conflicts=0
     # Score updates follow the original game/play sort, independently of the
-    # preparation script. Source-row identity remains the original CSV record.
+    # preparation script. Source row identity remains the original CSV record.
     for line,r in enumerate(events,2):r['_source_row']=line
     previous={}
     for r in sorted(events,key=lambda r:(integer(r['game_id']),integer(r['game_play_number']))):
@@ -102,7 +102,7 @@ def main():
         counts=np.array([1,made,p]);player_counts[g,athlete]+=counts;team_counts[g,t]+=counts
         conflicts+=h-old[0]+a-old[1]!=p
     checked('Original event keys, source rows and shot outcomes are valid',len(events)==121342 and len(raw)==42193)
-    checked('All 88 source score-update conflicts are disclosed',conflicts==88)
+    checked('All 88 source score update conflicts are disclosed',conflicts==88)
     current_players={};prior_counts=defaultdict(lambda:np.zeros(2,dtype=int));names={}
     for r in players:
         season=integer(r['season']);athlete=integer(r['athlete_id']);g=integer(r['game_id'])
@@ -153,9 +153,9 @@ def main():
     checked('GPU inputs and executed model code retain their recorded hashes',launch['source_archive_sha256']==SHA and launch['model_table_sha256']==hashlib.sha256((DATA/'model_shots.csv.gz').read_bytes()).hexdigest() and launch['gpu_code_sha256']==hashlib.sha256((HERE/'gpu_models.py').read_bytes()).hexdigest())
     past_check=json.loads((OUT/'preseason_history_audit.json').read_text())
     checked('All 1404 supplied historical game/team count sums agree',past_check['all_game_teams_present_in_both'] and past_check['game_team_rows']==1404 and past_check['disagreeing_game_team_rows']==0)
-    checked('Predictor allowlist excludes post-outcome fields',set(source['numeric_features'])=={'x','y','distance','angle','period_number','seconds','home','prior_rate','log_prior_n','preseason_rate','preseason_log_n'} and source['categorical_features']==['player_id','team_id'])
+    checked('Predictor allowlist excludes post outcome fields',set(source['numeric_features'])=={'x','y','distance','angle','period_number','seconds','home','prior_rate','log_prior_n','preseason_rate','preseason_log_n'} and source['categorical_features']==['player_id','team_id'])
     # Preserve the saved binary64 values; rounding nearly tied tree scores can
-    # change rank-based AUC even when Brier/log loss are unchanged to 15 digits.
+    # change rank based AUC even when Brier/log loss are unchanged to 15 digits.
     predictions=pd.read_csv(DATA/'comparison_predictions.csv.gz',float_precision='round_trip')
     truth=table[table.split.ne('train')].set_index('source_row')
     checked('Every compared prediction uses identical source keys and outcomes',not predictions.source_row.duplicated().any() and set(predictions.source_row)==set(truth.index))
@@ -182,7 +182,7 @@ def main():
     CHECKS.append('All GPU tree family predictions equal the three declared saved seed fits')
     cal=json.loads((OUT/'calibration_parameters.json').read_text())
     checked('Calibration transformation and reporting are coherent',np.allclose(predictions['Validation-calibrated ensemble'],expit(cal['intercept']+cal['slope']*logit(predictions['Equal-weight ensemble'].clip(1e-8,1-1e-8)))) and not ((metrics.model=='Validation-calibrated ensemble')&(metrics.split=='validation')).any())
-    # Independently reproduce the paired, cluster-resampled confidence intervals.
+    # Independently reproduce the paired, cluster resampled confidence intervals.
     for split,a in predictions.groupby('split'):
         if split=='validation':continue
         groups=a.groupby('game_id');games=sorted(a.game_id.unique());sizes=groups.size().reindex(games).to_numpy()
@@ -192,7 +192,7 @@ def main():
             sums=pd.Series(diff.values,index=a.game_id).groupby(level=0).sum().reindex(games).to_numpy()
             interval=np.quantile((weights@sums)/(weights@sizes),[.025,.975])
             assert np.allclose(interval,[r['lower'],r['upper']],atol=1e-12) and np.isclose(diff.mean(),r['brier_difference'])
-    CHECKS.append('All paired game-bootstrap Brier differences and intervals recompute')
+    CHECKS.append('All paired game bootstrap Brier differences and intervals recompute')
     point=pd.read_csv(DATA/'points_comparison_predictions.csv.gz')
     for name,a in point.groupby('model'):
         assert set(a.source_row)==set(truth.index) and not a.source_row.duplicated().any()
@@ -213,9 +213,9 @@ def main():
             rng=np.random.default_rng(20261116);w=rng.multinomial(len(g),np.full(len(g),1/len(g)),size=2000)
             interval=np.quantile((w@g['sum'].to_numpy())/(w@g['count'].to_numpy()),[.025,.975])
             assert np.allclose(interval,[r['lower'],r['upper']],atol=1e-12) and np.isclose(difference.mean(),r['mse_difference'])
-    CHECKS.append('All expected-point MSE differences and game-bootstrap intervals recompute')
+    CHECKS.append('All expected point MSE differences and game bootstrap intervals recompute')
     gp_dir=OUT/'experiments'/selection['selected_gp_id'];diag=pd.read_csv(gp_dir/'diagnostics.csv')
-    checked('Selected GP has finite four-chain diagnostics passing all thresholds',np.isfinite(diag[['r_hat','ess_bulk','ess_tail']]).all().all() and diag.r_hat.max()<1.01 and diag.ess_bulk.min()>=400 and selection['gp_diagnostics']['divergences']==0 and selection['gp_diagnostics']['max_tree_depth_hits']==0)
+    checked('Selected GP has finite four chain diagnostics passing all thresholds',np.isfinite(diag[['r_hat','ess_bulk','ess_tail']]).all().all() and diag.r_hat.max()<1.01 and diag.ess_bulk.min()>=400 and selection['gp_diagnostics']['divergences']==0 and selection['gp_diagnostics']['max_tree_depth_hits']==0)
     surface=pd.read_csv(OUT/'gp_surface.csv');checked('All posterior map means and intervals are ordered and bounded',len(surface)==2397 and not surface.duplicated(['x','y']).any() and surface.lower.between(0,1).all() and surface.upper.between(0,1).all() and (surface.lower<=surface['mean']).all() and (surface['mean']<=surface.upper).all())
     checked('Published surface is the exact selected posterior surface',np.array_equal(surface.to_numpy(),pd.read_csv(gp_dir/'surface.csv').to_numpy()))
     experiments=list((OUT/'experiments').glob('*/task.json'));prediction_files=0
@@ -240,7 +240,7 @@ def main():
         near=cKDTree(held[['x','y']].drop_duplicates()).query(other[['x','y']])[0]
         distances_retained=near[near>r['buffer_ft']]
         assert len(held)==r['test_shots'] and len(distances_retained)==r['train_shots'] and np.isclose(distances_retained.min(),r['minimum_separation_ft'])
-    CHECKS.append('Every spatial fold count and buffer separation independently rebuilds from source-verified coordinates')
+    CHECKS.append('Every spatial fold count and buffer separation independently rebuilds from source verified coordinates')
     site_bytes=(HERE.parent/'assets/data.json').read_bytes();site=json.loads(site_bytes)
     regular=[q for q in raw.values() if q['scope']=='regular'];half=[q for q in regular if -5.25<=q['x']<=41.75]
     counts=defaultdict(lambda:np.zeros(3,dtype=int))
@@ -248,12 +248,12 @@ def main():
     checked('Every website cell/team/player aggregate matches fresh raw event counts',len(counts)==len(site['cells']) and all(np.array_equal(counts[tuple(r[:4])],r[4:]) for r in site['cells']))
     checked('Website season totals match Data1',len(regular)==38535 and len(half)==38441 and sum(q['made'] for q in regular)==16926 and sum(q['points'] for q in regular)==38533)
     checked('Website map and all model tables are the published current results',np.allclose(np.array(site['gp']),surface[['x','y','mean','lower','upper']].to_numpy(),atol=.00000051) and site['metrics']==metrics.to_dict('records') and site['selection']==selection and site['source']==source)
-    checked('Website expected-point tables and uncertainty comparisons match verified result files',site['pointsMetrics']==pd.read_csv(OUT/'points_metrics.csv').to_dict('records') and site['pointsBootstrap']==pd.read_csv(OUT/'points_game_bootstrap.csv').to_dict('records') and site['bootstrap']==pd.read_csv(OUT/'game_bootstrap.csv').to_dict('records'))
+    checked('Website expected point tables and uncertainty comparisons match verified result files',site['pointsMetrics']==pd.read_csv(OUT/'points_metrics.csv').to_dict('records') and site['pointsBootstrap']==pd.read_csv(OUT/'points_game_bootstrap.csv').to_dict('records') and site['bootstrap']==pd.read_csv(OUT/'game_bootstrap.csv').to_dict('records'))
     for r in site['spatialCV']:
         a=cv[cv.model.eq(r['model'])&cv.buffer_ft.eq(r['buffer'])]
         assert len(a)==4 and np.isclose(r['brier'],np.average(a.brier,weights=a.shots)) and np.isclose(r['log_loss'],np.average(a.log_loss,weights=a.shots))
     CHECKS.append('Every published pooled spatial score has four correctly weighted folds')
-    # Independent finite-segment/arc distance implementation for the density ratio.
+    # Independent finite segment/arc distance implementation for the density ratio.
     radius=22+1.75/12;join=math.sqrt(radius**2-22**2);angle=math.asin(22/radius)
     def offset(q):
         x,y=q['x'],q['y'];theta=max(-angle,min(angle,math.atan2(y,x)))
@@ -263,7 +263,7 @@ def main():
         return min(curve,segment)*(-1 if inside else 1)
     distances=[offset(q) for q in regular];inside=sum(-2<=d<0 for d in distances);outside=sum(0<d<=2 for d in distances)
     checked('Arc band counts independently match all raw shots',inside==508 and outside==4380 and sum(abs(d)<1e-10 for d in distances)==140)
-    checked('Area-adjusted density ratio is coherent',np.isclose(site['arc']['outside_inside_density_ratio'],(outside/site['arc']['outside_2ft_area'])/(inside/site['arc']['inside_2ft_area'])))
+    checked('Area adjusted density ratio is coherent',np.isclose(site['arc']['outside_inside_density_ratio'],(outside/site['arc']['outside_2ft_area'])/(inside/site['arc']['inside_2ft_area'])))
     def vector_offset(x,y):
         theta=np.clip(np.arctan2(y,x),-angle,angle)
         curve=np.hypot(x-radius*np.cos(theta),y-radius*np.sin(theta))
@@ -276,7 +276,7 @@ def main():
     counts=np.histogram(distances,np.arange(-4,4,1))[0];areas=np.histogram(gd,np.arange(-4,4,1))[0]*.0025
     for r,n,area in zip(site['arcBins'],counts,areas):
         assert r['attempts']==n and np.isclose(r['area_sqft'],area) and np.isclose(r['attempts_per_sqft'],n/area)
-    CHECKS.append('Every plotted arc-density bin matches fresh raw counts and independent court areas')
+    CHECKS.append('Every plotted arc density bin matches fresh raw counts and independent court areas')
     arc_games=defaultdict(lambda:np.zeros(2,dtype=int))
     for q,d in zip(regular,distances):arc_games[q['game_id']]+=np.array([int(-2<=d<0),int(0<d<=2)])
     values=np.array([arc_games[g] for g in sorted(arc_games)]);rng=np.random.default_rng(2026)
@@ -287,7 +287,7 @@ def main():
     for _ in range(100):
         d=vector_offset(np.clip(rx+rng.uniform(-.5,.5,len(rx)),-5.25,88.75),np.clip(ry+rng.uniform(-.5,.5,len(ry)),-25,25))
         jitter.append((((d>0)&(d<=2)).sum()/ao)/(((d>=-2)&(d<0)).sum()/ai))
-    checked('Arc areas, 2000-game bootstrap and all coordinate sensitivity scenarios recompute',np.allclose([min(jitter),max(jitter)],site['arc']['coordinate_sensitivity_ratio_range']))
+    checked('Arc areas, 2000 game bootstrap and all coordinate sensitivity scenarios recompute',np.allclose([min(jitter),max(jitter)],site['arc']['coordinate_sensitivity_ratio_range']))
     compute=json.loads((OUT/'compute_usage.json').read_text());billing=compute.get('modal_billing',{})
     stop=json.loads((OUT/'compute_stop.json').read_text())
     checked('Later credit stop is respected and usage is accurately documented',compute['measured_gpu_usd_lower_bound']>0 and 0<billing.get('total_usd_before_credits',0)<40 and stop['all_study_apps_stopped'] and stop['remaining_credit_usd_reported_by_user']==1 and compute['original_measured_gpu_target_met']==(compute['measured_gpu_usd_lower_bound']>=20))

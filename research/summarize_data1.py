@@ -1,6 +1,6 @@
 """Freeze development choices, then evaluate keyed Data1 predictions.
 
-Run after the experiment coordinator finishes. No later-game result chooses a
+Run after the experiment coordinator finishes. No later game result chooses a
 model, prior, seed, calibration method, or ensemble weight.
 """
 from __future__ import annotations
@@ -146,7 +146,7 @@ def main():
              "gpu_function_seconds":float(sum(r.get("gpu_allocated_seconds_lower_bound",0) for r in records)),
              "gpu_usd_lower_bound":float(ledger["measured_gpu_usd_lower_bound"]),"guard_gpu_usd":float(ledger["guard_gpu_usd"])}
     receipt["compute_stage"]="Stopped on the user's later credit limit; evaluate completed runs only." if stop else "Completed scheduled study"
-    # Persist the choice before calculating any new later-game scores.
+    # Persist the choice before calculating any new later game scores.
     (OUT/"selection_receipt.json").write_text(json.dumps(receipt,indent=2,default=str),encoding="utf-8")
     calibration_x=logit(predictions.loc[valmask,"Equal-weight ensemble"].clip(1e-8,1-1e-8).to_numpy())[:,None]
     calibrator=LogisticRegression(C=1000,max_iter=2000).fit(calibration_x,predictions.loc[valmask,"made"])
