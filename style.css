@@ -18,3 +18,12 @@ h1,h2,h3{font-family:inherit;font-weight:600;letter-spacing:-.5px;line-height:1.
 #possession-value{border-top:1px solid var(--line);padding:27px 0 20px}.possession-figure{margin:25px 0;max-width:720px}#possession-chart{width:100%;display:block}.possession-figure figcaption{margin-top:10px}
 .possession-figure{overflow-x:auto}#possession-chart{min-width:680px}#possession-value .controls label{flex:1 1 240px}
 @media(max-width:680px){#possession-value .controls label{flex-basis:100%;min-width:0}#possession-value select{width:100%}}
+
+#recovery{border-top:1px solid var(--line);padding:27px 0 20px}#recovery .controls{flex-wrap:wrap}#recovery .controls label{flex:1 1 190px;min-width:0}#recovery .check-label{display:flex;flex-direction:row;align-items:center;gap:8px;margin-top:12px}#recovery-note{max-width:760px}@media(max-width:680px){#recovery .controls label{flex-basis:100%}#recovery select{width:100%}}
+
+.theme-toggle{width:34px;height:34px;min-height:34px;flex:0 0 34px;display:inline-flex;align-items:center;justify-content:center;padding:3px;border:1px solid var(--line);border-radius:6px;background:transparent;color:var(--ink);font-size:20px;line-height:1;cursor:pointer}.theme-toggle:hover{border-color:var(--muted)}
+:root[data-theme="dark"]{--paper:#11191f;--ink:#e7eef2;--muted:#a7b7c0;--line:#34454f;--teal:#79c7d5;--orange:#eba572;color-scheme:dark}
+:root[data-theme="dark"] a{color:#9dc6ef}:root[data-theme="dark"] select{background:#1c2a33;color:var(--ink);border-color:#526674}:root[data-theme="dark"] tr.selected{background:#203440}:root[data-theme="dark"] #geometry-chart{background:#17242c}:root[data-theme="dark"] .meeting-callout{background:#1a2b35}:root[data-theme="dark"] .skip{background:#1c2a33;color:var(--ink)}
+@media print{.theme-toggle{display:none}:root[data-theme="dark"]{--paper:#fff;--ink:#222;--muted:#555;--line:#ddd;--teal:#28677a;--orange:#b76639;color-scheme:light}:root[data-theme="dark"] a{color:#285a86}:root[data-theme="dark"] .meeting-callout{background:#f3f7f7}}
+
+:root[data-theme="light"]{color-scheme:light}

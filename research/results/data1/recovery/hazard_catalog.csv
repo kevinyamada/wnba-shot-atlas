@@ -1,0 +1,1226 @@
+source_row,game_id,period_number,game_play_number,clock_display_value,type_id,type_text,score_value,status,restart_source_row
+261,401820329,3,260,2:41,35,Technical Foul,0,hard_period_exclusion,
+262,401820329,3,261,2:41,30,Double Technical Foul,0,hard_period_exclusion,
+265,401820329,3,264,2:41,35,Technical Foul,0,hard_period_exclusion,
+266,401820329,3,265,2:41,103,Free Throw - Technical,0,hard_period_exclusion,
+267,401820329,3,266,2:41,103,Free Throw - Technical,1,hard_period_exclusion,
+333,401820329,4,332,6:04,35,Technical Foul,0,no_supported_restart,
+334,401820329,4,333,6:04,103,Free Throw - Technical,1,no_supported_restart,
+380,401820329,4,379,1:30,35,Technical Foul,0,no_supported_restart,
+381,401820329,4,380,1:30,103,Free Throw - Technical,1,no_supported_restart,
+500,401820326,1,85,0:53.3,35,Technical Foul,0,no_supported_restart,
+501,401820326,1,86,0:53.3,103,Free Throw - Technical,1,no_supported_restart,
+1424,401820322,3,207,5:37,32,Flagrant Foul Type 1,0,tail_available,1436.0
+1425,401820322,3,208,5:37,279,Ref-Initiated Review (Overturned),0,tail_available,1436.0
+1426,401820322,3,209,5:37,157,Free Throw - Flagrant 1 of 3,1,tail_available,1436.0
+1427,401820322,3,210,5:37,165,Free Throw - Flagrant 2 of 3,1,tail_available,1436.0
+1428,401820322,3,211,5:37,166,Free Throw - Flagrant 3 of 3,1,tail_available,1436.0
+1503,401820322,4,286,8:23,35,Technical Foul,0,tail_available,1513.0
+1504,401820322,4,287,8:23,103,Free Throw - Technical,1,tail_available,1513.0
+1768,401820340,2,184,1:33,35,Technical Foul,0,tail_available,1773.0
+1769,401820340,2,185,1:33,103,Free Throw - Technical,1,tail_available,1773.0
+1770,401820340,2,186,1:33,40,Away from Play Foul,0,tail_available,1773.0
+2220,401820337,3,199,7:17,29,Defensive 3-Seconds Technical,0,tail_available,2231.0
+2221,401820337,3,200,7:17,103,Free Throw - Technical,1,tail_available,2231.0
+2225,401820337,3,204,6:47,215,Coach's Challenge (Overturned),0,tail_available,2231.0
+2369,401820337,4,348,2:54,215,Coach's Challenge (Overturned),0,no_supported_restart,
+2378,401820337,4,357,1:59,29,Defensive 3-Seconds Technical,0,no_supported_restart,
+2379,401820337,4,358,1:59,103,Free Throw - Technical,1,no_supported_restart,
+2406,401820337,4,385,0:36.6,22,Personal Take Foul,0,no_supported_restart,
+2410,401820337,4,389,0:30.1,25,Excess Timeout Technical,0,no_supported_restart,
+2412,401820337,4,391,0:30.1,103,Free Throw - Technical,1,no_supported_restart,
+2414,401820337,4,393,0:27.6,22,Personal Take Foul,0,no_supported_restart,
+2419,401820337,4,398,0:18.4,22,Personal Take Foul,0,no_supported_restart,
+2424,401820337,4,403,0:6.1,22,Personal Take Foul,0,no_supported_restart,
+2648,401820338,3,218,8:01,29,Defensive 3-Seconds Technical,0,tail_available,2657.0
+2649,401820338,3,219,8:01,103,Free Throw - Technical,0,tail_available,2657.0
+2799,401820338,4,369,0:19.7,22,Personal Take Foul,0,hard_period_exclusion,
+2810,401820338,4,380,0:4.4,22,Personal Take Foul,0,hard_period_exclusion,
+2843,401820334,1,27,6:28,29,Defensive 3-Seconds Technical,0,tail_available,2903.0
+2844,401820334,1,28,6:28,103,Free Throw - Technical,0,tail_available,2903.0
+2885,401820334,1,69,1:45,40,Away from Play Foul,0,tail_available,2903.0
+2932,401820334,2,116,7:47,29,Defensive 3-Seconds Technical,0,tail_available,2986.0
+2933,401820334,2,117,7:47,103,Free Throw - Technical,1,tail_available,2986.0
+2983,401820334,2,167,3:39,29,Defensive 3-Seconds Technical,0,tail_available,2986.0
+2984,401820334,2,168,3:39,103,Free Throw - Technical,1,tail_available,2986.0
+3156,401820334,4,340,5:37,215,Coach's Challenge (Overturned),0,no_supported_restart,
+3197,401820334,4,381,1:07,22,Personal Take Foul,0,no_supported_restart,
+3203,401820334,4,387,0:48.8,22,Personal Take Foul,0,no_supported_restart,
+3210,401820334,4,394,0:31.7,22,Personal Take Foul,0,no_supported_restart,
+3216,401820334,4,400,0:29.8,22,Personal Take Foul,0,no_supported_restart,
+3222,401820334,4,406,0:17.9,22,Personal Take Foul,0,no_supported_restart,
+3356,401820333,2,130,5:27,35,Technical Foul,0,tail_available,3361.0
+3357,401820333,2,131,5:27,103,Free Throw - Technical,0,tail_available,3361.0
+3449,401820333,3,223,4:38,35,Technical Foul,0,tail_available,3459.0
+3450,401820333,3,224,4:38,103,Free Throw - Technical,1,tail_available,3459.0
+3519,401820333,4,293,8:16,257,Transition Take Foul,0,hard_period_exclusion,
+3567,401820333,4,341,2:33,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+3595,401820333,4,369,0:21.8,35,Technical Foul,0,hard_period_exclusion,
+3597,401820333,4,371,0:21.8,35,Technical Foul,0,hard_period_exclusion,
+3599,401820333,4,373,0:21.8,103,Free Throw - Technical,1,hard_period_exclusion,
+3601,401820333,4,375,0:21.8,103,Free Throw - Technical,1,hard_period_exclusion,
+3773,401820330,2,166,0:32.7,40,Away from Play Foul,0,tail_available,3780.0
+3946,401820330,4,339,0:20.7,22,Personal Take Foul,0,no_supported_restart,
+3998,401820330,5,391,0:17.3,22,Personal Take Foul,0,no_supported_restart,
+4003,401820330,5,396,0:12.7,22,Personal Take Foul,0,no_supported_restart,
+4007,401820330,5,400,0:8.4,22,Personal Take Foul,0,no_supported_restart,
+4009,401820330,5,402,0:8.3,215,Coach's Challenge (Overturned),0,no_supported_restart,
+4053,401820331,1,36,5:38,215,Coach's Challenge (Overturned),0,tail_available,4057.0
+4312,401820331,4,295,9:06,37,Clear Path Foul,0,tail_available,4322.0
+4546,401820327,2,154,2:37,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+4547,401820327,2,155,2:37,35,Technical Foul,0,no_supported_restart,
+4548,401820327,2,156,2:37,103,Free Throw - Technical,1,no_supported_restart,
+4568,401820327,2,176,1:12,215,Coach's Challenge (Overturned),0,no_supported_restart,
+5006,401820328,3,251,0:36.2,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+5007,401820328,3,252,0:36.2,35,Technical Foul,0,no_supported_restart,
+5012,401820328,3,257,0:36.2,103,Free Throw - Technical,1,no_supported_restart,
+5202,401820324,1,104,0:3.6,215,Coach's Challenge (Overturned),0,no_supported_restart,
+5311,401820324,2,213,0:39.3,35,Technical Foul,0,hard_period_exclusion,
+5312,401820324,2,214,0:39.3,103,Free Throw - Technical,1,hard_period_exclusion,
+5383,401820324,3,285,3:12,257,Transition Take Foul,0,tail_available,5387.0
+5512,401820324,4,414,0:17.6,22,Personal Take Foul,0,no_supported_restart,
+5775,401820320,3,256,5:44,35,Technical Foul,0,tail_available,5779.0
+5776,401820320,3,257,5:44,103,Free Throw - Technical,0,tail_available,5779.0
+5925,401820320,4,406,0:1.2,22,Personal Take Foul,0,no_supported_restart,
+6356,401820318,1,51,4:23,279,Ref-Initiated Review (Overturned),0,tail_available,6362.0
+6357,401820318,1,52,4:23,279,Ref-Initiated Review (Overturned),0,tail_available,6362.0
+6481,401820318,2,176,1:53,35,Technical Foul,0,tail_available,6484.0
+6482,401820318,2,177,1:53,103,Free Throw - Technical,1,tail_available,6484.0
+6800,401820319,2,115,6:12,29,Defensive 3-Seconds Technical,0,tail_available,6809.0
+6801,401820319,2,116,6:12,103,Free Throw - Technical,1,tail_available,6809.0
+6890,401820319,3,205,6:35,35,Technical Foul,0,tail_available,6902.0
+6891,401820319,3,206,6:35,103,Free Throw - Technical,0,tail_available,6902.0
+7445,401820317,1,8,8:48,257,Transition Take Foul,0,tail_available,7448.0
+7551,401820317,2,114,5:44,279,Ref-Initiated Review (Overturned),0,tail_available,7571.0
+7743,401820317,4,306,6:24,215,Coach's Challenge (Overturned),0,tail_available,7783.0
+7777,401820317,4,340,2:35,257,Transition Take Foul,0,tail_available,7783.0
+7990,401820272,2,181,0:21.9,257,Transition Take Foul,0,tail_available,7993.0
+8107,401820272,4,298,7:53,35,Technical Foul,0,tail_available,8111.0
+8108,401820272,4,299,7:53,103,Free Throw - Technical,1,tail_available,8111.0
+8258,401820313,1,69,2:41,215,Coach's Challenge (Overturned),0,tail_available,8265.0
+8379,401820313,2,190,1:54,215,Coach's Challenge (Overturned),0,tail_available,8385.0
+8519,401820313,4,330,8:15,35,Technical Foul,0,tail_available,8529.0
+8520,401820313,4,331,8:15,103,Free Throw - Technical,1,tail_available,8529.0
+8523,401820313,4,334,8:11,35,Technical Foul,0,tail_available,8529.0
+8524,401820313,4,335,8:11,103,Free Throw - Technical,1,tail_available,8529.0
+8793,401820314,2,168,1:37,215,Coach's Challenge (Overturned),0,tail_available,8802.0
+9337,401820315,4,304,8:03,215,Coach's Challenge (Overturned),0,tail_available,9357.0
+9341,401820315,4,308,8:03,35,Technical Foul,0,tail_available,9357.0
+9342,401820315,4,309,8:03,103,Free Throw - Technical,1,tail_available,9357.0
+9787,401736395,1,31,5:56,215,Coach's Challenge (Overturned),0,tail_available,9798.0
+10235,401736396,2,104,7:38,40,Away from Play Foul,0,tail_available,10279.0
+10257,401736396,2,126,4:51,279,Ref-Initiated Review (Overturned),0,tail_available,10279.0
+10268,401736396,2,137,3:22,257,Transition Take Foul,0,tail_available,10279.0
+10299,401736396,3,168,9:49,35,Technical Foul,0,tail_available,10302.0
+10300,401736396,3,169,9:49,103,Free Throw - Technical,1,tail_available,10302.0
+10419,401736396,4,288,7:22,22,Personal Take Foul,0,tail_available,10425.0
+10739,401736397,3,238,2:16,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+10839,401736397,4,338,1:59,22,Personal Take Foul,0,tail_available,10855.0
+11017,401736393,2,153,3:23,257,Transition Take Foul,0,tail_available,11022.0
+11368,401736388,2,123,5:13,279,Ref-Initiated Review (Overturned),0,tail_available,11381.0
+11449,401736388,3,204,6:42,215,Coach's Challenge (Overturned),0,tail_available,11454.0
+12159,401736390,3,196,6:49,215,Coach's Challenge (Overturned),0,tail_available,12163.0
+12689,401736391,4,383,0:1.2,22,Personal Take Foul,0,no_supported_restart,
+12750,401736392,1,56,3:03,215,Coach's Challenge (Overturned),0,tail_available,12758.0
+13052,401736392,4,358,0:0.0,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+13170,401736387,2,116,5:55,215,Coach's Challenge (Overturned),0,tail_available,13181.0
+13340,401736387,4,286,7:15,35,Technical Foul,0,tail_available,13354.0
+13341,401736387,4,287,7:15,103,Free Throw - Technical,1,tail_available,13354.0
+13545,401736384,2,133,6:50,29,Defensive 3-Seconds Technical,0,tail_available,13548.0
+13546,401736384,2,134,6:50,103,Free Throw - Technical,1,tail_available,13548.0
+13705,401736384,3,293,0:0.0,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+14362,401736386,2,153,3:26,35,Technical Foul,0,tail_available,14377.0
+14363,401736386,2,154,3:26,103,Free Throw - Technical,0,tail_available,14377.0
+14443,401736386,3,234,4:53,215,Coach's Challenge (Overturned),0,tail_available,14454.0
+14577,401736382,1,20,7:40,35,Technical Foul,0,tail_available,14584.0
+14578,401736382,1,21,7:40,103,Free Throw - Technical,1,tail_available,14584.0
+14670,401736382,2,113,8:56,35,Technical Foul,0,tail_available,14674.0
+14672,401736382,2,115,8:56,103,Free Throw - Technical,1,tail_available,14674.0
+14781,401736382,3,224,7:55,40,Away from Play Foul,0,tail_available,14785.0
+14954,401736382,4,397,1:11,32,Flagrant Foul Type 1,0,no_supported_restart,
+14955,401736382,4,398,1:11,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+14956,401736382,4,399,1:11,104,Free Throw - Flagrant 1 of 2,1,no_supported_restart,
+14957,401736382,4,400,1:11,105,Free Throw - Flagrant 2 of 2,0,no_supported_restart,
+14970,401736382,4,413,0:9.7,22,Personal Take Foul,0,no_supported_restart,
+15211,401736383,3,225,1:52,32,Flagrant Foul Type 1,0,tail_available,15231.0
+15213,401736383,3,227,1:52,157,Free Throw - Flagrant 1 of 3,1,tail_available,15231.0
+15214,401736383,3,228,1:52,165,Free Throw - Flagrant 2 of 3,1,tail_available,15231.0
+15215,401736383,3,229,1:52,166,Free Throw - Flagrant 3 of 3,1,tail_available,15231.0
+15216,401736383,3,230,1:52,279,Ref-Initiated Review (Overturned),0,tail_available,15231.0
+15222,401736383,3,236,1:09,215,Coach's Challenge (Overturned),0,tail_available,15231.0
+15335,401736383,4,349,0:18.4,22,Personal Take Foul,0,no_supported_restart,
+15685,401736379,4,338,2:33,215,Coach's Challenge (Overturned),0,tail_available,15712.0
+15699,401736379,4,352,1:03,22,Personal Take Foul,0,tail_available,15712.0
+15803,401736380,1,83,0:12.5,40,Away from Play Foul,0,no_supported_restart,
+15897,401736380,2,177,0:0.3,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+16002,401736380,3,282,0:10.7,215,Coach's Challenge (Overturned),0,no_supported_restart,
+16006,401736380,3,286,0:10.7,40,Away from Play Foul,0,no_supported_restart,
+16046,401736380,4,326,7:25,215,Coach's Challenge (Overturned),0,tail_available,16084.0
+16072,401736380,4,352,4:31,215,Coach's Challenge (Overturned),0,tail_available,16084.0
+16451,401736381,4,333,1:42,215,Coach's Challenge (Overturned),0,no_supported_restart,
+16459,401736381,4,341,0:46.8,215,Coach's Challenge (Overturned),0,no_supported_restart,
+16728,401736376,3,250,2:48,215,Coach's Challenge (Overturned),0,tail_available,16740.0
+16736,401736376,3,258,2:14,257,Transition Take Foul,0,tail_available,16740.0
+16804,401736376,4,326,5:14,215,Coach's Challenge (Overturned),0,tail_available,16809.0
+17012,401736377,2,155,4:12,32,Flagrant Foul Type 1,0,tail_available,17034.0
+17014,401736377,2,157,4:12,279,Ref-Initiated Review (Overturned),0,tail_available,17034.0
+17015,401736377,2,158,4:12,104,Free Throw - Flagrant 1 of 2,1,tail_available,17034.0
+17016,401736377,2,159,4:12,105,Free Throw - Flagrant 2 of 2,1,tail_available,17034.0
+17232,401736377,4,375,0:15.0,22,Personal Take Foul,0,no_supported_restart,
+17248,401736377,4,391,0:7.2,22,Personal Take Foul,0,no_supported_restart,
+17431,401736378,3,176,8:22,215,Coach's Challenge (Overturned),0,tail_available,17445.0
+17848,401736374,3,258,1:07,40,Away from Play Foul,0,tail_available,17856.0
+17930,401736374,4,340,4:06,47,Too Many Players Technical,0,tail_available,17936.0
+17931,401736374,4,341,4:06,103,Free Throw - Technical,1,tail_available,17936.0
+18172,401736375,2,190,0:46.2,279,Ref-Initiated Review (Overturned),0,tail_available,18177.0
+18173,401736375,2,191,0:46.2,35,Technical Foul,0,tail_available,18177.0
+18174,401736375,2,192,0:46.2,103,Free Throw - Technical,0,tail_available,18177.0
+18398,401736372,1,33,4:28,279,Ref-Initiated Review (Overturned),0,tail_available,18402.0
+18607,401736372,3,242,3:06,40,Away from Play Foul,0,tail_available,18619.0
+18653,401736372,4,288,7:28,35,Technical Foul,0,tail_available,18715.0
+18654,401736372,4,289,7:28,103,Free Throw - Technical,1,tail_available,18715.0
+18710,401736372,4,345,2:34,215,Coach's Challenge (Overturned),0,tail_available,18715.0
+19098,401736373,4,363,0:38.8,22,Personal Take Foul,0,no_supported_restart,
+19238,401736369,2,132,6:06,215,Coach's Challenge (Overturned),0,tail_available,19255.0
+19320,401736369,3,214,7:14,40,Away from Play Foul,0,hard_period_exclusion,
+19326,401736369,3,220,6:41,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+19450,401736369,4,344,4:09,215,Coach's Challenge (Overturned),0,tail_available,19455.0
+20002,401736371,2,156,2:26,35,Technical Foul,0,hard_period_exclusion,
+20003,401736371,2,157,2:26,103,Free Throw - Technical,1,hard_period_exclusion,
+20288,401736367,1,62,2:49,215,Coach's Challenge (Overturned),0,tail_available,20299.0
+20413,401736367,2,187,1:39,279,Ref-Initiated Review (Overturned),0,tail_available,20420.0
+20750,401736368,2,114,6:12,37,Clear Path Foul,0,tail_available,20804.0
+20751,401736368,2,115,6:12,279,Ref-Initiated Review (Overturned),0,tail_available,20804.0
+20753,401736368,2,117,6:12,107,Free Throw - Clear Path 1 of 2,1,tail_available,20804.0
+20754,401736368,2,118,6:12,108,Free Throw - Clear Path 2 of 2,1,tail_available,20804.0
+20787,401736368,2,151,2:51,215,Coach's Challenge (Overturned),0,tail_available,20804.0
+20797,401736368,2,161,1:57,32,Flagrant Foul Type 1,0,tail_available,20804.0
+20799,401736368,2,163,1:57,279,Ref-Initiated Review (Overturned),0,tail_available,20804.0
+20800,401736368,2,164,1:57,104,Free Throw - Flagrant 1 of 2,1,tail_available,20804.0
+20801,401736368,2,165,1:57,105,Free Throw - Flagrant 2 of 2,1,tail_available,20804.0
+20825,401736368,3,189,9:17,29,Defensive 3-Seconds Technical,0,no_supported_restart,
+20826,401736368,3,190,9:17,103,Free Throw - Technical,1,no_supported_restart,
+20879,401736368,3,243,2:14,29,Defensive 3-Seconds Technical,0,no_supported_restart,
+20880,401736368,3,244,2:14,103,Free Throw - Technical,1,no_supported_restart,
+20929,401736368,4,293,7:07,32,Flagrant Foul Type 1,0,tail_available,20934.0
+20930,401736368,4,294,7:07,279,Ref-Initiated Review (Overturned),0,tail_available,20934.0
+20931,401736368,4,295,7:07,106,Free Throw - Flagrant 1 of 1,1,tail_available,20934.0
+21028,401736363,1,43,4:00,279,Ref-Initiated Review (Overturned),0,tail_available,21041.0
+21119,401736363,2,134,4:16,215,Coach's Challenge (Overturned),0,tail_available,21121.0
+21209,401736363,3,224,4:38,257,Transition Take Foul,0,tail_available,21241.0
+21228,401736363,3,243,3:06,32,Flagrant Foul Type 1,0,tail_available,21241.0
+21230,401736363,3,245,3:06,279,Ref-Initiated Review (Overturned),0,tail_available,21241.0
+21234,401736363,3,249,3:06,104,Free Throw - Flagrant 1 of 2,1,tail_available,21241.0
+21235,401736363,3,250,3:06,105,Free Throw - Flagrant 2 of 2,1,tail_available,21241.0
+21238,401736363,3,253,2:31,30,Double Technical Foul,0,tail_available,21241.0
+21312,401736363,4,327,3:34,215,Coach's Challenge (Overturned),0,tail_available,21356.0
+21437,401736364,1,67,2:27,40,Away from Play Foul,0,tail_available,21449.0
+21484,401736364,2,114,6:34,35,Technical Foul,0,tail_available,21495.0
+21488,401736364,2,118,6:34,103,Free Throw - Technical,1,tail_available,21495.0
+21871,401736365,2,135,3:25,35,Technical Foul,0,tail_available,21880.0
+21873,401736365,2,137,3:25,103,Free Throw - Technical,1,tail_available,21880.0
+22105,401736365,4,369,1:09,35,Technical Foul,0,tail_available,22116.0
+22106,401736365,4,370,1:09,103,Free Throw - Technical,1,tail_available,22116.0
+22149,401736366,1,28,6:11,29,Defensive 3-Seconds Technical,0,hard_period_exclusion,
+22150,401736366,1,29,6:11,103,Free Throw - Technical,1,hard_period_exclusion,
+22265,401736366,2,144,3:12,35,Technical Foul,0,tail_available,22269.0
+22266,401736366,2,145,3:12,103,Free Throw - Technical,1,tail_available,22269.0
+22395,401736366,4,274,9:21,215,Coach's Challenge (Overturned),0,tail_available,22465.0
+22447,401736366,4,326,2:18,257,Transition Take Foul,0,tail_available,22465.0
+22804,401736361,4,331,2:33,215,Coach's Challenge (Overturned),0,tail_available,22811.0
+22976,401736362,2,145,4:55,35,Technical Foul,0,tail_available,22979.0
+22977,401736362,2,146,4:55,103,Free Throw - Technical,1,tail_available,22979.0
+23136,401736362,4,305,8:21,215,Coach's Challenge (Overturned),0,no_supported_restart,
+23209,401736362,4,378,0:1.1,22,Personal Take Foul,0,no_supported_restart,
+23211,401736362,4,380,0:0.4,22,Personal Take Foul,0,no_supported_restart,
+23489,401736358,4,269,9:36,279,Ref-Initiated Review (Overturned),0,tail_available,23560.0
+23553,401736358,4,333,1:21,22,Personal Take Foul,0,tail_available,23560.0
+23776,401736359,3,209,7:15,32,Flagrant Foul Type 1,0,tail_available,23781.0
+23777,401736359,3,210,7:15,279,Ref-Initiated Review (Overturned),0,tail_available,23781.0
+23778,401736359,3,211,7:15,106,Free Throw - Flagrant 1 of 1,1,tail_available,23781.0
+23850,401736359,4,283,10:00,35,Technical Foul,0,tail_available,23942.0
+23851,401736359,4,284,10:00,103,Free Throw - Technical,1,tail_available,23942.0
+23936,401736359,4,369,1:08,22,Personal Take Foul,0,tail_available,23942.0
+24221,401736360,3,272,0:56.7,215,Coach's Challenge (Overturned),0,tail_available,24229.0
+24300,401736360,4,351,3:03,215,Coach's Challenge (Overturned),0,tail_available,24320.0
+24524,401736356,3,182,8:09,215,Coach's Challenge (Overturned),0,tail_available,24531.0
+24696,401736356,4,354,0:8.9,22,Personal Take Foul,0,no_supported_restart,
+25101,401736357,4,394,0:16.6,22,Personal Take Foul,0,no_supported_restart,
+25107,401736357,4,400,0:6.3,22,Personal Take Foul,0,no_supported_restart,
+25134,401736354,1,22,7:05,22,Personal Take Foul,0,tail_available,25143.0
+25277,401736354,2,165,0:51.1,22,Personal Take Foul,0,no_supported_restart,
+25317,401736354,3,205,7:36,40,Away from Play Foul,0,tail_available,25327.0
+25454,401736354,4,342,3:37,215,Coach's Challenge (Overturned),0,tail_available,25457.0
+25556,401736355,1,73,1:55,215,Coach's Challenge (Overturned),0,tail_available,25563.0
+25618,401736355,2,135,6:29,215,Coach's Challenge (Overturned),0,no_supported_restart,
+25653,401736355,2,170,2:00,29,Defensive 3-Seconds Technical,0,no_supported_restart,
+25654,401736355,2,171,2:00,103,Free Throw - Technical,0,no_supported_restart,
+25738,401736355,3,255,2:04,29,Defensive 3-Seconds Technical,0,no_supported_restart,
+25739,401736355,3,256,2:04,103,Free Throw - Technical,1,no_supported_restart,
+25764,401736355,3,281,0:0.0,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+25801,401736355,4,318,5:30,215,Coach's Challenge (Overturned),0,no_supported_restart,
+25831,401736355,4,348,1:27,22,Personal Take Foul,0,no_supported_restart,
+25836,401736355,4,353,1:06,22,Personal Take Foul,0,no_supported_restart,
+26084,401736352,3,226,3:57,215,Coach's Challenge (Overturned),0,no_supported_restart,
+26126,401736352,3,268,0:3.7,36,Double Personal Foul,0,no_supported_restart,
+26127,401736352,3,269,0:3.7,35,Technical Foul,0,no_supported_restart,
+26128,401736352,3,270,0:3.7,103,Free Throw - Technical,1,no_supported_restart,
+26247,401736353,1,19,7:25,215,Coach's Challenge (Overturned),0,tail_available,26252.0
+26566,401736353,4,338,5:54,35,Technical Foul,0,no_supported_restart,
+26567,401736353,4,339,5:54,103,Free Throw - Technical,0,no_supported_restart,
+26614,401736353,4,386,0:18.9,22,Personal Take Foul,0,no_supported_restart,
+26860,401736349,3,236,3:57,29,Defensive 3-Seconds Technical,0,tail_available,26863.0
+26861,401736349,3,237,3:57,103,Free Throw - Technical,1,tail_available,26863.0
+27167,401736350,2,166,0:58.5,215,Coach's Challenge (Overturned),0,tail_available,27171.0
+27217,401736350,3,216,5:02,29,Defensive 3-Seconds Technical,0,hard_period_exclusion,
+27218,401736350,3,217,5:02,103,Free Throw - Technical,1,hard_period_exclusion,
+27277,401736350,4,276,8:36,35,Technical Foul,0,hard_period_exclusion,
+27278,401736350,4,277,8:36,103,Free Throw - Technical,1,hard_period_exclusion,
+27291,401736350,4,290,6:48,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+27363,401736350,4,362,0:3.2,22,Personal Take Foul,0,hard_period_exclusion,
+27591,401736351,3,223,2:54,215,Coach's Challenge (Overturned),0,tail_available,27600.0
+27594,401736351,3,226,2:43,32,Flagrant Foul Type 1,0,tail_available,27600.0
+27596,401736351,3,228,2:43,279,Ref-Initiated Review (Overturned),0,tail_available,27600.0
+27597,401736351,3,229,2:43,104,Free Throw - Flagrant 1 of 2,1,tail_available,27600.0
+27598,401736351,3,230,2:43,105,Free Throw - Flagrant 2 of 2,1,tail_available,27600.0
+27688,401736351,4,320,4:02,279,Ref-Initiated Review (Overturned),0,tail_available,27695.0
+27689,401736351,4,321,4:02,35,Technical Foul,0,tail_available,27695.0
+27690,401736351,4,322,4:02,103,Free Throw - Technical,1,tail_available,27695.0
+27988,401736346,3,253,1:37,215,Coach's Challenge (Overturned),0,tail_available,27992.0
+28258,401736347,2,162,2:09,215,Coach's Challenge (Overturned),0,tail_available,28278.0
+28261,401736347,2,165,1:58,35,Technical Foul,0,tail_available,28278.0
+28262,401736347,2,166,1:58,103,Free Throw - Technical,1,tail_available,28278.0
+28272,401736347,2,176,0:40.9,29,Defensive 3-Seconds Technical,0,tail_available,28278.0
+28273,401736347,2,177,0:40.9,103,Free Throw - Technical,1,tail_available,28278.0
+28306,401736347,3,210,6:26,32,Flagrant Foul Type 1,0,tail_available,28322.0
+28307,401736347,3,211,6:26,279,Ref-Initiated Review (Overturned),0,tail_available,28322.0
+28312,401736347,3,216,6:26,104,Free Throw - Flagrant 1 of 2,0,tail_available,28322.0
+28314,401736347,3,218,6:26,105,Free Throw - Flagrant 2 of 2,1,tail_available,28322.0
+28558,401736348,1,78,2:22,47,Too Many Players Technical,0,tail_available,28562.0
+28559,401736348,1,79,2:22,103,Free Throw - Technical,1,tail_available,28562.0
+28594,401736348,2,114,8:05,35,Technical Foul,0,tail_available,28642.0
+28595,401736348,2,115,8:05,103,Free Throw - Technical,1,tail_available,28642.0
+28596,401736348,2,116,8:05,35,Technical Foul,0,tail_available,28642.0
+28597,401736348,2,117,8:05,103,Free Throw - Technical,1,tail_available,28642.0
+28627,401736348,2,147,4:57,29,Defensive 3-Seconds Technical,0,tail_available,28642.0
+28629,401736348,2,149,4:57,103,Free Throw - Technical,1,tail_available,28642.0
+28850,401736348,4,370,0:32.3,22,Personal Take Foul,0,no_supported_restart,
+29156,401736343,4,296,5:22,215,Coach's Challenge (Overturned),0,no_supported_restart,
+29201,401736343,4,341,0:7.2,22,Personal Take Foul,0,no_supported_restart,
+29204,401736343,4,344,0:6.4,22,Personal Take Foul,0,no_supported_restart,
+29290,401736344,1,79,1:39,40,Away from Play Foul,0,hard_period_exclusion,
+29357,401736344,2,146,5:27,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+29762,401736345,2,171,1:28,35,Technical Foul,0,tail_available,29770.0
+29763,401736345,2,172,1:28,103,Free Throw - Technical,1,tail_available,29770.0
+29922,401736345,4,331,4:59,35,Technical Foul,0,tail_available,29934.0
+29923,401736345,4,332,4:59,103,Free Throw - Technical,0,tail_available,29934.0
+29928,401736345,4,337,4:22,257,Transition Take Foul,0,tail_available,29934.0
+30105,401736339,2,133,5:48,215,Coach's Challenge (Overturned),0,tail_available,30110.0
+30106,401736339,2,134,5:48,279,Ref-Initiated Review (Overturned),0,tail_available,30110.0
+30292,401736339,4,320,6:04,215,Coach's Challenge (Overturned),0,tail_available,30301.0
+30737,401736340,4,392,0:26.4,22,Personal Take Foul,0,no_supported_restart,
+31068,401736341,4,323,4:30,215,Coach's Challenge (Overturned),0,no_supported_restart,
+31108,401736341,4,363,0:40.9,215,Coach's Challenge (Overturned),0,no_supported_restart,
+31114,401736341,4,369,0:22.4,22,Personal Take Foul,0,no_supported_restart,
+31239,401736342,2,110,7:28,215,Coach's Challenge (Overturned),0,tail_available,31249.0
+31392,401736342,3,263,2:07,35,Technical Foul,0,tail_available,31395.0
+31393,401736342,3,264,2:07,103,Free Throw - Technical,1,tail_available,31395.0
+31525,401736338,1,29,6:22,35,Technical Foul,0,tail_available,31528.0
+31526,401736338,1,30,6:22,103,Free Throw - Technical,1,tail_available,31528.0
+31610,401736338,2,114,7:20,35,Technical Foul,0,tail_available,31626.0
+31611,401736338,2,115,7:20,103,Free Throw - Technical,1,tail_available,31626.0
+31621,401736338,2,125,6:12,37,Clear Path Foul,0,tail_available,31626.0
+31622,401736338,2,126,6:12,279,Ref-Initiated Review (Overturned),0,tail_available,31626.0
+31623,401736338,2,127,6:12,107,Free Throw - Clear Path 1 of 2,1,tail_available,31626.0
+31624,401736338,2,128,6:12,108,Free Throw - Clear Path 2 of 2,1,tail_available,31626.0
+31778,401736338,4,282,7:34,215,Coach's Challenge (Overturned),0,tail_available,31843.0
+31836,401736338,4,340,1:03,35,Technical Foul,0,tail_available,31843.0
+31837,401736338,4,341,1:03,103,Free Throw - Technical,1,tail_available,31843.0
+32048,401736333,3,199,8:53,35,Technical Foul,0,tail_available,32051.0
+32049,401736333,3,200,8:53,103,Free Throw - Technical,1,tail_available,32051.0
+32218,401736333,4,369,0:33.8,32,Flagrant Foul Type 1,0,no_supported_restart,
+32219,401736333,4,370,0:33.8,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+32222,401736333,4,373,0:33.8,104,Free Throw - Flagrant 1 of 2,0,no_supported_restart,
+32224,401736333,4,375,0:33.8,105,Free Throw - Flagrant 2 of 2,1,no_supported_restart,
+32285,401736334,1,56,3:12,29,Defensive 3-Seconds Technical,0,tail_available,32292.0
+32286,401736334,1,57,3:12,103,Free Throw - Technical,1,tail_available,32292.0
+32358,401736334,2,129,4:15,279,Ref-Initiated Review (Overturned),0,tail_available,32373.0
+32798,401736335,3,209,5:38,32,Flagrant Foul Type 1,0,tail_available,32814.0
+32799,401736335,3,210,5:38,279,Ref-Initiated Review (Overturned),0,tail_available,32814.0
+32800,401736335,3,211,5:38,157,Free Throw - Flagrant 1 of 3,1,tail_available,32814.0
+32801,401736335,3,212,5:38,165,Free Throw - Flagrant 2 of 3,1,tail_available,32814.0
+32802,401736335,3,213,5:38,166,Free Throw - Flagrant 3 of 3,0,tail_available,32814.0
+32923,401736335,4,334,2:22,35,Technical Foul,0,no_supported_restart,
+32924,401736335,4,335,2:22,103,Free Throw - Technical,1,no_supported_restart,
+32962,401736335,4,373,0:15.0,22,Personal Take Foul,0,no_supported_restart,
+32968,401736335,4,379,0:9.6,22,Personal Take Foul,0,no_supported_restart,
+33196,401736336,3,222,3:36,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+33198,401736336,3,224,3:36,215,Coach's Challenge (Overturned),0,no_supported_restart,
+33242,401736336,3,268,0:4.9,215,Coach's Challenge (Overturned),0,no_supported_restart,
+33299,401736336,4,325,4:28,215,Coach's Challenge (Overturned),0,tail_available,33305.0
+33351,401736337,1,17,7:08,279,Ref-Initiated Review (Overturned),0,tail_available,33356.0
+33470,401736337,2,136,5:11,215,Coach's Challenge (Overturned),0,tail_available,33476.0
+33703,401736337,4,369,0:44.5,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+33710,401736337,4,376,0:22.9,22,Personal Take Foul,0,no_supported_restart,
+33711,401736337,4,377,0:21.6,22,Personal Take Foul,0,no_supported_restart,
+33718,401736337,4,384,0:13.9,22,Personal Take Foul,0,no_supported_restart,
+33731,401736329,1,6,9:25,35,Technical Foul,0,tail_available,33777.0
+33732,401736329,1,7,9:25,103,Free Throw - Technical,1,tail_available,33777.0
+33733,401736329,1,8,9:25,279,Ref-Initiated Review (Overturned),0,tail_available,33777.0
+33771,401736329,1,46,5:34,215,Coach's Challenge (Overturned),0,tail_available,33777.0
+33864,401736329,2,139,6:39,29,Defensive 3-Seconds Technical,0,no_supported_restart,
+33865,401736329,2,140,6:39,103,Free Throw - Technical,0,no_supported_restart,
+33932,401736329,2,207,0:12.6,29,Defensive 3-Seconds Technical,0,no_supported_restart,
+33933,401736329,2,208,0:12.6,103,Free Throw - Technical,1,no_supported_restart,
+34008,401736329,3,283,2:07,29,Defensive 3-Seconds Technical,0,tail_available,34012.0
+34009,401736329,3,284,2:07,103,Free Throw - Technical,1,tail_available,34012.0
+34047,401736329,4,322,8:38,32,Flagrant Foul Type 1,0,no_supported_restart,
+34048,401736329,4,323,8:38,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+34050,401736329,4,325,8:38,106,Free Throw - Flagrant 1 of 1,1,no_supported_restart,
+34123,401736329,4,398,1:17,215,Coach's Challenge (Overturned),0,no_supported_restart,
+34124,401736329,4,399,0:53.3,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+34166,401736329,5,441,0:10.8,22,Personal Take Foul,0,no_supported_restart,
+34167,401736329,5,442,0:4.6,22,Personal Take Foul,0,no_supported_restart,
+34337,401736328,2,159,1:54,35,Technical Foul,0,tail_available,34341.0
+34338,401736328,2,160,1:54,103,Free Throw - Technical,1,tail_available,34341.0
+34651,401736330,2,107,8:06,32,Flagrant Foul Type 1,0,tail_available,34659.0
+34652,401736330,2,108,8:06,279,Ref-Initiated Review (Overturned),0,tail_available,34659.0
+34655,401736330,2,111,8:06,157,Free Throw - Flagrant 1 of 3,1,tail_available,34659.0
+34656,401736330,2,112,8:06,165,Free Throw - Flagrant 2 of 3,1,tail_available,34659.0
+34657,401736330,2,113,8:06,166,Free Throw - Flagrant 3 of 3,1,tail_available,34659.0
+35089,401736331,2,161,3:22,215,Coach's Challenge (Overturned),0,tail_available,35098.0
+35209,401736331,3,281,0:7.2,22,Personal Take Foul,0,tail_available,35212.0
+35778,401736327,2,101,8:47,29,Defensive 3-Seconds Technical,0,hard_period_exclusion,
+35779,401736327,2,102,8:47,103,Free Throw - Technical,1,hard_period_exclusion,
+35799,401736327,2,122,6:26,35,Technical Foul,0,hard_period_exclusion,
+35800,401736327,2,123,6:26,103,Free Throw - Technical,0,hard_period_exclusion,
+35911,401736327,3,234,4:41,257,Transition Take Foul,0,tail_available,35936.0
+35928,401736327,3,251,2:54,215,Coach's Challenge (Overturned),0,tail_available,35936.0
+36056,401736327,4,379,0:20.5,22,Personal Take Foul,0,no_supported_restart,
+36065,401736327,4,388,0:12.5,22,Personal Take Foul,0,no_supported_restart,
+36073,401736327,4,396,0:3.6,22,Personal Take Foul,0,no_supported_restart,
+36196,401736322,2,119,6:06,215,Coach's Challenge (Overturned),0,tail_available,36202.0
+36383,401736322,4,306,6:15,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+36459,401736322,4,382,0:11.3,22,Personal Take Foul,0,no_supported_restart,
+36467,401736322,4,390,0:5.0,22,Personal Take Foul,0,no_supported_restart,
+36665,401736323,3,190,8:39,29,Defensive 3-Seconds Technical,0,tail_available,36686.0
+36666,401736323,3,191,8:39,103,Free Throw - Technical,1,tail_available,36686.0
+36675,401736323,3,200,7:51,32,Flagrant Foul Type 1,0,tail_available,36686.0
+36676,401736323,3,201,7:51,279,Ref-Initiated Review (Overturned),0,tail_available,36686.0
+36677,401736323,3,202,7:51,106,Free Throw - Flagrant 1 of 1,1,tail_available,36686.0
+36766,401736323,4,291,7:43,29,Defensive 3-Seconds Technical,0,tail_available,36782.0
+36767,401736323,4,292,7:43,103,Free Throw - Technical,1,tail_available,36782.0
+37064,401736324,3,244,4:05,22,Personal Take Foul,0,tail_available,37075.0
+37214,401736324,4,394,0:12.3,22,Personal Take Foul,0,no_supported_restart,
+37421,401736325,3,197,9:24,35,Technical Foul,0,tail_available,37453.0
+37422,401736325,3,198,9:24,103,Free Throw - Technical,1,tail_available,37453.0
+37447,401736325,3,223,6:35,279,Ref-Initiated Review (Overturned),0,tail_available,37453.0
+37596,401736325,4,372,0:21.0,215,Coach's Challenge (Overturned),0,tail_available,37602.0
+37757,401736326,2,142,5:33,35,Technical Foul,0,tail_available,37769.0
+37759,401736326,2,144,5:33,103,Free Throw - Technical,1,tail_available,37769.0
+38110,401736318,2,117,6:35,30,Double Technical Foul,0,no_supported_restart,
+38118,401736318,2,125,6:35,35,Technical Foul,0,no_supported_restart,
+38119,401736318,2,126,6:35,35,Technical Foul,0,no_supported_restart,
+38169,401736318,2,176,0:0.0,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+38186,401736318,3,193,8:37,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+38347,401736318,4,354,2:06,257,Transition Take Foul,0,tail_available,38352.0
+39477,401736316,1,17,7:23,32,Flagrant Foul Type 1,0,hard_period_exclusion,
+39478,401736316,1,18,7:23,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+39479,401736316,1,19,7:23,157,Free Throw - Flagrant 1 of 3,1,hard_period_exclusion,
+39480,401736316,1,20,7:23,165,Free Throw - Flagrant 2 of 3,1,hard_period_exclusion,
+39481,401736316,1,21,7:23,166,Free Throw - Flagrant 3 of 3,1,hard_period_exclusion,
+39920,401736317,1,74,0:0.0,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+40396,401736315,2,179,1:03,215,Coach's Challenge (Overturned),0,tail_available,40398.0
+40443,401736315,3,226,6:05,35,Technical Foul,0,tail_available,40447.0
+40445,401736315,3,228,6:05,103,Free Throw - Technical,1,tail_available,40447.0
+40539,401736315,4,322,1:58,22,Personal Take Foul,0,hard_period_exclusion,
+40541,401736315,4,324,1:58,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+40876,401736310,4,307,3:16,215,Coach's Challenge (Overturned),0,tail_available,40900.0
+40892,401736310,4,323,1:12,35,Technical Foul,0,tail_available,40900.0
+40893,401736310,4,324,1:12,103,Free Throw - Technical,1,tail_available,40900.0
+41595,401736313,3,268,2:31,29,Defensive 3-Seconds Technical,0,tail_available,41607.0
+41596,401736313,3,269,2:31,103,Free Throw - Technical,0,tail_available,41607.0
+41665,401736313,4,338,6:11,30,Double Technical Foul,0,hard_period_exclusion,
+41666,401736313,4,339,6:11,103,Free Throw - Technical,1,hard_period_exclusion,
+41669,401736313,4,342,6:11,35,Technical Foul,0,hard_period_exclusion,
+41670,401736313,4,343,6:11,35,Technical Foul,0,hard_period_exclusion,
+41671,401736313,4,344,6:11,103,Free Throw - Technical,1,hard_period_exclusion,
+41727,401736313,4,400,0:14.7,22,Personal Take Foul,0,hard_period_exclusion,
+41802,401736312,1,71,1:35,257,Transition Take Foul,0,hard_period_exclusion,
+41878,401736312,2,147,2:59,35,Technical Foul,0,tail_available,41892.0
+41879,401736312,2,148,2:59,103,Free Throw - Technical,1,tail_available,41892.0
+42301,401736314,3,204,7:18,32,Flagrant Foul Type 1,0,tail_available,42308.0
+42304,401736314,3,207,7:18,279,Ref-Initiated Review (Overturned),0,tail_available,42308.0
+42305,401736314,3,208,7:18,104,Free Throw - Flagrant 1 of 2,1,tail_available,42308.0
+42306,401736314,3,209,7:18,105,Free Throw - Flagrant 2 of 2,1,tail_available,42308.0
+42652,401736309,3,194,8:50,257,Transition Take Foul,0,tail_available,42699.0
+42694,401736309,3,236,4:32,279,Ref-Initiated Review (Overturned),0,tail_available,42699.0
+42803,401736309,4,345,1:37,215,Coach's Challenge (Overturned),0,tail_available,42806.0
+42948,401736308,2,130,4:13,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+42956,401736308,2,138,3:14,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+43116,401736308,4,298,3:51,32,Flagrant Foul Type 1,0,tail_available,43122.0
+43117,401736308,4,299,3:51,279,Ref-Initiated Review (Overturned),0,tail_available,43122.0
+43118,401736308,4,300,3:51,104,Free Throw - Flagrant 1 of 2,1,tail_available,43122.0
+43119,401736308,4,301,3:51,105,Free Throw - Flagrant 2 of 2,1,tail_available,43122.0
+43187,401736305,1,27,6:06,257,Transition Take Foul,0,tail_available,43190.0
+43406,401736305,3,246,4:52,35,Technical Foul,0,tail_available,43435.0
+43407,401736305,3,247,4:52,103,Free Throw - Technical,1,tail_available,43435.0
+43424,401736305,3,264,2:54,215,Coach's Challenge (Overturned),0,tail_available,43435.0
+43589,401736306,1,30,5:34,215,Coach's Challenge (Overturned),0,tail_available,43591.0
+43660,401736306,2,101,7:00,35,Technical Foul,0,tail_available,43672.0
+43661,401736306,2,102,7:00,103,Free Throw - Technical,0,tail_available,43672.0
+43896,401736306,4,337,1:30,215,Coach's Challenge (Overturned),0,no_supported_restart,
+43906,401736306,4,347,0:36.6,215,Coach's Challenge (Overturned),0,no_supported_restart,
+43911,401736306,4,352,0:14.4,22,Personal Take Foul,0,no_supported_restart,
+43914,401736306,4,355,0:13.2,22,Personal Take Foul,0,no_supported_restart,
+43968,401736307,1,48,3:31,257,Transition Take Foul,0,tail_available,43976.0
+44170,401736307,3,250,3:32,215,Coach's Challenge (Overturned),0,tail_available,44174.0
+44464,401736302,2,166,1:24,35,Technical Foul,0,hard_period_exclusion,
+44466,401736302,2,168,1:24,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+44467,401736302,2,169,1:24,103,Free Throw - Technical,1,hard_period_exclusion,
+44525,401736302,3,227,5:08,35,Technical Foul,0,tail_available,44542.0
+44526,401736302,3,228,5:08,103,Free Throw - Technical,1,tail_available,44542.0
+44603,401736302,4,305,6:30,40,Away from Play Foul,0,tail_available,44613.0
+44825,401736303,2,166,2:57,32,Flagrant Foul Type 1,0,tail_available,44834.0
+44826,401736303,2,167,2:57,279,Ref-Initiated Review (Overturned),0,tail_available,44834.0
+44827,401736303,2,168,2:57,157,Free Throw - Flagrant 1 of 3,1,tail_available,44834.0
+44828,401736303,2,169,2:57,165,Free Throw - Flagrant 2 of 3,1,tail_available,44834.0
+44829,401736303,2,170,2:57,166,Free Throw - Flagrant 3 of 3,1,tail_available,44834.0
+45096,401736304,1,53,4:08,29,Defensive 3-Seconds Technical,0,tail_available,45102.0
+45097,401736304,1,54,4:08,103,Free Throw - Technical,1,tail_available,45102.0
+45343,401736304,3,300,0:36.3,37,Clear Path Foul,0,no_supported_restart,
+45344,401736304,3,301,0:36.3,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+45345,401736304,3,302,0:36.3,107,Free Throw - Clear Path 1 of 2,1,no_supported_restart,
+45346,401736304,3,303,0:36.3,108,Free Throw - Clear Path 2 of 2,1,no_supported_restart,
+45355,401736304,3,312,0:3.4,35,Technical Foul,0,no_supported_restart,
+45356,401736304,3,313,0:3.4,103,Free Throw - Technical,1,no_supported_restart,
+45655,401736301,3,193,8:37,215,Coach's Challenge (Overturned),0,tail_available,45710.0
+45694,401736301,3,232,4:49,215,Coach's Challenge (Overturned),0,tail_available,45710.0
+45702,401736301,3,240,3:20,32,Flagrant Foul Type 1,0,tail_available,45710.0
+45706,401736301,3,244,3:20,279,Ref-Initiated Review (Overturned),0,tail_available,45710.0
+45707,401736301,3,245,3:20,104,Free Throw - Flagrant 1 of 2,1,tail_available,45710.0
+45708,401736301,3,246,3:20,105,Free Throw - Flagrant 2 of 2,1,tail_available,45710.0
+46185,401736296,4,328,4:22,215,Coach's Challenge (Overturned),0,tail_available,46189.0
+46646,401736298,1,47,4:49,279,Ref-Initiated Review (Overturned),0,tail_available,46650.0
+46836,401736298,3,237,3:43,40,Away from Play Foul,0,tail_available,46866.0
+46843,401736298,3,244,2:52,35,Technical Foul,0,tail_available,46866.0
+46844,401736298,3,245,2:52,103,Free Throw - Technical,1,tail_available,46866.0
+46862,401736298,3,263,1:13,215,Coach's Challenge (Overturned),0,tail_available,46866.0
+47070,401736299,2,108,8:03,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+47158,401736299,2,196,0:39.6,35,Technical Foul,0,no_supported_restart,
+47159,401736299,2,197,0:39.6,103,Free Throw - Technical,1,no_supported_restart,
+47205,401736299,3,243,6:16,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+47206,401736299,3,244,6:16,35,Technical Foul,0,hard_period_exclusion,
+47207,401736299,3,245,6:16,103,Free Throw - Technical,1,hard_period_exclusion,
+47312,401736299,4,350,4:57,215,Coach's Challenge (Overturned),0,tail_available,47316.0
+47518,401736300,2,159,3:11,40,Away from Play Foul,0,tail_available,47529.0
+47519,401736300,2,160,3:11,279,Ref-Initiated Review (Overturned),0,tail_available,47529.0
+47569,401736300,3,210,8:18,215,Coach's Challenge (Overturned),0,tail_available,47573.0
+47735,401736300,4,376,0:29.5,22,Personal Take Foul,0,no_supported_restart,
+47740,401736300,4,381,0:19.3,22,Personal Take Foul,0,no_supported_restart,
+47745,401736300,4,386,0:5.5,22,Personal Take Foul,0,no_supported_restart,
+47748,401736300,4,389,0:3.8,22,Personal Take Foul,0,no_supported_restart,
+47969,401736292,3,217,7:51,32,Flagrant Foul Type 1,0,tail_available,47985.0
+47970,401736292,3,218,7:51,279,Ref-Initiated Review (Overturned),0,tail_available,47985.0
+47971,401736292,3,219,7:51,104,Free Throw - Flagrant 1 of 2,1,tail_available,47985.0
+47972,401736292,3,220,7:51,105,Free Throw - Flagrant 2 of 2,1,tail_available,47985.0
+48370,401736291,3,210,8:10,215,Coach's Challenge (Overturned),0,tail_available,48426.0
+48397,401736291,3,237,5:17,32,Flagrant Foul Type 1,0,tail_available,48426.0
+48399,401736291,3,239,5:17,279,Ref-Initiated Review (Overturned),0,tail_available,48426.0
+48404,401736291,3,244,5:17,104,Free Throw - Flagrant 1 of 2,1,tail_available,48426.0
+48405,401736291,3,245,5:17,105,Free Throw - Flagrant 2 of 2,1,tail_available,48426.0
+48779,401736295,3,215,5:12,257,Transition Take Foul,0,tail_available,48792.0
+48970,401736293,1,33,7:00,215,Coach's Challenge (Overturned),0,tail_available,48980.0
+49079,401736293,2,142,5:36,279,Ref-Initiated Review (Overturned),0,tail_available,49084.0
+49266,401736293,4,329,5:38,215,Coach's Challenge (Overturned),0,tail_available,49272.0
+49450,401736294,2,122,7:10,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+49477,401736294,2,149,4:47,35,Technical Foul,0,hard_period_exclusion,
+49478,401736294,2,150,4:47,103,Free Throw - Technical,1,hard_period_exclusion,
+49524,401736294,2,196,0:3.3,31,Flagrant Foul Type 2,0,hard_period_exclusion,
+49525,401736294,2,197,0:3.3,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+49527,401736294,2,199,0:3.3,104,Free Throw - Flagrant 1 of 2,1,hard_period_exclusion,
+49528,401736294,2,200,0:3.3,105,Free Throw - Flagrant 2 of 2,1,hard_period_exclusion,
+49575,401736294,3,247,5:31,35,Technical Foul,0,hard_period_exclusion,
+49576,401736294,3,248,5:31,103,Free Throw - Technical,1,hard_period_exclusion,
+49616,401736294,3,288,2:10,29,Defensive 3-Seconds Technical,0,hard_period_exclusion,
+49617,401736294,3,289,2:10,103,Free Throw - Technical,0,hard_period_exclusion,
+50239,401736285,2,152,4:03,32,Flagrant Foul Type 1,0,tail_available,50244.0
+50240,401736285,2,153,4:03,279,Ref-Initiated Review (Overturned),0,tail_available,50244.0
+50241,401736285,2,154,4:03,104,Free Throw - Flagrant 1 of 2,1,tail_available,50244.0
+50242,401736285,2,155,4:03,105,Free Throw - Flagrant 2 of 2,1,tail_available,50244.0
+50317,401736285,3,230,5:43,35,Technical Foul,0,tail_available,50327.0
+50318,401736285,3,231,5:43,103,Free Throw - Technical,1,tail_available,50327.0
+50937,401736287,2,91,9:17,29,Defensive 3-Seconds Technical,0,tail_available,50940.0
+50938,401736287,2,92,9:17,103,Free Throw - Technical,1,tail_available,50940.0
+51579,401736288,4,376,1:50,279,Ref-Initiated Review (Overturned),0,tail_available,51584.0
+51958,401736289,4,362,2:57,215,Coach's Challenge (Overturned),0,tail_available,51960.0
+52207,401736284,2,132,6:15,257,Transition Take Foul,0,tail_available,52216.0
+52323,401736284,3,248,3:39,215,Coach's Challenge (Overturned),0,tail_available,52340.0
+52337,401736284,3,262,2:34,40,Away from Play Foul,0,tail_available,52340.0
+52547,401736281,1,99,1:06,35,Technical Foul,0,tail_available,52558.0
+52548,401736281,1,100,1:06,103,Free Throw - Technical,1,tail_available,52558.0
+52895,401736281,4,447,1:12,35,Technical Foul,0,tail_available,52906.0
+52896,401736281,4,448,1:12,103,Free Throw - Technical,1,tail_available,52906.0
+53052,401736282,2,135,4:07,279,Ref-Initiated Review (Overturned),0,tail_available,53071.0
+53105,401736282,3,188,9:02,35,Technical Foul,0,hard_period_exclusion,
+53106,401736282,3,189,9:02,35,Technical Foul,0,hard_period_exclusion,
+53224,401736282,4,307,4:08,215,Coach's Challenge (Overturned),0,tail_available,53241.0
+53619,401736283,4,358,0:45.2,22,Personal Take Foul,0,no_supported_restart,
+53627,401736283,4,366,0:38.0,22,Personal Take Foul,0,no_supported_restart,
+53634,401736283,4,373,0:21.2,22,Personal Take Foul,0,no_supported_restart,
+53643,401736278,1,2,9:42,29,Defensive 3-Seconds Technical,0,no_supported_restart,
+53644,401736278,1,3,9:42,103,Free Throw - Technical,1,no_supported_restart,
+53729,401736278,1,88,0:0.0,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+53860,401736278,3,219,6:25,215,Coach's Challenge (Overturned),0,tail_available,53865.0
+54162,401736279,2,148,5:40,35,Technical Foul,0,tail_available,54179.0
+54164,401736279,2,150,5:40,103,Free Throw - Technical,1,tail_available,54179.0
+54264,401736279,3,250,4:56,257,Transition Take Foul,0,tail_available,54281.0
+54592,401736280,2,169,2:52,257,Transition Take Foul,0,tail_available,54600.0
+54620,401736280,3,197,9:36,35,Technical Foul,0,tail_available,54703.0
+54621,401736280,3,198,9:36,103,Free Throw - Technical,1,tail_available,54703.0
+54645,401736280,3,222,7:15,35,Technical Foul,0,tail_available,54703.0
+54646,401736280,3,223,7:15,103,Free Throw - Technical,1,tail_available,54703.0
+54699,401736280,3,276,1:29,215,Coach's Challenge (Overturned),0,tail_available,54703.0
+54743,401736280,4,320,7:28,215,Coach's Challenge (Overturned),0,tail_available,54758.0
+54754,401736280,4,331,6:49,35,Technical Foul,0,tail_available,54758.0
+54756,401736280,4,333,6:49,103,Free Throw - Technical,1,tail_available,54758.0
+54881,401736276,1,62,3:07,32,Flagrant Foul Type 1,0,tail_available,54888.0
+54882,401736276,1,63,3:07,279,Ref-Initiated Review (Overturned),0,tail_available,54888.0
+54883,401736276,1,64,3:07,106,Free Throw - Flagrant 1 of 1,1,tail_available,54888.0
+55462,401736277,3,265,2:45,257,Transition Take Foul,0,tail_available,55483.0
+55480,401736277,3,283,0:44.1,35,Technical Foul,0,tail_available,55483.0
+55481,401736277,3,284,0:44.1,103,Free Throw - Technical,1,tail_available,55483.0
+55579,401736277,4,382,0:54.0,22,Personal Take Foul,0,tail_available,55584.0
+55780,401736272,2,193,0:2.1,215,Coach's Challenge (Overturned),0,no_supported_restart,
+55781,401736272,2,194,0:2.1,40,Away from Play Foul,0,no_supported_restart,
+55877,401736272,3,290,1:21,29,Defensive 3-Seconds Technical,0,tail_available,55885.0
+55878,401736272,3,291,1:21,103,Free Throw - Technical,0,tail_available,55885.0
+55895,401736272,4,308,9:09,32,Flagrant Foul Type 1,0,tail_available,55915.0
+55896,401736272,4,309,9:09,279,Ref-Initiated Review (Overturned),0,tail_available,55915.0
+55898,401736272,4,311,9:09,157,Free Throw - Flagrant 1 of 3,1,tail_available,55915.0
+55899,401736272,4,312,9:09,165,Free Throw - Flagrant 2 of 3,1,tail_available,55915.0
+55900,401736272,4,313,9:09,166,Free Throw - Flagrant 3 of 3,1,tail_available,55915.0
+56232,401736269,3,257,2:51,279,Ref-Initiated Review (Overturned),0,tail_available,56234.0
+56617,401736273,3,268,3:43,215,Coach's Challenge (Overturned),0,tail_available,56622.0
+56816,401736274,1,40,5:22,215,Coach's Challenge (Overturned),0,tail_available,56820.0
+57136,401736274,4,360,4:35,35,Technical Foul,0,tail_available,57150.0
+57137,401736274,4,361,4:35,103,Free Throw - Technical,1,tail_available,57150.0
+57258,401736275,1,80,0:1.1,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+57502,401736275,4,324,1:57,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+57522,401736275,4,344,0:38.1,22,Personal Take Foul,0,no_supported_restart,
+57523,401736275,4,345,0:35.0,22,Personal Take Foul,0,no_supported_restart,
+57540,401736275,4,362,0:7.0,22,Personal Take Foul,0,no_supported_restart,
+57802,401736270,3,255,3:10,35,Technical Foul,0,tail_available,57815.0
+57803,401736270,3,256,3:10,103,Free Throw - Technical,1,tail_available,57815.0
+57855,401736270,4,308,9:15,215,Coach's Challenge (Overturned),0,tail_available,57859.0
+58137,401736271,3,202,8:38,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+58625,401736266,3,303,0:49.0,215,Coach's Challenge (Overturned),0,tail_available,58631.0
+58725,401736266,4,403,1:47,215,Coach's Challenge (Overturned),0,tail_available,58743.0
+58965,401736267,3,219,6:45,35,Technical Foul,0,tail_available,58976.0
+58966,401736267,3,220,6:45,103,Free Throw - Technical,1,tail_available,58976.0
+59438,401736268,4,274,9:37,215,Coach's Challenge (Overturned),0,tail_available,59499.0
+59496,401736268,4,332,4:15,215,Coach's Challenge (Overturned),0,tail_available,59499.0
+59599,401736263,1,43,4:14,35,Technical Foul,0,tail_available,59609.0
+59603,401736263,1,47,4:14,103,Free Throw - Technical,0,tail_available,59609.0
+59725,401736263,2,169,2:49,257,Transition Take Foul,0,hard_period_exclusion,
+59791,401736263,3,235,6:45,35,Technical Foul,0,tail_available,59797.0
+59793,401736263,3,237,6:45,103,Free Throw - Technical,1,tail_available,59797.0
+60025,401736264,1,46,5:25,215,Coach's Challenge (Overturned),0,no_supported_restart,
+60075,401736264,1,96,0:8.0,29,Defensive 3-Seconds Technical,0,no_supported_restart,
+60076,401736264,1,97,0:8.0,103,Free Throw - Technical,1,no_supported_restart,
+60133,401736264,2,154,5:53,35,Technical Foul,0,tail_available,60140.0
+60134,401736264,2,155,5:53,103,Free Throw - Technical,1,tail_available,60140.0
+60370,401736264,4,391,0:20.1,22,Personal Take Foul,0,no_supported_restart,
+60371,401736264,4,392,0:13.1,22,Personal Take Foul,0,no_supported_restart,
+60584,401736265,3,207,8:27,215,Coach's Challenge (Overturned),0,tail_available,60590.0
+60860,401736262,2,107,9:32,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+60941,401736262,2,188,1:42,35,Technical Foul,0,hard_period_exclusion,
+60945,401736262,2,192,1:42,103,Free Throw - Technical,1,hard_period_exclusion,
+60983,401736262,3,230,6:56,35,Technical Foul,0,tail_available,61010.0
+60984,401736262,3,231,6:56,103,Free Throw - Technical,1,tail_available,61010.0
+61880,401736258,4,362,3:06,215,Coach's Challenge (Overturned),0,tail_available,61909.0
+61905,401736258,4,387,0:58.0,22,Personal Take Foul,0,tail_available,61909.0
+61989,401736259,1,73,2:42,35,Technical Foul,0,tail_available,61994.0
+61990,401736259,1,74,2:42,35,Technical Foul,0,tail_available,61994.0
+62151,401736259,3,235,4:36,215,Coach's Challenge (Overturned),0,tail_available,62197.0
+62191,401736259,3,275,0:39.2,30,Double Technical Foul,0,tail_available,62197.0
+62268,401736259,4,352,3:21,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+62434,401736260,2,127,6:35,29,Defensive 3-Seconds Technical,0,no_supported_restart,
+62435,401736260,2,128,6:35,103,Free Throw - Technical,1,no_supported_restart,
+62502,401736260,2,195,0:0.1,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+62578,401736260,3,271,3:28,35,Technical Foul,0,tail_available,62584.0
+62579,401736260,3,272,3:28,103,Free Throw - Technical,1,tail_available,62584.0
+62717,401736261,1,5,9:20,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+62805,401736261,1,93,0:5.0,22,Personal Take Foul,0,no_supported_restart,
+62973,401736261,3,261,3:28,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+62974,401736261,3,262,3:28,30,Double Technical Foul,0,hard_period_exclusion,
+62975,401736261,3,263,3:28,104,Free Throw - Flagrant 1 of 2,1,hard_period_exclusion,
+62976,401736261,3,264,3:28,105,Free Throw - Flagrant 2 of 2,1,hard_period_exclusion,
+62977,401736261,3,265,3:28,32,Flagrant Foul Type 1,0,hard_period_exclusion,
+63524,401781604,4,413,1:25,215,Coach's Challenge (Overturned),0,out_of_scope,
+64129,401736253,2,198,0:0.1,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+64243,401736253,4,312,7:47,40,Away from Play Foul,0,hard_period_exclusion,
+64244,401736253,4,313,7:47,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+64339,401736254,1,6,8:54,29,Defensive 3-Seconds Technical,0,tail_available,64342.0
+64340,401736254,1,7,8:54,103,Free Throw - Technical,1,tail_available,64342.0
+64562,401736254,3,229,3:56,215,Coach's Challenge (Overturned),0,tail_available,64564.0
+65511,401736256,4,414,0:8.1,22,Personal Take Foul,0,no_supported_restart,
+65769,401736250,3,249,4:33,215,Coach's Challenge (Overturned),0,tail_available,65779.0
+65915,401736250,4,395,0:27.1,22,Personal Take Foul,0,no_supported_restart,
+66002,401736251,1,78,0:59.1,257,Transition Take Foul,0,tail_available,66006.0
+66151,401736251,3,227,5:53,257,Transition Take Foul,0,tail_available,66155.0
+66273,401736251,4,349,3:18,257,Transition Take Foul,0,tail_available,66287.0
+66441,401736248,2,128,4:34,29,Defensive 3-Seconds Technical,0,hard_period_exclusion,
+66442,401736248,2,129,4:34,103,Free Throw - Technical,1,hard_period_exclusion,
+66521,401736248,3,208,6:08,257,Transition Take Foul,0,hard_period_exclusion,
+66602,401736248,4,289,7:20,22,Personal Take Foul,0,tail_available,66610.0
+66757,401736249,1,82,0:18.1,35,Technical Foul,0,no_supported_restart,
+66758,401736249,1,83,0:18.1,103,Free Throw - Technical,0,no_supported_restart,
+66797,401736249,2,122,6:30,29,Defensive 3-Seconds Technical,0,tail_available,66801.0
+66798,401736249,2,123,6:30,103,Free Throw - Technical,1,tail_available,66801.0
+66888,401736249,3,213,7:39,215,Coach's Challenge (Overturned),0,tail_available,66911.0
+67353,401736244,3,283,1:16,215,Coach's Challenge (Overturned),0,no_supported_restart,
+67605,401736245,2,141,5:30,35,Technical Foul,0,tail_available,67627.0
+67606,401736245,2,142,5:30,103,Free Throw - Technical,0,tail_available,67627.0
+67738,401736245,3,274,3:35,35,Technical Foul,0,tail_available,67744.0
+67739,401736245,3,275,3:35,103,Free Throw - Technical,1,tail_available,67744.0
+67873,401736245,4,409,0:18.1,22,Personal Take Foul,0,no_supported_restart,
+67874,401736245,4,410,0:18.1,40,Away from Play Foul,0,no_supported_restart,
+68049,401736246,2,171,0:13.2,35,Technical Foul,0,no_supported_restart,
+68050,401736246,2,172,0:13.2,103,Free Throw - Technical,0,no_supported_restart,
+68122,401736246,3,244,2:11,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+68159,401736246,4,281,8:40,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+68656,401736247,4,400,0:13.2,22,Personal Take Foul,0,no_supported_restart,
+68658,401736247,4,402,0:13.0,22,Personal Take Foul,0,no_supported_restart,
+68910,401736242,3,246,4:33,257,Transition Take Foul,0,tail_available,68919.0
+68913,401736242,3,249,4:14,215,Coach's Challenge (Overturned),0,tail_available,68919.0
+69009,401736242,4,345,5:10,35,Technical Foul,0,tail_available,69017.0
+69010,401736242,4,346,5:10,103,Free Throw - Technical,1,tail_available,69017.0
+69200,401736243,2,138,5:01,29,Defensive 3-Seconds Technical,0,tail_available,69218.0
+69201,401736243,2,139,5:01,103,Free Throw - Technical,1,tail_available,69218.0
+69324,401736243,3,262,2:40,215,Coach's Challenge (Overturned),0,tail_available,69333.0
+69420,401736243,4,358,2:42,35,Technical Foul,0,tail_available,69429.0
+69421,401736243,4,359,2:42,103,Free Throw - Technical,1,tail_available,69429.0
+69424,401736243,4,362,2:25,215,Coach's Challenge (Overturned),0,tail_available,69429.0
+69707,401736240,3,226,5:37,32,Flagrant Foul Type 1,0,hard_period_exclusion,
+69708,401736240,3,227,5:37,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+69710,401736240,3,229,5:37,157,Free Throw - Flagrant 1 of 3,1,hard_period_exclusion,
+69711,401736240,3,230,5:37,165,Free Throw - Flagrant 2 of 3,1,hard_period_exclusion,
+69712,401736240,3,231,5:37,166,Free Throw - Flagrant 3 of 3,1,hard_period_exclusion,
+69726,401736240,3,245,4:46,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+69758,401736240,3,277,1:06,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+69771,401736240,3,290,0:0.0,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+69825,401736240,4,344,4:42,40,Away from Play Foul,0,tail_available,69852.0
+69918,401736241,1,36,6:07,215,Coach's Challenge (Overturned),0,tail_available,69923.0
+70114,401736241,3,232,4:13,215,Coach's Challenge (Overturned),0,tail_available,70143.0
+70136,401736241,3,254,1:20,257,Transition Take Foul,0,tail_available,70143.0
+70223,401736241,4,341,1:00,32,Flagrant Foul Type 1,0,no_supported_restart,
+70224,401736241,4,342,1:00,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+70225,401736241,4,343,1:00,104,Free Throw - Flagrant 1 of 2,1,no_supported_restart,
+70226,401736241,4,344,1:00,105,Free Throw - Flagrant 2 of 2,1,no_supported_restart,
+70233,401736241,4,351,0:22.0,22,Personal Take Foul,0,no_supported_restart,
+70289,401736238,1,48,3:56,35,Technical Foul,0,tail_available,70331.0
+70290,401736238,1,49,3:56,103,Free Throw - Technical,1,tail_available,70331.0
+70327,401736238,1,86,0:11.0,35,Technical Foul,0,tail_available,70331.0
+70328,401736238,1,87,0:11.0,103,Free Throw - Technical,1,tail_available,70331.0
+70338,401736238,2,97,9:40,215,Coach's Challenge (Overturned),0,tail_available,70350.0
+70769,401736239,2,173,3:02,215,Coach's Challenge (Overturned),0,tail_available,70776.0
+70828,401736239,3,232,5:22,215,Coach's Challenge (Overturned),0,tail_available,70834.0
+70981,401736239,4,385,0:4.1,22,Personal Take Foul,0,no_supported_restart,
+71249,401736234,3,257,0:19.0,215,Coach's Challenge (Overturned),0,no_supported_restart,
+71255,401736234,3,263,0:1.0,35,Technical Foul,0,no_supported_restart,
+71257,401736234,3,265,0:1.0,103,Free Throw - Technical,1,no_supported_restart,
+71342,401736234,4,350,1:03,22,Personal Take Foul,0,tail_available,71347.0
+71548,401736235,3,195,9:40,32,Flagrant Foul Type 1,0,tail_available,71555.0
+71549,401736235,3,196,9:40,279,Ref-Initiated Review (Overturned),0,tail_available,71555.0
+71550,401736235,3,197,9:40,104,Free Throw - Flagrant 1 of 2,0,tail_available,71555.0
+71552,401736235,3,199,9:40,105,Free Throw - Flagrant 2 of 2,1,tail_available,71555.0
+72033,401736236,3,275,0:0.0,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+72115,401736236,4,357,0:31.1,22,Personal Take Foul,0,no_supported_restart,
+72116,401736236,4,358,0:30.1,22,Personal Take Foul,0,no_supported_restart,
+72285,401736237,2,162,3:08,29,Defensive 3-Seconds Technical,0,tail_available,72288.0
+72286,401736237,2,163,3:08,103,Free Throw - Technical,1,tail_available,72288.0
+72514,401736237,4,391,1:46,215,Coach's Challenge (Overturned),0,tail_available,72519.0
+72629,401736232,1,99,1:29,30,Double Technical Foul,0,tail_available,72638.0
+72820,401736232,3,290,3:57,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+73305,401736233,4,325,4:59,35,Technical Foul,0,no_supported_restart,
+73306,401736233,4,326,4:59,103,Free Throw - Technical,1,no_supported_restart,
+73355,401736233,4,375,0:33.1,22,Personal Take Foul,0,no_supported_restart,
+73360,401736233,4,380,0:26.2,22,Personal Take Foul,0,no_supported_restart,
+73371,401736233,4,391,0:22.1,22,Personal Take Foul,0,no_supported_restart,
+73738,401736230,4,362,0:44.0,22,Personal Take Foul,0,no_supported_restart,
+73746,401736230,4,370,0:22.0,22,Personal Take Foul,0,no_supported_restart,
+74152,401736231,4,400,2:39,22,Personal Take Foul,0,tail_available,74155.0
+74217,401736228,1,45,3:40,279,Ref-Initiated Review (Overturned),0,tail_available,74222.0
+74400,401736228,3,228,3:13,40,Away from Play Foul,0,hard_period_exclusion,
+74401,401736228,3,229,3:13,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+75189,401736229,4,297,7:41,35,Technical Foul,0,no_supported_restart,
+75190,401736229,4,298,7:41,103,Free Throw - Technical,1,no_supported_restart,
+75260,401736229,4,368,0:22.1,22,Personal Take Foul,0,no_supported_restart,
+75269,401736229,4,377,0:14.1,22,Personal Take Foul,0,no_supported_restart,
+75277,401736229,4,385,0:8.0,22,Personal Take Foul,0,no_supported_restart,
+75505,401736225,3,219,6:42,29,Defensive 3-Seconds Technical,0,tail_available,75541.0
+75506,401736225,3,220,6:42,103,Free Throw - Technical,0,tail_available,75541.0
+75537,401736225,3,251,2:53,215,Coach's Challenge (Overturned),0,tail_available,75541.0
+75666,401736225,4,380,0:3.1,22,Personal Take Foul,0,no_supported_restart,
+75718,401736226,1,41,5:16,279,Ref-Initiated Review (Overturned),0,tail_available,75722.0
+75883,401736226,3,206,5:01,22,Personal Take Foul,0,tail_available,75913.0
+75910,401736226,3,233,2:34,35,Technical Foul,0,tail_available,75913.0
+75911,401736226,3,234,2:34,103,Free Throw - Technical,1,tail_available,75913.0
+75941,401736226,4,264,9:41,32,Flagrant Foul Type 1,0,tail_available,76001.0
+75942,401736226,4,265,9:41,279,Ref-Initiated Review (Overturned),0,tail_available,76001.0
+75943,401736226,4,266,9:41,104,Free Throw - Flagrant 1 of 2,0,tail_available,76001.0
+75945,401736226,4,268,9:41,105,Free Throw - Flagrant 2 of 2,1,tail_available,76001.0
+75996,401736226,4,319,3:30,215,Coach's Challenge (Overturned),0,tail_available,76001.0
+76183,401736220,2,160,1:02,215,Coach's Challenge (Overturned),0,tail_available,76194.0
+76219,401736220,3,196,8:11,215,Coach's Challenge (Overturned),0,tail_available,76270.0
+76259,401736220,3,236,4:44,215,Coach's Challenge (Overturned),0,tail_available,76270.0
+76366,401736220,4,343,5:35,35,Technical Foul,0,tail_available,76374.0
+76368,401736220,4,345,5:35,103,Free Throw - Technical,1,tail_available,76374.0
+76630,401736221,3,217,6:18,215,Coach's Challenge (Overturned),0,tail_available,76638.0
+76770,401736221,4,357,1:17,35,Technical Foul,0,tail_available,76781.0
+76771,401736221,4,358,1:17,103,Free Throw - Technical,1,tail_available,76781.0
+76778,401736221,4,365,0:43.1,35,Technical Foul,0,tail_available,76781.0
+76779,401736221,4,366,0:43.1,103,Free Throw - Technical,1,tail_available,76781.0
+76923,401736222,2,137,4:51,35,Technical Foul,0,tail_available,76933.0
+76924,401736222,2,138,4:51,103,Free Throw - Technical,1,tail_available,76933.0
+77040,401736222,3,254,2:53,215,Coach's Challenge (Overturned),0,tail_available,77047.0
+77222,401736223,1,70,0:53.2,35,Technical Foul,0,tail_available,77235.0
+77223,401736223,1,71,0:53.2,103,Free Throw - Technical,1,tail_available,77235.0
+77957,401736224,4,372,1:24,37,Clear Path Foul,0,tail_available,77963.0
+77958,401736224,4,373,1:24,279,Ref-Initiated Review (Overturned),0,tail_available,77963.0
+77959,401736224,4,374,1:24,107,Free Throw - Clear Path 1 of 2,1,tail_available,77963.0
+77960,401736224,4,375,1:24,108,Free Throw - Clear Path 2 of 2,1,tail_available,77963.0
+78214,401736430,3,243,1:56,215,Coach's Challenge (Overturned),0,out_of_scope,
+78446,401736215,2,115,8:12,29,Defensive 3-Seconds Technical,0,hard_period_exclusion,
+78450,401736215,2,119,8:12,103,Free Throw - Technical,1,hard_period_exclusion,
+78528,401736215,2,197,0:7.0,35,Technical Foul,0,hard_period_exclusion,
+78529,401736215,2,198,0:7.0,103,Free Throw - Technical,1,hard_period_exclusion,
+78797,401736216,1,71,0:26.1,257,Transition Take Foul,0,no_supported_restart,
+78967,401736216,3,241,3:26,35,Technical Foul,0,tail_available,78971.0
+78968,401736216,3,242,3:26,103,Free Throw - Technical,1,tail_available,78971.0
+79197,401736217,1,83,1:33,215,Coach's Challenge (Overturned),0,no_supported_restart,
+79331,401736217,3,217,9:11,35,Technical Foul,0,tail_available,79336.0
+79332,401736217,3,218,9:11,103,Free Throw - Technical,1,tail_available,79336.0
+79506,401736217,4,392,0:7.0,22,Personal Take Foul,0,hard_period_exclusion,
+79784,401736218,3,268,1:54,257,Transition Take Foul,0,tail_available,79800.0
+79950,401736219,1,45,4:32,30,Double Technical Foul,0,tail_available,79959.0
+80151,401736219,3,246,3:05,257,Transition Take Foul,0,tail_available,80159.0
+80240,401736219,4,335,4:49,257,Transition Take Foul,0,tail_available,80265.0
+80257,401736219,4,352,3:17,35,Technical Foul,0,tail_available,80265.0
+80259,401736219,4,354,3:17,215,Coach's Challenge (Overturned),0,tail_available,80265.0
+80260,401736219,4,355,3:17,103,Free Throw - Technical,1,tail_available,80265.0
+80547,401736214,3,257,4:12,35,Technical Foul,0,tail_available,80562.0
+80548,401736214,3,258,4:12,103,Free Throw - Technical,1,tail_available,80562.0
+80747,401736209,1,65,2:42,40,Away from Play Foul,0,tail_available,80760.0
+80847,401736209,2,165,1:21,35,Technical Foul,0,no_supported_restart,
+80848,401736209,2,166,1:21,103,Free Throw - Technical,1,no_supported_restart,
+80930,401736209,3,248,3:05,35,Technical Foul,0,tail_available,80942.0
+80933,401736209,3,251,3:05,103,Free Throw - Technical,1,tail_available,80942.0
+81100,401736209,5,418,0:54.1,215,Coach's Challenge (Overturned),0,no_supported_restart,
+81105,401736209,5,423,0:20.1,215,Coach's Challenge (Overturned),0,no_supported_restart,
+81110,401736209,5,428,0:19.0,22,Personal Take Foul,0,no_supported_restart,
+81112,401736209,5,430,0:17.1,22,Personal Take Foul,0,no_supported_restart,
+81129,401736209,5,447,0:7.1,22,Personal Take Foul,0,no_supported_restart,
+81174,401736210,1,39,5:42,40,Away from Play Foul,0,hard_period_exclusion,
+81175,401736210,1,40,5:42,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+81186,401736210,1,51,4:41,257,Transition Take Foul,0,hard_period_exclusion,
+81283,401736210,2,148,4:25,29,Defensive 3-Seconds Technical,0,tail_available,81314.0
+81284,401736210,2,149,4:25,103,Free Throw - Technical,1,tail_available,81314.0
+81310,401736210,2,175,1:25,29,Defensive 3-Seconds Technical,0,tail_available,81314.0
+81311,401736210,2,176,1:25,103,Free Throw - Technical,1,tail_available,81314.0
+81503,401736210,4,368,0:23.1,22,Personal Take Foul,0,tail_available,81509.0
+81580,401736211,1,66,3:35,32,Flagrant Foul Type 1,0,tail_available,81587.0
+81582,401736211,1,68,3:35,279,Ref-Initiated Review (Overturned),0,tail_available,81587.0
+81583,401736211,1,69,3:35,104,Free Throw - Flagrant 1 of 2,1,tail_available,81587.0
+81584,401736211,1,70,3:35,105,Free Throw - Flagrant 2 of 2,1,tail_available,81587.0
+81659,401736211,2,145,6:44,35,Technical Foul,0,tail_available,81670.0
+81660,401736211,2,146,6:44,103,Free Throw - Technical,1,tail_available,81670.0
+81905,401736211,4,391,0:22.0,22,Personal Take Foul,0,no_supported_restart,
+81911,401736211,4,397,0:8.1,22,Personal Take Foul,0,no_supported_restart,
+81919,401736211,4,405,0:3.0,22,Personal Take Foul,0,no_supported_restart,
+82080,401736212,2,156,1:48,279,Ref-Initiated Review (Overturned),0,tail_available,82091.0
+82081,401736212,2,157,1:48,35,Technical Foul,0,tail_available,82091.0
+82082,401736212,2,158,1:48,103,Free Throw - Technical,1,tail_available,82091.0
+82444,401736213,2,136,6:35,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+82472,401736213,2,164,3:40,35,Technical Foul,0,hard_period_exclusion,
+82473,401736213,2,165,3:40,103,Free Throw - Technical,1,hard_period_exclusion,
+82940,401736207,3,247,4:08,279,Ref-Initiated Review (Overturned),0,tail_available,82947.0
+83094,401736207,4,401,0:36.1,22,Personal Take Foul,0,no_supported_restart,
+83103,401736207,4,410,0:22.0,22,Personal Take Foul,0,no_supported_restart,
+83123,401736208,1,5,8:48,32,Flagrant Foul Type 1,0,tail_available,83153.0
+83125,401736208,1,7,8:48,279,Ref-Initiated Review (Overturned),0,tail_available,83153.0
+83128,401736208,1,10,8:48,104,Free Throw - Flagrant 1 of 2,1,tail_available,83153.0
+83129,401736208,1,11,8:48,105,Free Throw - Flagrant 2 of 2,1,tail_available,83153.0
+83145,401736208,1,27,6:25,279,Ref-Initiated Review (Overturned),0,tail_available,83153.0
+83146,401736208,1,28,6:25,35,Technical Foul,0,tail_available,83153.0
+83148,401736208,1,30,6:25,103,Free Throw - Technical,1,tail_available,83153.0
+83414,401736208,4,296,8:31,215,Coach's Challenge (Overturned),0,tail_available,83489.0
+83483,401736208,4,365,0:47.1,22,Personal Take Foul,0,tail_available,83489.0
+83576,401736205,1,81,0:12.2,29,Defensive 3-Seconds Technical,0,no_supported_restart,
+83577,401736205,1,82,0:12.2,103,Free Throw - Technical,1,no_supported_restart,
+83857,401736205,4,362,0:21.1,22,Personal Take Foul,0,no_supported_restart,
+84568,401736201,4,312,7:13,30,Double Technical Foul,0,tail_available,84576.0
+84708,401736202,1,47,4:51,30,Double Technical Foul,0,tail_available,84716.0
+84779,401736202,2,118,9:49,29,Defensive 3-Seconds Technical,0,tail_available,84858.0
+84780,401736202,2,119,9:49,103,Free Throw - Technical,1,tail_available,84858.0
+84848,401736202,2,187,2:58,279,Ref-Initiated Review (Overturned),0,tail_available,84858.0
+84973,401736202,4,312,9:48,29,Defensive 3-Seconds Technical,0,no_supported_restart,
+84974,401736202,4,313,9:48,103,Free Throw - Technical,1,no_supported_restart,
+85087,401736202,4,426,0:37.1,35,Technical Foul,0,no_supported_restart,
+85088,401736202,4,427,0:37.1,103,Free Throw - Technical,1,no_supported_restart,
+85095,401736202,4,434,0:32.2,22,Personal Take Foul,0,no_supported_restart,
+85294,401736203,2,191,0:32.0,37,Clear Path Foul,0,no_supported_restart,
+85296,401736203,2,193,0:32.0,107,Free Throw - Clear Path 1 of 2,1,no_supported_restart,
+85297,401736203,2,194,0:32.0,108,Free Throw - Clear Path 2 of 2,1,no_supported_restart,
+85322,401736203,3,219,8:05,35,Technical Foul,0,tail_available,85326.0
+85323,401736203,3,220,8:05,103,Free Throw - Technical,1,tail_available,85326.0
+85509,401736204,1,9,8:08,32,Flagrant Foul Type 1,0,tail_available,85515.0
+85510,401736204,1,10,8:08,279,Ref-Initiated Review (Overturned),0,tail_available,85515.0
+85511,401736204,1,11,8:08,106,Free Throw - Flagrant 1 of 1,1,tail_available,85515.0
+86290,401736196,4,380,1:34,215,Coach's Challenge (Overturned),0,tail_available,86307.0
+86302,401736196,4,392,0:41.1,22,Personal Take Foul,0,tail_available,86307.0
+86342,401736197,1,24,7:26,279,Ref-Initiated Review (Overturned),0,tail_available,86359.0
+86455,401736197,2,137,7:17,35,Technical Foul,0,tail_available,86514.0
+86456,401736197,2,138,7:17,103,Free Throw - Technical,1,tail_available,86514.0
+86473,401736197,2,155,6:00,29,Defensive 3-Seconds Technical,0,tail_available,86514.0
+86474,401736197,2,156,6:00,103,Free Throw - Technical,1,tail_available,86514.0
+86511,401736197,2,193,2:56,35,Technical Foul,0,tail_available,86514.0
+86512,401736197,2,194,2:56,103,Free Throw - Technical,1,tail_available,86514.0
+86784,401736197,5,466,3:16,279,Ref-Initiated Review (Overturned),0,tail_available,86795.0
+87152,401736198,4,332,3:26,215,Coach's Challenge (Overturned),0,no_supported_restart,
+87201,401736198,4,381,0:22.1,22,Personal Take Foul,0,no_supported_restart,
+87512,401736199,4,303,7:55,28,Delay Technical,0,tail_available,87592.0
+87513,401736199,4,304,7:55,103,Free Throw - Technical,1,tail_available,87592.0
+87586,401736199,4,377,0:39.1,40,Away from Play Foul,0,tail_available,87592.0
+87747,401736200,2,149,5:35,29,Defensive 3-Seconds Technical,0,hard_period_exclusion,
+87748,401736200,2,150,5:35,103,Free Throw - Technical,1,hard_period_exclusion,
+87777,401736200,2,179,3:22,257,Transition Take Foul,0,hard_period_exclusion,
+87887,401736200,3,289,2:53,257,Transition Take Foul,0,tail_available,87906.0
+87950,401736200,4,352,7:26,279,Ref-Initiated Review (Overturned),0,tail_available,88024.0
+87951,401736200,4,353,7:26,35,Technical Foul,0,tail_available,88024.0
+87952,401736200,4,354,7:26,103,Free Throw - Technical,1,tail_available,88024.0
+87969,401736200,4,371,5:56,279,Ref-Initiated Review (Overturned),0,tail_available,88024.0
+88014,401736200,4,416,1:01,257,Transition Take Foul,0,tail_available,88024.0
+88277,401736194,3,249,4:25,32,Flagrant Foul Type 1,0,tail_available,88281.0
+88278,401736194,3,250,4:25,104,Free Throw - Flagrant 1 of 2,1,tail_available,88281.0
+88279,401736194,3,251,4:25,105,Free Throw - Flagrant 2 of 2,1,tail_available,88281.0
+88534,401736195,2,124,6:03,279,Ref-Initiated Review (Overturned),0,tail_available,88539.0
+88889,401736191,2,102,8:30,35,Technical Foul,0,tail_available,88895.0
+88891,401736191,2,104,8:30,103,Free Throw - Technical,1,tail_available,88895.0
+89138,401736191,4,351,3:24,40,Away from Play Foul,0,tail_available,89143.0
+89352,401736192,2,165,3:14,35,Technical Foul,0,tail_available,89367.0
+89353,401736192,2,166,3:14,103,Free Throw - Technical,1,tail_available,89367.0
+89612,401736192,4,425,0:16.1,22,Personal Take Foul,0,no_supported_restart,
+90245,401736189,3,263,5:48,35,Technical Foul,0,tail_available,90275.0
+90246,401736189,3,264,5:48,103,Free Throw - Technical,1,tail_available,90275.0
+90247,401736189,3,265,5:48,35,Technical Foul,0,tail_available,90275.0
+90248,401736189,3,266,5:48,103,Free Throw - Technical,1,tail_available,90275.0
+90272,401736189,3,290,3:30,35,Technical Foul,0,tail_available,90275.0
+90273,401736189,3,291,3:30,103,Free Throw - Technical,1,tail_available,90275.0
+90390,401736189,4,408,0:35.0,22,Personal Take Foul,0,no_supported_restart,
+90398,401736189,4,416,0:27.0,22,Personal Take Foul,0,no_supported_restart,
+90404,401736189,4,422,0:20.1,22,Personal Take Foul,0,no_supported_restart,
+90978,401736188,2,170,4:19,279,Ref-Initiated Review (Overturned),0,tail_available,90985.0
+91370,401736182,2,152,4:45,35,Technical Foul,0,hard_period_exclusion,
+91371,401736182,2,153,4:45,103,Free Throw - Technical,1,hard_period_exclusion,
+91472,401736182,3,254,4:48,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+91473,401736182,3,255,4:48,30,Double Technical Foul,0,no_supported_restart,
+91474,401736182,3,256,4:48,35,Technical Foul,0,no_supported_restart,
+91475,401736182,3,257,4:48,103,Free Throw - Technical,1,no_supported_restart,
+91476,401736182,3,258,4:48,32,Flagrant Foul Type 1,0,no_supported_restart,
+91477,401736182,3,259,4:48,104,Free Throw - Flagrant 1 of 2,1,no_supported_restart,
+91478,401736182,3,260,4:48,105,Free Throw - Flagrant 2 of 2,1,no_supported_restart,
+91524,401736182,3,306,0:0.0,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+91609,401736182,4,391,0:46.0,31,Flagrant Foul Type 2,0,tail_available,91626.0
+91611,401736182,4,393,0:46.0,279,Ref-Initiated Review (Overturned),0,tail_available,91626.0
+91612,401736182,4,394,0:46.0,35,Technical Foul,0,tail_available,91626.0
+91613,401736182,4,395,0:46.0,35,Technical Foul,0,tail_available,91626.0
+91616,401736182,4,398,0:46.0,103,Free Throw - Technical,0,tail_available,91626.0
+91618,401736182,4,400,0:46.0,103,Free Throw - Technical,1,tail_available,91626.0
+91621,401736182,4,403,0:46.0,104,Free Throw - Flagrant 1 of 2,0,tail_available,91626.0
+91623,401736182,4,405,0:46.0,105,Free Throw - Flagrant 2 of 2,1,tail_available,91626.0
+91666,401736183,1,37,4:57,215,Coach's Challenge (Overturned),0,tail_available,91671.0
+91726,401736183,2,97,9:01,257,Transition Take Foul,0,tail_available,91774.0
+91763,401736183,2,134,5:34,36,Double Personal Foul,0,tail_available,91774.0
+92000,401736183,4,371,0:13.1,22,Personal Take Foul,0,no_supported_restart,
+92012,401736183,4,383,0:2.0,22,Personal Take Foul,0,no_supported_restart,
+92328,401736184,4,310,7:03,35,Technical Foul,0,tail_available,92360.0
+92329,401736184,4,311,7:03,103,Free Throw - Technical,1,tail_available,92360.0
+92740,401736185,4,327,5:00,215,Coach's Challenge (Overturned),0,no_supported_restart,
+92798,401736185,4,385,0:19.1,22,Personal Take Foul,0,no_supported_restart,
+92810,401736186,1,2,9:46,29,Defensive 3-Seconds Technical,0,hard_period_exclusion,
+92811,401736186,1,3,9:46,103,Free Throw - Technical,1,hard_period_exclusion,
+93010,401736186,3,202,8:15,215,Coach's Challenge (Overturned),0,tail_available,93067.0
+93057,401736186,3,249,2:33,40,Away from Play Foul,0,tail_available,93067.0
+93316,401736187,2,119,7:42,32,Flagrant Foul Type 1,0,tail_available,93322.0
+93317,401736187,2,120,7:42,279,Ref-Initiated Review (Overturned),0,tail_available,93322.0
+93318,401736187,2,121,7:42,104,Free Throw - Flagrant 1 of 2,1,tail_available,93322.0
+93320,401736187,2,123,7:42,105,Free Throw - Flagrant 2 of 2,1,tail_available,93322.0
+93476,401736187,3,279,2:21,215,Coach's Challenge (Overturned),0,no_supported_restart,
+93500,401736187,3,303,0:0.0,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+93790,401736179,3,198,6:22,30,Double Technical Foul,0,tail_available,93809.0
+94213,401736180,3,276,1:34,215,Coach's Challenge (Overturned),0,tail_available,94215.0
+94403,401736181,1,67,3:31,37,Clear Path Foul,0,tail_available,94421.0
+94404,401736181,1,68,3:31,279,Ref-Initiated Review (Overturned),0,tail_available,94421.0
+94405,401736181,1,69,3:31,107,Free Throw - Clear Path 1 of 2,1,tail_available,94421.0
+94406,401736181,1,70,3:31,108,Free Throw - Clear Path 2 of 2,1,tail_available,94421.0
+94631,401736181,4,295,9:32,32,Flagrant Foul Type 1,0,hard_period_exclusion,
+94633,401736181,4,297,9:32,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+94634,401736181,4,298,9:32,104,Free Throw - Flagrant 1 of 2,1,hard_period_exclusion,
+94635,401736181,4,299,9:32,105,Free Throw - Flagrant 2 of 2,1,hard_period_exclusion,
+94711,401736181,4,375,2:12,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+94719,401736181,4,383,1:13,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+94732,401736181,4,396,0:6.1,22,Personal Take Foul,0,hard_period_exclusion,
+94856,401736176,2,122,6:14,257,Transition Take Foul,0,hard_period_exclusion,
+94902,401736176,2,168,1:01,40,Away from Play Foul,0,hard_period_exclusion,
+94903,401736176,2,169,1:01,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+94930,401736176,3,196,8:46,29,Defensive 3-Seconds Technical,0,tail_available,94990.0
+94931,401736176,3,197,8:46,103,Free Throw - Technical,0,tail_available,94990.0
+94986,401736176,3,252,1:48,215,Coach's Challenge (Overturned),0,tail_available,94990.0
+95042,401736176,4,308,5:48,215,Coach's Challenge (Overturned),0,tail_available,95049.0
+95276,401736177,2,164,4:37,35,Technical Foul,0,tail_available,95286.0
+95279,401736177,2,167,4:37,103,Free Throw - Technical,1,tail_available,95286.0
+95700,401736178,2,166,0:9.0,215,Coach's Challenge (Overturned),0,no_supported_restart,
+95868,401736178,4,334,0:50.1,279,Ref-Initiated Review (Overturned),0,tail_available,95888.0
+96064,401736174,2,171,1:54,29,Defensive 3-Seconds Technical,0,tail_available,96069.0
+96065,401736174,2,172,1:54,103,Free Throw - Technical,1,tail_available,96069.0
+96343,401736175,1,56,2:23,215,Coach's Challenge (Overturned),0,tail_available,96347.0
+96371,401736175,2,84,9:43,29,Defensive 3-Seconds Technical,0,tail_available,96374.0
+96372,401736175,2,85,9:43,103,Free Throw - Technical,1,tail_available,96374.0
+96692,401736171,1,22,6:58,29,Defensive 3-Seconds Technical,0,no_supported_restart,
+96693,401736171,1,23,6:58,103,Free Throw - Technical,1,no_supported_restart,
+96705,401736171,1,35,5:13,215,Coach's Challenge (Overturned),0,no_supported_restart,
+96753,401736171,1,83,0:4.1,29,Defensive 3-Seconds Technical,0,no_supported_restart,
+96754,401736171,1,84,0:4.1,103,Free Throw - Technical,1,no_supported_restart,
+96769,401736171,2,99,9:12,30,Double Technical Foul,0,tail_available,96776.0
+96861,401736171,3,191,10:00,103,Free Throw - Technical,0,tail_available,96870.0
+96864,401736171,3,194,9:43,215,Coach's Challenge (Overturned),0,tail_available,96870.0
+97118,401736172,1,43,3:34,279,Ref-Initiated Review (Overturned),0,tail_available,97126.0
+97658,401736173,3,191,6:47,35,Technical Foul,0,tail_available,97673.0
+97659,401736173,3,192,6:47,103,Free Throw - Technical,1,tail_available,97673.0
+97768,401736173,4,301,2:03,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+97798,401736173,4,331,0:5.1,35,Technical Foul,0,no_supported_restart,
+97799,401736173,4,332,0:5.1,103,Free Throw - Technical,1,no_supported_restart,
+97981,401736169,2,178,0:28.0,215,Coach's Challenge (Overturned),0,no_supported_restart,
+98075,401736169,3,272,0:38.1,35,Technical Foul,0,tail_available,98082.0
+98076,401736169,3,273,0:38.1,103,Free Throw - Technical,0,tail_available,98082.0
+98115,401736169,4,312,6:06,215,Coach's Challenge (Overturned),0,tail_available,98159.0
+98150,401736169,4,347,3:01,35,Technical Foul,0,tail_available,98159.0
+98151,401736169,4,348,3:01,103,Free Throw - Technical,1,tail_available,98159.0
+98401,401736170,3,205,7:22,32,Flagrant Foul Type 1,0,tail_available,98407.0
+98402,401736170,3,206,7:22,279,Ref-Initiated Review (Overturned),0,tail_available,98407.0
+98403,401736170,3,207,7:22,104,Free Throw - Flagrant 1 of 2,0,tail_available,98407.0
+98405,401736170,3,209,7:22,105,Free Throw - Flagrant 2 of 2,1,tail_available,98407.0
+98637,401736168,1,77,2:07,29,Defensive 3-Seconds Technical,0,tail_available,98646.0
+98638,401736168,1,78,2:07,103,Free Throw - Technical,1,tail_available,98646.0
+98885,401736168,4,325,7:06,40,Away from Play Foul,0,hard_period_exclusion,
+99373,401736166,4,373,3:50,215,Coach's Challenge (Overturned),0,tail_available,99381.0
+99619,401736167,3,202,8:26,29,Defensive 3-Seconds Technical,0,tail_available,99636.0
+99620,401736167,3,203,8:26,103,Free Throw - Technical,1,tail_available,99636.0
+99629,401736167,3,212,7:07,215,Coach's Challenge (Overturned),0,tail_available,99636.0
+99775,401736167,4,358,1:19,215,Coach's Challenge (Overturned),0,tail_available,99793.0
+99790,401736167,4,373,0:33.1,40,Away from Play Foul,0,tail_available,99793.0
+99887,401736163,1,89,0:11.2,215,Coach's Challenge (Overturned),0,no_supported_restart,
+100001,401736163,2,203,0:0.0,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+100170,401736163,4,372,1:19,22,Personal Take Foul,0,tail_available,100181.0
+100398,401736164,3,203,8:56,40,Away from Play Foul,0,tail_available,100401.0
+100596,401736165,1,26,6:25,29,Defensive 3-Seconds Technical,0,tail_available,100600.0
+100597,401736165,1,27,6:25,103,Free Throw - Technical,1,tail_available,100600.0
+100772,401736165,3,202,8:11,29,Defensive 3-Seconds Technical,0,tail_available,100780.0
+100773,401736165,3,203,8:11,103,Free Throw - Technical,1,tail_available,100780.0
+100934,401736165,4,364,1:32,35,Technical Foul,0,tail_available,100942.0
+100935,401736165,4,365,1:32,103,Free Throw - Technical,0,tail_available,100942.0
+101249,401736161,4,301,7:06,257,Transition Take Foul,0,hard_period_exclusion,
+101307,401736161,4,359,0:58.0,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+101837,401736159,2,142,5:55,257,Transition Take Foul,0,tail_available,101853.0
+102217,401736160,1,94,0:0.0,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+102223,401736160,2,100,9:29,29,Defensive 3-Seconds Technical,0,hard_period_exclusion,
+102224,401736160,2,101,9:29,103,Free Throw - Technical,0,hard_period_exclusion,
+102659,401736156,2,134,4:40,215,Coach's Challenge (Overturned),0,no_supported_restart,
+102680,401736156,2,155,2:54,35,Technical Foul,0,no_supported_restart,
+102681,401736156,2,156,2:54,103,Free Throw - Technical,0,no_supported_restart,
+102737,401736156,3,212,6:25,32,Flagrant Foul Type 1,0,tail_available,102757.0
+102738,401736156,3,213,6:25,279,Ref-Initiated Review (Overturned),0,tail_available,102757.0
+102739,401736156,3,214,6:25,157,Free Throw - Flagrant 1 of 3,0,tail_available,102757.0
+102741,401736156,3,216,6:25,165,Free Throw - Flagrant 2 of 3,1,tail_available,102757.0
+102742,401736156,3,217,6:25,166,Free Throw - Flagrant 3 of 3,1,tail_available,102757.0
+102750,401736156,3,225,5:00,22,Personal Take Foul,0,tail_available,102757.0
+102897,401736156,4,372,0:8.0,22,Personal Take Foul,0,no_supported_restart,
+103111,401736157,3,207,5:50,279,Ref-Initiated Review (Overturned),0,tail_available,103113.0
+103597,401736158,4,336,5:52,37,Clear Path Foul,0,tail_available,103631.0
+103619,401736158,4,358,3:40,32,Flagrant Foul Type 1,0,tail_available,103631.0
+103620,401736158,4,359,3:40,279,Ref-Initiated Review (Overturned),0,tail_available,103631.0
+103621,401736158,4,360,3:40,104,Free Throw - Flagrant 1 of 2,1,tail_available,103631.0
+103622,401736158,4,361,3:40,105,Free Throw - Flagrant 2 of 2,1,tail_available,103631.0
+103881,401736152,3,196,5:42,215,Coach's Challenge (Overturned),0,tail_available,103888.0
+104228,401736153,3,210,10:00,35,Technical Foul,0,tail_available,104232.0
+104229,401736153,3,211,10:00,103,Free Throw - Technical,1,tail_available,104232.0
+104416,401736153,4,398,0:18.2,22,Personal Take Foul,0,hard_period_exclusion,
+104805,401736154,4,361,0:6.0,22,Personal Take Foul,0,no_supported_restart,
+104956,401736155,2,144,4:43,279,Ref-Initiated Review (Overturned),0,tail_available,104974.0
+104957,401736155,2,145,4:43,32,Flagrant Foul Type 1,0,tail_available,104974.0
+104958,401736155,2,146,4:43,104,Free Throw - Flagrant 1 of 2,0,tail_available,104974.0
+104960,401736155,2,148,4:43,105,Free Throw - Flagrant 2 of 2,1,tail_available,104974.0
+105078,401736155,3,266,2:14,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+105400,401736151,2,204,0:7.2,22,Personal Take Foul,0,no_supported_restart,
+105513,401736151,3,317,1:31,32,Flagrant Foul Type 1,0,hard_period_exclusion,
+105514,401736151,3,318,1:31,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+105518,401736151,3,322,1:31,104,Free Throw - Flagrant 1 of 2,0,hard_period_exclusion,
+105520,401736151,3,324,1:31,105,Free Throw - Flagrant 2 of 2,1,hard_period_exclusion,
+105599,401736151,4,403,4:29,30,Double Technical Foul,0,tail_available,105615.0
+105820,401736146,2,168,2:31,215,Coach's Challenge (Overturned),0,tail_available,105829.0
+105937,401736146,4,285,9:33,215,Coach's Challenge (Overturned),0,no_supported_restart,
+106008,401736146,4,356,0:6.1,22,Personal Take Foul,0,no_supported_restart,
+106299,401736147,3,281,2:04,257,Transition Take Foul,0,tail_available,106309.0
+106608,401736148,2,179,1:55,35,Technical Foul,0,tail_available,106614.0
+106609,401736148,2,180,1:55,103,Free Throw - Technical,1,tail_available,106614.0
+106610,401736148,2,181,1:47,215,Coach's Challenge (Overturned),0,tail_available,106614.0
+106713,401736148,3,284,0:36.0,35,Technical Foul,0,no_supported_restart,
+106714,401736148,3,285,0:36.0,103,Free Throw - Technical,1,no_supported_restart,
+106718,401736148,3,289,0:12.0,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+106936,401736149,2,117,8:00,257,Transition Take Foul,0,tail_available,107007.0
+107002,401736149,2,183,2:05,29,Defensive 3-Seconds Technical,0,tail_available,107007.0
+107003,401736149,2,184,2:05,103,Free Throw - Technical,1,tail_available,107007.0
+107116,401736149,3,297,0:45.0,29,Defensive 3-Seconds Technical,0,tail_available,107119.0
+107117,401736149,3,298,0:45.0,103,Free Throw - Technical,1,tail_available,107119.0
+107472,401736150,3,254,6:07,35,Technical Foul,0,tail_available,107523.0
+107473,401736150,3,255,6:07,103,Free Throw - Technical,1,tail_available,107523.0
+107512,401736150,3,294,2:21,215,Coach's Challenge (Overturned),0,tail_available,107523.0
+107555,401736150,4,337,7:34,32,Flagrant Foul Type 1,0,no_supported_restart,
+107556,401736150,4,338,7:34,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+107560,401736150,4,342,7:34,157,Free Throw - Flagrant 1 of 3,0,no_supported_restart,
+107562,401736150,4,344,7:34,165,Free Throw - Flagrant 2 of 3,1,no_supported_restart,
+107563,401736150,4,345,7:34,166,Free Throw - Flagrant 3 of 3,1,no_supported_restart,
+107633,401736150,4,415,0:17.2,22,Personal Take Foul,0,no_supported_restart,
+107883,401736144,3,241,4:28,215,Coach's Challenge (Overturned),0,no_supported_restart,
+107927,401736144,3,285,0:0.0,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+108041,401736144,4,399,0:4.1,22,Personal Take Foul,0,no_supported_restart,
+108160,401736145,2,112,9:25,29,Defensive 3-Seconds Technical,0,tail_available,108167.0
+108161,401736145,2,113,9:25,103,Free Throw - Technical,1,tail_available,108167.0
+108287,401736145,3,239,6:58,215,Coach's Challenge (Overturned),0,tail_available,108294.0
+108805,401736143,4,365,3:45,29,Defensive 3-Seconds Technical,0,tail_available,108843.0
+108806,401736143,4,366,3:45,103,Free Throw - Technical,1,tail_available,108843.0
+108834,401736143,4,394,1:21,40,Away from Play Foul,0,tail_available,108843.0
+109010,401736138,2,131,6:05,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+109512,401736139,3,221,8:05,35,Technical Foul,0,tail_available,109595.0
+109513,401736139,3,222,8:05,103,Free Throw - Technical,1,tail_available,109595.0
+109537,401736139,3,246,5:33,279,Ref-Initiated Review (Overturned),0,tail_available,109595.0
+109581,401736139,3,290,1:31,215,Coach's Challenge (Overturned),0,tail_available,109595.0
+109836,401736140,2,150,2:24,215,Coach's Challenge (Overturned),0,tail_available,109845.0
+109920,401736140,3,234,2:16,29,Defensive 3-Seconds Technical,0,tail_available,109933.0
+109921,401736140,3,235,2:16,103,Free Throw - Technical,0,tail_available,109933.0
+110032,401736140,4,346,0:23.1,22,Personal Take Foul,0,hard_period_exclusion,
+110040,401736140,4,354,0:14.1,22,Personal Take Foul,0,hard_period_exclusion,
+110268,401736141,3,215,8:28,215,Coach's Challenge (Overturned),0,tail_available,110289.0
+110284,401736141,3,231,6:28,215,Coach's Challenge (Overturned),0,tail_available,110289.0
+110286,401736141,3,233,6:15,29,Defensive 3-Seconds Technical,0,tail_available,110289.0
+110287,401736141,3,234,6:15,103,Free Throw - Technical,1,tail_available,110289.0
+110380,401736141,4,327,5:59,215,Coach's Challenge (Overturned),0,tail_available,110416.0
+110412,401736141,4,359,1:09,215,Coach's Challenge (Overturned),0,tail_available,110416.0
+110728,401736142,3,291,2:13,215,Coach's Challenge (Overturned),0,tail_available,110741.0
+110956,401736134,2,102,7:41,36,Double Personal Foul,0,tail_available,110969.0
+111062,401736134,3,208,5:54,215,Coach's Challenge (Overturned),0,hard_period_exclusion,
+111418,401736135,2,179,2:04,215,Coach's Challenge (Overturned),0,tail_available,111426.0
+111607,401736135,4,368,0:47.0,22,Personal Take Foul,0,tail_available,111618.0
+111833,401736136,3,212,5:22,32,Flagrant Foul Type 1,0,hard_period_exclusion,
+111834,401736136,3,213,5:22,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+111835,401736136,3,214,5:22,104,Free Throw - Flagrant 1 of 2,1,hard_period_exclusion,
+111837,401736136,3,216,5:22,105,Free Throw - Flagrant 2 of 2,1,hard_period_exclusion,
+111962,401736136,4,341,4:22,35,Technical Foul,0,no_supported_restart,
+111964,401736136,4,343,4:22,103,Free Throw - Technical,1,no_supported_restart,
+112026,401736136,4,405,0:3.0,22,Personal Take Foul,0,no_supported_restart,
+112613,401736132,3,235,6:26,215,Coach's Challenge (Overturned),0,tail_available,112643.0
+113143,401736133,4,355,5:17,32,Flagrant Foul Type 1,0,tail_available,113156.0
+113144,401736133,4,356,5:17,279,Ref-Initiated Review (Overturned),0,tail_available,113156.0
+113145,401736133,4,357,5:17,157,Free Throw - Flagrant 1 of 3,0,tail_available,113156.0
+113147,401736133,4,359,5:17,165,Free Throw - Flagrant 2 of 3,1,tail_available,113156.0
+113148,401736133,4,360,5:17,166,Free Throw - Flagrant 3 of 3,1,tail_available,113156.0
+113310,401736128,2,116,6:43,257,Transition Take Foul,0,tail_available,113329.0
+113326,401736128,2,132,5:34,29,Defensive 3-Seconds Technical,0,tail_available,113329.0
+113327,401736128,2,133,5:34,103,Free Throw - Technical,1,tail_available,113329.0
+113498,401736128,4,304,8:05,35,Technical Foul,0,no_supported_restart,
+113499,401736128,4,305,8:05,103,Free Throw - Technical,1,no_supported_restart,
+113577,401736128,4,383,0:23.0,22,Personal Take Foul,0,no_supported_restart,
+113584,401736128,4,390,0:9.1,22,Personal Take Foul,0,no_supported_restart,
+113739,401736129,2,146,3:51,257,Transition Take Foul,0,tail_available,113745.0
+113839,401736129,3,246,2:37,257,Transition Take Foul,0,tail_available,113848.0
+113974,401736129,4,381,0:7.1,215,Coach's Challenge (Overturned),0,no_supported_restart,
+114393,401736131,1,28,5:55,29,Defensive 3-Seconds Technical,0,tail_available,114396.0
+114394,401736131,1,29,5:55,103,Free Throw - Technical,1,tail_available,114396.0
+114513,401736131,2,148,4:16,40,Away from Play Foul,0,tail_available,114520.0
+115141,401736126,4,414,0:21.0,22,Personal Take Foul,0,no_supported_restart,
+115153,401736126,4,426,0:5.1,22,Personal Take Foul,0,no_supported_restart,
+115301,401736127,2,140,7:29,215,Coach's Challenge (Overturned),0,tail_available,115307.0
+115396,401736127,3,235,7:49,35,Technical Foul,0,tail_available,115400.0
+115397,401736127,3,236,7:49,103,Free Throw - Technical,1,tail_available,115400.0
+115522,401736127,4,361,5:50,28,Delay Technical,0,tail_available,115526.0
+115523,401736127,4,362,5:50,103,Free Throw - Technical,0,tail_available,115526.0
+115813,401736123,3,238,2:48,32,Flagrant Foul Type 1,0,tail_available,115827.0
+115814,401736123,3,239,2:48,279,Ref-Initiated Review (Overturned),0,tail_available,115827.0
+115817,401736123,3,242,2:48,104,Free Throw - Flagrant 1 of 2,0,tail_available,115827.0
+115819,401736123,3,244,2:48,105,Free Throw - Flagrant 2 of 2,1,tail_available,115827.0
+115888,401736123,4,313,6:37,40,Away from Play Foul,0,tail_available,115897.0
+115890,401736123,4,315,6:37,279,Ref-Initiated Review (Overturned),0,tail_available,115897.0
+116030,401736124,1,69,3:10,29,Defensive 3-Seconds Technical,0,tail_available,116041.0
+116031,401736124,1,70,3:10,103,Free Throw - Technical,1,tail_available,116041.0
+116139,401736124,2,178,3:43,35,Technical Foul,0,tail_available,116147.0
+116141,401736124,2,180,3:43,103,Free Throw - Technical,1,tail_available,116147.0
+116304,401736124,4,343,8:54,35,Technical Foul,0,hard_period_exclusion,
+116305,401736124,4,344,8:54,103,Free Throw - Technical,1,hard_period_exclusion,
+116402,401736124,4,441,0:22.1,22,Personal Take Foul,0,hard_period_exclusion,
+116409,401736124,4,448,0:9.0,22,Personal Take Foul,0,hard_period_exclusion,
+116578,401736125,2,162,2:39,35,Technical Foul,0,tail_available,116587.0
+116579,401736125,2,163,2:39,103,Free Throw - Technical,1,tail_available,116587.0
+116660,401736125,3,244,5:54,40,Away from Play Foul,0,tail_available,116665.0
+116821,401736125,4,405,0:17.1,22,Personal Take Foul,0,no_supported_restart,
+116834,401736125,4,418,0:14.1,22,Personal Take Foul,0,no_supported_restart,
+116846,401736125,4,430,0:3.0,22,Personal Take Foul,0,no_supported_restart,
+117204,401736121,4,351,6:27,215,Coach's Challenge (Overturned),0,tail_available,117206.0
+117352,401736122,1,95,1:10,37,Clear Path Foul,0,no_supported_restart,
+117353,401736122,1,96,1:10,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+117355,401736122,1,98,1:10,107,Free Throw - Clear Path 1 of 2,1,no_supported_restart,
+117356,401736122,1,99,1:10,108,Free Throw - Clear Path 2 of 2,1,no_supported_restart,
+117373,401736122,2,116,9:23,215,Coach's Challenge (Overturned),0,tail_available,117455.0
+117412,401736122,2,155,5:44,215,Coach's Challenge (Overturned),0,tail_available,117455.0
+117451,401736122,2,194,0:51.1,215,Coach's Challenge (Overturned),0,tail_available,117455.0
+117739,401736120,1,53,4:13,35,Technical Foul,0,tail_available,117750.0
+117740,401736120,1,54,4:13,103,Free Throw - Technical,0,tail_available,117750.0
+117981,401736120,3,295,1:06,215,Coach's Challenge (Overturned),0,no_supported_restart,
+118149,401736118,1,59,3:46,30,Double Technical Foul,0,tail_available,118181.0
+118177,401736118,1,87,2:06,257,Transition Take Foul,0,tail_available,118181.0
+118339,401736118,3,249,6:35,35,Technical Foul,0,tail_available,118352.0
+118342,401736118,3,252,6:35,103,Free Throw - Technical,0,tail_available,118352.0
+118800,401736119,3,266,0:53.0,35,Technical Foul,0,tail_available,118809.0
+118801,401736119,3,267,0:53.0,103,Free Throw - Technical,1,tail_available,118809.0
+118977,401736116,1,84,0:53.1,32,Flagrant Foul Type 1,0,tail_available,118993.0
+118978,401736116,1,85,0:53.1,279,Ref-Initiated Review (Overturned),0,tail_available,118993.0
+118980,401736116,1,87,0:53.1,157,Free Throw - Flagrant 1 of 3,1,tail_available,118993.0
+118981,401736116,1,88,0:53.1,165,Free Throw - Flagrant 2 of 3,0,tail_available,118993.0
+118983,401736116,1,90,0:53.1,166,Free Throw - Flagrant 3 of 3,1,tail_available,118993.0
+119024,401736116,2,131,7:17,215,Coach's Challenge (Overturned),0,no_supported_restart,
+119094,401736116,2,201,0:0.0,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+119215,401736116,4,322,8:09,29,Defensive 3-Seconds Technical,0,hard_period_exclusion,
+119216,401736116,4,323,8:09,103,Free Throw - Technical,1,hard_period_exclusion,
+119256,401736116,4,363,4:59,30,Double Technical Foul,0,hard_period_exclusion,
+119571,401736115,3,266,4:38,32,Flagrant Foul Type 1,0,tail_available,119591.0
+119572,401736115,3,267,4:38,279,Ref-Initiated Review (Overturned),0,tail_available,119591.0
+119574,401736115,3,269,4:38,30,Double Technical Foul,0,tail_available,119591.0
+119575,401736115,3,270,4:38,104,Free Throw - Flagrant 1 of 2,0,tail_available,119591.0
+119576,401736115,3,271,4:38,105,Free Throw - Flagrant 2 of 2,1,tail_available,119591.0
+119581,401736115,3,276,4:24,215,Coach's Challenge (Overturned),0,tail_available,119591.0
+119801,401736117,1,49,5:29,279,Ref-Initiated Review (Overturned),0,hard_period_exclusion,
+120010,401736117,3,258,4:02,35,Technical Foul,0,hard_period_exclusion,
+120011,401736117,3,259,4:02,103,Free Throw - Technical,1,hard_period_exclusion,
+120249,401736112,2,104,8:58,32,Flagrant Foul Type 1,0,tail_available,120273.0
+120250,401736112,2,105,8:58,279,Ref-Initiated Review (Overturned),0,tail_available,120273.0
+120251,401736112,2,106,8:58,106,Free Throw - Flagrant 1 of 1,1,tail_available,120273.0
+120463,401736112,3,318,0:0.0,279,Ref-Initiated Review (Overturned),0,no_supported_restart,
+120860,401736113,3,273,2:41,35,Technical Foul,0,tail_available,120875.0
+120861,401736113,3,274,2:41,103,Free Throw - Technical,1,tail_available,120875.0
+120948,401736113,4,361,4:06,215,Coach's Challenge (Overturned),0,tail_available,120959.0
+121219,401736114,3,228,4:20,29,Defensive 3-Seconds Technical,0,tail_available,121225.0
+121220,401736114,3,229,4:20,103,Free Throw - Technical,1,tail_available,121225.0
+121298,401736114,4,307,5:43,215,Coach's Challenge (Overturned),0,tail_available,121332.0
+121301,401736114,4,310,5:31,257,Transition Take Foul,0,tail_available,121332.0
+121327,401736114,4,336,2:14,40,Away from Play Foul,0,tail_available,121332.0

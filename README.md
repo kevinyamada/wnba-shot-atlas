@@ -18,7 +18,7 @@ The [desktop follow-up](research/LOCAL_FOLLOWUP.md) gives concrete source-disagr
 
 The [event-based possession-value extension](research/POSSESSION_VALUE.md) reconstructs ordinary scoring episodes, including free throws and offensive-rebound continuation. Strict source checks retain 662 of 1,257 periods and 25,306 entry states. CPU stage-mean, Markov, spline and context models use validation-only selection. The selected model's later-game improvement is uncertain. This is a screened, retrospectively qualified EPV prototype; full spatial xT still needs nonshot action data absent from the archive. No additional Modal compute is used. The [EPV verification record](research/results/data1/possession/final_possession_verification.json) is generated after publication.
 
-The [meeting brief](research/MEETING_BRIEF.md) explains what can be done with the existing archive before collecting more data. [Additional diagnostics](research/MEETING_DIAGNOSTICS.md) examine exclusions, period-clock effects and a simple training-only clock reference, while preserving the frozen primary models and site data.
+The [meeting walkthrough](https://kevinyamada.github.io/wnba-shot-atlas/meeting/) and [speaking brief](research/MEETING_BRIEF.md) present the completed work. The [recovery extension](research/RECOVERY.md) adds 5,394 ordinary episode-entry states after the final hazardous event and a corroborated live rebound, raising the total to 30,700. A second-restart check adds 4,339. Fixed-setting CPU refits improve the later context benchmark but do not establish an advantage over a simple clock rule. Original results remain frozen. [Earlier diagnostics](research/MEETING_DIAGNOSTICS.md) explain exclusions and clock effects.
 
 ## View locally
 
@@ -49,6 +49,8 @@ The [final verification record](research/results/data1/final_verification.json) 
 | `research/verify_data1.py`, `research/check_site.py` | Final independent source/results and real-browser checks |
 | `research/possession_reconstruction.py`, `research/possession_models.py` | Desktop CPU event-based EPV prototype |
 | `research/verify_possession_value.py` | Independent rewards, timing, Markov and EPV publication checks |
+| `research/possession_recovery.py`, `research/recovery_models.py` | Corroborated ordinary-tail recovery and fixed-setting CPU refits |
+| `research/verify_recovery.py`, `meeting/index.html` | Independent recovery checks and printable meeting walkthrough |
 | `research/results/data1/` | Current public aggregate outputs and audit records |
 | `research/DATA_REQUESTS.md` | Prepared research-group questions; not sent |
 

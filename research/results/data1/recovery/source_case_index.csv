@@ -1,0 +1,25 @@
+case_id,type_id,type_text,hazard_source_row,game_id,period_number,status,last_hazard_source_row,restart_source_row,miss_source_row,corroboration_source_row
+type-22-row-10419,22,Personal Take Foul,10419,401736396,4,tail_available,10419.0,10425.0,10424.0,10427.0
+type-25-row-2410,25,Excess Timeout Technical,2410,401820337,4,no_supported_restart,,,,
+type-28-row-87512,28,Delay Technical,87512,401736199,4,tail_available,87586.0,87592.0,87591.0,87594.0
+type-29-row-2220,29,Defensive 3-Seconds Technical,2220,401820337,3,tail_available,2225.0,2231.0,2230.0,2232.0
+type-30-row-21238,30,Double Technical Foul,21238,401736363,3,tail_available,21238.0,21241.0,21240.0,21242.0
+type-31-row-91609,31,Flagrant Foul Type 2,91609,401736182,4,tail_available,91623.0,91626.0,91625.0,91627.0
+type-32-row-1424,32,Flagrant Foul Type 1,1424,401820322,3,tail_available,1428.0,1436.0,1435.0,1437.0
+type-35-row-61990,35,Technical Foul,61990,401736259,1,tail_available,61990.0,61994.0,61993.0,61995.0
+type-36-row-91763,36,Double Personal Foul,91763,401736183,2,tail_available,91763.0,91774.0,91773.0,91776.0
+type-37-row-4312,37,Clear Path Foul,4312,401820331,4,tail_available,4312.0,4322.0,4321.0,4323.0
+type-40-row-1770,40,Away from Play Foul,1770,401820340,2,tail_available,1770.0,1773.0,1772.0,1774.0
+type-47-row-17930,47,Too Many Players Technical,17930,401736374,4,tail_available,17931.0,17936.0,17935.0,17937.0
+type-103-row-1504,103,Free Throw - Technical,1504,401820322,4,tail_available,1504.0,1513.0,1512.0,1514.0
+type-104-row-17015,104,Free Throw - Flagrant 1 of 2,17015,401736377,2,tail_available,17016.0,17034.0,17033.0,17038.0
+type-105-row-17016,105,Free Throw - Flagrant 2 of 2,17016,401736377,2,tail_available,17016.0,17034.0,17033.0,17038.0
+type-106-row-20931,106,Free Throw - Flagrant 1 of 1,20931,401736368,4,tail_available,20931.0,20934.0,20933.0,20935.0
+type-107-row-20753,107,Free Throw - Clear Path 1 of 2,20753,401736368,2,tail_available,20801.0,20804.0,20803.0,20805.0
+type-108-row-31624,108,Free Throw - Clear Path 2 of 2,31624,401736338,2,tail_available,31624.0,31626.0,31625.0,31627.0
+type-157-row-1426,157,Free Throw - Flagrant 1 of 3,1426,401820322,3,tail_available,1428.0,1436.0,1435.0,1437.0
+type-165-row-1427,165,Free Throw - Flagrant 2 of 3,1427,401820322,3,tail_available,1428.0,1436.0,1435.0,1437.0
+type-166-row-1428,166,Free Throw - Flagrant 3 of 3,1428,401820322,3,tail_available,1428.0,1436.0,1435.0,1437.0
+type-215-row-2225,215,Coach's Challenge (Overturned),2225,401820337,3,tail_available,2225.0,2231.0,2230.0,2232.0
+type-257-row-5383,257,Transition Take Foul,5383,401820324,3,tail_available,5383.0,5387.0,5386.0,5388.0
+type-279-row-6357,279,Ref-Initiated Review (Overturned),6357,401820318,1,tail_available,6357.0,6362.0,6361.0,6363.0

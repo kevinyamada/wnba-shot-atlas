@@ -1,31 +1,30 @@
-# What we can do before the meeting
+# Meeting brief: work completed with the existing archive
 
-We can make the existing project clearer and more useful without collecting another dataset. The current shooting analysis and basic possession-value prototype are complete. The next work is to understand their limits and improve how we handle the data already supplied.
+## What is ready
 
-## Three findings worth discussing
+- The shooting-location study, prediction comparisons and event-based remaining-points prototype are implemented and audited using **only Data (1).zip**.
+- Special situations no longer force us to discard an entire period when a later ordinary sequence has a clear, corroborated restart. The hazardous plays themselves remain excluded.
+- This adds **5,394 episode-entry states**, increasing the sample from **25,306 to 30,700**. A stricter second-restart check adds **4,339**. These are inferred episodes and partial-period tails, not official possession counts.
+- CPU refits with the same model settings lower the context model's error on the later regular benchmark. They still do not clearly outperform a simple clock-based rule, and playoff gains remain uncertain.
+- Source examples, three recovery charts, a printable meeting walkthrough and independent verification are available. All computations ran on the desktop CPU; Modal stayed off.
 
-1. **Many exclusions are precautions, not confirmed bad data.** Of 595 excluded periods, 485 were excluded only because our code conservatively avoids special-foul/free-throw or overturned-review situations. These may be legitimate events. Carefully supporting those situations could recover more of Data (1), but we must validate the sequences before including them. This does not mean all 485 periods can be recovered.
-2. **Knowing the time left explains much of the apparent model benefit.** In later regular games, the model's clearest improvement appears in the 120 entry states with 2–24 seconds left in the period. Outside that window, neither the selected model nor Markov model clearly beats the simple average. A separate training-only clock baseline performs about as well as the more complicated models. The comparison is exploratory; these games have already been examined.
-3. **The useful next step is better event handling and a stronger simple reference.** Extra GPU searches would not resolve the missing pass records or source disagreements. Keep the current models frozen, test difficult recorded-event cases carefully, and use the simple clock reference when assessing future improvements.
+## What the findings mean
 
-“Period clock” means time left in the quarter or overtime. It is not the shot clock. The project estimates remaining points at recorded events; it does not yet value individual passes, movements, or player decisions.
+The project now uses more of the supplied archive, and we can explain much of the original prediction gain: knowing how little time remains matters. The added records come from later parts of quarters, so the expanded sample has a different mix of situations. We preserve the original results and compare models on identical cases. These comparisons are exploratory: reused 2025 games do not establish performance in a new season.
 
-## Work for the next three days
+## A short update to say aloud
 
-- **First day — completed:** diagnose excluded periods, check which situations benefit from modelling, fit one small clock-only reference, and prepare three charts. Everything ran on the desktop CPU using Data (1); the original models and website data were kept unchanged.
-- **Second day — proposed:** inspect representative technical-free-throw and review sequences against the original records. Write small tests for the cases we can interpret reliably. Change the reconstruction only where the evidence supports it; keep unresolved cases excluded.
-- **Third day — proposed:** rerun checks after any supported changes and rehearse a short walkthrough: what works, what remains uncertain, and the specific decisions needed from the group.
+“I completed the first analysis using only the supplied archive. I then investigated why some records were excluded and why the model gains were small. I added a conservative way to resume after special events once an ordinary miss, rebound and following action clearly establish control. That gives us 5,394 more episode-entry records without changing the source. The refitted context model improves on its previous version in the later regular sample, but it still performs about like a simple clock rule. My next question is what the group wants to learn beyond that, and whether richer action records are available for passes and movement.”
 
-## A short meeting update
+## Decisions and requests for the group
 
-“I've completed the first analysis using only the supplied archive. I then checked why the prediction gains are small. Much of the benefit seems to come from knowing how little time remains, and a simple clock rule performs about as well as the larger models. I also found that many excluded periods are excluded because our code handles special situations cautiously, not because the records are definitely wrong. My next priority is to handle those situations safely and use more of the existing archive. For full pass and movement valuation, we would still need records of those actions and their locations.”
+1. Confirm the authoritative play order, possession/correction fields and interpretation of overturned events. The current episodes remain inferred rather than official labels.
+2. Clarify existing source discrepancies. For example, game **401736112** has **14** Rhyne Howard attempts in the event records and **15** in the supplied player box. Both versions remain preserved.
+3. If the goal is to value passes and movement, ask whether another supplied dataset records actors, timestamps, start/end locations and action outcomes. Those missing actions cannot be created by additional model fitting.
+4. Request another consistently recorded WNBA season only for a genuinely new evaluation after model choices are fixed. No extra basketball data has entered this project.
 
-Ask the group which event-order and correction fields are authoritative, and whether passes/movement with start and end locations exist in another supplied file or dataset. For example, game **401736112** records **14** Rhyne Howard attempts in the event list and **15** in the player box. We preserve both versions rather than guessing which is right.
+## Walkthrough
 
-## What to show
+Open the [meeting page](https://kevinyamada.github.io/wnba-shot-atlas/meeting/) for the demo and a print-friendly view. Show the original court explorer, then the recovered sample and matched prediction comparisons, then one source discrepancy. Keep the distinction clear: verified calculations and a larger auditable sample are achieved; a general predictive advantage and full spatial action value are not established.
 
-- [Coverage chart](results/data1/meeting/coverage_by_team.png): which teams' periods survive the strict checks. This measures data coverage, not team ability.
-- [Time-left comparison](results/data1/meeting/entry_error_by_clock.png): why the small overall prediction gain needs explanation.
-- [Errors at different recorded states](results/data1/meeting/error_by_state.png): whether a complicated model adds value beyond simple references.
-
-[Detailed calculations and limits](MEETING_DIAGNOSTICS.md) · [Source-disagreement examples](results/data1/followup/attempt_discrepancy_examples.csv) · [Final checks](results/data1/meeting/final_verification.json)
+[Recovery methods and results](RECOVERY.md) · [Earlier diagnostic findings](MEETING_DIAGNOSTICS.md) · [Final recovery checks](results/data1/recovery/final_verification.json)

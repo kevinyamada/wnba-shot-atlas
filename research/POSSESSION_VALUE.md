@@ -106,3 +106,7 @@ py -3.13 research/verify_possession_value.py --source "$env:USERPROFILE/Download
 ```
 
 The final verifier runs after publication and the primary source and desktop follow-up checks. It rereads the ZIP, checks every ledger reward, every retained target, prefix feature timing, chronological splits, all metrics/intervals, saved model inference, the Markov transition matrix and value iteration, published aggregates and live asset bytes. Eight synthetic scenarios check difficult free-throw and rebound cases without adding observations. [Final EPV verification](results/data1/possession/final_possession_verification.json). Raw events, per-state predictions and saved weights remain in ignored `research/data/`.
+
+## Subsequent recovery extension
+
+The [ordinary-tail recovery study](RECOVERY.md) now adds qualified states after a period’s final hazardous event and a corroborated live restart. It retains all original states and artifacts, compares fixed-setting CPU refits, and checks a stricter second restart. The counts and model table in this original report remain the frozen strict reference. The [meeting walkthrough](https://kevinyamada.github.io/wnba-shot-atlas/meeting/) presents both scopes.

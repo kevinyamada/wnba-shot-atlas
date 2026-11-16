@@ -1,0 +1,155 @@
+{
+  "only_data_source": "Data (1).zip",
+  "archive_sha256": "22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120",
+  "original_frozen_artifacts_unchanged": true,
+  "coverage": [
+    {
+      "policy": "first_rebound",
+      "candidate_periods": 484,
+      "periods_with_restart": 367,
+      "periods_with_added_states": 365,
+      "added_states": 8487,
+      "added_entry_states": 5394,
+      "total_states": 49104,
+      "total_entry_states": 30700,
+      "original_entry_states": 25306
+    },
+    {
+      "policy": "second_rebound",
+      "candidate_periods": 484,
+      "periods_with_restart": 312,
+      "periods_with_added_states": 312,
+      "added_states": 6825,
+      "added_entry_states": 4339,
+      "total_states": 47442,
+      "total_entry_states": 29645,
+      "original_entry_states": 25306
+    }
+  ],
+  "hazard_types": [
+    {
+      "type_id": 22,
+      "type_text": "Personal Take Foul",
+      "rows": 145
+    },
+    {
+      "type_id": 25,
+      "type_text": "Excess Timeout Technical",
+      "rows": 1
+    },
+    {
+      "type_id": 28,
+      "type_text": "Delay Technical",
+      "rows": 2
+    },
+    {
+      "type_id": 29,
+      "type_text": "Defensive 3-Seconds Technical",
+      "rows": 68
+    },
+    {
+      "type_id": 30,
+      "type_text": "Double Technical Foul",
+      "rows": 17
+    },
+    {
+      "type_id": 31,
+      "type_text": "Flagrant Foul Type 2",
+      "rows": 2
+    },
+    {
+      "type_id": 32,
+      "type_text": "Flagrant Foul Type 1",
+      "rows": 49
+    },
+    {
+      "type_id": 35,
+      "type_text": "Technical Foul",
+      "rows": 159
+    },
+    {
+      "type_id": 36,
+      "type_text": "Double Personal Foul",
+      "rows": 3
+    },
+    {
+      "type_id": 37,
+      "type_text": "Clear Path Foul",
+      "rows": 9
+    },
+    {
+      "type_id": 40,
+      "type_text": "Away from Play Foul",
+      "rows": 36
+    },
+    {
+      "type_id": 47,
+      "type_text": "Too Many Players Technical",
+      "rows": 2
+    },
+    {
+      "type_id": 103,
+      "type_text": "Free Throw - Technical",
+      "rows": 227
+    },
+    {
+      "type_id": 104,
+      "type_text": "Free Throw - Flagrant 1 of 2",
+      "rows": 32
+    },
+    {
+      "type_id": 105,
+      "type_text": "Free Throw - Flagrant 2 of 2",
+      "rows": 32
+    },
+    {
+      "type_id": 106,
+      "type_text": "Free Throw - Flagrant 1 of 1",
+      "rows": 7
+    },
+    {
+      "type_id": 107,
+      "type_text": "Free Throw - Clear Path 1 of 2",
+      "rows": 7
+    },
+    {
+      "type_id": 108,
+      "type_text": "Free Throw - Clear Path 2 of 2",
+      "rows": 7
+    },
+    {
+      "type_id": 157,
+      "type_text": "Free Throw - Flagrant 1 of 3",
+      "rows": 12
+    },
+    {
+      "type_id": 165,
+      "type_text": "Free Throw - Flagrant 2 of 3",
+      "rows": 12
+    },
+    {
+      "type_id": 166,
+      "type_text": "Free Throw - Flagrant 3 of 3",
+      "rows": 12
+    },
+    {
+      "type_id": 215,
+      "type_text": "Coach's Challenge (Overturned)",
+      "rows": 202
+    },
+    {
+      "type_id": 257,
+      "type_text": "Transition Take Foul",
+      "rows": 48
+    },
+    {
+      "type_id": 279,
+      "type_text": "Ref-Initiated Review (Overturned)",
+      "rows": 134
+    }
+  ],
+  "all_expanded_state_margins_match_source_snapshots": true,
+  "second_restart_is_subset_of_first": true,
+  "elapsed_seconds": 9.979766800000107,
+  "completed_utc": "2026-11-16T03:54:12.717005+00:00"
+}

@@ -1,0 +1,90 @@
+{
+  "only_data_source": "Data (1).zip",
+  "archive_sha256": "22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120",
+  "runtime": "desktop CPU only",
+  "features": [
+    "period_number",
+    "seconds_remaining",
+    "elapsed_seconds",
+    "home",
+    "score_margin",
+    "points_so_far",
+    "fga_so_far",
+    "fta_so_far",
+    "offensive_rebounds_so_far",
+    "stage",
+    "start_reason",
+    "offense_team_id",
+    "defense_team_id"
+  ],
+  "policies": [
+    "first_rebound",
+    "second_rebound"
+  ],
+  "context_parameters": {
+    "categorical_features": "from_dtype",
+    "early_stopping": false,
+    "interaction_cst": null,
+    "l2_regularization": 100.0,
+    "learning_rate": 0.04,
+    "loss": "poisson",
+    "max_bins": 63,
+    "max_depth": 3,
+    "max_features": 1.0,
+    "max_iter": 300,
+    "max_leaf_nodes": 15,
+    "min_samples_leaf": 100,
+    "monotonic_cst": null,
+    "n_iter_no_change": 10,
+    "quantile": null,
+    "random_state": 20261122,
+    "scoring": "loss",
+    "tol": 1e-07,
+    "validation_fraction": 0.1,
+    "verbose": 0,
+    "warm_start": false
+  },
+  "markov_alpha": 1.0,
+  "clock_prior_strength": 50,
+  "training_cutoff": "2025-08-09",
+  "setting_rule": "Reuse the frozen validation-selected context and Markov settings; use the diagnostic clock rule fixed earlier. No new tuning or winner selection.",
+  "evaluation_limit": "Exploratory refits and recovery sensitivity on reused 2025 data. The source eligibility rule was fixed before these fits.",
+  "model_names": [
+    "Frozen average",
+    "Expanded average",
+    "Frozen clock",
+    "Expanded clock",
+    "Frozen context",
+    "Expanded context",
+    "Frozen Markov",
+    "Expanded Markov"
+  ],
+  "fits": [
+    {
+      "policy": "first_rebound",
+      "training_states": 31582,
+      "training_entry_states": 19720,
+      "added_training_states": 5318,
+      "last_training_date": "2025-08-09",
+      "markov_states": 74,
+      "markov_bellman_residual": 2.498001805406602e-16,
+      "markov_spectral_radius": 0.3528221172396261,
+      "cpu_threads": 4
+    },
+    {
+      "policy": "second_rebound",
+      "training_states": 30522,
+      "training_entry_states": 19029,
+      "added_training_states": 4258,
+      "last_training_date": "2025-08-09",
+      "markov_states": 74,
+      "markov_bellman_residual": 2.220446049250313e-16,
+      "markov_spectral_radius": 0.3546440168714,
+      "cpu_threads": 4
+    }
+  ],
+  "original_model_predictions_reproduced": true,
+  "original_artifacts_unchanged": true,
+  "elapsed_seconds": 56.173341800000344,
+  "completed_utc": "2026-11-16T03:59:18.789598+00:00"
+}
