@@ -1,0 +1,28 @@
+{
+  "all_checks_pass": true,
+  "checks": [
+    "Exact original archive is the only observation source",
+    "Fresh standard-library CSV parsing reproduces all 624 final team scores",
+    "Every period and overlapping exclusion reason matches fresh source keys",
+    "All 13 team and monthly coverage counts independently rebuild",
+    "Retained/excluded period scoring and event summaries reproduce from original rows",
+    "Meeting example independently confirms 14 event attempts versus 15 in the box",
+    "Every diagnostic prediction joins to its verified source-state target",
+    "Every state/clock diagnostic error and paired game interval recomputes",
+    "Every reported prediction-spread statistic recomputes",
+    "Clock baseline uses only earlier training targets and fixed settings",
+    "Training-bin sums and every saved clock prediction independently reproduce",
+    "All simple-clock comparisons, errors and intervals independently recompute",
+    "All five original model, prediction and website artifacts remain unchanged",
+    "All three standalone figures exist and have PNG signatures",
+    "Brief and technical report preserve exploratory interpretation",
+    "All published meeting tables, figures and receipts match checked outputs",
+    "Checked analysis commit matches GitHub main"
+  ],
+  "archive_sha256": "22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120",
+  "only_data_source": "Data (1).zip",
+  "compute": "desktop CPU only",
+  "analysis_commit": "806df1570e4427191a5fb39e2797ce14d83c76bd",
+  "stage": "final after publication",
+  "completed_utc": "2026-11-16T03:37:08.530337+00:00"
+}
