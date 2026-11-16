@@ -1,5 +1,7 @@
 # WNBA Shot Atlas
 
+[Kevin Yamada · Portfolio](https://kevinyamada.github.io/)
+
 An interactive study of recorded WNBA shot locations, conditional make probabilities, observed field goal points and a source-limited event-based possession-value prototype. **All basketball inputs come from the supplied Data (1).zip.**
 
 **[Explore the live app](https://kevinyamada.github.io/wnba-shot-atlas/) · [Methods and results](research/summary.md) · [Archive and literature review](research/ARCHIVE_REVIEW.md)**
