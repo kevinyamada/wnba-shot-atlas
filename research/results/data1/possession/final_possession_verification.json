@@ -32,7 +32,7 @@
   "only_data_source": "Data (1).zip",
   "compute": "desktop CPU only",
   "actual_game_prefix_feature_comparisons": 3229,
-  "analysis_commit": "936119351c47218a1f1860400b0d81717b26a865",
-  "completed_utc": "2026-11-16T02:43:19.937705+00:00",
+  "analysis_commit": "7e2747b1ca7dd6d436594b32021e8d740e7f554b",
+  "completed_utc": "2026-11-16T14:27:20.070300+00:00",
   "stage": "final after publication"
 }

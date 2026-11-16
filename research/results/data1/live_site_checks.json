@@ -1,8 +1,11 @@
 {
   "url": "https://kevinyamada.github.io/wnba-shot-atlas/",
-  "completed_utc": "2026-11-16T02:41:31Z",
+  "completed_utc": "2026-11-16T14:25:32Z",
   "cache_disabled": true,
   "checks": [
+    "Small dark-mode toggle",
+    "Dark-mode preference survives reload",
+    "Light-mode toggle restores readable surface",
     "Source identity and visible totals",
     "Thirteen archive-sourced teams",
     "All team filters and cell sizes",
@@ -13,11 +16,17 @@
     "Every evaluation table",
     "Desktop CPU follow-up tables",
     "Possession EPV controls and tables",
+    "Recovery controls and tables",
     "Mesh, variogram, and all buffers",
     "Finite SVG geometry",
     "No broken or empty links",
     "desktop layout fits viewport",
-    "mobile layout fits viewport"
+    "mobile layout fits viewport",
+    "Dark mode persists across meeting navigation",
+    "Meeting walkthrough controls and layout",
+    "Meeting desktop fits viewport",
+    "Meeting mobile fits viewport",
+    "Meeting print stylesheet"
   ],
   "all_pass": true,
   "javascript_errors": 0,

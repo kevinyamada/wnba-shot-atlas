@@ -1,6 +1,6 @@
 {
   "stage": "Final verification after analysis and publication",
-  "completed_utc": "2026-11-16T02:41:55Z",
+  "completed_utc": "2026-11-16T14:26:01Z",
   "all_checks_pass": true,
   "checks": [
     "Original Data (1).zip is unchanged",
@@ -53,9 +53,9 @@
   ],
   "archive_sha256": "22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120",
   "site_data_sha256": "86db4f8b91dff9178ff91639f7d21c23f98bac0c48e4d1ef1442485c4ae6d8c3",
-  "analysis_commit": "936119351c47218a1f1860400b0d81717b26a865",
+  "analysis_commit": "7e2747b1ca7dd6d436594b32021e8d740e7f554b",
   "live_url": "https://kevinyamada.github.io/wnba-shot-atlas/",
-  "seconds": 22.21,
+  "seconds": 25.71,
   "modal_shutdown": {
     "study_apps_checked": 0,
     "active_tasks": 0,

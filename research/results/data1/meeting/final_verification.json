@@ -22,7 +22,7 @@
   "archive_sha256": "22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120",
   "only_data_source": "Data (1).zip",
   "compute": "desktop CPU only",
-  "analysis_commit": "806df1570e4427191a5fb39e2797ce14d83c76bd",
+  "analysis_commit": "7e2747b1ca7dd6d436594b32021e8d740e7f554b",
   "stage": "final after publication",
-  "completed_utc": "2026-11-16T03:37:08.530337+00:00"
+  "completed_utc": "2026-11-16T14:27:27.088769+00:00"
 }
