@@ -1,0 +1,27 @@
+{
+  "only_data_source": "Data (1).zip",
+  "archive_sha256": "22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120",
+  "features": [
+    "stage",
+    "seconds_remaining"
+  ],
+  "training_last_date": "2025-08-09",
+  "training_states": 26264,
+  "clock_edges_seconds": [
+    2,
+    5,
+    24,
+    60,
+    120,
+    300,
+    601
+  ],
+  "prior_strength": 50.0,
+  "definition": "Training mean in each state-type/period-clock bin, shrunk toward its training state-type mean with 50 pseudocounts.",
+  "setting_selection": "Fixed diagnostic settings; no validation or later-period tuning. Uses the existing clock-bin boundaries.",
+  "limit": "Designed after examining reused 2025 results. Exploratory explanation, not independent confirmation or a new selected model.",
+  "runtime": "desktop CPU only",
+  "existing_selected_model_unchanged": "Context boosting EPV",
+  "source_state_table_sha256": "29b4f5bab755dfda3057ace40bdf6ee2a599ed5c5e675c7cb58581bcf864b8f4",
+  "elapsed_seconds": 0.49930829999993875
+}

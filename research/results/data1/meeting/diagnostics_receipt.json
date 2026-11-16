@@ -1,0 +1,40 @@
+{
+  "only_data_source": "Data (1).zip",
+  "archive_sha256": "22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120",
+  "base_analysis_commit": "a1cf0b3c0350b356187a06c7222c441c2ec054a7",
+  "no_new_model_fits": true,
+  "no_cloud_compute": true,
+  "frozen_inputs_unchanged": {
+    "research\\results\\data1\\possession\\model_selection_receipt.json": "081f4244c8e5020fd08dc41e41fb0d82544bb78241ffed1c49ef6bee755bab76",
+    "research\\data\\data1\\possession\\model_states.csv.gz": "29b4f5bab755dfda3057ace40bdf6ee2a599ed5c5e675c7cb58581bcf864b8f4",
+    "research\\data\\data1\\possession\\predictions.csv.gz": "7fa79dfa9a0a0e602482937ed9a7577400a177c12789d1de54b8051aa6e6bb6a",
+    "research\\data\\data1\\possession\\models.joblib": "80ecc13067d3c5264df29560efc1c6cfd9cbd6512ff8bda817c4ff376610e155",
+    "assets\\data.json": "86db4f8b91dff9178ff91639f7d21c23f98bac0c48e4d1ef1442485c4ae6d8c3"
+  },
+  "all_periods": 1257,
+  "passing_periods": 662,
+  "excluded_periods": 595,
+  "excluded_only_for_special_or_review_rules": 485,
+  "standard_game_periods": 1249,
+  "standard_game_passing_periods": 659,
+  "min_team_coverage": 0.46846846846846846,
+  "max_team_coverage": 0.5925925925925926,
+  "checks": [
+    "ZIP digest matches the exact supplied archive",
+    "All 624 team point totals independently reconcile",
+    "Every raw event belongs to exactly one audited period",
+    "All team and monthly coverage denominators reconcile",
+    "All overall model errors match the frozen public metrics",
+    "Overall paired intervals reproduce the published bootstrap",
+    "Clock subgroup counts and weighted error differences reconcile with their overall groups",
+    "Five frozen inputs are byte-unchanged"
+  ],
+  "limitations": [
+    "Exploratory subgroup diagnosis on reused 2025 data; no model reselection",
+    "Period screening is a parser scope/consistency restriction, not proof every excluded record is wrong",
+    "Teams share each period quality label; this is data coverage, not team quality",
+    "Intervals condition on the reconstructed subset and do not measure boundary uncertainty"
+  ],
+  "elapsed_seconds": 3.911158400000204,
+  "completed_utc": "2026-11-16T03:34:32.258921+00:00"
+}

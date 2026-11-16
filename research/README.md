@@ -4,6 +4,8 @@ Read [the current methods and results](summary.md), [all-file archive review](AR
 
 The [event-based EPV prototype](POSSESSION_VALUE.md) adds audited control episodes, ordinary free throws and offensive rebounds, with CPU model fitting and independent verification. It uses only the supplied archive. Its strict retained subset is not an official possession feed, and the archive cannot support full spatial xT without nonshot action data. VS Code tasks provide desktop CPU reconstruction and fitting.
 
+The [meeting brief](MEETING_BRIEF.md) and [diagnostics](MEETING_DIAGNOSTICS.md) explain exclusion coverage and where prediction gains occur. `meeting_clock_baseline.py` adds one fixed training-only clock reference; `meeting_diagnostics.py` builds the tables and three figures; `verify_meeting_diagnostics.py` independently verifies them. These exploratory checks preserve the original fitted models and published site data.
+
 The archive is the only basketball source. `data/` holds private working files and is ignored. `results/archive_audit.json` and `archive_manifest.csv` account for all 45 files; `results/data1/` contains current aggregate results. Individual event predictions, raw experiment tasks and posterior arrays are excluded from Git. Earlier public-release outputs were removed from the current branch and remain available in Git history.
 
 Compatibility commands `prepare_data.py`, `run_comparisons.py`, `export_site_data.py` and `evaluate_predictions.py` route to the archive-only implementation. `gp_model.py` points to the Modal workflow. There is no public-download fallback.

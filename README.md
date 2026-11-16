@@ -18,6 +18,8 @@ The [desktop follow-up](research/LOCAL_FOLLOWUP.md) gives concrete source-disagr
 
 The [event-based possession-value extension](research/POSSESSION_VALUE.md) reconstructs ordinary scoring episodes, including free throws and offensive-rebound continuation. Strict source checks retain 662 of 1,257 periods and 25,306 entry states. CPU stage-mean, Markov, spline and context models use validation-only selection. The selected model's later-game improvement is uncertain. This is a screened, retrospectively qualified EPV prototype; full spatial xT still needs nonshot action data absent from the archive. No additional Modal compute is used. The [EPV verification record](research/results/data1/possession/final_possession_verification.json) is generated after publication.
 
+The [meeting brief](research/MEETING_BRIEF.md) explains what can be done with the existing archive before collecting more data. [Additional diagnostics](research/MEETING_DIAGNOSTICS.md) examine exclusions, period-clock effects and a simple training-only clock reference, while preserving the frozen primary models and site data.
+
 ## View locally
 
 ```bash
