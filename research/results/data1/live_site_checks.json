@@ -1,6 +1,6 @@
 {
   "url": "https://kevinyamada.github.io/wnba-shot-atlas/",
-  "completed_utc": "2026-11-15T21:55:01Z",
+  "completed_utc": "2026-11-16T02:41:31Z",
   "cache_disabled": true,
   "checks": [
     "Source identity and visible totals",
@@ -12,6 +12,7 @@
     "Tap selection and clear",
     "Every evaluation table",
     "Desktop CPU follow-up tables",
+    "Possession EPV controls and tables",
     "Mesh, variogram, and all buffers",
     "Finite SVG geometry",
     "No broken or empty links",

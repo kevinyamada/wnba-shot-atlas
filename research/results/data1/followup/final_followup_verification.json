@@ -18,8 +18,8 @@
     "Follow-up source is the same original archive and no cloud GPU is used"
   ],
   "archive_sha256": "22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120",
-  "completed_utc": "2026-11-15T21:58:49.129945+00:00",
-  "analysis_commit": "8d59ab176ee2fea32c276f4b1ec0bdf955c28665",
+  "completed_utc": "2026-11-16T02:42:02.731821+00:00",
+  "analysis_commit": "936119351c47218a1f1860400b0d81717b26a865",
   "only_data_source": "Data (1).zip",
   "compute": "desktop CPU only"
 }

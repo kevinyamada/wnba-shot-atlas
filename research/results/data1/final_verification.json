@@ -1,6 +1,6 @@
 {
   "stage": "Final verification after analysis and publication",
-  "completed_utc": "2026-11-15T21:58:43Z",
+  "completed_utc": "2026-11-16T02:41:55Z",
   "all_checks_pass": true,
   "checks": [
     "Original Data (1).zip is unchanged",
@@ -52,10 +52,10 @@
     "Local analysis commit matches GitHub main"
   ],
   "archive_sha256": "22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120",
-  "site_data_sha256": "dc4ac26c4636cf74d7ac3440fa64c127ef1bd1d2c26a78695364800143b687bd",
-  "analysis_commit": "8d59ab176ee2fea32c276f4b1ec0bdf955c28665",
+  "site_data_sha256": "86db4f8b91dff9178ff91639f7d21c23f98bac0c48e4d1ef1442485c4ae6d8c3",
+  "analysis_commit": "936119351c47218a1f1860400b0d81717b26a865",
   "live_url": "https://kevinyamada.github.io/wnba-shot-atlas/",
-  "seconds": 21.3,
+  "seconds": 22.21,
   "modal_shutdown": {
     "study_apps_checked": 0,
     "active_tasks": 0,
@@ -64,8 +64,9 @@
     "observation": "No study apps returned in the current listing; historical stop record retained."
   },
   "remaining_source_limits": [
-    "18 player/game attempt discrepancies in eight games; excluded from all models, retained in descriptive maps.",
-    "88 shot-score-update conflicts; no score-margin or possession model.",
+    "18 player/game attempt discrepancies in eight games; excluded from primary player-context shot models, retained in descriptive maps.",
+    "88 shot-score-update conflicts; score margin excluded from the primary shot comparison.",
+    "Separate event-based EPV prototype uses strict period/control screening; inferred episodes are not authoritative possession IDs or full spatial xT.",
     "Previously examined 2025 benchmark; no untouched WNBA season in this archive.",
     "Missed-shot two/three labels, tracking and actual shot clock unavailable."
   ]
