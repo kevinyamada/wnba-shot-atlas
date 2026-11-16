@@ -1,0 +1,23 @@
+{
+  "all_checks_pass": true,
+  "stage": "Final light-default UI verification after publication",
+  "default_theme": "light",
+  "saved_manual_choice_respected": true,
+  "ui_commit": "4279b0dd4975372320c37e604259dfbe9171aec0",
+  "asset_hashes": {
+    "theme.js": "a6c1f459dac830a72da93bda60f457514d7eacfbff325caaea4561c890ee560b",
+    "index.html": "2f5cda7068f5c6042e6138f380a901a22bf4cb983339bb3d4d117bfbf761a2ab",
+    "meeting/index.html": "e79df955d239559a5852395b53d4e5f7f248e2fb145ba6eaa331b9015f1eb063",
+    "assets/data.json": "86db4f8b91dff9178ff91639f7d21c23f98bac0c48e4d1ef1442485c4ae6d8c3",
+    "assets/recovery.json": "e49211482a1b1b4226a14538da71f28e8276d1faea9cb6ecf61fc61e06022077"
+  },
+  "checks": [
+    "Live theme and both pages match the reviewed files",
+    "Original and expanded analysis data remain byte-unchanged",
+    "All 25 live browser checks pass, including dark-system fresh visits, saved choices and mobile layouts",
+    "Verified UI commit matches GitHub main"
+  ],
+  "browser_checks": 25,
+  "analysis_results_changed": false,
+  "completed_utc": "2026-11-16T15:13:28Z"
+}

@@ -1,8 +1,9 @@
 {
   "url": "https://kevinyamada.github.io/wnba-shot-atlas/",
-  "completed_utc": "2026-11-16T14:25:32Z",
+  "completed_utc": "2026-11-16T15:13:26Z",
   "cache_disabled": true,
   "checks": [
+    "Fresh visits default to light even with a dark system theme",
     "Small dark-mode toggle",
     "Dark-mode preference survives reload",
     "Light-mode toggle restores readable surface",
