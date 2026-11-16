@@ -19,7 +19,7 @@ for(const name of visible){const r=selected.find(r=>r.model===name);if(!r)throw 
 const find=baseline=>data.bootstrap.find(r=>r.policy===policy&&r.split===split&&r.cohort===cohort&&r.stage===stage&&r.model==='Expanded context'&&r.baseline===baseline);
 const refit=find('Frozen context'),clock=find('Frozen clock');
 q('#recovery-note').textContent=`${format(selected[0].states)} identical recorded states in ${selected[0].games} games per model. `+conclusion(refit,'the original context model')+' '+conclusion(clock,'the original simple clock rule')+' Training always ends August 9. These are reused 2025 benchmarks.';
-q('#recovery-detail-note').textContent=`Expanded context minus original context squared-error difference: ${refit.mse_difference.toFixed(6)} (95% game-bootstrap interval ${refit.lower.toFixed(6)} to ${refit.upper.toFixed(6)}). Expanded context minus original clock rule: ${clock.mse_difference.toFixed(6)} (${clock.lower.toFixed(6)} to ${clock.upper.toFixed(6)}). Negative favours expanded context. Intervals condition on this screened sample and do not cover uncertainty in inferred boundaries.`;
+q('#recovery-detail-note').textContent=`Expanded context minus original context squared error difference: ${refit.mse_difference.toFixed(6)} (95% game bootstrap interval ${refit.lower.toFixed(6)} to ${refit.upper.toFixed(6)}). Expanded context minus original clock rule: ${clock.mse_difference.toFixed(6)} (${clock.lower.toFixed(6)} to ${clock.upper.toFixed(6)}). Negative favours expanded context. Intervals condition on this screened sample and do not cover uncertainty in inferred boundaries.`;
 window.recoveryCheck={data,render,rows:visible,policy,split,cohort,stage};
 }
 async function start(){
