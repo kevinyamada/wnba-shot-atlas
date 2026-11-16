@@ -49,7 +49,10 @@ def main():
             assert 'exceptionDetails' not in r,r
             return r['result'].get('value')
         call('Runtime.enable');call('Page.enable');call('Log.enable');call('Network.enable')
-        call('Network.setCacheDisabled',{'cacheDisabled':True});call('Page.navigate',{'url':args.url})
+        call('Network.setCacheDisabled',{'cacheDisabled':True})
+        call('Emulation.setEmulatedMedia',{'features':[{'name':'prefers-color-scheme','value':'dark'}]})
+        reset=call('Page.addScriptToEvaluateOnNewDocument',{'source':"try{localStorage.removeItem('wnba-theme');}catch{}"})
+        call('Page.navigate',{'url':args.url})
         for _ in range(100):
             if js('Boolean(document.body && document.body.dataset.ready === "true" && document.body.dataset.recoveryReady === "true")'):break
             time.sleep(.2)
@@ -58,6 +61,8 @@ def main():
         def check(name,expression):
             value=js(expression);assert value, (name,value)
             tests.append(name)
+        call('Page.removeScriptToEvaluateOnNewDocument',{'identifier':reset['identifier']})
+        check('Fresh visits default to light even with a dark system theme',"matchMedia('(prefers-color-scheme: dark)').matches && localStorage.getItem('wnba-theme')===null && document.documentElement.dataset.theme==='light' && getComputedStyle(document.body).backgroundColor==='rgb(255, 255, 255)'")
         js(SET_LIGHT);js(SET_DARK)
         check('Small dark-mode toggle',"document.querySelector('#theme-toggle').getBoundingClientRect().width<=40 && document.querySelector('#theme-toggle').getAttribute('aria-pressed')==='true' && document.querySelector('#theme-toggle').getAttribute('aria-label')==='Switch to light mode' && localStorage.getItem('wnba-theme')==='dark' && getComputedStyle(document.body).backgroundColor==='rgb(17, 25, 31)'")
         call('Page.reload',{'ignoreCache':True})
