@@ -10,3 +10,4 @@ research/results/data1/**/*.csv.gz
 *.cbm
 .DS_Store
 research/results/data1/development_site_checks.json
+research/results/data1/possession/development_verification.json

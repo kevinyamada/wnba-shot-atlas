@@ -319,7 +319,7 @@ def main():
     result={'stage':'Final verification after analysis and publication','completed_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),
             'all_checks_pass':True,'checks':CHECKS,'archive_sha256':actual_sha,'site_data_sha256':hashlib.sha256(site_bytes).hexdigest(),
             'analysis_commit':head,'live_url':args.live_url,'seconds':round(time.time()-start,2),'modal_shutdown':shutdown,
-            'remaining_source_limits':['18 player/game attempt discrepancies in eight games; excluded from all models, retained in descriptive maps.','88 shot-score-update conflicts; no score-margin or possession model.','Previously examined 2025 benchmark; no untouched WNBA season in this archive.','Missed-shot two/three labels, tracking and actual shot clock unavailable.']}
+            'remaining_source_limits':['18 player/game attempt discrepancies in eight games; excluded from primary player-context shot models, retained in descriptive maps.','88 shot-score-update conflicts; score margin excluded from the primary shot comparison.','Separate event-based EPV prototype uses strict period/control screening; inferred episodes are not authoritative possession IDs or full spatial xT.','Previously examined 2025 benchmark; no untouched WNBA season in this archive.','Missed-shot two/three labels, tracking and actual shot clock unavailable.']}
     (OUT/'final_verification.json').write_text(json.dumps(result,indent=2),encoding='utf-8')
     print(json.dumps(result,indent=2))
 

@@ -69,6 +69,16 @@ def main():
         data['localFollowup']={'metrics':pd.read_csv(followup/'local_metrics.csv').to_dict('records'),
                               'paired':pd.read_csv(followup/'local_game_bootstrap.csv').to_dict('records'),
                               'receipt':receipt,'sourceInvestigation':json.loads((followup/'archive_investigation.json').read_text(encoding='utf-8'))}
+    possession=OUT/'possession'
+    if (possession/'metrics.csv').exists() and not args.preview:
+        receipt=json.loads((possession/'model_selection_receipt.json').read_text(encoding='utf-8'))
+        assert receipt['archive_sha256']==source['archive_sha256'] and receipt['runtime']=='desktop CPU only'
+        data['possessionValue']={'audit':json.loads((possession/'reconstruction_audit.json').read_text(encoding='utf-8')),
+            'selection':receipt,'metrics':pd.read_csv(possession/'metrics.csv').to_dict('records'),
+            'bootstrap':pd.read_csv(possession/'game_bootstrap.csv').to_dict('records'),
+            'summary':pd.read_csv(possession/'value_summary.csv').to_dict('records'),
+            'calibration':pd.read_csv(possession/'calibration.csv').to_dict('records'),
+            'markov':json.loads((possession/'markov_diagnostics.json').read_text(encoding='utf-8'))}
     train=pd.read_csv(HERE/'data/data1/model_shots.csv.gz').query("split == 'train'")[['x','y']].drop_duplicates().copy()
     train['fold']=train.x.ge(16).astype(int)*2+train.y.ge(0).astype(int)
     train['nearest']=cKDTree(train[train.fold.eq(0)][['x','y']]).query(train[['x','y']])[0]

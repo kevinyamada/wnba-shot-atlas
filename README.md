@@ -1,6 +1,6 @@
 # WNBA Shot Atlas
 
-An interactive study of recorded WNBA shot locations, conditional make probabilities and observed field goal point outcomes. **All basketball inputs in this update come from the supplied Data (1).zip.**
+An interactive study of recorded WNBA shot locations, conditional make probabilities, observed field goal points and a source-limited event-based possession-value prototype. **All basketball inputs come from the supplied Data (1).zip.**
 
 **[Explore the live app](https://kevinyamada.github.io/wnba-shot-atlas/) · [Methods and results](research/summary.md) · [Archive and literature review](research/ARCHIVE_REVIEW.md)**
 
@@ -10,11 +10,13 @@ The descriptive sample contains 38,535 regular-season attempts in 286 games, wit
 
 The original 45-file archive has SHA-256 `22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120`. It supplies 2025 WNBA events, historical player/team boxes and supporting tables and papers. No external basketball release or additional season enters the active pipeline.
 
-All 624 game/team shot totals reconcile. Eighteen player/game attempt totals disagree across eight games; those games remain in descriptive maps and are excluded uniformly from model fitting and evaluation. The source also contains 88 shot-score-update conflicts, so score margin and possession models are excluded. [Review the exclusions](research/results/data1/excluded_games.csv).
+All 624 game/team shot totals and final scores reconcile. Eighteen player/game attempt totals disagree across eight games; those games remain in descriptive maps and are excluded uniformly from the player-context shot models. The source also contains 88 shot-score-update conflicts, so score margin is excluded from the primary shot comparison. [Review the exclusions](research/results/data1/excluded_games.csv).
 
 The model cohorts contain 25,751 training attempts, 5,995 validation attempts, 5,626 later regular-season attempts and 3,311 playoff attempts. All are previously examined 2025 benchmarks. They do not establish performance in an untouched season. Missing missed-shot values are handled by a joint 0/2/3 outcome model, rather than invented attempt labels. This does not yet estimate expected threat or causal shot-selection effects.
 
 The [desktop follow-up](research/LOCAL_FOLLOWUP.md) gives concrete source-disagreement examples and additional CPU refit and source-exclusion sensitivity results. It uses the same Data (1) archive.
+
+The [event-based possession-value extension](research/POSSESSION_VALUE.md) reconstructs ordinary scoring episodes, including free throws and offensive-rebound continuation. Strict source checks retain 662 of 1,257 periods and 25,306 entry states. CPU stage-mean, Markov, spline and context models use validation-only selection. The selected model's later-game improvement is uncertain. This is a screened, retrospectively qualified EPV prototype; full spatial xT still needs nonshot action data absent from the archive. No additional Modal compute is used. The [EPV verification record](research/results/data1/possession/final_possession_verification.json) is generated after publication.
 
 ## View locally
 
@@ -43,6 +45,8 @@ The [final verification record](research/results/data1/final_verification.json) 
 | `research/gpu_models.py`, `research/modal_study.py` | Bounded H100 model study |
 | `research/summarize_data1.py` | Validation-only selection, keyed evaluation and game bootstraps |
 | `research/verify_data1.py`, `research/check_site.py` | Final independent source/results and real-browser checks |
+| `research/possession_reconstruction.py`, `research/possession_models.py` | Desktop CPU event-based EPV prototype |
+| `research/verify_possession_value.py` | Independent rewards, timing, Markov and EPV publication checks |
 | `research/results/data1/` | Current public aggregate outputs and audit records |
 | `research/DATA_REQUESTS.md` | Prepared research-group questions; not sent |
 

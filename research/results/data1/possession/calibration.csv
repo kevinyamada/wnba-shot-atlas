@@ -1,0 +1,140 @@
+split,stage,model,prediction_bin,states,mean_prediction,observed_remaining_points
+playoffs,after_miss,Stage mean,"(0.25, 0.5]",919,0.31025039123630677,0.25571273122959737
+playoffs,after_offensive_rebound,Stage mean,"(1.0, 1.25]",241,1.0742857142857145,0.9875518672199171
+playoffs,entry,Stage mean,"(1.0, 1.25]",1963,1.0302677532013966,1.0224146714212938
+playoffs,after_miss,Shrunk state mean,"(-inf, 0.25]",8,0.20082003129890455,0.0
+playoffs,after_miss,Shrunk state mean,"(0.25, 0.5]",911,0.3119480120529975,0.2579582875960483
+playoffs,after_offensive_rebound,Shrunk state mean,"(0.75, 1.0]",13,0.8768580355814398,1.2307692307692308
+playoffs,after_offensive_rebound,Shrunk state mean,"(1.0, 1.25]",211,1.080456526831114,0.943127962085308
+playoffs,after_offensive_rebound,Shrunk state mean,"(1.25, 1.5]",17,1.319290928050052,1.3529411764705883
+playoffs,entry,Shrunk state mean,"(0.25, 0.5]",4,0.36995568740846446,0.0
+playoffs,entry,Shrunk state mean,"(0.5, 0.75]",14,0.6132459517126074,0.6428571428571429
+playoffs,entry,Shrunk state mean,"(0.75, 1.0]",598,0.9450034697613537,1.028428093645485
+playoffs,entry,Shrunk state mean,"(1.0, 1.25]",1339,1.0809569564720436,1.027632561613144
+playoffs,entry,Shrunk state mean,"(1.25, 1.5]",8,1.328606201714467,0.875
+playoffs,after_miss,Markov EPV,"(-inf, 0.25]",8,0.2032017599753579,0.0
+playoffs,after_miss,Markov EPV,"(0.25, 0.5]",911,0.311168781874115,0.2579582875960483
+playoffs,after_offensive_rebound,Markov EPV,"(0.5, 0.75]",4,0.7099346789777303,1.0
+playoffs,after_offensive_rebound,Markov EPV,"(0.75, 1.0]",9,0.8931238618406925,1.3333333333333333
+playoffs,after_offensive_rebound,Markov EPV,"(1.0, 1.25]",201,1.0670383117213276,0.9701492537313433
+playoffs,after_offensive_rebound,Markov EPV,"(1.25, 1.5]",27,1.2886671463096386,1.0
+playoffs,entry,Markov EPV,"(-inf, 0.25]",5,0.1607338623804581,0.0
+playoffs,entry,Markov EPV,"(0.25, 0.5]",6,0.34468714471471656,0.3333333333333333
+playoffs,entry,Markov EPV,"(0.5, 0.75]",10,0.6499496431459522,1.0
+playoffs,entry,Markov EPV,"(0.75, 1.0]",392,0.9283449814107969,1.0127551020408163
+playoffs,entry,Markov EPV,"(1.0, 1.25]",1542,1.0680589995420084,1.0317769130998704
+playoffs,entry,Markov EPV,"(1.25, 1.5]",8,1.3126661188048858,0.875
+playoffs,after_miss,Poisson spline,"(0.25, 0.5]",919,0.39948080324571156,0.25571273122959737
+playoffs,after_offensive_rebound,Poisson spline,"(0.5, 0.75]",1,0.5078844858370635,0.0
+playoffs,after_offensive_rebound,Poisson spline,"(0.75, 1.0]",218,0.9306997017461024,0.9954128440366973
+playoffs,after_offensive_rebound,Poisson spline,"(1.0, 1.25]",22,1.015391786747153,0.9545454545454546
+playoffs,entry,Poisson spline,"(0.75, 1.0]",662,0.9752149071968638,0.9969788519637462
+playoffs,entry,Poisson spline,"(1.0, 1.25]",1301,1.0362840739489843,1.035357417371253
+playoffs,after_miss,Context boosting EPV,"(-inf, 0.25]",91,0.21969159440146133,0.16483516483516483
+playoffs,after_miss,Context boosting EPV,"(0.25, 0.5]",826,0.33848204080482325,0.26634382566585957
+playoffs,after_miss,Context boosting EPV,"(0.5, 0.75]",2,0.5111544831007762,0.0
+playoffs,after_offensive_rebound,Context boosting EPV,"(0.25, 0.5]",1,0.35326200385158796,2.0
+playoffs,after_offensive_rebound,Context boosting EPV,"(0.5, 0.75]",13,0.6393403887270543,0.38461538461538464
+playoffs,after_offensive_rebound,Context boosting EPV,"(0.75, 1.0]",67,0.8878361743505547,0.7313432835820896
+playoffs,after_offensive_rebound,Context boosting EPV,"(1.0, 1.25]",130,1.1246820741127646,1.1538461538461537
+playoffs,after_offensive_rebound,Context boosting EPV,"(1.25, 1.5]",30,1.307214547208777,1.0666666666666667
+playoffs,entry,Context boosting EPV,"(0.25, 0.5]",18,0.3350766033825967,0.5
+playoffs,entry,Context boosting EPV,"(0.5, 0.75]",9,0.5977300581612736,0.2222222222222222
+playoffs,entry,Context boosting EPV,"(0.75, 1.0]",554,0.9304022902688818,1.0180505415162455
+playoffs,entry,Context boosting EPV,"(1.0, 1.25]",1358,1.098775173973242,1.0324005891016201
+playoffs,entry,Context boosting EPV,"(1.25, 1.5]",24,1.2947682411175518,1.25
+test,after_miss,Stage mean,"(0.25, 0.5]",1619,0.3102503912363068,0.30203829524397774
+test,after_offensive_rebound,Stage mean,"(1.0, 1.25]",462,1.0742857142857143,1.0627705627705628
+test,entry,Stage mean,"(1.0, 1.25]",3468,1.0302677532013966,1.059111880046136
+test,after_miss,Shrunk state mean,"(-inf, 0.25]",25,0.20082003129890452,0.56
+test,after_miss,Shrunk state mean,"(0.25, 0.5]",1594,0.3123852705103934,0.29799247176913424
+test,after_offensive_rebound,Shrunk state mean,"(0.75, 1.0]",17,0.8254678015629204,1.411764705882353
+test,after_offensive_rebound,Shrunk state mean,"(1.0, 1.25]",417,1.0783198901224094,1.0071942446043165
+test,after_offensive_rebound,Shrunk state mean,"(1.25, 1.5]",28,1.319290928050052,1.6785714285714286
+test,entry,Shrunk state mean,"(0.25, 0.5]",10,0.3774779375868414,0.4
+test,entry,Shrunk state mean,"(0.5, 0.75]",37,0.6207388859309697,0.2972972972972973
+test,entry,Shrunk state mean,"(0.75, 1.0]",1112,0.9474522496293486,1.0098920863309353
+test,entry,Shrunk state mean,"(1.0, 1.25]",2295,1.080750465251625,1.0989106753812636
+test,entry,Shrunk state mean,"(1.25, 1.5]",14,1.3286062017144675,0.9285714285714286
+test,after_miss,Markov EPV,"(-inf, 0.25]",25,0.2032017599753579,0.56
+test,after_miss,Markov EPV,"(0.25, 0.5]",1594,0.3106933168815915,0.29799247176913424
+test,after_offensive_rebound,Markov EPV,"(0.5, 0.75]",12,0.707010281778434,1.25
+test,after_offensive_rebound,Markov EPV,"(0.75, 1.0]",5,0.8931238618406925,1.8
+test,after_offensive_rebound,Markov EPV,"(1.0, 1.25]",398,1.0675438012912357,1.0
+test,after_offensive_rebound,Markov EPV,"(1.25, 1.5]",47,1.2880119750814802,1.4680851063829787
+test,entry,Markov EPV,"(-inf, 0.25]",11,0.16616425143858313,0.36363636363636365
+test,entry,Markov EPV,"(0.25, 0.5]",16,0.3549999577779732,0.1875
+test,entry,Markov EPV,"(0.5, 0.75]",29,0.6503460947538001,0.6896551724137931
+test,entry,Markov EPV,"(0.75, 1.0]",732,0.9332599328256734,0.9385245901639344
+test,entry,Markov EPV,"(1.0, 1.25]",2666,1.06686930383038,1.105026256564141
+test,entry,Markov EPV,"(1.25, 1.5]",14,1.3126661188048858,0.9285714285714286
+test,after_miss,Poisson spline,"(-inf, 0.25]",1,0.20856941701160295,0.0
+test,after_miss,Poisson spline,"(0.25, 0.5]",1618,0.3975133909747363,0.3022249690976514
+test,after_offensive_rebound,Poisson spline,"(0.25, 0.5]",1,0.4986230543798437,0.0
+test,after_offensive_rebound,Poisson spline,"(0.75, 1.0]",402,0.9213256891590428,1.0597014925373134
+test,after_offensive_rebound,Poisson spline,"(1.0, 1.25]",58,1.0300871417026207,1.0862068965517242
+test,after_offensive_rebound,Poisson spline,"(1.25, 1.5]",1,1.4774126762137607,2.0
+test,entry,Poisson spline,"(0.75, 1.0]",1458,0.9666697806784996,0.9698216735253772
+test,entry,Poisson spline,"(1.0, 1.25]",2010,1.0425541674252083,1.1238805970149253
+test,after_miss,Context boosting EPV,"(-inf, 0.25]",268,0.21529670342130058,0.27611940298507465
+test,after_miss,Context boosting EPV,"(0.25, 0.5]",1329,0.34340334115391047,0.309255079006772
+test,after_miss,Context boosting EPV,"(0.5, 0.75]",22,0.5334976310013478,0.18181818181818182
+test,after_offensive_rebound,Context boosting EPV,"(0.25, 0.5]",11,0.3872936608349521,0.5454545454545454
+test,after_offensive_rebound,Context boosting EPV,"(0.5, 0.75]",49,0.6497984121413215,1.1020408163265305
+test,after_offensive_rebound,Context boosting EPV,"(0.75, 1.0]",126,0.8996915518979833,0.9285714285714286
+test,after_offensive_rebound,Context boosting EPV,"(1.0, 1.25]",205,1.121020384203884,1.1658536585365853
+test,after_offensive_rebound,Context boosting EPV,"(1.25, 1.5]",67,1.3418428351373983,1.1194029850746268
+test,after_offensive_rebound,Context boosting EPV,"(1.5, 1.75]",4,1.5190968045325817,0.0
+test,entry,Context boosting EPV,"(0.25, 0.5]",39,0.37083338842299696,0.48717948717948717
+test,entry,Context boosting EPV,"(0.5, 0.75]",36,0.6688838066250762,0.8888888888888888
+test,entry,Context boosting EPV,"(0.75, 1.0]",1151,0.9221298573321729,1.0112945264986968
+test,entry,Context boosting EPV,"(1.0, 1.25]",2068,1.1059809911952323,1.0947775628626693
+test,entry,Context boosting EPV,"(1.25, 1.5]",174,1.289842465279256,1.1149425287356323
+validation,after_miss,Stage mean,"(0.25, 0.5]",1655,0.31025039123630677,0.34984894259818733
+validation,after_offensive_rebound,Stage mean,"(1.0, 1.25]",472,1.0742857142857145,1.2648305084745763
+validation,entry,Stage mean,"(1.0, 1.25]",3554,1.0302677532013969,1.0756893640967924
+validation,after_miss,Shrunk state mean,"(-inf, 0.25]",24,0.20082003129890455,0.4583333333333333
+validation,after_miss,Shrunk state mean,"(0.25, 0.5]",1631,0.3137066497296346,0.3482526057633354
+validation,after_offensive_rebound,Shrunk state mean,"(0.75, 1.0]",22,0.8442828394472496,1.2727272727272727
+validation,after_offensive_rebound,Shrunk state mean,"(1.0, 1.25]",418,1.0762243541197947,1.2511961722488039
+validation,after_offensive_rebound,Shrunk state mean,"(1.25, 1.5]",32,1.319290928050052,1.4375
+validation,entry,Shrunk state mean,"(0.25, 0.5]",14,0.35383657988337097,0.0
+validation,entry,Shrunk state mean,"(0.5, 0.75]",35,0.6079187973916063,0.6285714285714286
+validation,entry,Shrunk state mean,"(0.75, 1.0]",1093,0.947807702172014,1.0073193046660567
+validation,entry,Shrunk state mean,"(1.0, 1.25]",2398,1.0780417708017165,1.1184320266889074
+validation,entry,Shrunk state mean,"(1.25, 1.5]",14,1.3286062017144675,1.2857142857142858
+validation,after_miss,Markov EPV,"(-inf, 0.25]",24,0.20320175997535786,0.4583333333333333
+validation,after_miss,Markov EPV,"(0.25, 0.5]",1631,0.3125763746863431,0.3482526057633354
+validation,after_offensive_rebound,Markov EPV,"(0.5, 0.75]",12,0.707010281778434,1.3333333333333333
+validation,after_offensive_rebound,Markov EPV,"(0.75, 1.0]",10,0.8931238618406925,1.2
+validation,after_offensive_rebound,Markov EPV,"(1.0, 1.25]",404,1.0687902643722167,1.2376237623762376
+validation,after_offensive_rebound,Markov EPV,"(1.25, 1.5]",46,1.28994370339423,1.5
+validation,entry,Markov EPV,"(-inf, 0.25]",20,0.14146804336105462,0.1
+validation,entry,Markov EPV,"(0.25, 0.5]",12,0.3275612144594327,0.0
+validation,entry,Markov EPV,"(0.5, 0.75]",23,0.6484500218467008,1.0869565217391304
+validation,entry,Markov EPV,"(0.75, 1.0]",736,0.9337032997202594,0.9959239130434783
+validation,entry,Markov EPV,"(1.0, 1.25]",2749,1.0654585497200968,1.1076755183703164
+validation,entry,Markov EPV,"(1.25, 1.5]",14,1.3126661188048858,1.2857142857142858
+validation,after_miss,Poisson spline,"(-inf, 0.25]",1,0.21421014528306379,0.0
+validation,after_miss,Poisson spline,"(0.25, 0.5]",1652,0.39513200403059484,0.3486682808716707
+validation,after_miss,Poisson spline,"(0.5, 0.75]",2,0.581587868209587,1.5
+validation,after_offensive_rebound,Poisson spline,"(0.5, 0.75]",3,0.5185219778446628,1.6666666666666667
+validation,after_offensive_rebound,Poisson spline,"(0.75, 1.0]",407,0.927099206263826,1.2358722358722358
+validation,after_offensive_rebound,Poisson spline,"(1.0, 1.25]",58,1.0307584339820224,1.4310344827586208
+validation,after_offensive_rebound,Poisson spline,"(1.25, 1.5]",4,1.3745268971190123,1.5
+validation,entry,Poisson spline,"(0.75, 1.0]",1681,0.96900564345158,1.0095181439619274
+validation,entry,Poisson spline,"(1.0, 1.25]",1873,1.0360383484475542,1.1350774159103043
+validation,after_miss,Context boosting EPV,"(-inf, 0.25]",342,0.21855295606550257,0.2573099415204678
+validation,after_miss,Context boosting EPV,"(0.25, 0.5]",1301,0.3288238208855974,0.3697156033820138
+validation,after_miss,Context boosting EPV,"(0.5, 0.75]",12,0.5267471362575997,0.8333333333333334
+validation,after_offensive_rebound,Context boosting EPV,"(0.25, 0.5]",8,0.3934137688147863,1.125
+validation,after_offensive_rebound,Context boosting EPV,"(0.5, 0.75]",37,0.6588330681194112,1.162162162162162
+validation,after_offensive_rebound,Context boosting EPV,"(0.75, 1.0]",104,0.8885873207095105,0.9615384615384616
+validation,after_offensive_rebound,Context boosting EPV,"(1.0, 1.25]",258,1.1123876153552146,1.313953488372093
+validation,after_offensive_rebound,Context boosting EPV,"(1.25, 1.5]",64,1.3233094059684645,1.609375
+validation,after_offensive_rebound,Context boosting EPV,"(1.5, 1.75]",1,1.561742724196413,3.0
+validation,entry,Context boosting EPV,"(0.25, 0.5]",39,0.3984902051826668,0.2564102564102564
+validation,entry,Context boosting EPV,"(0.5, 0.75]",19,0.6736835783658549,0.47368421052631576
+validation,entry,Context boosting EPV,"(0.75, 1.0]",1232,0.9308480832663646,0.9926948051948052
+validation,entry,Context boosting EPV,"(1.0, 1.25]",2147,1.0894695512827732,1.1252911038658593
+validation,entry,Context boosting EPV,"(1.25, 1.5]",117,1.289441009044405,1.4102564102564104

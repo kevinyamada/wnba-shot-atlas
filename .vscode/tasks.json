@@ -9,6 +9,25 @@
       "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"}},
       "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
       "problemMatcher": []
+    },
+    {
+      "label": "WNBA: reconstruct Data1 episodes on CPU",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "${workspaceFolder}/research/possession_reconstruction.py", "--source", "${env:USERPROFILE}/Downloads/Data (1).zip"],
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"}},
+      "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
+      "problemMatcher": []
+    },
+    {
+      "label": "WNBA: fit event EPV on CPU",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "-c", "import sys; sys.path.insert(0,'research'); import possession_models; possession_models.main()"],
+      "dependsOn": "WNBA: reconstruct Data1 episodes on CPU",
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"}},
+      "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
+      "problemMatcher": []
     }
   ]
 }

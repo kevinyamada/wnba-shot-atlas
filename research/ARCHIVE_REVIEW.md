@@ -10,7 +10,7 @@ The original WNBA event file has 121,342 event records and 42,193 field goal att
 
 All **624 game/team combinations** match the supplied team boxes for attempts, makes, and field goal points. That check does not establish that every event is attributed to the correct shooter. The player check finds **18 disagreeing player/game attempt totals in eight games**. The same players' makes and field goal points agree. Both source versions are retained; no missed shot is silently reassigned.
 
-All prediction models use the same sample after excluding those eight games. Their within-season player histories also exclude those games. The [exclusion list](results/data1/excluded_games.csv) and [player reconciliation](results/data1/player_box_reconciliation.csv) make that decision reviewable. Model results therefore describe the retained, reconciled sample, rather than every game in the archive. This post-game source-quality filter is not a feature available to a live prediction system.
+All primary shot prediction models use the same sample after excluding those eight games. Their within-season player histories also exclude those games. The [exclusion list](results/data1/excluded_games.csv) and [player reconciliation](results/data1/player_box_reconciliation.csv) make that decision reviewable. These model results therefore describe the retained, reconciled sample, rather than every game in the archive. This post-game source-quality filter is not a feature available to a live prediction system. The separate team-level [event-based EPV extension](POSSESSION_VALUE.md) uses no shooter identities and applies strict period-score and control checks instead.
 
 | Modelling interval | Half-court attempts | Games | Purpose |
 | --- | ---: | ---: | --- |
@@ -21,7 +21,7 @@ All prediction models use the same sample after excluding those eight games. The
 
 These 2025 periods have been examined in earlier development. They are **reused benchmarks**, not an untouched final season. The archive does not supply a second WNBA play-by-play season for a genuinely new season test.
 
-The original event file also has **88 shot-score-update conflicts**, affecting 27 regular-season games. The model avoids score margin and sequence-derived play features. Valid shot locations and correct game totals do not validate possessions, passes, dribbles, or the previous ten basketball actions.
+The original event file also has **88 shot-score-update conflicts**, affecting 27 regular-season games. The primary shot model avoids score margin and sequence-derived play features. Valid shot locations and correct game totals do not validate possessions, passes, dribbles, or the previous ten basketball actions. The EPV extension reconciles all final scores including free throws and retains only a screened event-state subset; its inferred episodes are not authoritative possession IDs.
 
 ## All seven Wehoop tables
 

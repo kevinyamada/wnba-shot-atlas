@@ -1,0 +1,145 @@
+{
+  "only_data_source": "Data (1).zip",
+  "archive_sha256": "22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120",
+  "events": 121342,
+  "games": 312,
+  "all_624_team_scores_reconcile": true,
+  "all_scoring_values_accounted_for_once": true,
+  "ordinary_episode_points": 50774,
+  "every_retained_state_margin_agrees_with_source_snapshot": true,
+  "special_free_throw_points": 299,
+  "episodes": 50185,
+  "periods": 1257,
+  "clean_periods": 662,
+  "jump_ball_winner_rows": 848,
+  "validated_jump_ball_winner_rows": 787,
+  "eligible_states": 40617,
+  "eligible_entry_states": 25306,
+  "flag_counts": {
+    "overturned_review": 11662,
+    "special_free_throw_or_foul": 16189,
+    "unanchored_start": 1289,
+    "unobserved_transfer": 337,
+    "cumulative_score_conflict": 2086,
+    "score_snapshot_conflict": 2136,
+    "defensive_rebound_same_owner": 59,
+    "unvalidated_jump_winner": 2437,
+    "incomplete_free_throw_series": 12
+  },
+  "cohorts": [
+    {
+      "split": "playoffs",
+      "stage": "after_miss",
+      "states": 919,
+      "episodes": 814,
+      "games": 23,
+      "mean_remaining_points": 0.25571273122959737
+    },
+    {
+      "split": "playoffs",
+      "stage": "after_offensive_rebound",
+      "states": 241,
+      "episodes": 200,
+      "games": 23,
+      "mean_remaining_points": 0.9875518672199171
+    },
+    {
+      "split": "playoffs",
+      "stage": "entry",
+      "states": 1963,
+      "episodes": 1963,
+      "games": 23,
+      "mean_remaining_points": 1.0224146714212938
+    },
+    {
+      "split": "test",
+      "stage": "after_miss",
+      "states": 1619,
+      "episodes": 1432,
+      "games": 39,
+      "mean_remaining_points": 0.30203829524397774
+    },
+    {
+      "split": "test",
+      "stage": "after_offensive_rebound",
+      "states": 462,
+      "episodes": 393,
+      "games": 39,
+      "mean_remaining_points": 1.0627705627705628
+    },
+    {
+      "split": "test",
+      "stage": "entry",
+      "states": 3468,
+      "episodes": 3468,
+      "games": 39,
+      "mean_remaining_points": 1.059111880046136
+    },
+    {
+      "split": "train",
+      "stage": "after_miss",
+      "states": 7668,
+      "episodes": 6804,
+      "games": 195,
+      "mean_remaining_points": 0.3102503912363067
+    },
+    {
+      "split": "train",
+      "stage": "after_offensive_rebound",
+      "states": 2275,
+      "episodes": 1967,
+      "games": 195,
+      "mean_remaining_points": 1.0742857142857143
+    },
+    {
+      "split": "train",
+      "stage": "entry",
+      "states": 16321,
+      "episodes": 16321,
+      "games": 195,
+      "mean_remaining_points": 1.030267753201397
+    },
+    {
+      "split": "validation",
+      "stage": "after_miss",
+      "states": 1655,
+      "episodes": 1480,
+      "games": 42,
+      "mean_remaining_points": 0.34984894259818733
+    },
+    {
+      "split": "validation",
+      "stage": "after_offensive_rebound",
+      "states": 472,
+      "episodes": 408,
+      "games": 42,
+      "mean_remaining_points": 1.2648305084745763
+    },
+    {
+      "split": "validation",
+      "stage": "entry",
+      "states": 3554,
+      "episodes": 3554,
+      "games": 42,
+      "mean_remaining_points": 1.0756893640967924
+    }
+  ],
+  "feature_allowlist": [
+    "period_number",
+    "seconds_remaining",
+    "elapsed_seconds",
+    "home",
+    "score_margin",
+    "points_so_far",
+    "fga_so_far",
+    "fta_so_far",
+    "offensive_rebounds_so_far",
+    "stage",
+    "start_reason",
+    "offense_team_id",
+    "defense_team_id"
+  ],
+  "exclusion_rule": "Whole periods with score-snapshot inconsistencies, special retention/technical/flagrant/take fouls or free throws, overturned reviews or clock problems; individual episodes with uncertain control or incomplete FT sequences. State clocks must exceed 2 seconds.",
+  "target": "Remaining recorded ordinary points before the reconstructed control episode ends. Offensive rebounds continue the episode. Special free throws are audited separately.",
+  "limitation": "No authoritative possession IDs are supplied. Reconciliation validates rewards and internal consistency, not every true possession boundary. No pass/movement locations are invented; this is event-based EPV, not full spatial xT."
+}

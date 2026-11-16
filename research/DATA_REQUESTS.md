@@ -2,8 +2,10 @@
 
 The current models use only the supplied `Data (1).zip`. These requests would help resolve source problems and define a later study; they are not additional inputs to the present analysis.
 
+The [event-based EPV prototype](POSSESSION_VALUE.md) is now implemented from a screened subset of the current archive. Additional data is not needed to reproduce it. The requests below concern authoritative corrections, full spatial action value and a genuinely new season evaluation.
+
 1. **Shooter attribution.** Can we get the authoritative event/shooter identifiers or corrections for games `401736112`, `401736137`, `401736145`, `401736155`, `401736217`, `401736227`, `401736274`, and `401736355`? Eighteen player/game attempt totals disagree with the player boxes, while makes, field goal points, and team totals agree. The [difference table](results/data1/player_box_reconciliation.csv) preserves both versions.
-2. **Event ordering.** Which identifier is the authoritative order, and are corrections available for the 88 shot-score-update conflicts? Reliable ordering is necessary before reconstructing possessions or recent actions.
+2. **Event ordering.** Which identifier is the authoritative order, and are corrections available for the 88 shot-score-update conflicts? The current prototype excludes inconsistent periods rather than claiming authoritative reconstruction of every possession.
 3. **Attempt value.** Is an official two/three-point label available for every missed attempt? Scored points are zero for misses, and rounded coordinates are insufficient for resolving shots near the line.
 4. **Coordinates.** What do coordinates represent—manual shot location, player position, or ball release? What are the units, origin, basket direction, rounding, and known recording errors?
 5. **Shot clock and context.** Can we obtain the actual shot clock, defensive distance/pressure, transition status, and shot categories recorded consistently for makes and misses? Period time remaining is not the shot clock. An assist label populated only on makes cannot be a make predictor.

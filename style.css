@@ -15,3 +15,6 @@ h1,h2,h3{font-family:inherit;font-weight:600;letter-spacing:-.5px;line-height:1.
 @media(max-width:680px){header,main{margin-left:18px;margin-right:18px}.intro{padding:25px 0 22px}h1{font-size:29px;letter-spacing:-.5px}h2{font-size:22px}.lede{font-size:15px}.court-layout{grid-template-columns:1fr;gap:18px}.band-story,.method-layout{grid-template-columns:1fr;gap:18px}.section-label{font-size:11px;letter-spacing:0}.finding strong{font-size:38px}.method-copy h3{font-size:18px}header{font-size:13px}.caption{line-height:1.65}}
 
 #points,#audit{border-top:1px solid var(--line);padding:27px 0 20px}
+#possession-value{border-top:1px solid var(--line);padding:27px 0 20px}.possession-figure{margin:25px 0;max-width:720px}#possession-chart{width:100%;display:block}.possession-figure figcaption{margin-top:10px}
+.possession-figure{overflow-x:auto}#possession-chart{min-width:680px}#possession-value .controls label{flex:1 1 240px}
+@media(max-width:680px){#possession-value .controls label{flex-basis:100%;min-width:0}#possession-value select{width:100%}}

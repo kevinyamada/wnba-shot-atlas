@@ -1,0 +1,13 @@
+model,setting,validation_entry_mse
+Shrunk state mean,alpha=10.0,1.370615763520436
+Shrunk state mean,alpha=50.0,1.3729656375150898
+Shrunk state mean,alpha=200.0,1.3748307849167762
+Markov EPV,alpha=1.0,1.3693182781282822
+Markov EPV,alpha=10.0,1.370140274931748
+Markov EPV,alpha=50.0,1.3726378444344638
+Poisson spline,alpha=0.1,1.376906271820767
+Poisson spline,alpha=1.0,1.3988041849978776
+Context boosting EPV,depth=3;penalty=20.0,1.3634104387130845
+Context boosting EPV,depth=3;penalty=100.0,1.3630762456950336
+Context boosting EPV,depth=5;penalty=20.0,1.3698451111990284
+Context boosting EPV,depth=5;penalty=100.0,1.3714787919063545

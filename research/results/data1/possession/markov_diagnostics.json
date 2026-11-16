@@ -1,0 +1,9 @@
+{
+  "bellman_residual_max": 2.498001805406602e-16,
+  "transition_spectral_radius": 0.357409767695346,
+  "alpha": 1.0,
+  "states": 74,
+  "absorbing_rows_positive": true,
+  "finite_nonnegative_values": true,
+  "interpretation": "Regularized empirical event-state reward/transition model, not a learned spatial movement policy."
+}

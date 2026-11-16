@@ -1,0 +1,6 @@
+scope,split,episodes,eligible_episodes,ordinary_points,mean_points,max_points
+playoffs,playoffs,3919,1988,3900,0.9951518244450115,4
+regular,test,6606,3496,6700,1.0142294883439298,4
+regular,train,32085,16487,32245,1.0049867539348605,5
+regular,validation,7214,3593,7514,1.0415858053784308,5
+special,special,361,0,415,1.149584487534626,4

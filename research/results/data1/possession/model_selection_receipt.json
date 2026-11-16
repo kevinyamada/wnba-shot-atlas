@@ -1,0 +1,50 @@
+{
+  "only_data_source": "Data (1).zip",
+  "archive_sha256": "22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120",
+  "selected_model": "Context boosting EPV",
+  "selection_rule": "Minimum mean squared error on August 10-26 episode-entry states; no later-game result selects settings.",
+  "training_last_date": "2025-08-09",
+  "validation_first_date": "2025-08-10",
+  "validation_last_date": "2025-08-25",
+  "features": [
+    "period_number",
+    "seconds_remaining",
+    "elapsed_seconds",
+    "home",
+    "score_margin",
+    "points_so_far",
+    "fga_so_far",
+    "fta_so_far",
+    "offensive_rebounds_so_far",
+    "stage",
+    "start_reason",
+    "offense_team_id",
+    "defense_team_id"
+  ],
+  "fitted_stages": [
+    "entry",
+    "after_miss",
+    "after_offensive_rebound"
+  ],
+  "current_event_outcome_rule": "A miss or rebound is already observed at a post-event state; the target is points scored later in that same episode.",
+  "eligibility_limit": "Retrospectively source-qualified subset; not a live guarantee of episode completeness or official possession IDs.",
+  "evaluation_limit": "Reused 2025 chronological benchmarks; source-limited prototype, not full spatial xT.",
+  "training_states": 26264,
+  "training_entry_states": 16321,
+  "runtime": "desktop CPU only",
+  "state_table_sha256": "29b4f5bab755dfda3057ace40bdf6ee2a599ed5c5e675c7cb58581bcf864b8f4",
+  "versions": {
+    "python": "3.13.5",
+    "numpy": "2.4.6",
+    "pandas": "3.0.6",
+    "scikit_learn": "1.9.1"
+  },
+  "selected_settings": {
+    "Stage mean": "training stage mean",
+    "Shrunk state mean": "alpha=10.0",
+    "Markov EPV": "alpha=1.0",
+    "Poisson spline": "alpha=0.1",
+    "Context boosting EPV": "depth=3;penalty=100.0"
+  },
+  "elapsed_seconds": 55.640066899999965
+}
