@@ -1,6 +1,6 @@
 {
   "url": "https://kevinyamada.github.io/wnba-shot-atlas/",
-  "completed_utc": "2026-11-16T15:13:26Z",
+  "completed_utc": "2026-11-17T02:12:37Z",
   "cache_disabled": true,
   "checks": [
     "Fresh visits default to light even with a dark system theme",
@@ -19,6 +19,7 @@
     "Possession EPV controls and tables",
     "Recovery controls and tables",
     "Mesh, variogram, and all buffers",
+    "Mesh interpolation at a recorded interior, edge and vertex location",
     "Finite SVG geometry",
     "No broken or empty links",
     "desktop layout fits viewport",
