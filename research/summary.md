@@ -70,6 +70,16 @@ Context fields are period, seconds remaining in that period, home status, strict
 
 The equal weight ensemble averages distance, SPDE, selected GP, CatBoost context and XGBoost context. A separate Platt transformation fits intercept and slope to validation predictions, with logistic C=1000. Its validation score would be in sample and is omitted. It is a secondary comparator, not a model promoted by comparing its fitted validation error with out of sample rows.
 
+## Spatial theory from STA465
+
+In Homework 2 I used a Matérn SPDE mesh to model campus air quality. The court model uses the same finite element representation for a spatial effect on the log odds of making a shot. Its binomial likelihood uses the number of makes out of the attempts recorded at each training location. [Interactive court mesh](https://kevinyamada.github.io/wnba-shot-atlas/#methods)
+
+The mesh approximates the spatial field with piecewise linear basis functions. At location $s$ in a triangle with vertices A, B and C, the field is $w(s) = a_A(s)u_A + a_B(s)u_B + a_C(s)u_C$. The $u$ values are the latent effects at the vertices. The interpolation weights $a$ are nonnegative and sum to one. The three examples on the site are recorded training locations in the same triangle. Their weights are $(1/3,1/3,1/3)$ in the interior, $(2/3,1/3,0)$ on the edge and $(1,0,0)$ at vertex A.
+
+Lecture 4 relates the Gaussian Markov random field to its precision matrix $Q$. A zero off the diagonal gives conditional independence between those two node values given the rest of the field. The spatial block of the primary SPDE fit has 841 rows and 10,357 nonzero entries, about 1.5% of the matrix. The code assembles the precision from the triangular mesh's mass and stiffness matrices. Triangle edges show the elements used for interpolation. The precision matrix also includes links through the product of the stiffness matrices. [Lindgren, Rue and Lindström (2011)](https://doi.org/10.1111/j.1467-9868.2011.00777.x)
+
+At location $s$, the log odds of a make equal the intercept plus $w(s)$. The court implementation holds the validation selected SPDE range and marginal scale fixed and applies a Gaussian Laplace approximation at the posterior mode. The mesh extends outside the plotted court to reduce boundary effects. The [refinement check](results/data1/cpu/mesh_refinement.csv) evaluates how changing the spacing affects the predictions.
+
 ## Identical shot temporal comparisons
 
 ### Validation: settings and primary choice

@@ -8,6 +8,8 @@ An interactive study of recorded WNBA shot locations, conditional make probabili
 
 The descriptive sample contains 38,535 regular season attempts in 286 games, with 38,441 attempts in the half court view. Explore teams, 1/2/4 foot squares, actual field goal scoring leaders, observed make rates, Bayesian predictions and posterior uncertainty. The app also compares distance, logistic, IDW, kriging, SPDE, four chain Bayesian GP, GPU boosting and ensemble models.
 
+The court mesh connects the Matérn SPDE model to my STA465 coursework. The interactive figure shows how a recorded shot location weights the three vertices of a triangle. [Spatial methods on the site](https://kevinyamada.github.io/wnba-shot-atlas/#methods) · [Course connection in the methods report](research/summary.md#spatial-theory-from-sta465)
+
 ## Source and limitations
 
 The original 45 file archive has SHA256 `22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120`. It supplies 2025 WNBA events, historical player/team boxes and supporting tables and papers. No external basketball release or additional season enters the active pipeline.

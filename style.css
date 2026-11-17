@@ -150,3 +150,31 @@ footer p { max-width: 760px; }
   :root[data-theme="dark"] { --paper: #fff; --ink: #222; --muted: #555; --line: #ddd; --teal: #28677a; --orange: #b76639; color-scheme: light; }
   :root[data-theme="dark"] .meeting-callout { background: #f3f7f7; }
 }
+
+.method-figure { margin: 0; min-width: 0; }
+.method-figure .controls { flex-wrap: wrap; margin-top: 0; }
+.method-figure .controls label { flex: 1 1 140px; min-width: 0; }
+.method-figure select { width: 100%; }
+.mesh-heading, .mesh-key, .mesh-vertex-label { font-family: var(--sans); }
+.mesh-heading { fill: var(--ink); font-size: 17px; font-weight: 650; }
+.mesh-key { fill: var(--muted); font-size: 14px; }
+.mesh-domain { fill: var(--line); }
+.mesh-court, .mesh-inset { fill: var(--paper); }
+.mesh-grid { fill: none; stroke: var(--muted); stroke-width: .55; opacity: .48; }
+.mesh-inset { stroke: var(--line); }
+.mesh-triangle { fill: var(--teal); fill-opacity: .12; stroke: var(--teal); stroke-width: 1.8; }
+.mesh-vertex { fill: var(--teal); }
+.mesh-vertex-label { fill: var(--ink); font-size: 17px; font-weight: 650; }
+.mesh-shot { fill: var(--paper); stroke: var(--orange); stroke-width: 3; }
+.mesh-boundary-key { stroke: #8a9898; stroke-width: 2; }
+.mesh-weights {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0 0 11px;
+  border: 1px solid var(--line);
+  font: 13px/1.5 var(--sans);
+}
+.mesh-weights > div { padding: 7px 9px; text-align: center; }
+.mesh-weights > div + div { border-left: 1px solid var(--line); }
+.mesh-weights dt { color: var(--muted); }
+.mesh-weights dd { margin: 2px 0 0; color: var(--teal); font-size: 19px; font-weight: 650; }

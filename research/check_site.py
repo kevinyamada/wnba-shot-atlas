@@ -87,14 +87,51 @@ def main():
         check('Recovery controls and tables',RECOVERY_CHECK)
         js(RECOVERY_RESET)
         check('Mesh, variogram, and all buffers',"(()=>{for(const kind of ['buffer','mesh','variogram']){document.querySelector('#geometry').value=kind;for(const buffer of [0,2,4]){document.querySelector('#buffer').value=buffer;geometry();if(!document.querySelector('#geometry-chart').children.length||!document.querySelector('#geometry-note').textContent)return false;}}return true;})()")
+        check('Mesh interpolation at a recorded interior, edge and vertex location', """
+            (() => {
+                const view = document.querySelector('#geometry');
+                view.value = 'mesh';
+                view.dispatchEvent(new Event('change'));
+                const location = document.querySelector('#mesh-location');
+                const chart = document.querySelector('#geometry-chart');
+                const examples = [
+                    ['2,0', [1/3, 1/3, 1/3]],
+                    ['1,0', [2/3, 1/3, 0]],
+                    ['1,-1', [1, 0, 0]]
+                ];
+                const points = new Set();
+                for (const [value, expected] of examples) {
+                    location.value = value;
+                    location.dispatchEvent(new Event('change'));
+                    const shown = [...document.querySelectorAll('#mesh-weights dd')]
+                        .map(el => Number(el.dataset.weight));
+                    if (shown.length !== 3 || !shown.every((v, i) => Math.abs(v - expected[i]) < 1e-10)) return false;
+                    const mark = chart.querySelector('[data-mesh=shot]');
+                    if (!mark || !chart.querySelector('[data-mesh=selected]')) return false;
+                    points.add(mark.getAttribute('cx') + ',' + mark.getAttribute('cy'));
+                }
+                view.value = 'buffer';
+                view.dispatchEvent(new Event('change'));
+                return points.size === 3 && document.querySelector('#mesh-weights').hidden
+                    && document.querySelector('#mesh-location-label').hidden;
+            })()
+        """)
         check('Finite SVG geometry',"[...document.querySelectorAll('svg *')].every(e=>[...e.attributes].every(a=>!/(NaN|Infinity|undefined)/.test(a.value)))")
         check('No broken or empty links',"[...document.querySelectorAll('a')].every(a=>a.getAttribute('href')&& !a.href.includes('/wnba/'))")
         # Capture the app in its normal starting state at desktop and phone widths.
-        js("document.querySelector('#metric').value='attempts';document.querySelector('#metric').dispatchEvent(new Event('change'));document.querySelector('#team').value='all';document.querySelector('#size').value='2';document.querySelector('#evaluation').value='test';document.querySelector('#geometry').value='buffer';document.querySelector('#buffer').value='2';document.querySelector('#possession-period').value='test';document.querySelector('#possession-stage').value='entry';renderCourt();results();geometry();possessionResults();window.scrollTo(0,0)")
+        js("document.querySelector('#metric').value='attempts';document.querySelector('#metric').dispatchEvent(new Event('change'));document.querySelector('#team').value='all';document.querySelector('#size').value='2';document.querySelector('#evaluation').value='test';document.querySelector('#geometry').value='mesh';document.querySelector('#mesh-location').value='2,0';document.querySelector('#possession-period').value='test';document.querySelector('#possession-stage').value='entry';renderCourt();results();geometry();possessionResults();window.scrollTo(0,0)")
         for name,width,height,mobile in [('desktop',1440,1000,False),('mobile',390,844,True)]:
             call('Emulation.setDeviceMetricsOverride',{'width':width,'height':height,'deviceScaleFactor':1,'mobile':mobile})
             time.sleep(.25)
-            check(name+' layout fits viewport',"document.documentElement.scrollWidth<=innerWidth+1 && document.querySelector('#court').getBoundingClientRect().width>200 && document.querySelector('#load-error').hidden")
+            check(name+' layout fits viewport',f"innerWidth==={width} && document.documentElement.scrollWidth<=innerWidth+1 && document.querySelector('#court').getBoundingClientRect().width>200 && document.querySelector('#load-error').hidden")
+            js("document.querySelector('.method-figure').scrollIntoView({block:'start',behavior:'instant'})")
+            for suffix in ['', '-dark']:
+                if suffix:
+                    js(SET_DARK)
+                mesh_shot=call('Page.captureScreenshot',{'format':'png','captureBeyondViewport':False})
+                (root/('course-mesh-'+name+suffix+'.png')).write_bytes(base64.b64decode(mesh_shot['data']))
+            js(SET_LIGHT)
+            js("window.scrollTo({top:0,behavior:'instant'})")
             shot=call('Page.captureScreenshot',{'format':'png','captureBeyondViewport':True})
             (root/(name+'.png')).write_bytes(base64.b64decode(shot['data']))
             box=js("(()=>{const b=document.querySelector('#possession-value').getBoundingClientRect();return {x:b.x+scrollX,y:b.y+scrollY,width:b.width,height:b.height,scale:1};})()")
@@ -118,7 +155,7 @@ def main():
         js(RECOVERY_RESET)
         for name,width,height,mobile in [('desktop',1440,1000,False),('mobile',390,844,True)]:
             call('Emulation.setDeviceMetricsOverride',{'width':width,'height':height,'deviceScaleFactor':1,'mobile':mobile});time.sleep(.2)
-            check('Meeting '+name+' fits viewport',"document.documentElement.scrollWidth<=innerWidth+1 && document.querySelector('#recovery-error').hidden && document.images.length===3 && [...document.images].every(i=>i.naturalWidth>0)")
+            check('Meeting '+name+' fits viewport',f"innerWidth==={width} && document.documentElement.scrollWidth<=innerWidth+1 && document.querySelector('#recovery-error').hidden && document.images.length===3 && [...document.images].every(i=>i.naturalWidth>0)")
             js(SET_DARK)
             shot=call('Page.captureScreenshot',{'format':'png','captureBeyondViewport':True});(root/('meeting-'+name+'-dark.png')).write_bytes(base64.b64decode(shot['data']))
             js(SET_LIGHT)
