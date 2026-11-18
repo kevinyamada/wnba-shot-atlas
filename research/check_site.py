@@ -86,50 +86,77 @@ def main():
         check('Possession EPV controls and tables',"(()=>{const p=D.possessionValue;if(!p||p.selection.runtime!=='desktop CPU only'||p.audit.eligible_entry_states!==25306)return false;for(const split of ['validation','test','playoffs'])for(const stage of ['entry','after_miss','after_offensive_rebound']){document.querySelector('#possession-period').value=split;document.querySelector('#possession-stage').value=stage;possessionResults();const expected=p.metrics.filter(r=>r.split===split&&r.stage===stage).sort((a,b)=>a.rmse-b.rmse),rows=[...document.querySelectorAll('#possession-results tr')];if(rows.length!==5||rows.length!==expected.length)return false;for(let i=0;i<rows.length;i++)if(rows[i].children[0].textContent!==expected[i].model||rows[i].children[1].textContent!==expected[i].rmse.toFixed(5)||rows[i].children[2].textContent!==expected[i].mae.toFixed(5))return false;if(document.querySelector('#possession-results .selected td').textContent!==p.selection.selected_model)return false;const bins=p.summary.filter(r=>r.split===split&&r.stage===stage);if(document.querySelectorAll('#possession-chart circle').length!==2*bins.length)return false;const calibration=p.calibration.filter(r=>r.split===split&&r.stage===stage&&r.model===p.selection.selected_model);if(document.querySelectorAll('#possession-calibration tr').length!==calibration.length||calibration.reduce((v,r)=>v+r.states,0)!==expected[0].states)return false;}return true;})()")
         check('Recovery controls and tables',RECOVERY_CHECK)
         js(RECOVERY_RESET)
-        check('Mesh, variogram, and all buffers',"(()=>{for(const kind of ['buffer','mesh','variogram']){document.querySelector('#geometry').value=kind;for(const buffer of [0,2,4]){document.querySelector('#buffer').value=buffer;geometry();if(!document.querySelector('#geometry-chart').children.length||!document.querySelector('#geometry-note').textContent)return false;}}return true;})()")
-        check('Mesh interpolation at a recorded interior, edge and vertex location', """
-            (() => {
-                const view = document.querySelector('#geometry');
-                view.value = 'mesh';
-                view.dispatchEvent(new Event('change'));
-                const location = document.querySelector('#mesh-location');
-                const chart = document.querySelector('#geometry-chart');
-                const examples = [
-                    ['2,0', [1/3, 1/3, 1/3]],
-                    ['1,0', [2/3, 1/3, 0]],
-                    ['1,-1', [1, 0, 0]]
-                ];
-                const points = new Set();
-                for (const [value, expected] of examples) {
-                    location.value = value;
-                    location.dispatchEvent(new Event('change'));
-                    const shown = [...document.querySelectorAll('#mesh-weights dd')]
-                        .map(el => Number(el.dataset.weight));
-                    if (shown.length !== 3 || !shown.every((v, i) => Math.abs(v - expected[i]) < 1e-10)) return false;
-                    const mark = chart.querySelector('[data-mesh=shot]');
-                    if (!mark || !chart.querySelector('[data-mesh=selected]')) return false;
-                    points.add(mark.getAttribute('cx') + ',' + mark.getAttribute('cy'));
+        check('Prediction chart uses the recorded differences and intervals', """
+            (()=>{
+                for (const split of ['validation','test','playoffs']) {
+                    document.querySelector('#evaluation').value=split; results();
+                    const base=D.metrics.find(r=>r.split===split&&r.model==='Distance baseline');
+                    const groups=[...document.querySelectorAll('#model-chart [data-model]')];
+                    if(groups.length!==3)return false;
+                    for(const g of groups){
+                        const score=D.metrics.find(r=>r.split===split&&r.model===g.dataset.model);
+                        const ci=D.bootstrap.find(r=>r.split===split&&r.model===g.dataset.model);
+                        if(Math.abs(Number(g.dataset.difference)-(score.brier-base.brier))>1e-12)return false;
+                        if(ci ? Number(g.dataset.lower)!==ci.lower||Number(g.dataset.upper)!==ci.upper : g.querySelectorAll('line').length!==0)return false;
+                    }
                 }
-                view.value = 'buffer';
-                view.dispatchEvent(new Event('change'));
-                return points.size === 3 && document.querySelector('#mesh-weights').hidden
-                    && document.querySelector('#mesh-location-label').hidden;
+                return true;
             })()
         """)
+        check('Spatial comparison plots the existing pooled errors', """
+            (()=>{
+                const points=[...document.querySelectorAll('#spatial-chart circle')];
+                if(points.length!==9)return false;
+                for(const p of points){
+                    const row=D.spatialCV.find(r=>r.model===p.dataset.model&&r.buffer===Number(p.dataset.buffer));
+                    if(!row||Number(p.dataset.brier)!==row.brier)return false;
+                }
+                return [0,2,4].every(b=>{
+                    const best=D.spatialCV.filter(r=>r.buffer===b).sort((a,b)=>a.brier-b.brier)[0].model;
+                    return best===(b===4?'Universal kriging':'Distance baseline');
+                });
+            })()
+        """)
+        check('Continuation chart matches independently summed event outcomes', """
+            (()=>{
+                // Counts and integer point totals checked from private model_states.csv.gz on the desktop.
+                const expected={
+                    test:{entry:[3468,3673],after_miss:[1619,489],after_offensive_rebound:[462,491]},
+                    playoffs:{entry:[1963,2007],after_miss:[919,235],after_offensive_rebound:[241,238]},
+                    validation:{entry:[3554,3823],after_miss:[1655,579],after_offensive_rebound:[472,597]}
+                };
+                for(const split of ['test','playoffs','validation']){
+                    document.querySelector('#possession-period').value=split;possessionResults();
+                    const bars=[...document.querySelectorAll('#continuation-chart rect[data-stage]')];
+                    if(bars.length!==3)return false;
+                    for(const bar of bars){
+                        const [n,total]=expected[split][bar.dataset.stage];
+                        if(Number(bar.dataset.states)!==n||Math.abs(Number(bar.dataset.mean)-total/n)>1e-12)return false;
+                    }
+                }
+                return true;
+            })()
+        """)
+        check('Three resource links in one footer and no classroom copy', "[...document.querySelectorAll('a:not(.skip)')].length===3 && document.querySelectorAll('#resources a').length===3 && !/Lecture [0-9]|Homework|STA465|From a triangle to a shot/i.test(document.body.innerText)")
         check('Finite SVG geometry',"[...document.querySelectorAll('svg *')].every(e=>[...e.attributes].every(a=>!/(NaN|Infinity|undefined)/.test(a.value)))")
         check('No broken or empty links',"[...document.querySelectorAll('a')].every(a=>a.getAttribute('href')&& !a.href.includes('/wnba/'))")
         # Capture the app in its normal starting state at desktop and phone widths.
-        js("document.querySelector('#metric').value='attempts';document.querySelector('#metric').dispatchEvent(new Event('change'));document.querySelector('#team').value='all';document.querySelector('#size').value='2';document.querySelector('#evaluation').value='test';document.querySelector('#geometry').value='mesh';document.querySelector('#mesh-location').value='2,0';document.querySelector('#possession-period').value='test';document.querySelector('#possession-stage').value='entry';renderCourt();results();geometry();possessionResults();window.scrollTo(0,0)")
+        js("document.querySelector('#metric').value='attempts';document.querySelector('#metric').dispatchEvent(new Event('change'));document.querySelector('#team').value='all';document.querySelector('#size').value='2';document.querySelector('#evaluation').value='test';document.querySelectorAll('details').forEach(d=>d.open=false);document.querySelector('#possession-period').value='test';document.querySelector('#possession-stage').value='entry';renderCourt();results();possessionResults();window.scrollTo(0,0)")
         for name,width,height,mobile in [('desktop',1440,1000,False),('mobile',390,844,True)]:
             call('Emulation.setDeviceMetricsOverride',{'width':width,'height':height,'deviceScaleFactor':1,'mobile':mobile})
             time.sleep(.25)
             check(name+' layout fits viewport',f"innerWidth==={width} && document.documentElement.scrollWidth<=innerWidth+1 && document.querySelector('#court').getBoundingClientRect().width>200 && document.querySelector('#load-error').hidden")
-            js("document.querySelector('.method-figure').scrollIntoView({block:'start',behavior:'instant'})")
-            for suffix in ['', '-dark']:
-                if suffix:
-                    js(SET_DARK)
-                mesh_shot=call('Page.captureScreenshot',{'format':'png','captureBeyondViewport':False})
-                (root/('course-mesh-'+name+suffix+'.png')).write_bytes(base64.b64decode(mesh_shot['data']))
+            check(name+' charts use readable responsive coordinates',"['model-chart','spatial-chart','continuation-chart'].every(id=>document.getElementById(id).viewBox.baseVal.width===(innerWidth<=680?360:720))")
+            js("document.querySelectorAll('details').forEach(d=>d.open=true)")
+            check(name+' expanded methods stay inside the viewport',"document.documentElement.scrollWidth<=innerWidth+1")
+            js("document.querySelectorAll('details').forEach(d=>d.open=false)")
+            for section in ['models','methods','possession-value']:
+                js(f"document.getElementById('{section}').scrollIntoView({{block:'start',behavior:'instant'}})")
+                for suffix in ['', '-dark']:
+                    if suffix:js(SET_DARK)
+                    capture=call('Page.captureScreenshot',{'format':'png','captureBeyondViewport':False})
+                    (root/(section+'-'+name+suffix+'.png')).write_bytes(base64.b64decode(capture['data']))
+                js(SET_LIGHT)
             js(SET_LIGHT)
             js("window.scrollTo({top:0,behavior:'instant'})")
             shot=call('Page.captureScreenshot',{'format':'png','captureBeyondViewport':True})
@@ -137,6 +164,7 @@ def main():
             box=js("(()=>{const b=document.querySelector('#possession-value').getBoundingClientRect();return {x:b.x+scrollX,y:b.y+scrollY,width:b.width,height:b.height,scale:1};})()")
             shot=call('Page.captureScreenshot',{'format':'png','captureBeyondViewport':True,'clip':box})
             (root/('possession-'+name+'.png')).write_bytes(base64.b64decode(shot['data']))
+            js("document.querySelector('#recovery-panel').open=true")
             box=js("(()=>{const b=document.querySelector('#recovery').getBoundingClientRect();return {x:b.x+scrollX,y:b.y+scrollY,width:b.width,height:b.height,scale:1};})()")
             shot=call('Page.captureScreenshot',{'format':'png','captureBeyondViewport':True,'clip':box})
             (root/('recovery-'+name+'.png')).write_bytes(base64.b64decode(shot['data']))
@@ -144,6 +172,7 @@ def main():
             shot=call('Page.captureScreenshot',{'format':'png','captureBeyondViewport':False});(root/(name+'-dark.png')).write_bytes(base64.b64decode(shot['data']))
             shot=call('Page.captureScreenshot',{'format':'png','captureBeyondViewport':True,'clip':box});(root/('recovery-'+name+'-dark.png')).write_bytes(base64.b64decode(shot['data']))
             js(SET_LIGHT)
+            js("document.querySelector('#recovery-panel').open=false")
         js(SET_DARK)
         call('Page.navigate',{'url':args.url.rstrip('/')+'/meeting/'})
         for _ in range(100):
@@ -152,6 +181,7 @@ def main():
         else:raise RuntimeError('Meeting walkthrough did not finish loading')
         check('Dark mode persists across meeting navigation',"document.documentElement.dataset.theme==='dark' && document.querySelector('#theme-toggle').getAttribute('aria-pressed')==='true'")
         check('Meeting walkthrough controls and layout',RECOVERY_CHECK)
+        check('Meeting links are consolidated',"[...document.querySelectorAll('a:not(.skip)')].length===3 && document.querySelectorAll('#resources a').length===3")
         js(RECOVERY_RESET)
         for name,width,height,mobile in [('desktop',1440,1000,False),('mobile',390,844,True)]:
             call('Emulation.setDeviceMetricsOverride',{'width':width,'height':height,'deviceScaleFactor':1,'mobile':mobile});time.sleep(.2)
