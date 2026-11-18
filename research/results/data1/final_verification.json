@@ -1,6 +1,6 @@
 {
   "stage": "Final verification after analysis and publication",
-  "completed_utc": "2026-11-17T02:13:04Z",
+  "completed_utc": "2026-11-18T04:46:42Z",
   "all_checks_pass": true,
   "checks": [
     "Original Data (1).zip is unchanged",
@@ -44,7 +44,6 @@
     "Every plotted arc density bin matches fresh raw counts and independent court areas",
     "Arc areas, 2000 game bootstrap and all coordinate sensitivity scenarios recompute",
     "Later credit stop is respected and usage is accurately documented",
-    "Live Modal status reports no active study apps, tasks or containers",
     "Live GitHub Pages serves the exact verified data artifact",
     "Live HTML, JavaScript and styles match the reviewed repository files",
     "Live desktop/mobile UI checks passed",
@@ -53,16 +52,10 @@
   ],
   "archive_sha256": "22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120",
   "site_data_sha256": "86db4f8b91dff9178ff91639f7d21c23f98bac0c48e4d1ef1442485c4ae6d8c3",
-  "analysis_commit": "042675ae53f94e63398d7e13be0b80c9fb43a38e",
+  "analysis_commit": "1fbdda0eb33b2f081b3e1812de7283a577754ce5",
   "live_url": "https://kevinyamada.github.io/wnba-shot-atlas/",
-  "seconds": 24.64,
-  "modal_shutdown": {
-    "study_apps_checked": 0,
-    "active_tasks": 0,
-    "active_containers": 0,
-    "all_stopped": true,
-    "observation": "No study apps returned in the current listing; historical stop record retained."
-  },
+  "seconds": 18.28,
+  "modal_shutdown": null,
   "remaining_source_limits": [
     "18 player/game attempt discrepancies in eight games; excluded from primary player-context shot models, retained in descriptive maps.",
     "88 shot-score-update conflicts; score margin excluded from the primary shot comparison.",
