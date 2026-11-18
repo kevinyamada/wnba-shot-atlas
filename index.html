@@ -36,13 +36,18 @@
 <details class="band-details"><summary>Counts, uncertainty and band boundaries</summary><p>The two foot comparison uses 508 attempts inside and 4,380 outside, adjusted for the area of each band. The density ratio is 7.97; its 95% game bootstrap interval is 7.25 to 8.82, using 2,000 resamples.</p><p>The ratio uses −2 ≤ distance &lt; 0 inside and 0 &lt; distance ≤ 2 outside. The chart’s one foot bars include their lower endpoint and exclude their upper endpoint. The 140 shots exactly on the line enter the first outside bar; the 374 exactly two feet outside enter the third bar. For that reason, the first two outside bars do not sum to the ratio’s outside count. Whole foot coordinates also limit how precisely these bands can be interpreted.</p></details>
 </section>
 <section id="models" aria-labelledby="models-title">
-<p class="kicker">Predicting a make</p><h2 id="models-title">Does the extra detail help?</h2>
-<p>A model can use the shot location, the shooter, and the game situation. But how much does that improve on knowing only the distance from the basket?</p>
-<div class="results-head"><label>Games to compare<select id="evaluation"><option value="validation">Model selection · Aug 10 to 26</option><option value="test" selected>Later games · Aug 27 to Sep 11</option><option value="playoffs">Playoffs</option></select></label><span>Compared with distance alone</span></div>
-<figure class="insight-figure"><svg id="model-chart" viewBox="0 0 720 310" role="img" aria-label="Three model comparisons against a distance baseline, with uncertainty intervals"></svg><figcaption id="model-chart-note" aria-live="polite"></figcaption></figure>
+<p class="kicker">Predicting a make</p>
+<h2 id="models-title">Averaging models helped a little</h2>
+<p>A model that only knows the distance gives every 15-foot shot the same chance of going in. I compared it with models that can also use the spot on the court, the shooter, or the game situation.</p>
+<p class="takeaway">On the same 5,626 late-season shots, averaging the predictions from five models reduced prediction error by <strong>about 0.7%</strong> compared with using distance alone. The playoff results were too close to say whether averaging helped.</p>
+<p>Distance is a good starting point for predicting whether a shot goes in. I’d want to see a clearer gain in another season before relying on a more complicated model.</p>
+<details id="model-details">
+<summary>See the chart and model scores</summary>
+<div class="results-head"><label>Games to compare<select id="evaluation"><option value="validation">Model selection · Aug 10 to 26</option><option value="test" selected>Later games · Aug 27 to Sep 11</option><option value="playoffs">Playoffs</option></select></label></div>
+<p>Zero on the chart means a tie with the distance model. Each dot shows how a model did in the selected games. Its line shows uncertainty. If the line reaches zero, the data leave room for a tie.</p>
+<figure class="insight-figure"><svg id="model-chart" viewBox="0 0 720 310" role="img" aria-label="Prediction error compared with using distance alone. Zero means equal error."></svg><figcaption id="model-chart-note" aria-live="polite"></figcaption></figure>
 <p id="model-takeaway" class="takeaway" aria-live="polite"></p>
-<details id="model-details"><summary>All models, scores and how the comparison works</summary>
-<p>The dots show the change in Brier score: the average squared gap between a predicted make probability and the actual result, coded as 0 or 1. Lower is better. A line crossing zero means these games do not clearly establish an improvement. Lines are 95% intervals from resampling entire games.</p>
+<p>Prediction error is measured by the Brier score, the average squared gap between the predicted chance of making a shot and the actual result, coded as 0 or 1. Lower is better. The lines are 95% intervals from resampling whole games.</p>
 <p>The chart shows the Bayesian Gaussian process, the CatBoost context model selected on validation log loss, and an equal average of five fixed models. All models are listed below. The highlighted choice stays fixed when switching periods.</p>
 <div class="table-scroll"><table><thead><tr><th>Model</th><th>Brier score</th><th>Log loss</th></tr></thead><tbody id="results"></tbody></table></div><p id="result-note" class="caption"></p>
 <p>Model settings were chosen using August 10 to 26. Training ends August 9. Tree models average three seeds; the five model ensemble uses equal weights. A separately calibrated ensemble uses validation predictions only, so it has no validation row here. These 2025 games have already been examined; another season is needed for a fresh test.</p>
