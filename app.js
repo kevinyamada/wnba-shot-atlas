@@ -1,12 +1,13 @@
 'use strict';
 const $=s=>document.querySelector(s), NS='http://www.w3.org/2000/svg';
 const number=n=>Number(n).toLocaleString('en-CA');
-const modelLabel=name=>name.replaceAll('Equal-weight','Equal weight').replaceAll('Validation-calibrated','Validation calibrated');
+const modelLabel=name=>name.replaceAll('Equal-weight','Equal weight').replaceAll('Validation-calibrated','Validation calibrated')
+    .replace('Identity-free HGB ', 'HGB without shooter ID · ');
 const pct=n=>(100*n).toFixed(1)+'%';
 function svg(tag,attrs={},text){const el=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,v);if(text!==undefined)el.textContent=text;return el;}
 function label(parent,x,y,text,attrs={}){parent.append(svg('text',{x,y,class:'label-svg',...attrs},text));}
 function colour(t){const stops=[[230,239,236],[141,186,177],[38,126,131],[0,61,77]];t=Math.max(0,Math.min(.999999,t))*3;const i=Math.floor(t),f=t-i;return 'rgb('+stops[i].map((v,j)=>Math.round(v*(1-f)+stops[i+1][j]*f)).join(',')+')';}
-let D,cells=[],current=null,pinned=false;
+let D,missOutcomes,cells=[],current=null,pinned=false;
 function courtLines(parent){const g=svg('g',{class:'court-lines'});g.append(svg('rect',{x:0,y:0,width:500,height:470,stroke:'#8a9898'}));g.append(svg('path',{d:'M30 470 L30 392.13 A221.4583 221.4583 0 0 1 470 392.13 L470 470'}));g.append(svg('circle',{cx:250,cy:417.5,r:7.5}));g.append(svg('line',{x1:220,y1:430,x2:280,y2:430}));parent.append(g);}
 function selectCell(cell,lock=false){if(!cell)return;if(pinned&&!lock)return;if(current?.el)current.el.classList.remove('selected');current=cell;cell.el.classList.add('selected');if(lock){pinned=true;$('#unpin').hidden=false;}const mode=$('#metric').value;$('#cell-title').textContent=cell.n?'This square, up close.':'An unvisited square.';$('#cell-location').textContent=`${cell.y0.toFixed(1)} to ${cell.y1.toFixed(1)} ft sideways; ${cell.x0.toFixed(1)} to ${cell.x1.toFixed(1)} ft toward half court.`;$('#cell-n').textContent=number(cell.n);$('#cell-k').textContent=number(cell.k);$('#cell-points').textContent=number(cell.points);$('#cell-rate').textContent=(mode==='gp'||mode==='uncertainty')?`Model at centre: ${pct(cell.gp[2])}. 95% credible interval: ${pct(cell.gp[3])} to ${pct(cell.gp[4])}.`:(cell.n?`Observed make rate: ${pct(cell.k/cell.n)} (${cell.k} of ${cell.n}).`:'No recorded attempts in this square.');const list=$('#leaders');list.replaceChildren();let leaders=[...cell.players].filter(([,p])=>p.points>0).sort((a,b)=>b[1].points-a[1].points||D.players[a[0]].localeCompare(D.players[b[0]]));if(leaders.length){const max=leaders[0][1].points;leaders=leaders.filter((v,i)=>i<3||v[1].points===max);leaders.forEach(([id,p],i)=>{const li=document.createElement('li');li.textContent=`${D.players[id]}: ${p.points} points · ${p.k} makes / ${p.n} attempts${p.points===max&&leaders.filter(v=>v[1].points===max).length>1?' (tied lead)':''}`;list.append(li);});}else{const li=document.createElement('li');li.textContent=cell.n?'No made baskets here.':'No player counts to rank.';list.append(li);}$('#cell-caution').textContent=(cell.n<20?'Few attempts: this local rate can be noisy. ':'')+'Leaders are ranked by recorded field goal points.';}
 function renderCourt(){const size=Number($('#size').value),team=$('#team').value,mode=$('#metric').value;const cols=Math.ceil(51/size),rows=Math.ceil(48/size);const map=new Map();cells=[];for(let i=0;i<rows;i++)for(let j=0;j<cols;j++){const x0=Math.max(-5.25,-5.5+i*size),x1=Math.min(41.75,-5.5+(i+1)*size),y0=Math.max(-25,-25.5+j*size),y1=Math.min(25,-25.5+(j+1)*size);if(x1<=x0||y1<=y0)continue;const cx=Math.max(-5,Math.min(41,Math.round((x0+x1)/2))),cy=Math.max(-25,Math.min(25,Math.round((y0+y1)/2)));const cell={i,j,x0,x1,y0,y1,n:0,k:0,points:0,players:new Map(),gp:D.gp[(cx+5)*51+cy+25]};cells.push(cell);map.set(i+','+j,cell);}
@@ -81,21 +82,21 @@ function modelComparison(split) {
                 group.append(svg('line', {x1: x(end), x2: x(end), y1: y - 5, y2: y + 5, class: 'chart-interval'}));
         }
         const point = svg('circle', {cx: x(row.difference), cy: y, r: 5, class: 'chart-dot'});
-        point.append(svg('title', {}, `${row.name}: ${row.difference.toFixed(6)} Brier difference` +
+        point.append(svg('title', {}, `${modelLabel(row.name)}: ${row.difference.toFixed(6)} Brier difference` +
             (row.interval ? `; 95% interval ${row.interval.lower.toFixed(6)} to ${row.interval.upper.toFixed(6)}` : '; no interval for model selection data')));
         group.append(point);
         chart.append(group);
     });
     label(chart, centre, narrow ? 342 : 295, narrow ? 'Change in error (Brier score)' : 'Change in prediction error (Brier score)', {'text-anchor': 'middle'});
     const validation = split === 'validation';
-    $('#model-chart-note').textContent = `${number(baseline.shots)} attempts, identical for every model. ` +
-        (validation ? 'Dots only: this period chose the model settings; no uncertainty intervals are reported.' :
-            'Dots show measured differences; lines show 95% game bootstrap intervals. A line crossing zero leaves the improvement uncertain.');
+    $('#model-chart-note').textContent = `${number(baseline.shots)} shots in each comparison. Zero is a tie with distance alone. ` +
+        (validation ? 'These games helped choose the model settings.' :
+            'The lines show uncertainty. If a line reaches zero, a tie is still plausible.');
     $('#model-takeaway').textContent = validation
-        ? 'These games chose the model settings. Switch to later games or the playoffs to check what happened next.'
+        ? 'Choose later games or the playoffs to see how the models did on other shots.'
         : split === 'test'
-            ? 'Averaging five models gives a small improvement on these later games. The selected context model and the Bayesian model still have intervals crossing zero.'
-            : 'In the playoffs, all three intervals cross zero. These games leave the advantage over distance alone uncertain.';
+            ? 'Of the three comparisons shown, only the average of five models had a clear gain in these games.'
+            : 'The playoff results are too close to tell which predictions were better.';
 }
 
 function spatialComparison() {
@@ -137,42 +138,27 @@ function spatialComparison() {
     });
 }
 
-function continuationComparison(split) {
-    const chart = $('#continuation-chart');
-    const narrow = window.matchMedia('(max-width: 680px)').matches;
-    chart.setAttribute('viewBox', narrow ? '0 0 360 350' : '0 0 720 290');
-    chart.replaceChildren();
-    const stages = [
-        {name: 'entry', label: 'Start of a team’s turn'},
-        {name: 'after_miss', label: 'After a miss'},
-        {name: 'after_offensive_rebound', label: 'After an offensive rebound'}
-    ];
-    const rows = stages.map(stage => {
-        const bins = D.possessionValue.summary.filter(row => row.split === split && row.stage === stage.name);
-        const states = bins.reduce((total, row) => total + row.states, 0);
-        const mean = bins.reduce((total, row) => total + row.states * row.mean_observed, 0) / states;
-        return {...stage, states, mean};
-    });
-    const x = value => (narrow ? 24 : 268) + value / 1.5 * (narrow ? 282 : 365);
-    for (const tick of [0, .5, 1, 1.5]) {
-        for (const [top, bottom] of narrow ? [[66, 97], [156, 187], [246, 277]] : [[24, 228]])
-            chart.append(svg('line', {x1: x(tick), x2: x(tick), y1: top, y2: bottom, class: 'chart-grid'}));
-        label(chart, x(tick), narrow ? 309 : 250, tick.toFixed(1), {'text-anchor': 'middle'});
-    }
-    rows.forEach((row, i) => {
-        const y = narrow ? 70 + i * 90 : 38 + i * 70;
-        label(chart, 12, y + (narrow ? -32 : 13), row.label, {class: 'chart-name'});
-        label(chart, 12, y + (narrow ? -13 : 34), number(row.states) + ' recorded states', {class: 'chart-detail'});
-        const bar = svg('rect', {x: x(0), y, width: x(row.mean) - x(0), height: narrow ? 23 : 29,
-            fill: i === 1 ? 'var(--orange)' : 'var(--teal)', 'data-stage': row.name,
-            'data-states': row.states, 'data-mean': row.mean});
-        bar.append(svg('title', {}, `${row.label}: ${row.mean.toFixed(6)} observed remaining points, ${number(row.states)} states`));
-        chart.append(bar);
-        label(chart, x(row.mean) + 9, y + (narrow ? 17 : 20), row.mean.toFixed(2), {class: 'chart-value'});
-    });
-    label(chart, narrow ? 180 : 450, narrow ? 340 : 281, 'Average points still to come', {'text-anchor': 'middle'});
-    $('#continuation-takeaway').textContent = `After a miss, the team still scored an average of ${rows[1].mean.toFixed(2)} more points. ` +
-        `In the situations with an offensive rebound, that average was ${rows[2].mean.toFixed(2)} points.`;
+function renderMissFlow(split) {
+    const counts = missOutcomes.splits[split];
+    const share = count => `${(100 * count / counts.misses).toFixed(1)}%`;
+    $('#miss-total').textContent = number(counts.misses);
+    $('#miss-offense-count').textContent = number(counts.offense);
+    $('#miss-offense-share').textContent = `of ${number(counts.misses)} · ${share(counts.offense)}`;
+    $('#miss-defense-count').textContent = number(counts.defense);
+    $('#miss-defense-share').textContent = `of ${number(counts.misses)} · ${share(counts.defense)}`;
+    $('#miss-scored').textContent = number(counts.offense_scored);
+    $('#miss-no-score').textContent = number(counts.offense - counts.offense_scored);
+    $('#miss-other').textContent = `On ${number(counts.other)} ${counts.other === 1 ? 'miss' : 'misses'}, another attempt or the end of the turn came first.`;
+    const scoredShare = (100 * counts.offense_scored / counts.offense).toFixed(0);
+    $('#miss-takeaway').textContent = `When the offense got the rebound, it went on to score about ${scoredShare}% of the time.`;
+
+    const rebounds = D.possessionValue.summary.filter(row => row.split === split && row.stage === 'after_offensive_rebound');
+    const reboundPoints = rebounds.reduce((total, row) => total + row.states * row.mean_observed, 0);
+    const reboundCount = rebounds.reduce((total, row) => total + row.states, 0);
+    const afterMiss = (counts.points / counts.misses).toFixed(2);
+    const afterRebound = (reboundPoints / reboundCount).toFixed(2);
+    $('#continuation-takeaway').textContent = `After a miss, the team still scored an average of ${afterMiss} more points. ` +
+        `Across all eligible offensive rebounds in these games, that average was ${afterRebound} points.`;
 }
 
 function spatialResults(){const body=$('#spatial-results');for(const name of [...new Set(D.spatialCV.map(r=>r.model))]){const tr=document.createElement('tr');[modelLabel(name),...[0,2,4].map(b=>D.spatialCV.find(r=>r.model===name&&r.buffer===b)?.brier.toFixed(5)??'Not available')].forEach(value=>{const td=document.createElement('td');td.textContent=value;tr.append(td);});body.append(tr);}}
@@ -188,7 +174,7 @@ $('#followup-note').textContent=`${number(pair.shots)} identical eligible attemp
 function possessionResults(){
 const p=D.possessionValue;if(!p){$('#possession-value').hidden=true;return;}
 const split=$('#possession-period').value,stage=$('#possession-stage').value,selected=p.selection.selected_model;
-continuationComparison(split);
+renderMissFlow(split);
 const rows=p.metrics.filter(r=>r.split===split&&r.stage===stage).sort((a,b)=>a.rmse-b.rmse),body=$('#possession-results');body.replaceChildren();
 for(const r of rows){const tr=document.createElement('tr');if(r.model===selected)tr.className='selected';for(const value of [modelLabel(r.model),r.rmse.toFixed(5),r.mae.toFixed(5)]){const td=document.createElement('td');td.textContent=value;tr.append(td);}body.append(tr);}
 const pair=p.bootstrap.find(r=>r.split===split&&r.stage===stage&&r.model===selected);
@@ -205,7 +191,52 @@ for(const r of groups){const point=svg('circle',{cx:x(r.clock_bin),cy:y(r[key]),
 for(const r of groups)label(chart,x(r.clock_bin),245,`n=${number(r.states)}`,{'text-anchor':'middle','font-size':10});
 const calibration=$('#possession-calibration');calibration.replaceChildren();for(const r of p.calibration.filter(r=>r.split===split&&r.stage===stage&&r.model===selected)){const tr=document.createElement('tr');for(const value of [r.prediction_bin,number(r.states),r.mean_prediction.toFixed(3),r.observed_remaining_points.toFixed(3)]){const td=document.createElement('td');td.textContent=value;tr.append(td);}calibration.append(tr);}
 }
-async function start(){const r=await fetch('assets/data.json');if(!r.ok)throw Error('Data request failed');D=await r.json();for(const [id,name] of Object.entries(D.teams).sort((a,b)=>a[1].localeCompare(b[1]))){const o=document.createElement('option');o.value=id;o.textContent=name;$('#team').append(o);}$('#metric').addEventListener('change',()=>{const gp=['gp','uncertainty'].includes($('#metric').value);if(gp)$('#team').value='all';$('#team').disabled=gp;renderCourt();});$('#team').addEventListener('change',renderCourt);$('#size').addEventListener('change',renderCourt);$('#unpin').addEventListener('click',()=>{pinned=false;$('#unpin').hidden=true;});$('#court').addEventListener('keydown',e=>{const moves={ArrowLeft:[0,-1],ArrowRight:[0,1],ArrowUp:[1,0],ArrowDown:[-1,0]};if(!moves[e.key]||!current)return;e.preventDefault();const [di,dj]=moves[e.key];selectCell(cells.find(c=>c.i===current.i+di&&c.j===current.j+dj),true);});$('#evaluation').addEventListener('change',results);$('#followup-period').addEventListener('change',followupResults);$('#possession-period').addEventListener('change',possessionResults);$('#possession-stage').addEventListener('change',possessionResults);renderCourt();drawBand();results();spatialComparison();spatialResults();followupResults();possessionResults();document.body.dataset.ready='true';}
+async function start() {
+    const [shots, misses] = await Promise.all([fetch('assets/data.json'), fetch('assets/miss_outcomes.json')]);
+    if (!shots.ok || !misses.ok) throw Error('Data request failed');
+    [D, missOutcomes] = await Promise.all([shots.json(), misses.json()]);
+    if (missOutcomes.source.only_data_source !== D.source.only_data_source ||
+        missOutcomes.source.archive_sha256 !== D.selection.source_archive_sha256) {
+        throw Error('Miss outcomes do not match the study archive');
+    }
+    for (const [id, name] of Object.entries(D.teams).sort((a, b) => a[1].localeCompare(b[1]))) {
+        const option = document.createElement('option');
+        option.value = id;
+        option.textContent = name;
+        $('#team').append(option);
+    }
+    $('#metric').addEventListener('change', () => {
+        const gp = ['gp', 'uncertainty'].includes($('#metric').value);
+        if (gp) $('#team').value = 'all';
+        $('#team').disabled = gp;
+        renderCourt();
+    });
+    $('#team').addEventListener('change', renderCourt);
+    $('#size').addEventListener('change', renderCourt);
+    $('#unpin').addEventListener('click', () => {
+        pinned = false;
+        $('#unpin').hidden = true;
+    });
+    $('#court').addEventListener('keydown', event => {
+        const moves = {ArrowLeft:[0,-1], ArrowRight:[0,1], ArrowUp:[1,0], ArrowDown:[-1,0]};
+        if (!moves[event.key] || !current) return;
+        event.preventDefault();
+        const [di, dj] = moves[event.key];
+        selectCell(cells.find(cell => cell.i === current.i + di && cell.j === current.j + dj), true);
+    });
+    $('#evaluation').addEventListener('change', results);
+    $('#followup-period').addEventListener('change', followupResults);
+    $('#possession-period').addEventListener('change', possessionResults);
+    $('#possession-stage').addEventListener('change', possessionResults);
+    renderCourt();
+    drawBand();
+    results();
+    spatialComparison();
+    spatialResults();
+    followupResults();
+    possessionResults();
+    document.body.dataset.ready = 'true';
+}
 start().catch(e=>{$('#load-error').hidden=false;console.error(e);});
 
 let chartResize;
@@ -216,6 +247,5 @@ window.addEventListener('resize', () => {
         drawBand();
         modelComparison($('#evaluation').value);
         spatialComparison();
-        continuationComparison($('#possession-period').value);
     });
 });

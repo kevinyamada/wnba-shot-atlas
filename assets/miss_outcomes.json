@@ -1,0 +1,32 @@
+{
+  "source": {
+    "only_data_source": "Data (1).zip",
+    "archive_sha256": "22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120"
+  },
+  "splits": {
+    "validation": {
+      "misses": 1655,
+      "offense": 460,
+      "defense": 1194,
+      "other": 1,
+      "offense_scored": 264,
+      "points": 579
+    },
+    "test": {
+      "misses": 1619,
+      "offense": 464,
+      "defense": 1153,
+      "other": 2,
+      "offense_scored": 230,
+      "points": 489
+    },
+    "playoffs": {
+      "misses": 919,
+      "offense": 241,
+      "defense": 675,
+      "other": 3,
+      "offense_scored": 107,
+      "points": 235
+    }
+  }
+}

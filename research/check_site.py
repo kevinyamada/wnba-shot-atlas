@@ -82,7 +82,7 @@ def main():
         check('Arrow key selection',"(()=>{const before=current;document.querySelector('#court').dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowUp',bubbles:true}));return current.i===before.i+1&&current.j===before.j&&!document.querySelector('#unpin').hidden;})()")
         check('Tap selection and clear',"(()=>{cells[20].el.dispatchEvent(new MouseEvent('click',{bubbles:true}));if(current!==cells[20]||!pinned)return false;document.querySelector('#unpin').click();return !pinned&&document.querySelector('#unpin').hidden;})()")
         check('Every evaluation table',"(()=>{for(const split of ['validation','test','playoffs']){document.querySelector('#evaluation').value=split;results();if(document.querySelectorAll('#results tr').length!==D.metrics.filter(r=>r.split===split).length||!document.querySelector('#result-note').textContent.includes(Number(D.metrics.find(r=>r.split===split).shots).toLocaleString('en-CA')))return false;}return true;})()")
-        check('Desktop CPU follow up tables',"(()=>{if(!D.localFollowup||!D.localFollowup.receipt.no_cloud_gpu_used)return false;for(const split of ['test','playoffs']){document.querySelector('#followup-period').value=split;followupResults();const expected=D.localFollowup.metrics.filter(r=>r.split===split),rows=[...document.querySelectorAll('#followup-results tr')];if(rows.length!==expected.length||rows.length!==6)return false;for(let i=0;i<rows.length;i++){const cells=rows[i].children;if(cells[0].textContent!==expected[i].model||cells[1].textContent!==expected[i].brier.toFixed(5)||cells[2].textContent!==expected[i].log_loss.toFixed(5))return false;}}return true;})()")
+        check('Desktop CPU follow up tables',"(()=>{if(!D.localFollowup||!D.localFollowup.receipt.no_cloud_gpu_used)return false;for(const split of ['test','playoffs']){document.querySelector('#followup-period').value=split;followupResults();const expected=D.localFollowup.metrics.filter(r=>r.split===split),rows=[...document.querySelectorAll('#followup-results tr')];if(rows.length!==expected.length||rows.length!==6)return false;for(let i=0;i<rows.length;i++){const cells=rows[i].children;if(cells[0].textContent!==modelLabel(expected[i].model)||cells[1].textContent!==expected[i].brier.toFixed(5)||cells[2].textContent!==expected[i].log_loss.toFixed(5))return false;}}return true;})()")
         check('Possession EPV controls and tables',"(()=>{const p=D.possessionValue;if(!p||p.selection.runtime!=='desktop CPU only'||p.audit.eligible_entry_states!==25306)return false;for(const split of ['validation','test','playoffs'])for(const stage of ['entry','after_miss','after_offensive_rebound']){document.querySelector('#possession-period').value=split;document.querySelector('#possession-stage').value=stage;possessionResults();const expected=p.metrics.filter(r=>r.split===split&&r.stage===stage).sort((a,b)=>a.rmse-b.rmse),rows=[...document.querySelectorAll('#possession-results tr')];if(rows.length!==5||rows.length!==expected.length)return false;for(let i=0;i<rows.length;i++)if(rows[i].children[0].textContent!==expected[i].model||rows[i].children[1].textContent!==expected[i].rmse.toFixed(5)||rows[i].children[2].textContent!==expected[i].mae.toFixed(5))return false;if(document.querySelector('#possession-results .selected td').textContent!==p.selection.selected_model)return false;const bins=p.summary.filter(r=>r.split===split&&r.stage===stage);if(document.querySelectorAll('#possession-chart circle').length!==2*bins.length)return false;const calibration=p.calibration.filter(r=>r.split===split&&r.stage===stage&&r.model===p.selection.selected_model);if(document.querySelectorAll('#possession-calibration tr').length!==calibration.length||calibration.reduce((v,r)=>v+r.states,0)!==expected[0].states)return false;}return true;})()")
         check('Recovery controls and tables',RECOVERY_CHECK)
         js(RECOVERY_RESET)
@@ -117,22 +117,43 @@ def main():
                 });
             })()
         """)
-        check('Continuation chart matches independently summed event outcomes', """
+        check('Prediction results share one section and open on request', """
             (()=>{
-                // Counts and integer point totals checked from private model_states.csv.gz on the desktop.
+                const models=document.querySelector('#models');
+                const panels=[...models.querySelectorAll(':scope > details')];
+                if(panels.length!==2 || panels.some(panel=>panel.open))return false;
+                for(const [id,chart] of [['model-details','model-chart'],['methods','spatial-chart']]){
+                    const panel=document.getElementById(id);
+                    const summary=panel.querySelector('summary');
+                    const figure=document.getElementById(chart);
+                    summary.click();
+                    if(!panel.open || figure.getBoundingClientRect().width<=0)return false;
+                    summary.click();
+                    if(panel.open)return false;
+                }
+                return true;
+            })()
+        """)
+        check('Miss flow follows recorded rebounds and scoring in every period', """
+            (()=>{
                 const expected={
-                    test:{entry:[3468,3673],after_miss:[1619,489],after_offensive_rebound:[462,491]},
-                    playoffs:{entry:[1963,2007],after_miss:[919,235],after_offensive_rebound:[241,238]},
-                    validation:{entry:[3554,3823],after_miss:[1655,579],after_offensive_rebound:[472,597]}
+                    test:{misses:1619,offense:464,defense:1153,other:2,scored:230,afterMiss:'0.30',afterRebound:'1.06'},
+                    playoffs:{misses:919,offense:241,defense:675,other:3,scored:107,afterMiss:'0.26',afterRebound:'0.99'},
+                    validation:{misses:1655,offense:460,defense:1194,other:1,scored:264,afterMiss:'0.35',afterRebound:'1.26'}
                 };
-                for(const split of ['test','playoffs','validation']){
-                    document.querySelector('#possession-period').value=split;possessionResults();
-                    const bars=[...document.querySelectorAll('#continuation-chart rect[data-stage]')];
-                    if(bars.length!==3)return false;
-                    for(const bar of bars){
-                        const [n,total]=expected[split][bar.dataset.stage];
-                        if(Number(bar.dataset.states)!==n||Math.abs(Number(bar.dataset.mean)-total/n)>1e-12)return false;
+                const select=document.querySelector('#possession-period');
+                const read=id=>document.getElementById(id).textContent;
+                for(const [split,e] of Object.entries(expected)){
+                    select.value=split;
+                    select.dispatchEvent(new Event('change'));
+                    for(const [id,value] of [['miss-total',e.misses],['miss-offense-count',e.offense],
+                        ['miss-defense-count',e.defense],['miss-scored',e.scored],['miss-no-score',e.offense-e.scored]]){
+                        if(read(id)!==value.toLocaleString('en-CA'))return false;
                     }
+                    if(!read('miss-other').startsWith('On '+e.other+' '))return false;
+                    if(!read('miss-offense-share').includes((100*e.offense/e.misses).toFixed(1)+'%'))return false;
+                    const takeaway=read('continuation-takeaway');
+                    if(!takeaway.includes(e.afterMiss+' more points')||!takeaway.includes(e.afterRebound+' points'))return false;
                 }
                 return true;
             })()
@@ -146,17 +167,20 @@ def main():
             call('Emulation.setDeviceMetricsOverride',{'width':width,'height':height,'deviceScaleFactor':1,'mobile':mobile})
             time.sleep(.25)
             check(name+' layout fits viewport',f"innerWidth==={width} && document.documentElement.scrollWidth<=innerWidth+1 && document.querySelector('#court').getBoundingClientRect().width>200 && document.querySelector('#load-error').hidden")
-            check(name+' charts use readable responsive coordinates',"['model-chart','spatial-chart','continuation-chart'].every(id=>document.getElementById(id).viewBox.baseVal.width===(innerWidth<=680?360:720))")
+            check(name+' charts use readable responsive coordinates',"['model-chart','spatial-chart'].every(id=>document.getElementById(id).viewBox.baseVal.width===(innerWidth<=680?360:720))")
+            check(name+' miss flow fits its column',"(()=>{const f=document.querySelector('#miss-flow');return f.clientWidth>200 && f.scrollWidth<=f.clientWidth+1 && [...f.querySelectorAll('.miss-branch')].every(b=>b.scrollWidth<=b.clientWidth+1)})()")
             js("document.querySelectorAll('details').forEach(d=>d.open=true)")
             check(name+' expanded methods stay inside the viewport',"document.documentElement.scrollWidth<=innerWidth+1")
             js("document.querySelectorAll('details').forEach(d=>d.open=false)")
             for section in ['models','methods','possession-value']:
+                if section=='methods':js("document.querySelector('#methods').open=true")
                 js(f"document.getElementById('{section}').scrollIntoView({{block:'start',behavior:'instant'}})")
                 for suffix in ['', '-dark']:
                     if suffix:js(SET_DARK)
                     capture=call('Page.captureScreenshot',{'format':'png','captureBeyondViewport':False})
                     (root/(section+'-'+name+suffix+'.png')).write_bytes(base64.b64decode(capture['data']))
                 js(SET_LIGHT)
+                if section=='methods':js("document.querySelector('#methods').open=false")
             js(SET_LIGHT)
             js("window.scrollTo({top:0,behavior:'instant'})")
             shot=call('Page.captureScreenshot',{'format':'png','captureBeyondViewport':True})
