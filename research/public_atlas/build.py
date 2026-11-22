@@ -11,7 +11,7 @@ import zipfile
 import numpy as np
 import pandas as pd
 
-from fetch import CACHE, HERE, PIN, RAW, ROOT, YEARS, file_matches
+from fetch import CACHE, HERE, PIN, RAW, ROOT, YEARS, file_matches, manifest_digest
 from geometry import BASELINE, CELL_FT, COLS, MIDCOURT, ROWS, RULES, ZONES, era_for, locations
 
 RESULTS = ROOT / 'research/results/public_atlas'
@@ -253,7 +253,7 @@ def build(years, archive):
                                        grid=dict(baseline=BASELINE, midcourt=MIDCOURT, size=CELL_FT, cols=COLS, rows=ROWS),
                                        source='wehoop / ESPN', files=4 * len(years), archiveComparison=crosscheck,
                                        leagueHistory={str(year): batch[4] for year, batch in zip(years, batches)},
-                                       manifestSha256=hashlib.sha256(PIN.read_bytes()).hexdigest()))
+                                       manifestSha256=manifest_digest()))
     print('PUBLIC_ATLAS_BUILT', len(years), 'seasons', sum(row['source_rows'] for row in coverage), 'shot release rows', flush=True)
 
 

@@ -7,7 +7,7 @@ import json
 import math
 from pathlib import Path
 
-from fetch import HERE, PIN, RAW, ROOT, TAGS, YEARS, file_matches
+from fetch import HERE, PIN, RAW, ROOT, TAGS, YEARS, file_matches, manifest_digest
 
 SITE = ROOT / 'explore/data'
 RESULTS = ROOT / 'research/results/public_atlas'
@@ -157,7 +157,7 @@ def main():
     pins = json.loads(PIN.read_bytes())
     assert len(pins) == index['files'] == len(YEARS) * len(TAGS)
     assert {(row['season'],row['kind']) for row in pins} == {(year, kind) for year in YEARS for kind in TAGS}
-    assert hashlib.sha256(PIN.read_bytes()).hexdigest() == index['manifestSha256']
+    assert manifest_digest() == index['manifestSha256']
     for row in pins:
         assert file_matches(RAW / row['filename'], row), row['filename']
     assert index['seasons'] == list(YEARS)

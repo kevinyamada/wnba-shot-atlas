@@ -31,6 +31,9 @@ def digest(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
+def manifest_digest():
+    return digest(PIN.read_bytes().replace(b'\r\n', b'\n'))
+
 def file_matches(path, source):
     return (path.is_file() and path.stat().st_size == source['bytes']
             and digest(path.read_bytes()) == source['sha256'])
@@ -72,7 +75,7 @@ def snapshot():
         name = source['filename']
         (CACHE / 'refresh' / name).replace(RAW / name)
     temporary = PIN.with_suffix('.tmp')
-    temporary.write_text(json.dumps(sorted(sources, key=lambda row: (row['season'], row['kind'])), indent=2) + '\n', encoding='utf-8')
+    temporary.write_text(json.dumps(sorted(sources, key=lambda row: (row['season'], row['kind'])), indent=2) + '\n', encoding='utf-8', newline='')
     temporary.replace(PIN)
 
 
