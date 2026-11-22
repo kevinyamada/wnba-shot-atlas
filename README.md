@@ -1,5 +1,7 @@
 # WNBA Shot Atlas
 
+[Public seasons explorer](https://kevinyamada.github.io/wnba-shot-atlas/explore/) covers 2011 to 2026 using wehoop releases. See the [data pipeline and audit](research/public_atlas/README.md). This edition is separate from the Data (1) study described below.
+
 [Kevin Yamada · Portfolio](https://kevinyamada.github.io/)
 
 An interactive study of recorded WNBA shot locations, conditional make probabilities, observed field goal points and a source limited event based possession value prototype. **All basketball inputs come from the supplied Data (1).zip.**
