@@ -29,6 +29,15 @@ python research/public_atlas/possession_value.py
 python research/public_atlas/publish_study.py
 python research/public_atlas/verify.py
 python research/public_atlas/reference_audit.py
+python research/public_atlas/shot_form.py
+python research/public_atlas/form_context.py
+python research/public_atlas/form_reference.py
+python research/public_atlas/publish_form.py
+python research/public_atlas/verify_form.py
+python research/public_atlas/play_sources.py
+python research/public_atlas/league_turns.py
+python research/public_atlas/play_value.py
+python research/public_atlas/verify_plays.py
 python research/public_atlas/check_browser.py
 ```
 
@@ -38,9 +47,11 @@ The restore step checks the pinned bytes and reports any upstream changes. An ex
 
 A separate check compares the ESPN shot tables with the WNBA Stats shot release on confidently matched games in 2025 and 2026. Its [source pins](reference_manifest.json), [season totals](../results/public_atlas/official_reference_summary.csv) and [game differences](../results/public_atlas/official_reference_games.csv) keep both versions visible. They agree on attempts, makes and points in 661 of 662 games. ESPN records one additional miss in game 401857099, where the ESPN team box also has one fewer attempt than its shot release. The prediction sample excludes that game through the box score check.
 
+- [Shot sources, next shot probability and expected points from play histories](../results/public_atlas/plays/README.md)
+- [Shot type at the same distance, rolling tests and source agreement](../results/public_atlas/shot_form/README.md)
 - [Data coverage, shot counts and arc patterns](../results/public_atlas/eda.md)
 - [Prediction, remaining points and recovery results](../results/public_atlas/study.md)
 - [Shot prediction metrics and court surfaces](../results/public_atlas/shot_models/)
 - [Possession metrics and source checks](../results/public_atlas/possession/)
 
-The forecasts train on 2022 to 2024 regular season games, select settings on the 2025 regular season, and score 2026 regular season and playoff games separately. The game level bootstrap compares errors on identical shots or states. The earlier study used full posterior sampling for some fits. This edition uses CPU Laplace inference conditional on the selected Matérn and mesh hyperparameters. Court intervals concern modelled probabilities. Play sequences support remaining points forecasts and rebound summaries. The releases used here lack the action locations needed to value individual passes or movement.
+The original public benchmark models train on 2022 to 2024 regular season games, select settings on the 2025 regular season, and score 2026 regular season and playoff games separately. The game level bootstrap compares errors on identical shots or states. The earlier study used full posterior sampling for some fits. This edition uses CPU Laplace inference conditional on the selected Matérn and mesh hyperparameters. Court intervals concern modelled probabilities. Play sequences support remaining points forecasts and rebound summaries. The releases used here lack the action locations needed to value individual passes or movement.

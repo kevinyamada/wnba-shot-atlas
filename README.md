@@ -1,12 +1,14 @@
 # WNBA Shot Atlas
 
-[WNBA Shot Atlas](https://kevinyamada.github.io/wnba-shot-atlas/) covers 1997 to 2026 from public wehoop releases. See the [data pipeline and methods](research/public_atlas/README.md) and the [public results](research/results/public_atlas/study.md). The [original 2025 study](https://kevinyamada.github.io/wnba-shot-atlas/study/) remains available.
+[WNBA Shot Atlas](https://kevinyamada.github.io/wnba-shot-atlas/) covers 1997 to 2026 from public wehoop releases. See the [data pipeline and methods](research/public_atlas/README.md) and the [public results](research/results/public_atlas/study.md). The [shot type comparison](research/results/public_atlas/shot_form/README.md) tests how much a recorded layup, jumper or other shot type adds to distance across 11 seasons. The [WNBA play analysis](research/results/public_atlas/plays/README.md) traces up to ten recorded actions, shot probability and expected points across regular season and playoff games. The [original 2025 study](https://kevinyamada.github.io/wnba-shot-atlas/study/) remains available.
 
 [Kevin Yamada · Portfolio](https://kevinyamada.github.io/)
 
+## Original 2025 study
+
 An interactive study of recorded WNBA shot locations, conditional make probabilities, observed field goal points and a source limited event based possession value prototype. **All basketball inputs come from the supplied Data (1).zip.**
 
-**[Explore the live app](https://kevinyamada.github.io/wnba-shot-atlas/) · [Methods and results](research/summary.md) · [Archive and literature review](research/ARCHIVE_REVIEW.md)**
+**[Explore the 2025 app](https://kevinyamada.github.io/wnba-shot-atlas/study/) · [Methods and results](research/summary.md) · [Archive and literature review](research/ARCHIVE_REVIEW.md)**
 
 The descriptive sample contains 38,535 regular season attempts in 286 games, with 38,441 attempts in the half court view. Explore teams, 1/2/4 foot squares, actual field goal scoring leaders, observed make rates, Bayesian predictions and posterior uncertainty. The app also compares distance, logistic, IDW, kriging, SPDE, four chain Bayesian GP, GPU boosting and ensemble models.
 
@@ -14,7 +16,7 @@ The website leads with the court explorer, shot density around the arc, predicti
 
 ## Source and limitations
 
-The original 45 file archive has SHA256 `22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120`. It supplies 2025 WNBA events, historical player/team boxes and supporting tables and papers. No external basketball release or additional season enters the active pipeline.
+The original 45 file archive has SHA256 `22a86860e179ce40ed34648c592bbd384297ddd5833000117973308a915a2120`. It supplies 2025 WNBA events, historical player/team boxes and supporting tables and papers. No external basketball release or additional season enters the original 2025 analysis.
 
 All 624 game/team shot totals and final scores reconcile. Eighteen player/game attempt totals disagree across eight games; those games remain in descriptive maps and are excluded uniformly from the player context shot models. The source also contains 88 shot score update conflicts, so score margin is excluded from the primary shot comparison. [Review the exclusions](research/results/data1/excluded_games.csv).
 

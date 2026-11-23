@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Compare WNBA shooting from 1997 to 2026 by season, team, player and position on the court.">
   <title>WNBA Shot Atlas | Explore 1997 to 2026</title>
-  <link rel="stylesheet" href="explore/atlas.css?v=2">
+  <link rel="stylesheet" href="explore/atlas.css?v=4">
   <script src="theme.js?v=light-default"></script>
-  <script type="module" src="explore/atlas.js?v=2"></script>
+  <script type="module" src="explore/atlas.js?v=4"></script>
 </head>
 <body>
   <a class="skip" href="#explorer">Skip to the shot explorer</a>
@@ -24,7 +24,7 @@
         <h1>Where the WNBA shoots</h1>
         <p>Explore where players shoot, how often they make it, and how those patterns change across seasons.</p>
       </div>
-      <p class="source-credit">wehoop<br><strong id="total-shots"></strong></p>
+      <p class="source-credit">ESPN and WNBA Stats via wehoop<br><strong id="total-shots"></strong></p>
     </div>
     <div class="filter-bar" aria-label="Shot filters">
       <label>Season<select id="season" disabled></select></label>
@@ -88,9 +88,9 @@
         </aside>
       </div>
       <p class="caption" id="metric-note"></p>
-      <div class="comparison-callout" id="comparison-callout" hidden>
+      <details class="rule-history" id="comparison-callout" hidden><summary>When the three point line moved</summary>
         <p id="arc-finding"></p><button type="button" id="compare-rule">Compare 2012 and 2013</button>
-      </div>
+      </details>
       <section class="history" aria-labelledby="history-title">
         <div class="section-heading">
           <div><h2 id="history-title">Across the seasons</h2><p id="history-context"></p></div>
@@ -115,6 +115,7 @@
       <div id="public-study" hidden></div>
       <section class="foundations" aria-labelledby="foundation-title">
         <div class="section-heading"><div><h2 id="foundation-title">What the source covers</h2><p id="coverage-summary"></p></div></div>
+        <details><summary>Where the shot total comes from</summary><div id="source-explanation"></div></details>
         <details id="coverage-details"><summary>See the audit by season</summary>
           <p>WNBA Stats provides the shots from 1997 to 2001. ESPN provides the later shots and schedules. From 2003, the audit counts games whose shots agree with both teams’ box scores. The explorer includes disagreements as recorded.</p>
           <div class="table-scroll"><table><thead><tr><th>Season</th><th>Games with shots</th><th>Games matching both boxes</th><th>Attempts</th><th>Unknown location</th></tr></thead><tbody id="coverage-rows"></tbody></table></div>

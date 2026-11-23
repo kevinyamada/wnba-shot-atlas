@@ -206,6 +206,11 @@ def cat_features(frame, context):
     return frame[columns]
 
 
+def make_xgboost(depth, seed):
+    return XGBClassifier(n_estimators=400, max_depth=depth, learning_rate=.05, min_child_weight=12,
+                         reg_lambda=4, tree_method='hist', random_state=seed, n_jobs=3)
+
+
 def xgb_features(frame, context, fitted_encoder):
     if not context:
         return frame[SPATIAL].to_numpy()
@@ -269,8 +274,7 @@ def comparisons(data, identity_free):
             classes = OUTCOMES if joint else np.array([0, 1])
             assert np.array_equal(fit.classes_, classes)
             return lambda a: fit.predict_proba(cat_features(a, context))
-        fit = XGBClassifier(n_estimators=400, max_depth=depth, learning_rate=.05, min_child_weight=12,
-                            reg_lambda=4, tree_method='hist', random_state=seed, n_jobs=3)
+        fit = make_xgboost(depth, seed)
         fit.fit(xgb_features(fitted_train, context, design.encoder),
                 np.searchsorted(OUTCOMES, fitted_train.points) if joint else fitted_train.made)
         return lambda a: fit.predict_proba(xgb_features(a, context, design.encoder))

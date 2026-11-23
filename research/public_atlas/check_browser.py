@@ -161,6 +161,50 @@ def verify(browser, url):
     assert 'Layup' in js("document.querySelector('#history-context').textContent")
     assert js("document.querySelector('#type-rows').rows.length") == len(index['shotTypes'])
 
+    plays=json.loads((ROOT/'explore/data/plays.json').read_bytes())
+    forms=json.loads((ROOT/'explore/data/shot-form.json').read_bytes())
+    assert js("document.querySelector('#miss-scope').value")=='both'
+    assert not js("document.querySelector('#comparison-callout').open")
+    for r in plays['misses']:
+        choice={'both':'both','regular':'regular','playoffs':'post'}[r['scope']]
+        browser.select('miss-scope',choice)
+        total=sum(x['misses'] for x in r['flow'])
+        assert fmt(total) in js("document.querySelector('.miss-flow h3').textContent")
+        assert fmt(r['games']) in js("document.getElementById('miss-title').parentElement.textContent")
+    for r in plays['situations']:
+        browser.select('play-situation',r['situation'])
+        assert js("document.querySelector('.play-rates strong').textContent")==f"{100*r['next_shots']/r['states']:.1f}%"
+        assert js("document.querySelector('.play-rates > div:nth-child(2) strong').textContent")==f"{100*r['scoring_turns']/r['states']:.1f}%"
+        assert js("document.querySelector('.play-rates > div:nth-child(3) strong').textContent")==f"{r['points']/r['states']:.2f}"
+    for group in plays['histories']:
+        browser.select('history-length',group['length'])
+        assert js("document.querySelectorAll('.play-trail li').length")==group['length']+1
+        assert js("document.querySelector('.play-trail li:last-child').textContent")=='Shot attempted'
+    for i,r in enumerate(plays['forecasts']):
+        browser.select('play-forecast-history',i)
+        assert fmt(r['states']) in js("document.getElementById('play-forecast-history').parentNode.nextSibling.textContent")
+    for scope in ('both','regular','playoffs'):
+        browser.select('location-model-phase',scope)
+        area=next(r for r in plays['shotValue'] if r['scope']==scope)
+        assert fmt(area['attempts']) in js("document.getElementById('location-model-phase').closest('details').textContent")
+    for band in forms['diagram']:
+        browser.select('form-distance',band['feet'])
+        if js("document.getElementById('form-match').checked"):
+            js("document.getElementById('form-match').click()")
+        for row in [r for r in band['rows'] if r['name'] in ('Jump shot','Layup')]:
+            selector=f".form-card[data-family='{row['name']}']"
+            actual=js(f'document.querySelector("{selector} strong").textContent')
+            assert actual==f"{100*row['makes']/row['attempts']:.1f}%"
+            assert js(f'document.querySelectorAll("{selector} .form-dots i").length')==100
+        if band['sameSpots']:
+            js("document.getElementById('form-match').click()")
+            assert js("document.querySelector('.form-card strong').textContent")==f"{100*band['sameSpots']['layup_rate']:.1f}%"
+        else:
+            assert js("document.getElementById('form-match').disabled")
+    assert '511,169' in js("document.querySelector('#source-explanation').textContent")
+    assert '902,729' in js("document.querySelector('#source-explanation').textContent")
+    browser.select('form-distance',4)
+    browser.select('miss-scope','both')
     for section in ('prediction-title', 'miss-title'):
         prefix = f"document.getElementById('{section}').parentElement"
         for split in ('test', 'playoffs', 'validation'):
@@ -174,7 +218,7 @@ def verify(browser, url):
             else:
                 n = next(r['attempts'] for r in study['shots'] if r['split'] == split)
                 assert fmt(n) in js(f"{prefix}.querySelector('.finding-body').textContent")
-    js("document.querySelector('.posterior-view').closest('details').open=true")
+    js("for(let n=document.querySelector('.posterior-view');n;n=n.parentElement){if(n.tagName==='DETAILS') n.open=true;}")
     browser.wait("document.querySelector('.posterior-numbers strong')?.textContent.includes('estimated make chance')")
     before = js("document.querySelector('.posterior-numbers').textContent")
     js("document.querySelector('.posterior-court canvas').dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowUp',bubbles:true,cancelable:true}))")
@@ -185,7 +229,9 @@ def verify(browser, url):
     js("document.querySelector('.posterior-view').scrollIntoView({block:'center'})")
     browser.save_image('atlas_bayesian_desktop.png')
 
+    before_colours = js("getComputedStyle(document.documentElement).getPropertyValue('--colour-mid').trim()")
     js("document.querySelector('#theme-toggle').click()")
+    assert js("getComputedStyle(document.documentElement).getPropertyValue('--colour-mid').trim()") != before_colours
     assert js("document.documentElement.dataset.theme") == 'dark'
     browser.call('Page.reload', {'ignoreCache': True})
     browser.wait(ready)

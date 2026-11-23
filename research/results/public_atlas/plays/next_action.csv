@@ -1,0 +1,31 @@
+situation,next_action,states
+Defensive rebound,Field goal attempt,223645
+Defensive rebound,Foul,68791
+Defensive rebound,Free throw,37
+Defensive rebound,Period end,5212
+Defensive rebound,Turnover,47759
+Offensive rebound,Field goal attempt,96168
+Offensive rebound,Foul,27125
+Offensive rebound,Free throw,50
+Offensive rebound,Period end,7713
+Offensive rebound,Turnover,17004
+Opponent basket,Field goal attempt,233605
+Opponent basket,Foul,57723
+Opponent basket,Free throw,57
+Opponent basket,Period end,4000
+Opponent basket,Turnover,47314
+Opponent free throw,Field goal attempt,70728
+Opponent free throw,Foul,17567
+Opponent free throw,Free throw,6
+Opponent free throw,Period end,1410
+Opponent free throw,Turnover,15453
+Opponent turnover,Field goal attempt,64197
+Opponent turnover,Foul,14959
+Opponent turnover,Free throw,43
+Opponent turnover,Period end,921
+Opponent turnover,Turnover,12678
+Steal,Field goal attempt,68787
+Steal,Foul,18664
+Steal,Free throw,10
+Steal,Period end,940
+Steal,Turnover,12634

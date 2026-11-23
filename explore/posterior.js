@@ -1,4 +1,4 @@
-import { paintCourt, canvasSquare } from './drawing.js?v=2';
+import { paintCourt, canvasSquare } from './drawing.js?v=4';
 
 const pct = value => `${(100 * value).toFixed(1)}%`;
 
@@ -57,7 +57,7 @@ export function posteriorView(rules, surfaceData, palette) {
         interval.textContent = `95% interval from ${pct(lower)} to ${pct(upper)}`;
         result.append(location, value, interval);
         legend.lastElementChild.textContent = pct(limit);
-        caption.textContent = spread ? 'Darker squares have wider intervals. The model is less sure about those spots.'
+        caption.textContent = spread ? 'Higher values on the scale mean wider intervals. The model is less sure about those spots.'
             : 'Each square shows the model’s estimate at one spot. The model uses the location of the shot.';
     }
     const resize = new ResizeObserver(draw);

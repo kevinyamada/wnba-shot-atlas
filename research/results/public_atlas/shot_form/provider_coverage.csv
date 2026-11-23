@@ -1,0 +1,9 @@
+season,provider,scope,attempts,incomplete_identity_or_clock,ambiguous_rows,eligible_to_link,linked,no_unique_counterpart
+2025,ESPN,playoffs,3321,0,4,3317,3268,49
+2025,ESPN,regular,38535,0,20,38515,35515,3000
+2025,WNBA Stats,playoffs,3321,49,4,3268,3268,0
+2025,WNBA Stats,regular,38535,797,20,37718,35515,2203
+2026,ESPN,playoffs,2934,0,0,2934,2923,11
+2026,ESPN,regular,45297,0,12,45285,45068,217
+2026,WNBA Stats,playoffs,2934,11,0,2923,2923,0
+2026,WNBA Stats,regular,45296,210,12,45074,45068,6

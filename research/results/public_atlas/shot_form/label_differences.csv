@@ -1,0 +1,11 @@
+type_text,sub_type,alias_agree,attempts
+Turnaround Fade Away Jump Shot,Turnaround Fadeaway shot,True,1210
+Tip Shot,Tip Layup Shot,True,445
+Turnaround Bank Jump Shot,Turnaround Bank shot,False,234
+Driving Jump Shot Bank,Driving Floating Bank Jump Shot,False,190
+Fade Away Bank Jump Shot,Fadeaway Bank shot,True,84
+Driving Layup Shot,Driving Floating Bank Jump Shot,False,3
+Cutting Dunk Shot,Cutting Layup Shot,False,1
+Alley Oop Layup Shot,Jump Shot,False,1
+Driving Dunk Shot,Driving Layup Shot,False,1
+Layup Shot,Turnaround Hook Shot,False,1

@@ -1,4 +1,6 @@
-import { posteriorView } from './posterior.js?v=2';
+import { locationPanel, playSection, sourceBreakdown } from './play-value.js?v=1';
+import { formComparison } from './shot-form.js?v=1';
+import { posteriorView } from './posterior.js?v=4';
 
 const count = new Intl.NumberFormat('en-CA');
 const format = (value, digits = 2) => Number(value).toFixed(digits);
@@ -142,9 +144,11 @@ function relativeChart(rows, baseline) {
     return chart;
 }
 
-function shotSection(data, rules, surfaces, palette) {
-    const node = section('prediction-title', 'How much does looking beyond distance help?');
-    node.append(el('p', 'Distance gives two shots from 15 feet the same chance of going in. I compared that starting point with models that also use the spot on the court, the shooter, or the game situation.'));
+function shotSection(data, rules, surfaces, palette, forms) {
+    const node = section('prediction-title', 'Layups and jumpers from the same distance');
+    node.append(formComparison(forms, {el, table, details}));
+    const otherModels = details('Compare the court, shooter and game situation');
+    otherModels.append(el('p', 'Distance gives two shots from 15 feet the same chance of going in. I compared that starting point with models that also use the spot on the court, the shooter, or the game situation.'));
     const {label, select} = picker('Games to compare');
     const target = el('div', null, 'finding-body');
     const surface = details('Explore the Bayesian court estimates',
@@ -152,7 +156,7 @@ function shotSection(data, rules, surfaces, palette) {
         posteriorView(rules, surfaces, palette),
         el('p', 'The intervals describe uncertainty about the estimated make chance with the fitted smoothness fixed.')
     );
-    node.append(label, target, surface);
+    otherModels.append(label, target, surface);
     const spatial = [0, 2, 4].map(buffer => data.spatial.filter(r => r.buffer_ft === buffer).sort((a, b) => a.brier - b.brier));
     const shortest = el('div', null, 'spatial-findings');
     for (const run of spatial) {
@@ -163,7 +167,7 @@ function shotSection(data, rules, surfaces, palette) {
         if (winner.model !== distance) box.append(el('small', `${pct((base.brier - winner.brier) / base.brier)} less error than distance`));
         shortest.append(box);
     }
-    node.append(details('Prediction in unfamiliar court areas',
+    otherModels.append(details('Prediction in unfamiliar court areas',
         el('p', 'Each test hides one part of the court. The gap also removes training shots close to the hidden shots. This tests whether a model can predict from places it has never seen.'),
         shortest,
         table(['Gap (ft)', 'Model', 'Brier score'], spatial.flat().map(r => [r.buffer_ft, r.model, format(r.brier, 5)]))
@@ -208,28 +212,34 @@ function shotSection(data, rules, surfaces, palette) {
         ));
         target.replaceChildren(picked, results);
     }
+    node.append(otherModels);
     select.addEventListener('change', render);
     render();
     return node;
 }
 
-function possessions(data) {
+function possessions(data, plays) {
     const node = section('miss-title', 'A miss doesn’t always end the chance');
     node.append(el('p', 'Some misses lead to another scoring opportunity. The event records follow each team’s turn through rebounds and free throws.'));
-    const {label, select} = picker('Games to show');
+    const {label, select} = picker('Games to show', [
+        ['both','All available games'], ['regular','All regular seasons'], ['post','All playoffs'],
+        ['test','2026 regular season study'], ['playoffs','2026 playoff study'], ['validation','2025 model selection study']
+    ]);
+    select.id = 'miss-scope';
     const target = el('div', null, 'finding-body');
     node.append(label, target);
 
     function render() {
         const choice = select.value;
-        const group = data.flow.filter(row => row.split === choice);
+        const longRun = plays.misses.find(r => r.scope === (choice === 'post' ? 'playoffs' : choice) && choice !== 'playoffs');
+        const group = longRun ? longRun.flow : data.flow.filter(row => row.split === choice);
         const total = group.reduce((n, row) => n + row.misses, 0);
         const points = group.reduce((n, row) => n + row.later_points, 0);
         const outcomes = el('div', null, 'miss-outcomes');
         const track = el('div', null, 'miss-track');
         track.setAttribute('aria-hidden', 'true');
         const rebound = group.find(row => row.rebound);
-        const after = data.stateCounts.find(row => row.split === choice && row.stage === 'after_offensive_rebound');
+        const after = longRun ? {mean:longRun.board_points/longRun.board_n} : data.stateCounts.find(row => row.split === choice && row.stage === 'after_offensive_rebound');
         const ordered = [rebound, group.find(row => !row.rebound)];
         for (const row of ordered) {
             const part = el('span');
@@ -250,6 +260,11 @@ function possessions(data) {
         const refit = data.recoveryMetrics.filter(r => r.split === choice && r.cohort === 'all' && r.model === data.possessionSelected);
         const match = data.seasonReconstruction.find(r => r.season === (choice === 'validation' ? 2025 : 2026));
         const explanation = el('p', `After a miss, the team still scored ${format(points / total)} more points on average. From the moment of an offensive rebound, the team scored ${format(after.mean)} more points on average.`);
+        if (longRun) {
+            const first=longRun.seasons[0], last=longRun.seasons[longRun.seasons.length - 1];
+            target.replaceChildren(chart, explanation, el('p', `Recorded misses in ${count.format(longRun.games)} qualifying games from ${first} through ${last}. A turn must have a clear start and end, and its game must pass the score checks. The individual study periods use the earlier ESPN reconstruction.`, 'caption'));
+            return;
+        }
         target.replaceChildren(chart, explanation, details('See the remaining points models and source checks',
             el('p', `These averages describe what happened next in recorded sequences. The play order and score checks retained ${count.format(match.clean_periods)} of ${count.format(match.periods)} periods in ${match.season}.`),
             table(['Forecast at start of turn', 'RMSE', 'Mean absolute error'],
@@ -266,9 +281,16 @@ function possessions(data) {
     return node;
 }
 
-export function renderStudy(findings, data, rules, surfaces, palette) {
+export function renderStudy(findings, data, rules, surfaces, palette, forms, plays) {
     const target = document.getElementById('public-study');
-    target.replaceChildren(arcSection(findings), shotSection(data, rules, surfaces, palette), possessions(data));
+    const helpers = {el, table, details, section, picker};
+    const shotStudy = shotSection(data, rules, surfaces, palette, forms);
+    shotStudy.append(locationPanel(plays, helpers));
+    const lineStudy = arcSection(findings);
+    lineStudy.append(el('p','A shot just outside the line can earn an extra point. The records show where the ball was released. Whether a player deliberately stepped back would require movement data.'));
+    document.getElementById('comparison-callout').append(lineStudy);
+    sourceBreakdown(plays, helpers);
+    target.replaceChildren(playSection(plays, helpers), shotStudy, possessions(data, plays));
     target.hidden = false;
     document.getElementById('study-status').textContent = '';
 }

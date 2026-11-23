@@ -1,5 +1,5 @@
-import { paintCourt, paintHistory, canvasSquare } from './drawing.js?v=2';
-import { renderStudy } from './study-findings.js?v=2';
+import { paintCourt, paintHistory, canvasSquare } from './drawing.js?v=4';
+import { renderStudy } from './study-findings.js?v=4';
 
 const $ = id => document.getElementById(id);
 const controls = ['season', 'team', 'player', 'phase', 'shot-type', 'compare'].map($);
@@ -185,7 +185,7 @@ function renderStats() {
 
 function palette() {
     const css = getComputedStyle(document.documentElement);
-    return Object.fromEntries(['ink','muted','line','deep','accent','court','court-alt','court-line','historic-line','earliest-line','colour-min','colour-max','surface']
+    return Object.fromEntries(['ink','muted','line','deep','accent','court','court-alt','court-line','historic-line','earliest-line','colour-min','colour-mid','colour-max','surface']
         .map(name => [name, css.getPropertyValue('--' + name).trim()]));
 }
 
@@ -208,7 +208,7 @@ function draw() {
     $('legend-low').textContent = model.metric === 'points' ? '0' : '0%';
     $('legend-high').textContent = format(limit, model.metric);
     const metricNotes = {
-        share: 'Darker squares contain a larger share of the selected shots. Shares use all attempts, including shots outside the map.',
+        share: 'Shot share is the percentage of all selected attempts taken in a square. The total includes attempts outside the map.',
         rate: 'Colour shows the share of shots made. Patterned squares have fewer than 12 attempts.',
         points: 'Colour shows points from the floor divided by attempts. Patterned squares have fewer than 12 attempts.'
     };
@@ -458,10 +458,10 @@ async function start() {
     window.addEventListener('resize', resize);
     new MutationObserver(resize).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
     await refresh();
-    Promise.all([json('data/findings.json'), json('data/study.json'), json('data/bayesian.json')])
-        .then(([findings, study, bayesian]) => {
-            if (study.manifestSha256 !== index.manifestSha256) throw new Error('Research data differ from the explorer snapshot');
-            renderStudy(findings, study, index.court, bayesian, palette);
+    Promise.all([json('data/findings.json'), json('data/study.json'), json('data/bayesian.json'), json('data/shot-form.json'), json('data/plays.json')])
+        .then(([findings, study, bayesian, forms, plays]) => {
+            if ([study, forms, plays].some(result => result.manifestSha256 !== index.manifestSha256)) throw new Error('Research data differ from the explorer snapshot');
+            renderStudy(findings, study, index.court, bayesian, palette, forms, plays);
         })
         .catch(error => {
             $('study-status').textContent = 'The research findings could not load. Reload to try again.';

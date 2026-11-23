@@ -87,7 +87,9 @@ export function paintCourt(canvas, court, grid, era, p, squares, focus, hover, m
         }
         const weight = clamp(cell.value / limit, 0, 1);
         const colourFraction = metric === 'share' ? Math.log1p(60 * weight) / Math.log(61) : weight;
-        ctx.fillStyle = blend(p['colour-min'], p['colour-max'], colourFraction);
+        ctx.fillStyle = colourFraction <= .5
+            ? blend(p['colour-min'], p['colour-mid'], colourFraction * 2)
+            : blend(p['colour-mid'], p['colour-max'], (colourFraction - .5) * 2);
         ctx.fillRect(xpos, ypos, w, h);
     }
     ctx.strokeStyle = p['court-line'];
@@ -121,7 +123,7 @@ export function paintCourt(canvas, court, grid, era, p, squares, focus, hover, m
         ctx.strokeStyle = p.surface;
         line(ctx, points);
         ctx.lineWidth = Math.max(1.4, scale * .16);
-        ctx.strokeStyle = era.length === 1 || !older ? p.accent : rule.arc_only ? p['earliest-line'] : p['historic-line'];
+        ctx.strokeStyle = era.length === 1 || !older ? p.deep : rule.arc_only ? p['earliest-line'] : p['historic-line'];
         line(ctx, points);
         ctx.setLineDash([]);
     }
