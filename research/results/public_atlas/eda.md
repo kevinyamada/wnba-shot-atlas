@@ -1,38 +1,44 @@
 # WNBA Shot Atlas data review
 
-The pinned files support 507,707 recorded field goal attempts in regular season games and playoffs from 2011 through 2026. There were 222,247 makes and 494,792 points from those attempts. The court displays 506,650 attempts. Another 1,041 came from the other half of the court and 16 have an unusable location. The three counts sum to the attempt total.
+The public releases contain 902,729 field goal attempts from 1997 to 2026, with 389,216 makes and 858,999 points. The court maps 810,416 attempts. The other half accounts for 1,459 and 90,854 have unknown locations.
 
-## What changed
+The regular season share of threes in the available team boxes was 22.4% in 2003 and 37.2% in 2026.
 
-- The share of recorded shots from the geometric three point area rose from 23.8% in 2011 to 36.5% in 2026. It was 23.8% and 36.5% when limited to games matching both team boxes.
-- The team boxes also show more attempts credited as threes. The share was 24.1% in 2011 and 37.2% in 2026, across the available regular season boxes. The box share uses recorded three point attempts. The map share uses court geometry and can differ.
-- To compare the space affected by the 2013 rule change, use the same physical band in both years. Among locations at least 10 feet in front of the rim and between the old and new arc radii, there were 2,396 shots in 2012 and 403 in 2013. The source coverage and other changes across seasons matter for interpreting this difference.
+The same physical strip between the old and new arcs contained 2,396 regular season attempts in 2012 and 403 in 2013. Restricting to games that match both team boxes gives 2,186 and 300.
 
-## Season coverage
+In 2026 regular season games, shots per square foot were 9.64 times as common in the two feet outside the line as in the two feet inside (95% whole game resampling interval 8.74 to 10.65). Perturbing locations by up to half a foot per axis gave ratios from 7.15 to 8.15. These are descriptive contrasts.
 
-Games matching both boxes is a count of games whose attempts, makes, and points from the floor agree for both teams. A missing or different box is documented in team_game_audit.csv. The explorer shows the recorded attempts and gives those coverage counts for each season.
+The 1997 to 2001 shot release identifies the game phase. ESPN schedules and box scores let us check coverage where available from 2002 onward. Shots at the exact basket from 1997 to 2010 stay in the totals with an unknown location given the large provider pileups at this coordinate.
 
-| Season | Recorded regular games | Both boxes match | Attempts | Made | Field goal points | Make rate | Points per attempt |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 2011 | 203/204 | 202 | 26,640 | 11,605 | 25,468 | 43.6% | 0.956 |
-| 2012 | 202/204 | 182 | 26,863 | 11,515 | 25,548 | 42.9% | 0.951 |
-| 2013 | 203/204 | 152 | 26,868 | 11,361 | 24,606 | 42.3% | 0.916 |
-| 2014 | 203/204 | 201 | 26,898 | 11,772 | 25,424 | 43.8% | 0.945 |
-| 2015 | 204/204 | 202 | 26,681 | 11,335 | 24,635 | 42.5% | 0.923 |
-| 2016 | 201/204 | 197 | 27,121 | 11,961 | 26,089 | 44.1% | 0.962 |
-| 2017 | 204/204 | 196 | 27,694 | 12,217 | 26,846 | 44.1% | 0.969 |
-| 2018 | 201/203 | 188 | 27,659 | 12,315 | 27,326 | 44.5% | 0.988 |
-| 2019 | 202/204 | 198 | 27,695 | 11,749 | 26,231 | 42.4% | 0.947 |
-| 2020 | 131/132 | 126 | 17,866 | 7,972 | 17,863 | 44.6% | 1.000 |
-| 2021 | 192/192 | 184 | 26,265 | 11,413 | 25,616 | 43.5% | 0.975 |
-| 2022 | 216/216 | 212 | 29,371 | 12,985 | 29,312 | 44.2% | 0.998 |
-| 2023 | 240/240 | 236 | 32,805 | 14,459 | 32,597 | 44.1% | 0.994 |
-| 2024 | 240/240 | 238 | 32,761 | 14,349 | 32,405 | 43.8% | 0.989 |
-| 2025 | 286/286 | 286 | 38,535 | 16,926 | 38,533 | 43.9% | 1.000 |
-| 2026 | 330/330 | 329 | 45,297 | 20,480 | 46,692 | 45.2% | 1.031 |
-
-## Agreement with Data (1)
-
-All 42,193 of the 42,193 field goal attempts match the public file for 2025 across 312 games. This comparison includes the game, period, clock, team, shooter, play type, makes, points, and both coordinates. The two files have the same upstream source, so agreement checks that the data were joined and interpreted consistently. Box score differences in recording individual shooters remain visible in the player audit.
-
-The source coordinates are recorded at coarse precision. The exact rim coordinate can hold many shots at the same point. Near the three point line the recorded shot value and the geometric zone are separate fields. A shot inside a court area can have an uncertain attempt value, especially on a miss. Aggregates by geometric area preserve those attempts, and their observed points only count actual makes.
+| Season | Games with records | Attempts | Makes | Field goal points | Mapped | Unknown |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1997 | 115 | 14,080 | 5,825 | 12,524 | 9,836 | 4,224 |
+| 1998 | 157 | 19,151 | 8,107 | 17,390 | 14,202 | 4,942 |
+| 1999 | 203 | 24,150 | 10,131 | 22,005 | 18,281 | 5,839 |
+| 2000 | 272 | 31,559 | 13,618 | 29,524 | 24,308 | 7,238 |
+| 2001 | 274 | 32,008 | 13,156 | 28,692 | 25,087 | 6,905 |
+| 2002 | 265 | 30,711 | 12,928 | 28,220 | 21,507 | 9,176 |
+| 2003 | 255 | 29,957 | 12,490 | 27,248 | 23,621 | 6,321 |
+| 2004 | 237 | 27,518 | 11,525 | 25,069 | 21,257 | 6,243 |
+| 2005 | 238 | 27,330 | 11,596 | 25,095 | 21,095 | 6,209 |
+| 2006 | 255 | 32,722 | 13,850 | 30,258 | 25,317 | 7,363 |
+| 2007 | 239 | 31,628 | 13,282 | 29,284 | 24,491 | 7,097 |
+| 2008 | 256 | 33,235 | 13,954 | 30,600 | 25,957 | 7,220 |
+| 2009 | 239 | 31,744 | 13,610 | 29,919 | 25,313 | 6,379 |
+| 2010 | 220 | 29,229 | 12,897 | 28,379 | 23,494 | 5,682 |
+| 2011 | 222 | 29,219 | 12,699 | 27,858 | 29,165 | 0 |
+| 2012 | 220 | 29,274 | 12,553 | 27,821 | 29,222 | 2 |
+| 2013 | 220 | 29,081 | 12,284 | 26,559 | 29,018 | 8 |
+| 2014 | 221 | 29,305 | 12,848 | 27,741 | 29,236 | 0 |
+| 2015 | 225 | 29,397 | 12,513 | 27,200 | 29,332 | 0 |
+| 2016 | 216 | 29,155 | 12,914 | 28,141 | 29,070 | 2 |
+| 2017 | 219 | 29,699 | 13,100 | 28,793 | 29,618 | 4 |
+| 2018 | 218 | 30,038 | 13,390 | 29,721 | 30,035 | 0 |
+| 2019 | 218 | 29,987 | 12,803 | 28,581 | 29,922 | 0 |
+| 2020 | 146 | 19,936 | 8,871 | 19,872 | 19,905 | 0 |
+| 2021 | 209 | 28,650 | 12,466 | 27,987 | 28,591 | 0 |
+| 2022 | 239 | 32,509 | 14,396 | 32,471 | 32,448 | 0 |
+| 2023 | 260 | 35,599 | 15,665 | 35,342 | 35,521 | 0 |
+| 2024 | 262 | 35,771 | 15,679 | 35,417 | 35,706 | 0 |
+| 2025 | 310 | 41,856 | 18,368 | 41,779 | 41,752 | 0 |
+| 2026 | 352 | 48,231 | 21,698 | 49,509 | 48,109 | 0 |

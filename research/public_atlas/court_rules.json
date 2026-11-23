@@ -6,6 +6,23 @@
   "free_throw_from_baseline": 19,
   "eras": [
     {
+      "id": "1997-court",
+      "first_season": 1997,
+      "last_season": 2003,
+      "arc_radius": 19.75,
+      "corner_distance": 19.75,
+      "arc_label": "19 ft 9 in",
+      "corner_label": "early line approximate",
+      "arc_only": true,
+      "references": [
+        {
+          "name": "Seattle Storm media guide, timeline entry for December 17, 2003",
+          "url": "https://funwhileitlasted.net/wp-content/uploads/2021/02/2014-Seattle-Storm-Media-Guide.pdf"
+        }
+      ],
+      "lane_width": 12
+    },
+    {
       "id": "2004-court",
       "first_season": 2004,
       "last_season": 2012,
@@ -14,8 +31,14 @@
       "arc_label": "20 ft 6¼ in",
       "corner_label": "20 ft 6 in",
       "references": [
-        {"name": "2011 San Antonio Silver Stars media guide, court diagram on page 100", "url": "https://cdn6.f-cdn.com/files/download/653668/k5alL2011_ssmg.pdf#page=102"},
-        {"name": "WNBA announcement for the 2013 season", "url": "https://www.oursportscentral.com/services/releases/wnba-announces-rules-changes-for-2013-season/n-4522916"}
+        {
+          "name": "2011 San Antonio Silver Stars media guide, court diagram on page 100",
+          "url": "https://cdn6.f-cdn.com/files/download/653668/k5alL2011_ssmg.pdf#page=102"
+        },
+        {
+          "name": "WNBA announcement for the 2013 season",
+          "url": "https://www.oursportscentral.com/services/releases/wnba-announces-rules-changes-for-2013-season/n-4522916"
+        }
       ]
     },
     {
@@ -27,9 +50,18 @@
       "arc_label": "22 ft 1¾ in",
       "corner_label": "22 ft",
       "references": [
-        {"name": "WNBA announcement for the 2013 season", "url": "https://www.oursportscentral.com/services/releases/wnba-announces-rules-changes-for-2013-season/n-4522916"},
-        {"name": "2025 WNBA rule book, rule 1", "url": "https://cdn.wnba.com/sites/4/2025/04/2025-WNBA-Official-Rule-Book.pdf"},
-        {"name": "2026 WNBA rule book, rule 1", "url": "https://cdn.wnba.com/sites/4/2026/05/2026-WNBA-Official-Rule-Book.pdf"}
+        {
+          "name": "WNBA announcement for the 2013 season",
+          "url": "https://www.oursportscentral.com/services/releases/wnba-announces-rules-changes-for-2013-season/n-4522916"
+        },
+        {
+          "name": "2025 WNBA rule book, rule 1",
+          "url": "https://cdn.wnba.com/sites/4/2025/04/2025-WNBA-Official-Rule-Book.pdf"
+        },
+        {
+          "name": "2026 WNBA rule book, rule 1",
+          "url": "https://cdn.wnba.com/sites/4/2026/05/2026-WNBA-Official-Rule-Book.pdf"
+        }
       ]
     }
   ]

@@ -1,5 +1,533 @@
 [
   {
+    "season": 1997,
+    "kind": "official_shots",
+    "filename": "official_shots_1997.csv",
+    "release": "wnba_stats_shots",
+    "asset_id": 624047701,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_stats_shots/shots_1997.csv",
+    "sha256": "88499163b4b813c7b5a3bcb0a329f863b08cfdc9b375cecfc036028f3c34a540",
+    "bytes": 1887953,
+    "updated_at": "2026-10-09T05:56:02Z"
+  },
+  {
+    "season": 1998,
+    "kind": "official_shots",
+    "filename": "official_shots_1998.csv",
+    "release": "wnba_stats_shots",
+    "asset_id": 624047904,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_stats_shots/shots_1998.csv",
+    "sha256": "9bbb02ccba5829305d52a05491d1744da2fbd233c3d0c33089d9b25b8ccc388d",
+    "bytes": 2582711,
+    "updated_at": "2026-10-09T05:56:10Z"
+  },
+  {
+    "season": 1999,
+    "kind": "official_shots",
+    "filename": "official_shots_1999.csv",
+    "release": "wnba_stats_shots",
+    "asset_id": 624048139,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_stats_shots/shots_1999.csv",
+    "sha256": "0c39132a76f5f2a116d570f25f0a284c23e698ec91d6e5d233888489a2dabbf8",
+    "bytes": 3284720,
+    "updated_at": "2026-10-09T05:56:24Z"
+  },
+  {
+    "season": 2000,
+    "kind": "official_shots",
+    "filename": "official_shots_2000.csv",
+    "release": "wnba_stats_shots",
+    "asset_id": 624048646,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_stats_shots/shots_2000.csv",
+    "sha256": "7642367f6d63d432fbaa902e3ae3fe195f3f79e7668155d55f9588dec107222d",
+    "bytes": 4314643,
+    "updated_at": "2026-10-09T05:56:37Z"
+  },
+  {
+    "season": 2001,
+    "kind": "official_shots",
+    "filename": "official_shots_2001.csv",
+    "release": "wnba_stats_shots",
+    "asset_id": 624049001,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_stats_shots/shots_2001.csv",
+    "sha256": "b33c18ac0eb0717191804adb90a2b53929d97054fe87328ea2e88d6eace6a41f",
+    "bytes": 4367808,
+    "updated_at": "2026-10-09T05:56:47Z"
+  },
+  {
+    "season": 2002,
+    "kind": "player_box",
+    "filename": "player_box_2002.csv",
+    "release": "espn_wnba_player_boxscores",
+    "asset_id": 743186634,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_player_boxscores/player_box_2002.csv",
+    "sha256": "c803ccf37aac654f0232757e1977a053676d4e770b6b138aa494f2714f6c3960",
+    "bytes": 2446407,
+    "updated_at": "2026-11-13T10:13:08Z"
+  },
+  {
+    "season": 2002,
+    "kind": "shots",
+    "filename": "shots_2002.csv",
+    "release": "espn_wnba_shots",
+    "asset_id": 743200455,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_shots/shots_2002.csv",
+    "sha256": "d7537d2c8a31894906b06a167ad47765785c05eb135690eaf83f87402e0e9e1d",
+    "bytes": 4766798,
+    "updated_at": "2026-11-13T10:18:09Z"
+  },
+  {
+    "season": 2002,
+    "kind": "wnba_player_crosswalk",
+    "filename": "wnba_player_crosswalk_2002.csv",
+    "release": "wnba_crosswalk",
+    "asset_id": 631489488,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_crosswalk/wnba_player_crosswalk_2002.csv",
+    "sha256": "fa25b64812921f0d29fa8925bac3a3f7450793ba3ebf309301f1f65a6de88782",
+    "bytes": 26768,
+    "updated_at": "2026-10-11T18:32:06Z"
+  },
+  {
+    "season": 2002,
+    "kind": "wnba_schedule",
+    "filename": "wnba_schedule_2002.csv",
+    "release": "espn_wnba_schedules",
+    "asset_id": 743198812,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_schedules/wnba_schedule_2002.csv",
+    "sha256": "148f792592487e2c0da6ebcf8d47d6495bc03437a668b45037b1d3141fd42e69",
+    "bytes": 309891,
+    "updated_at": "2026-11-13T10:17:32Z"
+  },
+  {
+    "season": 2002,
+    "kind": "wnba_team_crosswalk",
+    "filename": "wnba_team_crosswalk_2002.csv",
+    "release": "wnba_crosswalk",
+    "asset_id": 631750416,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_crosswalk/wnba_team_crosswalk_2002.csv",
+    "sha256": "a5e11d0cacd8e7f7d7bdda1329cc2205e053c9ee052a3b12e71ed3628a9cb5a5",
+    "bytes": 2121,
+    "updated_at": "2026-10-11T20:38:06Z"
+  },
+  {
+    "season": 2003,
+    "kind": "player_box",
+    "filename": "player_box_2003.csv",
+    "release": "espn_wnba_player_boxscores",
+    "asset_id": 479666612,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_player_boxscores/player_box_2003.csv",
+    "sha256": "15e7b9562913c2a140359f90861158235ea34ced699aed4a126fa11c2f90f98c",
+    "bytes": 1715124,
+    "updated_at": "2026-07-16T21:35:29Z"
+  },
+  {
+    "season": 2003,
+    "kind": "shots",
+    "filename": "shots_2003.csv",
+    "release": "espn_wnba_shots",
+    "asset_id": 493526820,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_shots/shots_2003.csv",
+    "sha256": "9bfb4e2b7a7686783cad0b24b366dff9ba30a1d59029ea6eca66aee8b7df1205",
+    "bytes": 4675376,
+    "updated_at": "2026-07-29T03:17:56Z"
+  },
+  {
+    "season": 2003,
+    "kind": "team_box",
+    "filename": "team_box_2003.csv",
+    "release": "espn_wnba_team_boxscores",
+    "asset_id": 479666421,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_team_boxscores/team_box_2003.csv",
+    "sha256": "179356d0d2420e4963aab19b66ef0ce195edc9e459c627eefa0d8a14bbe11c8b",
+    "bytes": 156626,
+    "updated_at": "2026-07-16T21:35:22Z"
+  },
+  {
+    "season": 2003,
+    "kind": "wnba_player_crosswalk",
+    "filename": "wnba_player_crosswalk_2003.csv",
+    "release": "wnba_crosswalk",
+    "asset_id": 631493282,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_crosswalk/wnba_player_crosswalk_2003.csv",
+    "sha256": "0b48a079f2a8e3cb9f2c34ed9460c820ac3e70515135ae17460f6cace30a89ff",
+    "bytes": 22010,
+    "updated_at": "2026-10-11T18:33:48Z"
+  },
+  {
+    "season": 2003,
+    "kind": "wnba_schedule",
+    "filename": "wnba_schedule_2003.csv",
+    "release": "espn_wnba_schedules",
+    "asset_id": 654701917,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_schedules/wnba_schedule_2003.csv",
+    "sha256": "5d8a0af54fac193b3d15d9888ab804f807364735aa74eed0cdbdc2b376765299",
+    "bytes": 300194,
+    "updated_at": "2026-10-18T23:10:58Z"
+  },
+  {
+    "season": 2003,
+    "kind": "wnba_team_crosswalk",
+    "filename": "wnba_team_crosswalk_2003.csv",
+    "release": "wnba_crosswalk",
+    "asset_id": 631751759,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_crosswalk/wnba_team_crosswalk_2003.csv",
+    "sha256": "4b3d1e27728e02f6d242d5c7455ff4030e5a10d1c955f7e6f82b304bcb9d1ab5",
+    "bytes": 1981,
+    "updated_at": "2026-10-11T20:38:46Z"
+  },
+  {
+    "season": 2004,
+    "kind": "player_box",
+    "filename": "player_box_2004.csv",
+    "release": "espn_wnba_player_boxscores",
+    "asset_id": 479668398,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_player_boxscores/player_box_2004.csv",
+    "sha256": "e13877bad9ff38ca5cd15a51058997e9cd670b5528aa242303b8760b779f1e14",
+    "bytes": 1930915,
+    "updated_at": "2026-07-16T21:37:21Z"
+  },
+  {
+    "season": 2004,
+    "kind": "shots",
+    "filename": "shots_2004.csv",
+    "release": "espn_wnba_shots",
+    "asset_id": 493527016,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_shots/shots_2004.csv",
+    "sha256": "34a49009d51184344805bfd80bbd2161abe57255f7be8ac9dc55157a897930e4",
+    "bytes": 4299847,
+    "updated_at": "2026-07-29T03:18:11Z"
+  },
+  {
+    "season": 2004,
+    "kind": "team_box",
+    "filename": "team_box_2004.csv",
+    "release": "espn_wnba_team_boxscores",
+    "asset_id": 479668308,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_team_boxscores/team_box_2004.csv",
+    "sha256": "40a77b8d45541313124b7a05c94523f7bb1911ab61f2cbcfb0f67f19b934de17",
+    "bytes": 174634,
+    "updated_at": "2026-07-16T21:37:14Z"
+  },
+  {
+    "season": 2004,
+    "kind": "wnba_player_crosswalk",
+    "filename": "wnba_player_crosswalk_2004.csv",
+    "release": "wnba_crosswalk",
+    "asset_id": 631496882,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_crosswalk/wnba_player_crosswalk_2004.csv",
+    "sha256": "12beb0811a371f573a164aed9f6f319efa3b0ffba82ce9878d15df996e06fb04",
+    "bytes": 20721,
+    "updated_at": "2026-10-11T18:35:36Z"
+  },
+  {
+    "season": 2004,
+    "kind": "wnba_schedule",
+    "filename": "wnba_schedule_2004.csv",
+    "release": "espn_wnba_schedules",
+    "asset_id": 654702601,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_schedules/wnba_schedule_2004.csv",
+    "sha256": "8c58ca2fc5a1e77b82914644d0b34c1be41bfb2913f18ed37f5f47477206da8f",
+    "bytes": 288958,
+    "updated_at": "2026-10-18T23:11:29Z"
+  },
+  {
+    "season": 2004,
+    "kind": "wnba_team_crosswalk",
+    "filename": "wnba_team_crosswalk_2004.csv",
+    "release": "wnba_crosswalk",
+    "asset_id": 631752968,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_crosswalk/wnba_team_crosswalk_2004.csv",
+    "sha256": "0d34ebdcb8787aee01e9d526265f12baa55df0018ae813a5ebd35201e3ef2f2d",
+    "bytes": 1865,
+    "updated_at": "2026-10-11T20:39:31Z"
+  },
+  {
+    "season": 2005,
+    "kind": "player_box",
+    "filename": "player_box_2005.csv",
+    "release": "espn_wnba_player_boxscores",
+    "asset_id": 479669955,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_player_boxscores/player_box_2005.csv",
+    "sha256": "5356849f5f74d8701111182482786196aa82d689888ab9d7c7048aaa6d4cb382",
+    "bytes": 2081047,
+    "updated_at": "2026-07-16T21:39:13Z"
+  },
+  {
+    "season": 2005,
+    "kind": "shots",
+    "filename": "shots_2005.csv",
+    "release": "espn_wnba_shots",
+    "asset_id": 493527225,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_shots/shots_2005.csv",
+    "sha256": "7c931d8392bfa6eb1b0f0ec72fb578a9798cde1fb6aa478909bc885463f02405",
+    "bytes": 4356228,
+    "updated_at": "2026-07-29T03:18:26Z"
+  },
+  {
+    "season": 2005,
+    "kind": "team_box",
+    "filename": "team_box_2005.csv",
+    "release": "espn_wnba_team_boxscores",
+    "asset_id": 479669829,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_team_boxscores/team_box_2005.csv",
+    "sha256": "ba4d918d1be53b65fad6e6c6446550eddef5910adaf668b3a7e6128f70f37f14",
+    "bytes": 187323,
+    "updated_at": "2026-07-16T21:39:06Z"
+  },
+  {
+    "season": 2005,
+    "kind": "wnba_schedule",
+    "filename": "wnba_schedule_2005.csv",
+    "release": "espn_wnba_schedules",
+    "asset_id": 654703411,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_schedules/wnba_schedule_2005.csv",
+    "sha256": "f9209bf849f4a9ff6e042e0f950bcb1eaf78826c322c6a283e8cbc82ad3ee223",
+    "bytes": 289052,
+    "updated_at": "2026-10-18T23:11:59Z"
+  },
+  {
+    "season": 2006,
+    "kind": "player_box",
+    "filename": "player_box_2006.csv",
+    "release": "espn_wnba_player_boxscores",
+    "asset_id": 479671542,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_player_boxscores/player_box_2006.csv",
+    "sha256": "d5734b33a64421803efe4912b3dadbca4d446f11813003d85013989ffb808906",
+    "bytes": 2483443,
+    "updated_at": "2026-07-16T21:41:05Z"
+  },
+  {
+    "season": 2006,
+    "kind": "shots",
+    "filename": "shots_2006.csv",
+    "release": "espn_wnba_shots",
+    "asset_id": 493527513,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_shots/shots_2006.csv",
+    "sha256": "6076887a064a1243845e03b80fefd500f657591236707412d21844394898ad6d",
+    "bytes": 5118340,
+    "updated_at": "2026-07-29T03:18:41Z"
+  },
+  {
+    "season": 2006,
+    "kind": "team_box",
+    "filename": "team_box_2006.csv",
+    "release": "espn_wnba_team_boxscores",
+    "asset_id": 479671457,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_team_boxscores/team_box_2006.csv",
+    "sha256": "04cedcbb286ae9dc10861b80837ef37025244946ce3c92356d08120884558fdd",
+    "bytes": 207795,
+    "updated_at": "2026-07-16T21:40:58Z"
+  },
+  {
+    "season": 2006,
+    "kind": "wnba_schedule",
+    "filename": "wnba_schedule_2006.csv",
+    "release": "espn_wnba_schedules",
+    "asset_id": 654704139,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_schedules/wnba_schedule_2006.csv",
+    "sha256": "a5ccd6ae817beb0fdd96b4c8b7b0d37bede476338f6877be1f694e5fc341efe8",
+    "bytes": 364399,
+    "updated_at": "2026-10-18T23:12:34Z"
+  },
+  {
+    "season": 2007,
+    "kind": "player_box",
+    "filename": "player_box_2007.csv",
+    "release": "espn_wnba_player_boxscores",
+    "asset_id": 479673195,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_player_boxscores/player_box_2007.csv",
+    "sha256": "9297415b236ae96e26ff1a164ccb366a6a57505ff60edde5b3b2371dacd3e05a",
+    "bytes": 2414344,
+    "updated_at": "2026-07-16T21:42:58Z"
+  },
+  {
+    "season": 2007,
+    "kind": "shots",
+    "filename": "shots_2007.csv",
+    "release": "espn_wnba_shots",
+    "asset_id": 493527715,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_shots/shots_2007.csv",
+    "sha256": "4257f44701996f5552efb2e89c6c8bf466626dee87cdafbeaa7d95951cd3f61c",
+    "bytes": 4905085,
+    "updated_at": "2026-07-29T03:18:56Z"
+  },
+  {
+    "season": 2007,
+    "kind": "team_box",
+    "filename": "team_box_2007.csv",
+    "release": "espn_wnba_team_boxscores",
+    "asset_id": 479673125,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_team_boxscores/team_box_2007.csv",
+    "sha256": "1f90b1d872d0f4984dc1e085001f52b060eb22db31e87edf42a022246bec96c7",
+    "bytes": 197487,
+    "updated_at": "2026-07-16T21:42:51Z"
+  },
+  {
+    "season": 2007,
+    "kind": "wnba_schedule",
+    "filename": "wnba_schedule_2007.csv",
+    "release": "espn_wnba_schedules",
+    "asset_id": 654705438,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_schedules/wnba_schedule_2007.csv",
+    "sha256": "5088eaf793b5b8c5a307a0b3ba85a0cf9559a61e4f0b6dbc3e042ce081085252",
+    "bytes": 345332,
+    "updated_at": "2026-10-18T23:13:09Z"
+  },
+  {
+    "season": 2008,
+    "kind": "player_box",
+    "filename": "player_box_2008.csv",
+    "release": "espn_wnba_player_boxscores",
+    "asset_id": 479674582,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_player_boxscores/player_box_2008.csv",
+    "sha256": "8bd376dd4a421dd1fdc6098943a98b3fed5e799f1d0624ec16e8c474ec75c4f1",
+    "bytes": 2561178,
+    "updated_at": "2026-07-16T21:44:53Z"
+  },
+  {
+    "season": 2008,
+    "kind": "shots",
+    "filename": "shots_2008.csv",
+    "release": "espn_wnba_shots",
+    "asset_id": 493527973,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_shots/shots_2008.csv",
+    "sha256": "030c7386472d0fc2b59134caa5506da4d22b1c8ab2156d645a083b33249a9f87",
+    "bytes": 5221550,
+    "updated_at": "2026-07-29T03:19:11Z"
+  },
+  {
+    "season": 2008,
+    "kind": "team_box",
+    "filename": "team_box_2008.csv",
+    "release": "espn_wnba_team_boxscores",
+    "asset_id": 479674491,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_team_boxscores/team_box_2008.csv",
+    "sha256": "4a085fc6c8359126ddb352d19ade3287ce6627bc5848d55a47f1e0912c496a8f",
+    "bytes": 209380,
+    "updated_at": "2026-07-16T21:44:45Z"
+  },
+  {
+    "season": 2008,
+    "kind": "wnba_player_crosswalk",
+    "filename": "wnba_player_crosswalk_2008.csv",
+    "release": "wnba_crosswalk",
+    "asset_id": 631512519,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_crosswalk/wnba_player_crosswalk_2008.csv",
+    "sha256": "0b9dde16e23eb43daf4d3b72edaf175df885d55e773b129b42ba86d7108ce18a",
+    "bytes": 25182,
+    "updated_at": "2026-10-11T18:42:56Z"
+  },
+  {
+    "season": 2008,
+    "kind": "wnba_schedule",
+    "filename": "wnba_schedule_2008.csv",
+    "release": "espn_wnba_schedules",
+    "asset_id": 654706248,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_schedules/wnba_schedule_2008.csv",
+    "sha256": "359c34e11525c4c051e4ea6f0a9d5492b776894269c227c5c59f700e4a2a3634",
+    "bytes": 368167,
+    "updated_at": "2026-10-18T23:13:41Z"
+  },
+  {
+    "season": 2008,
+    "kind": "wnba_team_crosswalk",
+    "filename": "wnba_team_crosswalk_2008.csv",
+    "release": "wnba_crosswalk",
+    "asset_id": 631758616,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_crosswalk/wnba_team_crosswalk_2008.csv",
+    "sha256": "84555ed44d664eed0bbbbb10f6268537f0d991a088baae11f15e48829ffdf4ca",
+    "bytes": 1977,
+    "updated_at": "2026-10-11T20:42:32Z"
+  },
+  {
+    "season": 2009,
+    "kind": "player_box",
+    "filename": "player_box_2009.csv",
+    "release": "espn_wnba_player_boxscores",
+    "asset_id": 479676154,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_player_boxscores/player_box_2009.csv",
+    "sha256": "0fa56d6fd82a7e0324c4ee0c36c7bdfff1ff1363de0a686031669375778d2dc7",
+    "bytes": 2224445,
+    "updated_at": "2026-07-16T21:46:46Z"
+  },
+  {
+    "season": 2009,
+    "kind": "shots",
+    "filename": "shots_2009.csv",
+    "release": "espn_wnba_shots",
+    "asset_id": 493528255,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_shots/shots_2009.csv",
+    "sha256": "20d19e500e655d11e0364aa432b6ca224c562278e5f28eb417c91083b18f9a6b",
+    "bytes": 4978030,
+    "updated_at": "2026-07-29T03:19:25Z"
+  },
+  {
+    "season": 2009,
+    "kind": "team_box",
+    "filename": "team_box_2009.csv",
+    "release": "espn_wnba_team_boxscores",
+    "asset_id": 479676066,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_team_boxscores/team_box_2009.csv",
+    "sha256": "8d52b639e0e55cc307dbb321c0aed7d9c171e155c2b7171a144a5694a8f9e045",
+    "bytes": 198972,
+    "updated_at": "2026-07-16T21:46:38Z"
+  },
+  {
+    "season": 2009,
+    "kind": "wnba_schedule",
+    "filename": "wnba_schedule_2009.csv",
+    "release": "espn_wnba_schedules",
+    "asset_id": 654707198,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_schedules/wnba_schedule_2009.csv",
+    "sha256": "d38e71d1956f81e91ac895c3f02ac9cc8b1f45d23578ec1bd23596e59d552c7d",
+    "bytes": 347756,
+    "updated_at": "2026-10-18T23:14:12Z"
+  },
+  {
+    "season": 2010,
+    "kind": "player_box",
+    "filename": "player_box_2010.csv",
+    "release": "espn_wnba_player_boxscores",
+    "asset_id": 479677713,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_player_boxscores/player_box_2010.csv",
+    "sha256": "0af514d4c978f58f284f055d5ef94da20b093a480ed04beddc125b7ffc79e6c7",
+    "bytes": 2009365,
+    "updated_at": "2026-07-16T21:48:40Z"
+  },
+  {
+    "season": 2010,
+    "kind": "shots",
+    "filename": "shots_2010.csv",
+    "release": "espn_wnba_shots",
+    "asset_id": 493528491,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_shots/shots_2010.csv",
+    "sha256": "bd9e01cbf4603803c088953615582a2acf1f4de55d5362a77b620cdd01b2a546",
+    "bytes": 4579136,
+    "updated_at": "2026-07-29T03:19:39Z"
+  },
+  {
+    "season": 2010,
+    "kind": "team_box",
+    "filename": "team_box_2010.csv",
+    "release": "espn_wnba_team_boxscores",
+    "asset_id": 479677628,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_team_boxscores/team_box_2010.csv",
+    "sha256": "b2948c920fc19ae2becbbe94f9642a3571699c31aba94f12077762053af0966f",
+    "bytes": 180731,
+    "updated_at": "2026-07-16T21:48:33Z"
+  },
+  {
+    "season": 2010,
+    "kind": "wnba_schedule",
+    "filename": "wnba_schedule_2010.csv",
+    "release": "espn_wnba_schedules",
+    "asset_id": 654708213,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_schedules/wnba_schedule_2010.csv",
+    "sha256": "b3449eddbc77456c8983fbb342bb8ab1350d790c2ea5e71ad582e79bfdab21fc",
+    "bytes": 314411,
+    "updated_at": "2026-10-18T23:14:50Z"
+  },
+  {
     "season": 2011,
     "kind": "player_box",
     "filename": "player_box_2011.csv",
@@ -78,6 +606,17 @@
   },
   {
     "season": 2012,
+    "kind": "wnba_player_crosswalk",
+    "filename": "wnba_player_crosswalk_2012.csv",
+    "release": "wnba_crosswalk",
+    "asset_id": 631526748,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_crosswalk/wnba_player_crosswalk_2012.csv",
+    "sha256": "16c5e95e022e5cf3d22e6e3ac954553676660ff5859496975855a79ffb8ac5d8",
+    "bytes": 19158,
+    "updated_at": "2026-10-11T18:50:15Z"
+  },
+  {
+    "season": 2012,
     "kind": "wnba_schedule",
     "filename": "wnba_schedule_2012.csv",
     "release": "espn_wnba_schedules",
@@ -86,6 +625,17 @@
     "sha256": "b290ba7a75d45b3c107f02e0160c005befc741b69ec93efdeea6640256e7de73",
     "bytes": 317992,
     "updated_at": "2026-10-18T23:16:11Z"
+  },
+  {
+    "season": 2012,
+    "kind": "wnba_team_crosswalk",
+    "filename": "wnba_team_crosswalk_2012.csv",
+    "release": "wnba_crosswalk",
+    "asset_id": 631764553,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_crosswalk/wnba_team_crosswalk_2012.csv",
+    "sha256": "5b094ebe8f5ca0ec80ee111ef18848538b1cb21e844db57f2a150d1cca697f12",
+    "bytes": 1740,
+    "updated_at": "2026-10-11T20:45:38Z"
   },
   {
     "season": 2013,
@@ -254,6 +804,17 @@
   },
   {
     "season": 2016,
+    "kind": "wnba_player_crosswalk",
+    "filename": "wnba_player_crosswalk_2016.csv",
+    "release": "wnba_crosswalk",
+    "asset_id": 631543929,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_crosswalk/wnba_player_crosswalk_2016.csv",
+    "sha256": "8669cdc59494f2bbd35fb20d8588fd796f982ef3241c805e2d1dff6a4038039b",
+    "bytes": 21147,
+    "updated_at": "2026-10-11T18:57:34Z"
+  },
+  {
+    "season": 2016,
     "kind": "wnba_schedule",
     "filename": "wnba_schedule_2016.csv",
     "release": "espn_wnba_schedules",
@@ -262,6 +823,17 @@
     "sha256": "c4b4598b14f317c3c259451c1b08cf3a7964c09407f398cf6791cadab6e7361e",
     "bytes": 319364,
     "updated_at": "2026-10-18T23:18:18Z"
+  },
+  {
+    "season": 2016,
+    "kind": "wnba_team_crosswalk",
+    "filename": "wnba_team_crosswalk_2016.csv",
+    "release": "wnba_crosswalk",
+    "asset_id": 631770558,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_crosswalk/wnba_team_crosswalk_2016.csv",
+    "sha256": "baf6898bcbe67c69a0c5965e274fb72a8fa33034aee9fe927189acb58f9ed4a1",
+    "bytes": 1721,
+    "updated_at": "2026-10-11T20:48:33Z"
   },
   {
     "season": 2017,
@@ -430,6 +1002,17 @@
   },
   {
     "season": 2020,
+    "kind": "wnba_player_crosswalk",
+    "filename": "wnba_player_crosswalk_2020.csv",
+    "release": "wnba_crosswalk",
+    "asset_id": 678264555,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_crosswalk/wnba_player_crosswalk_2020.csv",
+    "sha256": "7aee3868ff99e7cd8ec8c7480de934549b3741ac4d900d92370f99ac34b491b8",
+    "bytes": 23037,
+    "updated_at": "2026-10-26T13:32:01Z"
+  },
+  {
+    "season": 2020,
     "kind": "wnba_schedule",
     "filename": "wnba_schedule_2020.csv",
     "release": "espn_wnba_schedules",
@@ -438,6 +1021,17 @@
     "sha256": "fe511af29b9cfdd6970cf40202bcfe76197112617ad1fb6332621170376fc4ad",
     "bytes": 212302,
     "updated_at": "2026-10-18T23:20:33Z"
+  },
+  {
+    "season": 2020,
+    "kind": "wnba_team_crosswalk",
+    "filename": "wnba_team_crosswalk_2020.csv",
+    "release": "wnba_crosswalk",
+    "asset_id": 631776308,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_crosswalk/wnba_team_crosswalk_2020.csv",
+    "sha256": "cc9158db60f459bc196c10f22ebc65bcec357f90b54ca39be5f8f10ab831afa4",
+    "bytes": 1726,
+    "updated_at": "2026-10-11T20:51:33Z"
   },
   {
     "season": 2021,
@@ -485,6 +1079,17 @@
   },
   {
     "season": 2022,
+    "kind": "play_by_play",
+    "filename": "play_by_play_2022.csv",
+    "release": "espn_wnba_pbp",
+    "asset_id": 653181456,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_pbp/play_by_play_2022.csv",
+    "sha256": "3fbcf1e31291693eeeb1c6bc14146377f239c09ca5d5dbf8c0f1db486c10ee8f",
+    "bytes": 38800267,
+    "updated_at": "2026-10-18T10:20:28Z"
+  },
+  {
+    "season": 2022,
     "kind": "player_box",
     "filename": "player_box_2022.csv",
     "release": "espn_wnba_player_boxscores",
@@ -526,6 +1131,17 @@
     "sha256": "01b442bed1e899ca17b7a9662799fc94c3c4b2205d8d9d37aeb24e54e0572c28",
     "bytes": 352538,
     "updated_at": "2026-10-18T23:21:46Z"
+  },
+  {
+    "season": 2023,
+    "kind": "play_by_play",
+    "filename": "play_by_play_2023.csv",
+    "release": "espn_wnba_pbp",
+    "asset_id": 653183953,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_pbp/play_by_play_2023.csv",
+    "sha256": "e5f9f82f7495fc28b6b4ae86e086371a9ee9d9bada31ff645b8a16a830913784",
+    "bytes": 43731742,
+    "updated_at": "2026-10-18T10:21:30Z"
   },
   {
     "season": 2023,
@@ -573,6 +1189,17 @@
   },
   {
     "season": 2024,
+    "kind": "play_by_play",
+    "filename": "play_by_play_2024.csv",
+    "release": "espn_wnba_pbp",
+    "asset_id": 653186273,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_pbp/play_by_play_2024.csv",
+    "sha256": "83b7141cdba855d98b8f5fe99f438c7cbc55bcf4c259df593dbd708e9f7c4ac6",
+    "bytes": 44644473,
+    "updated_at": "2026-10-18T10:22:29Z"
+  },
+  {
+    "season": 2024,
     "kind": "player_box",
     "filename": "player_box_2024.csv",
     "release": "espn_wnba_player_boxscores",
@@ -614,6 +1241,17 @@
     "sha256": "62994931d49303abd00f4fd13d46718f6efb97928ae73974e0d3e8cc7015c48f",
     "bytes": 426630,
     "updated_at": "2026-05-12T01:23:06Z"
+  },
+  {
+    "season": 2025,
+    "kind": "play_by_play",
+    "filename": "play_by_play_2025.csv",
+    "release": "espn_wnba_pbp",
+    "asset_id": 653188452,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_pbp/play_by_play_2025.csv",
+    "sha256": "2b156b3de57835707597d2139900d640344af6fd70801ec9faeb3b7ed82e27b9",
+    "bytes": 53636049,
+    "updated_at": "2026-10-18T10:23:34Z"
   },
   {
     "season": 2025,
@@ -661,6 +1299,17 @@
   },
   {
     "season": 2026,
+    "kind": "play_by_play",
+    "filename": "play_by_play_2026.csv",
+    "release": "espn_wnba_pbp",
+    "asset_id": 691779129,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/espn_wnba_pbp/play_by_play_2026.csv",
+    "sha256": "2725451ec2fd35e69989e87dee806bd8dd1fbd7ff6e3383e5de29ba18c5894c9",
+    "bytes": 64235051,
+    "updated_at": "2026-10-30T10:41:56Z"
+  },
+  {
+    "season": 2026,
     "kind": "player_box",
     "filename": "player_box_2026.csv",
     "release": "espn_wnba_player_boxscores",
@@ -694,6 +1343,17 @@
   },
   {
     "season": 2026,
+    "kind": "wnba_player_crosswalk",
+    "filename": "wnba_player_crosswalk_2026.csv",
+    "release": "wnba_crosswalk",
+    "asset_id": 681979705,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_crosswalk/wnba_player_crosswalk_2026.csv",
+    "sha256": "93fca27364d25e19a45191ae700cc5d70b310b0c0a8dd1946ed588648b428721",
+    "bytes": 45478,
+    "updated_at": "2026-10-27T15:20:09Z"
+  },
+  {
+    "season": 2026,
     "kind": "wnba_schedule",
     "filename": "wnba_schedule_2026.csv",
     "release": "espn_wnba_schedules",
@@ -702,5 +1362,16 @@
     "sha256": "6354d7d33fb66e3ab938a86809d958ac53e688f400c92fd01402af3543a73dc5",
     "bytes": 2621882,
     "updated_at": "2026-10-31T11:05:14Z"
+  },
+  {
+    "season": 2026,
+    "kind": "wnba_team_crosswalk",
+    "filename": "wnba_team_crosswalk_2026.csv",
+    "release": "wnba_crosswalk",
+    "asset_id": 633073397,
+    "url": "https://github.com/sportsdataverse/sportsdataverse-data/releases/download/wnba_crosswalk/wnba_team_crosswalk_2026.csv",
+    "sha256": "3a8c587852f11412fecb80c4e91992218286c3705c33b5dc81bd385a6757bcb3",
+    "bytes": 2537,
+    "updated_at": "2026-10-12T07:49:35Z"
   }
 ]

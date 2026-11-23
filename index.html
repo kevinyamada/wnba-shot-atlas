@@ -1,112 +1,135 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Where the WNBA shoots | Kevin Yamada</title>
-<meta name="description" content="Explore 38,535 WNBA shots: the quiet strip inside the arc, the limits of prediction, and what happens after a miss.">
-<link rel="stylesheet" href="style.css?v=miss-flow-1">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23b76639'/%3E%3Cpath d='M2 16h28M16 2v28M6 6q20 10 0 20M26 6q-20 10 0 20' fill='none' stroke='%23252c35' stroke-width='1.5'/%3E%3C/svg%3E">
-<script src="theme.js?v=light-default"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Compare WNBA shooting from 1997 to 2026 by season, team, player and position on the court.">
+  <title>WNBA Shot Atlas | Explore 1997 to 2026</title>
+  <link rel="stylesheet" href="explore/atlas.css?v=2">
+  <script src="theme.js?v=light-default"></script>
+  <script type="module" src="explore/atlas.js?v=2"></script>
 </head>
 <body>
-<a class="skip" href="#explore">Skip to the court</a>
-<header><span class="site-name">Kevin Yamada · WNBA Shot Atlas</span><button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode">☾</button></header>
-<main>
-<section class="intro">
-<p class="kicker">2025 WNBA season</p><h1>Where the WNBA shoots</h1>
-<p class="lede">I mapped 38,535 shots to see where players shoot, where they score, and how much a model can tell us beyond distance from the basket.</p>
-<p class="byline">By Kevin Yamada · University of Toronto · Updated November 17, 2026</p>
-</section>
-<section id="explore" class="explore" aria-labelledby="explore-title">
-<div class="section-label"><span>The shot map</span><span>38,535 attempts · 286 games</span></div>
-<h2 id="explore-title">Where are the shots?</h2>
-<p>Hover or tap a square to see who scored there. Try a team, change the size of the squares, or compare the observed shooting rates with the model’s estimates.</p>
-<div class="controls"><label>Colour by<select id="metric"><option value="attempts">Shot frequency</option><option value="rate">Observed make rate</option><option value="gp">Bayesian make probability</option><option value="uncertainty">Bayesian uncertainty</option></select></label><label>Team<select id="team"><option value="all">Whole league</option></select></label><label>Cell size<select id="size"><option value="1">1 foot</option><option value="2" selected>2 feet</option><option value="4">4 feet</option></select></label></div>
-<div class="court-layout">
-<div class="court-wrap"><svg id="court" viewBox="-8 -8 516 486" tabindex="0" role="img" aria-label="Interactive WNBA shot chart. Use arrow keys to explore squares, or hover and tap."></svg><div class="legend"><span id="legend-low">Fewer</span><span class="ramp" id="ramp"></span><span id="legend-high">More</span></div><p id="map-note" class="caption"></p></div>
-<aside id="cell-info" aria-live="polite"><p class="kicker">A closer look</p><h3 id="cell-title">Pick a square.</h3><p id="cell-location">Hover, tap, or use the arrow keys on the court.</p><div class="cell-stats"><div><b id="cell-n">Not available</b><span>Attempts</span></div><div><b id="cell-k">Not available</b><span>Makes</span></div><div><b id="cell-points">Not available</b><span>FG points</span></div></div><p id="cell-rate"></p><p class="leader-label">Most field goal points in this square</p><ol id="leaders"></ol><p id="cell-caution" class="caption">Scoring totals measure volume as well as accuracy.</p><button type="button" id="unpin" hidden>Clear selection</button></aside>
-</div>
-<p class="caption">38,441 attempts fit on this half court. Another 94 longer attempts are included in the season totals. Free throws are excluded.</p>
-<details><summary>What is counted in the map?</summary><p>The map uses recorded regular season shots, with coordinates in whole feet. It includes eight games where some player attempt counts disagree with the supplied box scores; prediction comparisons exclude those games. Team totals agree. Tied scoring leaders are shown together.</p><p>The Bayesian map uses a league reference player and average training context. It shows a fitted probability at each square’s centre, rather than a team’s observed make rate or a ranking of player skill. Striped squares in the observed rate view have fewer than 20 attempts.</p></details>
-<noscript><p>JavaScript is needed for the interactive charts. The full results are available in the methods link at the bottom of this page.</p></noscript><p id="load-error" hidden>Unable to load the charts. Please reload, or use the methods link at the bottom of this page.</p>
-</section>
-<section class="band-story" aria-labelledby="band-title">
-<div><p class="kicker">The three point line</p><h2 id="band-title">A quiet strip just inside the arc</h2><p>Attempts cluster outside the three point line, leaving a much quieter strip just inside it.</p><p class="finding"><strong>8×</strong><span>as many shots per square foot just outside the line</span></p><p class="caption">Comparing the two foot bands on either side of the line. This is a pattern in shot selection; it does not establish why players chose those spots.</p></div>
-<figure><svg id="band" viewBox="0 0 480 320" role="img" aria-label="Shots per square foot are much lower just inside the three point line than just outside it"></svg><figcaption>Negative distances are inside the line; positive distances are outside.</figcaption></figure>
-<details class="band-details"><summary>Counts, uncertainty and band boundaries</summary><p>The two foot comparison uses 508 attempts inside and 4,380 outside, adjusted for the area of each band. The density ratio is 7.97; its 95% game bootstrap interval is 7.25 to 8.82, using 2,000 resamples.</p><p>The ratio uses −2 ≤ distance &lt; 0 inside and 0 &lt; distance ≤ 2 outside. The chart’s one foot bars include their lower endpoint and exclude their upper endpoint. The 140 shots exactly on the line enter the first outside bar; the 374 exactly two feet outside enter the third bar. For that reason, the first two outside bars do not sum to the ratio’s outside count. Whole foot coordinates also limit how precisely these bands can be interpreted.</p></details>
-</section>
-<section id="models" aria-labelledby="models-title">
-<p class="kicker">Predicting a make</p>
-<h2 id="models-title">Distance alone is hard to beat</h2>
-<p>Take two shots from 15 feet away. A model that uses only distance gives them the same chance of going in. Other models can take into account where on the court a shot came from, who took it, or the game situation.</p>
-<p>On 5,626 shots from late in the season, averaging five models’ predictions reduced prediction error by <strong>about 0.7%</strong> compared with using distance alone. The playoff results were too close to call.</p>
-<p>Distance also gave the best predictions in two of the three tests on parts of the court the models hadn’t seen. A model that uses nearby shots had a small lead in the third. I’d start with distance and look for a clearer gain in another season before relying on a more complicated model.</p>
-<details id="model-details">
-<summary>Compare predictions across games</summary>
-<div class="results-head"><label>Games to compare<select id="evaluation"><option value="validation">Model selection · Aug 10 to 26</option><option value="test" selected>Later games · Aug 27 to Sep 11</option><option value="playoffs">Playoffs</option></select></label></div>
-<figure class="insight-figure"><svg id="model-chart" viewBox="0 0 720 310" role="img" aria-label="Prediction error compared with using distance alone. Zero means equal error."></svg><figcaption id="model-chart-note" aria-live="polite"></figcaption></figure>
-<p id="model-takeaway" class="takeaway" aria-live="polite"></p>
-<p>The chart compares three models with distance alone. Brier score is the average squared gap between the predicted chance of a make and what happened, coded as 0 for a miss or 1 for a make. Lower is better.</p>
-<details id="full-shot-scores"><summary>Full scores and model settings</summary>
-<div class="table-scroll"><table><thead><tr><th>Model</th><th>Brier score</th><th>Log loss</th></tr></thead><tbody id="results"></tbody></table></div><p id="result-note" class="caption"></p>
-<p>Model settings were chosen using August 10 to 26. Training ends August 9. Tree models average three seeds; the five model ensemble uses equal weights. A separately calibrated ensemble uses validation predictions only, so it has no validation row here. These 2025 games have already been examined; another season is needed for a fresh test.</p>
-<details id="points"><summary>Predicting field goal points</summary><p>A second comparison predicts the recorded outcome: 0, 2, or 3 points. Misses do not always have a reliable two or three point attempt label in this archive, so the model does not invent one.</p><div class="table-scroll"><table><thead><tr><th>Model</th><th>Points RMSE</th><th>Points MAE</th></tr></thead><tbody id="points-results"></tbody></table></div><p class="caption">Uses the games selected above. Both error measures are in points; lower is better. These are outcomes conditional on taking a shot, rather than the value of choosing a different shot.</p></details>
-<div id="desktop-followup"><details id="followup-panel"><summary>Training on more games and checking disputed player counts</summary><p>Fixed CatBoost settings were fitted through August 9 and then through August 26, using matched CPU fits. A separate model without shooter identity checks the effect of including seven early games with disputed player counts.</p><label>Games<select id="followup-period"><option value="test">Later games · Aug 27 to Sep 11</option><option value="playoffs">Playoffs</option></select></label><div class="table-scroll"><table><thead><tr><th>Model</th><th>Brier score</th><th>Log loss</th></tr></thead><tbody id="followup-results"></tbody></table></div><p id="followup-note" class="caption"></p><p>The event records and player boxes disagree on 18 player/game attempt counts in eight games. Alternate orderings and the parsed export do not resolve them. These checks keep the recorded shooter assignments intact.</p></details></div>
-</details>
-</details>
-<details id="methods">
-<summary>Compare predictions in different court areas</summary>
-<p>I left out one court region at a time and removed nearby training shots. Distance had the lowest error with buffers of zero and two feet. At four feet, kriging with a distance trend had a small lead.</p>
-<figure class="insight-figure"><svg id="spatial-chart" viewBox="0 0 720 340" role="img" aria-label="Prediction errors increase as training shots near the test locations are removed"></svg><figcaption>Each setting tests the same shots. Only the training data change.</figcaption></figure>
-<details id="spatial-details"><summary>Spatial model details and scores</summary>
-<p>The chart compares distance alone, a Matérn SPDE model, and universal kriging. The SPDE model represents a smooth spatial effect on a triangular mesh; a sparse Gaussian Markov prior makes fitting practical. Universal kriging combines a distance trend with a spatial covariance model.</p>
-<p>Each of four court regions is held out once. Training shots within 0, 2, or 4 feet of an observed held out location are removed. All 25,751 early season training shots are tested once at each setting; scores are pooled by shot count. Model settings are fixed before fitting each fold. Games can appear on both sides of a split.</p>
-<div class="table-scroll"><table><thead><tr><th>Model</th><th>0 ft buffer</th><th>2 ft buffer</th><th>4 ft buffer</th></tr></thead><tbody id="spatial-results"></tbody></table></div><p class="caption">Brier score; lower is better. “Not available” means the GP setting lacks four fits passing all sampling checks. Removing nearby training shots also reduces the training sample, so this does not isolate a causal effect of distance.</p>
-<p>The SPDE fit uses a Gaussian Laplace approximation with spatial parameters fixed after validation. Refining the mesh changed some local predictions but did not consistently lower validation error. The full report gives the covariance, precision matrix, sampling checks and sensitivity results.</p>
-</details>
-</details>
-</section>
-<section id="possession-value" aria-labelledby="possession-title">
-<p class="kicker">After the shot</p><h2 id="possession-title">A miss doesn’t always end the chance</h2>
-<p>Some misses lead to another scoring opportunity. The event records let us follow ordinary play through offensive rebounds and free throws until the team’s turn ends.</p>
-<div class="controls"><label>Games<select id="possession-period"><option value="test">Later games · Aug 27 to Sep 11</option><option value="playoffs">Playoffs</option><option value="validation">Model selection · Aug 10 to 26</option></select></label></div>
-<figure class="miss-flow" id="miss-flow" aria-label="Where the ball went after a missed shot">
-  <div class="miss-origin"><strong id="miss-total"></strong><span>Missed shots</span></div>
-  <div class="miss-branches">
-    <div class="miss-branch miss-offense">
-      <h3>Offense gets the rebound</h3>
-      <p class="miss-count"><strong id="miss-offense-count"></strong> <span id="miss-offense-share"></span></p>
-      <dl class="miss-scoring">
-        <div><dt>Went on to score</dt><dd id="miss-scored"></dd></div>
-        <div><dt>No more points</dt><dd id="miss-no-score"></dd></div>
-      </dl>
+  <a class="skip" href="#explorer">Skip to the shot explorer</a>
+  <header class="masthead">
+    <div class="masthead-inner">
+      <span class="brand"><span class="brand-ball" aria-hidden="true"></span> WNBA Shot Atlas</span>
+      <span class="masthead-years">1997 to 2026</span>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">☾</button>
     </div>
-    <div class="miss-branch miss-defense">
-      <h3>Defense gets the rebound</h3>
-      <p class="miss-count"><strong id="miss-defense-count"></strong> <span id="miss-defense-share"></span></p>
-      <p class="miss-ended">The shooting team’s turn ends.</p>
+  </header>
+  <main class="page" id="explorer">
+    <div class="intro">
+      <div>
+        <h1>Where the WNBA shoots</h1>
+        <p>Explore where players shoot, how often they make it, and how those patterns change across seasons.</p>
+      </div>
+      <p class="source-credit">wehoop<br><strong id="total-shots"></strong></p>
     </div>
-  </div>
-  <figcaption>Follows each miss to the first rebound, another attempt, or the end of the turn. <span id="miss-other"></span> Includes only plays with clear event order and team control.</figcaption>
-</figure>
-<p id="miss-takeaway" class="takeaway" aria-live="polite"></p>
-<p id="continuation-takeaway" class="small" aria-live="polite"></p>
-<details id="possession-details"><summary>How the remaining points model works</summary>
-<p>The model estimates the ordinary points still to come at the start of a team’s turn, after a miss, or after an offensive rebound. These turns are reconstructed from events; the archive does not supply official possession IDs.</p>
-<label>Situation to evaluate<select id="possession-stage"><option value="entry">Start of a team’s turn</option><option value="after_miss">After a missed field goal</option><option value="after_offensive_rebound">After an offensive rebound</option></select></label>
-<div class="table-scroll"><table><thead><tr><th>Remaining points model</th><th>Points RMSE</th><th>Points MAE</th></tr></thead><tbody id="possession-results"></tbody></table></div><p id="possession-note" class="caption" aria-live="polite"></p>
-<figure class="possession-figure"><svg id="possession-chart" viewBox="0 0 680 280" role="img" aria-labelledby="possession-chart-title"><title id="possession-chart-title">Mean predicted and observed remaining points by period clock</title></svg><figcaption>Teal: selected model. Orange: observed remaining points. Groups use the selected situation and games; n shows each sample size. Period time is different from the shot clock. No uncertainty band is shown.</figcaption></figure>
-<h3>Coverage and calibration</h3><p>Strict checks retain 662 of 1,257 periods, or 52.7%, and 25,306 entry states. Special free throws, overturned reviews, clock or score conflicts, and uncertain team control can exclude a period. This screening uses the completed event record, so the retained sample may differ from excluded play.</p><p>All 624 game/team final scores reconcile. Every retained score margin agrees with its source snapshot. Sixteen intervals end at a jump ball change without an intermediate event; they have zero recorded reward and do not establish an additional official possession. Predictions after an event use only information available up to that event.</p>
-<div class="table-scroll"><table><thead><tr><th>Prediction range</th><th>States</th><th>Mean predicted</th><th>Mean observed</th></tr></thead><tbody id="possession-calibration"></tbody></table></div><p>The context model was selected using August 10 to 26 entry state error. Its improvement in later games remains uncertain. These benchmarks reuse 2025 games and do not establish performance in another season.</p>
-</details>
-<details id="recovery-panel"><summary>Can more of the same archive be used?</summary>
-<div id="recovery"><h3>More usable play, with the same source limits</h3><p>After a special event, some later play is clear enough to retain. The restart rule waits for an ordinary miss, an opposite team defensive rebound, and an action confirming that team’s control. Conflicting scores and uncertain ordering still exclude a sequence.</p><p id="recovery-counts"></p><p id="recovery-error" class="caption" hidden>Recovery results could not be loaded. Please reload.</p>
-<div class="controls"><label>Restart rule<select id="recovery-policy"><option value="first_rebound">First confirmed restart</option><option value="second_rebound">Second restart · stricter</option></select></label><label>Games<select id="recovery-period"><option value="test">Later regular season games</option><option value="playoffs">Playoffs</option></select></label><label>Evaluation records<select id="recovery-cohort"><option value="all">Original + recovered</option><option value="original">Original records only</option><option value="recovered">Recovered records only</option></select></label><label>Situation<select id="recovery-stage"><option value="entry">Team’s turn begins</option><option value="after_miss">After a missed field goal</option><option value="after_offensive_rebound">After an offensive rebound</option></select></label></div>
-<div class="table-scroll"><table><thead><tr><th>Model and training sample</th><th>Points RMSE</th><th>Points MAE</th></tr></thead><tbody id="recovery-results"></tbody></table></div><p class="caption">Lower errors are better. Every row evaluates the same records. Expanded training adds recovered records with the same model settings.</p><p id="recovery-note" class="small" aria-live="polite"></p>
-<details><summary>All models and uncertainty</summary><label class="check-label"><input id="recovery-all-models" type="checkbox"> Include Markov and average references</label><p id="recovery-detail-note" class="caption"></p><p>The added records are partial period tails and occur later in periods. They are not a random sample of excluded play. Eligibility is determined from the completed record; the inferred turns are not official possessions.</p></details>
-</div></details>
-</section>
-<section class="ending"><h2>What would move this forward?</h2><p>A new WNBA season would allow a fresh prediction test. To value passes and movement, the next dataset would also need to record where those actions start and end. Those locations are missing from this archive.</p><p class="caption">Every basketball observation here comes from the supplied Data (1).zip. The study is exploratory; it does not measure defensive pressure or assign causal player credit.</p></section>
-<footer id="resources"><p class="kicker">Code, methods and further reading</p><div class="resource-links"><a href="explore/">Explore 2011 to 2026</a><a href="https://github.com/kevinyamada/wnba-shot-atlas/blob/main/research/summary.md">Full methods &amp; results</a><a href="meeting/">Meeting walkthrough</a></div><p>The full report includes source checks, equations, model settings, references and compute records.</p><p>Kevin Yamada · University of Toronto</p></footer>
-</main><script src="app.js?v=miss-flow-1"></script><script src="recovery.js?v=article-1"></script>
-</body></html>
+    <div class="filter-bar" aria-label="Shot filters">
+      <label>Season<select id="season" disabled></select></label>
+      <label>Team<select id="team" disabled><option value="all">Whole league</option></select></label>
+      <label>Player<select id="player" disabled><option value="all">All players</option></select></label>
+      <label>Games<select id="phase" disabled><option value="0">Regular season</option><option value="1">Playoffs</option><option value="all" selected>Regular + playoffs</option></select></label>
+      <label>Shot type<select id="shot-type" disabled><option value="all">All shot types</option></select></label>
+      <label>Compare with<select id="compare" disabled><option value="off">No comparison</option></select></label>
+    </div>
+    <div id="load-state" role="status">Loading shot data…</div>
+    <div id="atlas-content" hidden>
+      <div class="view-bar">
+        <div class="metric-group" role="group" aria-label="Colour court by">
+          <button type="button" data-metric="share" aria-pressed="true">Shot share</button>
+          <button type="button" data-metric="rate" aria-pressed="false">Make rate</button>
+          <button type="button" data-metric="points" aria-pressed="false">Points per shot</button>
+        </div>
+        <div class="legend"><span id="legend-low">0%</span><span class="legend-strip" aria-hidden="true"></span><span id="legend-high"></span></div>
+      </div>
+      <div class="workbench" id="workbench">
+        <div class="court-pair" id="court-pair">
+          <article class="court-panel" id="court-primary">
+            <div class="court-heading"><h2 data-year></h2><span data-arc></span></div>
+            <dl class="totals">
+              <div><dt>Attempts</dt><dd data-total="n"></dd></div>
+              <div><dt>Make rate</dt><dd data-total="rate"></dd></div>
+              <div><dt>Points</dt><dd data-total="points"></dd></div>
+            </dl>
+            <div class="court-stage">
+              <canvas tabindex="0" aria-label="Shot court. Use the arrow keys to move the selected square."></canvas>
+              <div class="court-hover" hidden></div>
+            </div>
+            <div class="era-key" data-era-key hidden></div>
+            <p class="court-note" data-coverage></p>
+            <p class="court-note" data-location></p>
+          </article>
+          <article class="court-panel" id="court-secondary" hidden>
+            <div class="court-heading"><h2 data-year></h2><span data-arc></span></div>
+            <dl class="totals">
+              <div><dt>Attempts</dt><dd data-total="n"></dd></div>
+              <div><dt>Make rate</dt><dd data-total="rate"></dd></div>
+              <div><dt>Points</dt><dd data-total="points"></dd></div>
+            </dl>
+            <div class="court-stage">
+              <canvas tabindex="0" aria-label="Comparison court. Use the arrow keys to move the selected square."></canvas>
+              <div class="court-hover" hidden></div>
+            </div>
+            <div class="era-key" data-era-key hidden></div>
+            <p class="court-note" data-coverage></p>
+            <p class="court-note" data-location></p>
+          </article>
+        </div>
+        <aside class="inspector" aria-labelledby="area-title">
+          <div class="inspector-heading">
+            <p id="selection-kind">Selected square</p>
+            <h2 id="area-title"></h2>
+            <p id="area-position"></p>
+          </div>
+          <div class="area-stats" id="area-stats" aria-live="polite"></div>
+          <label class="zone-picker">Look at a larger area<select id="zone"><option value="cell">Selected square</option></select></label>
+        </aside>
+      </div>
+      <p class="caption" id="metric-note"></p>
+      <div class="comparison-callout" id="comparison-callout" hidden>
+        <p id="arc-finding"></p><button type="button" id="compare-rule">Compare 2012 and 2013</button>
+      </div>
+      <section class="history" aria-labelledby="history-title">
+        <div class="section-heading">
+          <div><h2 id="history-title">Across the seasons</h2><p id="history-context"></p></div>
+          <p class="line-key"><span aria-hidden="true"></span> Arc moved in 2004 and 2013</p>
+        </div>
+        <div id="history-status" role="status"></div>
+        <div class="history-stage"><canvas id="history-chart" aria-label="The selected area across the seasons. Values are listed below." role="img"></canvas></div>
+        <details id="history-details"><summary>View season values</summary>
+          <div class="table-scroll">
+            <table><thead><tr><th>Season</th><th>Made / attempts</th><th>Shot share</th><th>Make rate</th><th>Points per shot</th></tr></thead><tbody id="history-rows"></tbody></table>
+          </div>
+        </details>
+      </section>
+      <section class="foundations" aria-labelledby="types-title">
+        <div class="section-heading"><div><h2 id="types-title">Shot types</h2><p id="types-summary"></p></div></div>
+        <details><summary>Compare the shot types</summary>
+          <p>The table uses the selected season, games, team and player. Shots are grouped by the wording in the source.</p>
+          <div class="table-scroll"><table><thead><tr><th>Shot type</th><th>Attempts</th><th>Makes</th><th>Make rate</th><th>Points per shot</th></tr></thead><tbody id="type-rows"></tbody></table></div>
+        </details>
+      </section>
+      <div id="study-status" role="status"></div>
+      <div id="public-study" hidden></div>
+      <section class="foundations" aria-labelledby="foundation-title">
+        <div class="section-heading"><div><h2 id="foundation-title">What the source covers</h2><p id="coverage-summary"></p></div></div>
+        <details id="coverage-details"><summary>See the audit by season</summary>
+          <p>WNBA Stats provides the shots from 1997 to 2001. ESPN provides the later shots and schedules. From 2003, the audit counts games whose shots agree with both teams’ box scores. The explorer includes disagreements as recorded.</p>
+          <div class="table-scroll"><table><thead><tr><th>Season</th><th>Games with shots</th><th>Games matching both boxes</th><th>Attempts</th><th>Unknown location</th></tr></thead><tbody id="coverage-rows"></tbody></table></div>
+          <p>Free throws, exhibition games, and the Commissioner’s Cup final are separate. Cup qualifying games count in the regular season. Shots from the other half stay in the totals and can be selected as an area. The map uses the three point line from each season. The early arc is shown in front of the rim, where its distance is documented. Attempts recorded exactly at the basket through 2010 stay in the totals with an unknown location.</p>
+        </details>
+      </section>
+    </div>
+    <noscript><p>The explorer needs JavaScript to load the shot tables.</p></noscript>
+    <footer class="footer">
+      <div><strong>WNBA Shot Atlas</strong><p>Kevin Yamada · Shot data from wehoop</p></div>
+      <div class="footer-links">
+        <a href="study/">Original 2025 study</a>
+        <a href="https://github.com/kevinyamada/wnba-shot-atlas/tree/main/research/public_atlas">Data sources and methods</a>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>

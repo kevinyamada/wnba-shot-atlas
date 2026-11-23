@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+from urllib.parse import unquote, urlparse
 import urllib.request
 
 HERE = Path(__file__).resolve().parent
@@ -11,13 +12,7 @@ ROOT = HERE.parents[1]
 CACHE = ROOT / 'research/data/public_wnba'
 RAW = CACHE / 'raw'
 PIN = HERE / 'source_manifest.json'
-YEARS = tuple(range(2011, 2027))
-TAGS = {
-    'shots': 'espn_wnba_shots',
-    'wnba_schedule': 'espn_wnba_schedules',
-    'team_box': 'espn_wnba_team_boxscores',
-    'player_box': 'espn_wnba_player_boxscores',
-}
+YEARS = tuple(range(1997, 2027))
 REPO = 'sportsdataverse/sportsdataverse-data'
 
 
@@ -31,12 +26,18 @@ def digest(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
+def file_digest(path):
+    with path.open('rb') as stream:
+        return hashlib.file_digest(stream, 'sha256').hexdigest()
+
+
 def manifest_digest():
-    return digest(PIN.read_bytes().replace(b'\r\n', b'\n'))
+    return digest(PIN.read_text(encoding='utf-8').encode('utf-8'))
+
 
 def file_matches(path, source):
     return (path.is_file() and path.stat().st_size == source['bytes']
-            and digest(path.read_bytes()) == source['sha256'])
+            and file_digest(path) == source['sha256'])
 
 
 def restore(source):
@@ -53,29 +54,29 @@ def restore(source):
 
 def snapshot():
     sources = []
-    for kind, tag in TAGS.items():
-        release = json.loads(download(f'https://api.github.com/repos/{REPO}/releases/tags/{tag}'))
-        assets = {item['name']: item for item in release['assets']}
-        for season in YEARS:
-            filename = f'{kind}_{season}.csv'
-            asset = assets[filename]
-            url = asset['browser_download_url']
-            raw = download(url)
-            sha = digest(raw)
-            assert len(raw) == asset['size'], filename
-            assert not asset.get('digest') or asset['digest'] == f'sha256:{sha}', filename
-            # Preserve the pinned files until the new snapshot has downloaded in full.
-            target = CACHE / 'refresh' / filename
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes(raw)
-            sources.append(dict(season=season, kind=kind, filename=filename, release=tag,
-                                asset_id=asset['id'], url=url, sha256=sha, bytes=len(raw),
-                                updated_at=asset['updated_at']))
+    inventories = {}
+    for source in json.loads(PIN.read_bytes()):
+        tag = source['release']
+        if tag not in inventories:
+            release = json.loads(download(f'https://api.github.com/repos/{REPO}/releases/tags/{tag}'))
+            inventories[tag] = {asset['name']: asset for asset in release['assets']}
+        upstream = unquote(Path(urlparse(source['url']).path).name)
+        asset = inventories[tag][upstream]
+        url = asset['browser_download_url']
+        raw = download(url)
+        sha = digest(raw)
+        assert len(raw) == asset['size'], upstream
+        assert not asset.get('digest') or asset['digest'] == f'sha256:{sha}', upstream
+        target = CACHE / 'refresh' / source['filename']
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(raw)
+        sources.append(dict(source, asset_id=asset['id'], url=url, sha256=sha,
+                            bytes=len(raw), updated_at=asset['updated_at']))
     for source in sources:
         name = source['filename']
         (CACHE / 'refresh' / name).replace(RAW / name)
     temporary = PIN.with_suffix('.tmp')
-    temporary.write_text(json.dumps(sorted(sources, key=lambda row: (row['season'], row['kind'])), indent=2) + '\n', encoding='utf-8', newline='')
+    temporary.write_text(json.dumps(sorted(sources, key=lambda row: (row['season'], row['kind'])), indent=2) + '\n', encoding='utf-8')
     temporary.replace(PIN)
 
 
@@ -87,8 +88,7 @@ def main():
     if args.refresh:
         snapshot()
     sources = json.loads(PIN.read_bytes())
-    assert {(row['season'], row['kind']) for row in sources} == {(y, k) for y in YEARS for k in TAGS}
-    assert len(sources) == len(YEARS) * len(TAGS)
+    assert len({row['filename'] for row in sources}) == len(sources)
     with ThreadPoolExecutor(max_workers=4) as pool:
         list(pool.map(restore, sources))
     print(f'Verified {len(sources)} pinned wehoop files')

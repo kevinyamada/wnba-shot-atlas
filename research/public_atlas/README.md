@@ -1,38 +1,46 @@
-# WNBA Shot Atlas public seasons
+# Public WNBA Shot Atlas
 
-[Open the explorer](https://kevinyamada.github.io/wnba-shot-atlas/explore/) · [Season audit and findings](../results/public_atlas/eda.md) · [Original 2025 study](https://kevinyamada.github.io/wnba-shot-atlas/)
+The explorer covers 30 recorded seasons from 1997 to 2026. The build uses only the public wehoop releases pinned in [the source manifest](source_manifest.json). Each pin records its release tag, asset ID, checksum and byte size.
 
-This edition uses 16 seasons of wehoop / ESPN shot records, schedules, team boxes, and player boxes. [The source manifest](source_manifest.json) records the release asset, byte length, date, and SHA256 for each of the 64 CSV files. The [wehoop documentation](https://wehoop.sportsdataverse.org/articles/wnba-womens-college-basketball-shot-charts.html) explains the shot data and coordinate system. The private Data (1).zip is used separately to compare the overlapping 2025 records.
+| Seasons | Shot release | Game scope |
+| --- | --- | --- |
+| 1997 to 2001 | WNBA Stats via wehoop | League game ID distinguishes regular season and playoffs |
+| 2002 to 2026 | ESPN via wehoop | Completed games in the ESPN schedule |
+| 2022 to 2026 | ESPN play by play and player and team boxes via wehoop | Public shot and possession benchmarks |
 
-## From inputs to results
+The site combines regular games and playoffs at startup. Free throws, exhibitions and the cup final are excluded from shot totals. Long shots and unknown locations stay in attempts, makes and points. Shots recorded exactly at the basket through 2010 are kept with unknown locations because of the provider pileups there. The early shot release uses tenths of a foot. ESPN coordinates use the attacking team's basket and are checked against the raw coordinate pair. Early player and team IDs are linked only where the published crosswalk has a unique high confidence match. Historical team labels follow the name history of the recorded provider ID.
 
-| File | What it does |
-| --- | --- |
-| `fetch.py` | Restores and verifies the exact pinned files on disk. |
-| `build.py` | Assigns games and shots, reconciles box scores, and exports one file per season for the explorer. |
-| `geometry.py` and `court_rules.json` | Convert provider coordinates and define the court for each era. The explorer gets its court dimensions from the same file as the analysis. |
-| `analyze.py` | Compares volume, accuracy, and points. It also repeats the main area comparisons on games whose two team boxes agree. |
-| `verify.py` | Verifies the season files against the source rows, recounts each grouping, and checks the court rules and published totals. |
+Shot type groups come from the recorded subtype or play type text. Layups include finger rolls. Dunks, hooks, runners, tips and jump shots are distinct. Generic labels remain in Other field goal. Model comparisons by shot type use identical attempts within each group. Uncertain missed shot values remain unknown.
 
-The project ran on the desktop CPU with Python 3.13, pandas, and NumPy. From the repository root:
+The court uses three line eras. From 1997 to 2003 the documented radius was 19 ft 9 in and the lane was 12 ft. Only the front of that earliest arc is drawn, and the early line density uses that front region. The early geometric corner classification is approximate. The lane widened to 16 ft and the arc moved to 20 ft 6¼ in for 2004. The arc moved to 22 ft 1¾ in for 2013. Rule references are in [court_rules.json](court_rules.json).
 
-```powershell
-py -3.13 research/public_atlas/fetch.py
-py -3.13 research/public_atlas/build.py --archive 'C:\Users\kevin\Downloads\Data (1).zip'
-py -3.13 research/public_atlas/analyze.py
-py -3.13 research/public_atlas/verify.py
+## Reproduce on CPU
+
+From the repository root with Python 3.13, install the packages listed below. Chrome and websocket client are needed for the browser check.
+
+```sh
+python -m pip install numpy pandas scipy scikit-learn catboost xgboost websocket-client
+python research/public_atlas/fetch.py
+python research/public_atlas/build.py
+python research/public_atlas/analyze.py
+python research/public_atlas/shot_models.py
+python research/public_atlas/reconstruct.py
+python research/public_atlas/possession_value.py
+python research/public_atlas/publish_study.py
+python research/public_atlas/verify.py
+python research/public_atlas/reference_audit.py
+python research/public_atlas/check_browser.py
 ```
 
-The downloader requires the exact pinned asset bytes. Some upstream files can change if the provider rebuilds a release. Retain the downloaded snapshot for repeat runs. Use `fetch.py --refresh` to make a deliberate new snapshot. `build.py --seasons 2012 2013 2025` is the pilot command. Run the full build again before publishing season files.
+The restore step checks the pinned bytes and reports any upstream changes. An explicit refresh creates a new source snapshot using the same release file list. Raw and derived rows stay in the local cache. Each derived shot carries the source file season and original CSV line number.
 
-## Definitions
+## Results
 
-- A row in the shot table represents a recorded field goal attempt with a recognized shooting play description and a score of zero, two, or three. The table keeps the source row number, coordinates, score, play description, game, team at the time, and shooter. Free throws and uncertain records are written separately. Repeated rows are flagged because the shot release does not give each play an identifier. Box scores can identify differences without deciding which apparent repeat is genuine.
-- Made shots use the points scored. Misses only get a two or three point attempt label if the play type says so explicitly. A player may be unknown on an otherwise usable shot. A missing player box is reported as unavailable. Missing values do not become zero attempts.
-- The schedule supplies the game type. Exhibition games and the Cup final are separate. The early Cup final in 2021 and the All Star Game in 2023 need game ID overrides because their schedule descriptions do not identify them. One duplicate 2011 game ID is removed from the schedule denominator after checking the date, teams, and scores against the entry with play records. Cancelled, postponed, and forfeited games without ordinary play do not supply shooting records.
-- The provider coordinates describe a full court. We orient them to the shooting team’s basket using the home and away identifiers and verify the transform against the provider’s raw coordinate columns. Valid attempts beyond half court and ambiguous locations still count in the totals. The map uses bins 2.5 feet wide. Bins at the edges of the court can cover a smaller area.
-- The position relative to the line is calculated from the arc and straight corner segments in that season. The 2011 media guide gives the early corner dimensions. The 2013 rule announcement and later rule books establish the wider arc. The corners extend from the baseline to where they intersect the arc. For whole foot positions, shots within about 0.71 feet of the line are flagged as close to the boundary. Any recorded value is kept separately.
-- Rim means distance under 4 feet. Short two area means 4 to under 10 feet inside the line. Midrange area means the remaining inside area. Corner three area and Above the break describe geometry rather than the points awarded. The timeline uses the same physical square when a square is picked, and the selected season’s court geometry when an area is picked.
-- Shot share is attempts in the selected area divided by all attempts under the filters. Make rate is makes divided by attempts. Points per shot is field goal points divided by attempts. The raw league comparison uses the same area, season, and game filter. On the court, accuracy and points are patterned when a cell has fewer than 12 attempts.
+A separate check compares the ESPN shot tables with the WNBA Stats shot release on confidently matched games in 2025 and 2026. Its [source pins](reference_manifest.json), [season totals](../results/public_atlas/official_reference_summary.csv) and [game differences](../results/public_atlas/official_reference_games.csv) keep both versions visible. They agree on attempts, makes and points in 661 of 662 games. ESPN records one additional miss in game 401857099, where the ESPN team box also has one fewer attempt than its shot release. The prediction sample excludes that game through the box score check.
 
-[Coverage by season](../results/public_atlas/season_coverage.csv) lists schedule and box coverage. [Team reconciliation](../results/public_atlas/team_game_audit.csv) identifies exact differences by game. [Season and zone totals](../results/public_atlas/season_zones.csv) and [the EDA](../results/public_atlas/eda_by_season.csv) report the observed counts and rates. The source rows, normalized event tables, and player reconciliation are kept in `research/data/public_wnba/` on the desktop. The published site contains grouped counts only.
+- [Data coverage, shot counts and arc patterns](../results/public_atlas/eda.md)
+- [Prediction, remaining points and recovery results](../results/public_atlas/study.md)
+- [Shot prediction metrics and court surfaces](../results/public_atlas/shot_models/)
+- [Possession metrics and source checks](../results/public_atlas/possession/)
+
+The forecasts train on 2022 to 2024 regular season games, select settings on the 2025 regular season, and score 2026 regular season and playoff games separately. The game level bootstrap compares errors on identical shots or states. The earlier study used full posterior sampling for some fits. This edition uses CPU Laplace inference conditional on the selected Matérn and mesh hyperparameters. Court intervals concern modelled probabilities. Play sequences support remaining points forecasts and rebound summaries. The releases used here lack the action locations needed to value individual passes or movement.

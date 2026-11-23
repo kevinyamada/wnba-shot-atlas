@@ -1,0 +1,40 @@
+model,settings,validation_log_loss
+Spatial logistic,C=0.1,0.657942705041311
+Spatial logistic,C=1.0,0.6571729933657744
+Spatial logistic,C=10.0,0.6568343277414954
+Context logistic,C=0.1,0.6571071773463314
+Context logistic,C=1.0,0.6574636538916948
+Context logistic,C=10.0,0.6575269546685668
+IDW,power=1,0.6571276451279755
+IDW,power=2,0.6563825796105267
+IDW,power=3,0.6562996104051562
+SPDE,"range=4, sigma=0.3, spacing=3",0.6554793711908373
+SPDE,"range=4, sigma=0.7, spacing=3",0.6555694246732121
+SPDE,"range=4, sigma=1.5, spacing=3",0.6556427424567548
+SPDE,"range=8, sigma=0.3, spacing=3",0.6553144866192001
+SPDE,"range=8, sigma=0.7, spacing=3",0.6554661431851042
+SPDE,"range=8, sigma=1.5, spacing=3",0.6555943417281731
+SPDE,"range=16, sigma=0.3, spacing=3",0.655105235256728
+SPDE,"range=16, sigma=0.7, spacing=3",0.6553046269503998
+SPDE,"range=16, sigma=1.5, spacing=3",0.6554957807632187
+Matérn GP,"length=4, scale=0.5, basis=16×16",0.6548787992014571
+Matérn GP,"length=4, scale=1.0, basis=16×16",0.6549348294339583
+Matérn GP,"length=8, scale=0.5, basis=16×16",0.6547988931897408
+Matérn GP,"length=8, scale=1.0, basis=16×16",0.6548066664340212
+Matérn GP,"length=16, scale=0.5, basis=16×16",0.6553697877267819
+Matérn GP,"length=16, scale=1.0, basis=16×16",0.6548682926408049
+CatBoost spatial,depth=4,0.6548999030997495
+CatBoost spatial,depth=6,0.6552964742126441
+CatBoost context,depth=4,0.6536191022475046
+CatBoost context,depth=6,0.6552344960499189
+XGBoost spatial,depth=4,0.655591607093811
+XGBoost spatial,depth=6,0.6567479968070984
+XGBoost context,depth=4,0.6529253125190735
+XGBoost context,depth=6,0.6538965702056885
+Joint logistic,C=0.1,0.6766900385388515
+Joint logistic,C=1.0,0.6704523484135874
+Joint logistic,C=10.0,0.6660398129827122
+Joint boosted,CatBoost depth=4,0.6552749760319333
+Joint boosted,CatBoost depth=6,0.6560838785195895
+Joint boosted,XGBoost depth=4,0.6540327668190002
+Joint boosted,XGBoost depth=6,0.6560859680175781

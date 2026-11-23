@@ -1,0 +1,7 @@
+year,split,rebound,misses,later_points,scored_after
+2025,validation,False,8038,33,16
+2025,validation,True,3154,3461,1618
+2026,playoffs,False,596,0,0
+2026,playoffs,True,224,207,95
+2026,test,False,9336,46,22
+2026,test,True,3817,4295,2022

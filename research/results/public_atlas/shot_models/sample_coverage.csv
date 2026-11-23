@@ -1,0 +1,5 @@
+split,attempts,games,games_failing_team_boxes,games_failing_player_check,eligible,eligible_games,first_date,last_date
+playoffs,2934,22,0,0,2927,22,2026-09-27,2026-10-29
+test,45297,330,1,5,44478,325,2026-05-08,2026-09-24
+train,94937,696,10,20,92055,676,2022-05-06,2024-09-19
+validation,38535,286,0,8,37372,278,2025-05-16,2025-09-11

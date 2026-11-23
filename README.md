@@ -1,6 +1,6 @@
 # WNBA Shot Atlas
 
-[Public seasons explorer](https://kevinyamada.github.io/wnba-shot-atlas/explore/) covers 2011 to 2026 using wehoop releases. See the [data pipeline and audit](research/public_atlas/README.md). This edition is separate from the Data (1) study described below.
+[WNBA Shot Atlas](https://kevinyamada.github.io/wnba-shot-atlas/) covers 1997 to 2026 from public wehoop releases. See the [data pipeline and methods](research/public_atlas/README.md) and the [public results](research/results/public_atlas/study.md). The [original 2025 study](https://kevinyamada.github.io/wnba-shot-atlas/study/) remains available.
 
 [Kevin Yamada · Portfolio](https://kevinyamada.github.io/)
 

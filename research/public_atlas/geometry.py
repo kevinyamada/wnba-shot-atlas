@@ -34,7 +34,7 @@ def line_geometry(depth, lateral, era):
     return np.minimum(arc_distance, corner_distance) * np.where(outside, 1, -1), join
 
 
-def locations(shots, era):
+def locations(shots, era, zero_is_missing=False):
     home = shots.team_id.eq(shots.home_id)
     participants = home | shots.team_id.eq(shots.away_id)
     # wehoop's sign convention already encodes the attacking basket for each team.
@@ -44,17 +44,23 @@ def locations(shots, era):
     lateral = shots.coordinate_y.to_numpy(dtype=float) * sign
     raw_depth = shots.coordinate_y_raw.to_numpy(dtype=float)
     raw_lateral = HALF_WIDTH - shots.coordinate_x_raw.to_numpy(dtype=float)
-    finite = np.isfinite(depth) & np.isfinite(lateral)
     verified = (participants.to_numpy() & np.isclose(depth, raw_depth, atol=1e-8, rtol=0)
                 & np.isclose(lateral, raw_lateral, atol=1e-8, rtol=0))
+    return locate(shots, era, depth, lateral, verified, zero_is_missing)
+
+
+def locate(shots, era, depth, lateral, verified, zero_is_missing):
+    finite = np.isfinite(depth) & np.isfinite(lateral)
     on_court = ((depth >= BASELINE) & (depth <= RULES['length'] + BASELINE)
                 & (np.abs(lateral) <= HALF_WIDTH))
-    known = finite & verified & on_court
+    origin = (depth == 0) & (lateral == 0)
+    placeholder = origin & zero_is_missing
+    known = finite & verified & on_court & ~placeholder
     half = known & (depth <= MIDCOURT)
     beyond = known & ~half
     shots['location_status'] = np.select(
-        [~finite, ~verified, ~on_court, beyond],
-        ['missing', 'coordinate_conflict', 'outside_court', 'other_half'], default='mapped')
+        [~finite, placeholder, ~verified, ~on_court, beyond],
+        ['missing', 'provider_origin_placeholder', 'coordinate_conflict', 'outside_court', 'other_half'], default='mapped')
     shots['depth_ft'] = np.where(known, depth, np.nan)
     shots['lateral_ft'] = np.where(known, lateral, np.nan)
     distance = np.hypot(depth, lateral)
@@ -64,7 +70,7 @@ def locations(shots, era):
     shots['court_id'] = era['id']
     # Whole foot locations sufficiently near a line can fall on either side after rounding.
     shots['near_three_line'] = known & (np.abs(line) <= np.sqrt(.5))
-    shots['shot_location_disagrees'] = (known & ~shots.near_three_line & shots.attempt_value.notna()
+    shots['shot_location_disagrees'] = (known & (not era.get('arc_only', False)) & ~shots.near_three_line & shots.attempt_value.notna()
                                        & ((line > 0) != shots.attempt_value.eq(3).fillna(False)))
     shots['rim_coordinate'] = known & (depth == 0) & (lateral == 0)
     shots['zone'] = np.select([~known, beyond, (line > 0) & (depth <= join), line > 0, distance < 4, distance < 10],

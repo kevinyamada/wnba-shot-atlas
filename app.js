@@ -192,7 +192,10 @@ for(const r of groups)label(chart,x(r.clock_bin),245,`n=${number(r.states)}`,{'t
 const calibration=$('#possession-calibration');calibration.replaceChildren();for(const r of p.calibration.filter(r=>r.split===split&&r.stage===stage&&r.model===selected)){const tr=document.createElement('tr');for(const value of [r.prediction_bin,number(r.states),r.mean_prediction.toFixed(3),r.observed_remaining_points.toFixed(3)]){const td=document.createElement('td');td.textContent=value;tr.append(td);}calibration.append(tr);}
 }
 async function start() {
-    const [shots, misses] = await Promise.all([fetch('assets/data.json'), fetch('assets/miss_outcomes.json')]);
+    const base = new URL('.', document.currentScript.src);
+    const [shots, misses] = await Promise.all([
+        fetch(new URL('assets/data.json', base)), fetch(new URL('assets/miss_outcomes.json', base))
+    ]);
     if (!shots.ok || !misses.ok) throw Error('Data request failed');
     [D, missOutcomes] = await Promise.all([shots.json(), misses.json()]);
     if (missOutcomes.source.only_data_source !== D.source.only_data_source ||

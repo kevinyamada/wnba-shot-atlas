@@ -86,34 +86,45 @@ export function paintCourt(canvas, court, grid, era, p, squares, focus, hover, m
             continue;
         }
         const weight = clamp(cell.value / limit, 0, 1);
-        ctx.fillStyle = blend(p['colour-min'], p['colour-max'], metric === 'share' ? Math.sqrt(weight) : weight);
+        const colourFraction = metric === 'share' ? Math.log1p(60 * weight) / Math.log(61) : weight;
+        ctx.fillStyle = blend(p['colour-min'], p['colour-max'], colourFraction);
         ctx.fillRect(xpos, ypos, w, h);
     }
     ctx.strokeStyle = p['court-line'];
     ctx.lineWidth = Math.max(1, scale * .12);
     ctx.strokeRect(.8, .8, width - 1.6, height - 1.6);
     circle(ctx, x(0), y(grid.midcourt), 6 * scale, Math.PI, 2 * Math.PI);
-    const halfLane = court.lane_width / 2;
+    const lane = era.length === 1 ? (era[0].lane_width ?? court.lane_width) : court.lane_width;
+    const halfLane = lane / 2;
     const freeThrow = grid.baseline + court.free_throw_from_baseline;
-    ctx.strokeRect(x(-halfLane), y(grid.baseline), court.lane_width * scale, y(freeThrow) - y(grid.baseline));
+    ctx.strokeRect(x(-halfLane), y(grid.baseline), lane * scale, y(freeThrow) - y(grid.baseline));
     circle(ctx, x(0), y(freeThrow), 6 * scale, 0, Math.PI);
     ctx.setLineDash([4, 4]);
     circle(ctx, x(0), y(freeThrow), 6 * scale, Math.PI, 2 * Math.PI);
     ctx.setLineDash([]);
-    circle(ctx, x(0), y(0), 4 * scale, 0, Math.PI);
+    if (!era.every(rule => rule.arc_only)) circle(ctx, x(0), y(0), 4 * scale, 0, Math.PI);
     line(ctx, [[x(-3), y(-1.25)], [x(3), y(-1.25)]]);
     circle(ctx, x(0), y(0), .75 * scale);
-    ctx.strokeStyle = p.accent;
-    ctx.lineWidth = Math.max(1.3, scale * .16);
-    const radius = era.arc_radius, corner = era.corner_distance;
-    const join = Math.sqrt(radius * radius - corner * corner);
-    const points = [[x(-corner), y(grid.baseline)]];
-    for (let i = 0; i <= 100; i++) {
-        const lateral = -corner + 2 * corner * i / 100;
-        points.push([x(lateral), y(Math.sqrt(radius * radius - lateral * lateral))]);
+    for (const rule of era) {
+        const radius = rule.arc_radius, corner = rule.corner_distance;
+        const join = Math.sqrt(radius * radius - corner * corner);
+        const curvedWidth = rule.arc_only ? Math.sqrt(radius * radius - 100) : corner;
+        const points = rule.arc_only ? [] : [[x(-corner), y(grid.baseline)]];
+        for (let i = 0; i <= 100; i++) {
+            const lateral = -curvedWidth + 2 * curvedWidth * i / 100;
+            points.push([x(lateral), y(Math.sqrt(radius * radius - lateral * lateral))]);
+        }
+        if (!rule.arc_only) points.push([x(corner), y(join)], [x(corner), y(grid.baseline)]);
+        const older = rule.first_season < 2013;
+        ctx.setLineDash(era.length > 1 && older ? (rule.arc_only ? [2, 5] : [5, 4]) : []);
+        ctx.lineWidth = Math.max(3, scale * .31);
+        ctx.strokeStyle = p.surface;
+        line(ctx, points);
+        ctx.lineWidth = Math.max(1.4, scale * .16);
+        ctx.strokeStyle = era.length === 1 || !older ? p.accent : rule.arc_only ? p['earliest-line'] : p['historic-line'];
+        line(ctx, points);
+        ctx.setLineDash([]);
     }
-    points.push([x(corner), y(join)], [x(corner), y(grid.baseline)]);
-    line(ctx, points);
     function outline(cell, colour, lineWidth) {
         if (cell === undefined || cell === null) return;
         const [left, below, above] = bounds(cell, grid);
@@ -124,7 +135,7 @@ export function paintCourt(canvas, court, grid, era, p, squares, focus, hover, m
     if (hover !== focus) outline(hover, p.ink, 1.2);
     outline(focus, p.ink, 2.8);
     outline(focus, p.surface, 1.2);
-    canvas.dataset.arc = String(radius);
+    canvas.dataset.arc = era.map(rule => rule.arc_radius).join(',');
     canvas.dataset.selected = focus === null ? '' : String(focus);
 }
 
@@ -153,8 +164,7 @@ export function paintHistory(canvas, values, years, p, metric) {
         line(ctx, [[left, y(tick)], [right, y(tick)]]);
         ctx.fillText(fmt(tick), left - 6, y(tick));
     }
-    const rule = 2013;
-    if (start <= rule && rule <= end) {
+    for (const rule of [2004, 2013].filter(year => start <= year && year <= end)) {
         ctx.setLineDash([4, 4]);
         ctx.strokeStyle = p.accent;
         line(ctx, [[x(rule), top], [x(rule), bottom]]);

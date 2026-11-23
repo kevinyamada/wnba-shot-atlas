@@ -1,13 +1,15 @@
-import { paintCourt, paintHistory, canvasSquare } from './drawing.js?v=1';
+import { paintCourt, paintHistory, canvasSquare } from './drawing.js?v=2';
+import { renderStudy } from './study-findings.js?v=2';
 
 const $ = id => document.getElementById(id);
-const controls = ['season', 'team', 'player', 'phase', 'compare'].map($);
+const controls = ['season', 'team', 'player', 'phase', 'shot-type', 'compare'].map($);
 const panels = ['court-primary', 'court-secondary'].map($);
 const number = new Intl.NumberFormat('en-CA');
 const percent = new Intl.NumberFormat('en-CA', {style: 'percent', maximumFractionDigits: 1});
 const decimal = new Intl.NumberFormat('en-CA', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 const sampleFloor = 12;
 const metricNames = {share: 'Shot share', rate: 'Make rate', points: 'Points per shot'};
+const yearName = year => year === 'all' ? 'All seasons' : String(year);
 const phaseNames = {'0': 'Regular season', '1': 'Playoffs', all: 'Regular season and playoffs'};
 const model = {metric: 'share', selection: {kind: 'cell', value: 50}, views: [], history: [], hover: []};
 const cache = new Map();
@@ -16,7 +18,9 @@ let selectionVersion = 0;
 let historyVersion = 0;
 
 async function json(url) {
-    const response = await fetch(url);
+    const asset = new URL(url, import.meta.url);
+    asset.searchParams.set('snapshot', index?.manifestSha256.slice(0, 12) ?? 'public-2');
+    const response = await fetch(asset);
     if (!response.ok) throw new Error(`Could not load ${url}`);
     return response.json();
 }
@@ -39,21 +43,22 @@ function options(select, first, items, selected) {
 }
 
 function searchFilters() {
-    return {phase: $('phase').value, team: $('team').value, player: $('player').value};
+    return {phase: $('phase').value, team: $('team').value, player: $('player').value, type: $('shot-type').value};
 }
 
 function matching(row, filters) {
     const [phase, team, player] = row;
     return (filters.phase === 'all' || phase === Number(filters.phase)) &&
         (filters.team === 'all' || team === Number(filters.team)) &&
-        (filters.player === 'all' || player === Number(filters.player));
+        (filters.player === 'all' || player === Number(filters.player)) &&
+        (filters.type === 'all' || row[8] === Number(filters.type));
 }
 
 function filtersFor(seasons, wanted) {
     const teamNames = new Map();
     for (const entry of seasons) {
         for (const row of entry.rows) {
-            if (!matching(row, {phase: wanted.phase, team: 'all', player: 'all'})) continue;
+            if (!matching(row, {...wanted, team: 'all', player: 'all', type: 'all'})) continue;
             const id = String(row[1]);
             if (!teamNames.has(id)) teamNames.set(id, entry.teams[id]);
         }
@@ -62,7 +67,7 @@ function filtersFor(seasons, wanted) {
     const playerNames = new Map();
     for (const entry of seasons) {
         for (const row of entry.rows) {
-            if (!row[2] || !matching(row, {phase: wanted.phase, team: $('team').value, player: 'all'})) continue;
+            if (!row[2] || !matching(row, {...wanted, team: $('team').value, player: 'all', type: 'all'})) continue;
             const id = String(row[2]);
             if (!playerNames.has(id)) playerNames.set(id, entry.players[id]);
         }
@@ -117,8 +122,10 @@ function value(part, total, metric = model.metric) {
 function recordedGames(coverage, phase) {
     if (phase !== 'all') return coverage[phase === '1' ? 'playoffs' : 'regular'];
     const {regular, playoffs} = coverage;
-    return Object.fromEntries(['scheduled_games','recorded_games','matched_team_games','attempts','unknown']
-        .map(key => [key, regular[key] + playoffs[key]]));
+    const sums = Object.fromEntries(['recorded_games','matched_team_games','checked_team_boxes','attempts','unknown']
+        .map(key => [key, (regular[key] ?? 0) + (playoffs[key] ?? 0)]));
+    sums.scheduled_games = regular.scheduled_games == null ? null : regular.scheduled_games + playoffs.scheduled_games;
+    return sums;
 }
 
 function areaDescription() {
@@ -158,7 +165,7 @@ function renderStats() {
         block.className = 'area-result';
         block.dataset.season = entry.season;
         const heading = document.createElement('h3');
-        heading.textContent = entry.season;
+        heading.textContent = yearName(entry.season);
         const list = document.createElement('dl');
         const part = data.area;
         addStat(list, 'Made / attempts', `${number.format(part.makes)} / ${number.format(part.n)}`);
@@ -169,7 +176,7 @@ function renderStats() {
         const note = document.createElement('p');
         note.className = 'caption';
         const leagueRate = format(value(league.area, league.total, 'rate'), 'rate');
-        note.textContent = league.area.n ? `League here: ${leagueRate} made on ${number.format(league.area.n)} attempts.` : 'The league has no recorded shots here.';
+        note.textContent = league.area.n ? `${leagueRate} made across the league on ${number.format(league.area.n)} attempts.` : 'The league has no recorded shots here.';
         if (part.n > 0 && part.n < sampleFloor) note.textContent += ' Small sample.';
         block.append(heading, list, note);
         target.append(block);
@@ -178,7 +185,7 @@ function renderStats() {
 
 function palette() {
     const css = getComputedStyle(document.documentElement);
-    return Object.fromEntries(['ink','muted','line','deep','accent','court','court-alt','court-line','colour-min','colour-max','surface']
+    return Object.fromEntries(['ink','muted','line','deep','accent','court','court-alt','court-line','historic-line','earliest-line','colour-min','colour-max','surface']
         .map(name => [name, css.getPropertyValue('--' + name).trim()]));
 }
 
@@ -209,19 +216,50 @@ function draw() {
     paintHistory($('history-chart'), model.history, model.views.map(v => v.entry.season), colours, model.metric);
 }
 
+function renderTypes(entry, filters) {
+    const byType = index.shotTypes.map(counts);
+    const selection = {...filters, type: 'all'};
+    for (const row of entry.rows) {
+        if (matching(row, selection)) add(byType[row[8]], row);
+    }
+    $('type-rows').replaceChildren(...byType.map((part, i) => tableRow([
+        index.shotTypes[i], number.format(part.n), number.format(part.makes),
+        format(value(part, part, 'rate'), 'rate'), format(value(part, part, 'points'), 'points')
+    ])));
+    $('types-title').textContent = `Shot types in ${yearName(entry.season).toLowerCase()}`;
+    const [jump, layup] = byType;
+    $('types-summary').textContent = layup.n && jump.n
+        ? `Layups went in ${percent.format(layup.makes / layup.n)} of the time, compared with ${percent.format(jump.makes / jump.n)} for jump shots.`
+        : 'Compare scoring by the recorded shot type.';
+}
+
 function renderCourts() {
     const phase = $('phase').value;
     panels[1].hidden = model.views.length === 1;
     $('workbench').classList.toggle('comparing', model.views.length === 2);
     model.views.forEach(({entry, data, era}, i) => {
         const panel = panels[i];
-        panel.querySelector('[data-year]').textContent = entry.season;
-        panel.querySelector('[data-arc]').textContent = `Arc ${era.arc_label} · corner ${era.corner_label}`;
+        panel.querySelector('[data-year]').textContent = yearName(entry.season);
+        panel.querySelector('[data-arc]').textContent = entry.season === 'all'
+            ? `${index.seasons.at(0)} to ${index.seasons.at(-1)}` : `Arc ${era[0].arc_label}`;
+        const key = panel.querySelector('[data-era-key]');
+        key.replaceChildren(...era.map(rule => {
+            const marker = document.createElement('span');
+            marker.className = 'era-marker';
+            marker.dataset.era = rule.id;
+            marker.textContent = `${rule.first_season} to ${rule.last_season} · ${rule.arc_label}`;
+            if (rule.arc_only) marker.title = 'The early arc is shown only in front of the rim';
+            return marker;
+        }));
+        key.hidden = entry.season !== 'all';
         panel.querySelector('[data-total=n]').textContent = number.format(data.total.n);
         panel.querySelector('[data-total=rate]').textContent = format(value(data.total, data.total, 'rate'), 'rate');
         panel.querySelector('[data-total=points]').textContent = number.format(data.total.points);
         const coverage = recordedGames(entry.coverage, phase);
-        panel.querySelector('[data-coverage]').textContent = `Season coverage · ${coverage.recorded_games} of ${coverage.scheduled_games} games have shots. ${coverage.matched_team_games} match both team boxes.`;
+        panel.querySelector('[data-coverage]').textContent = entry.season === 'all'
+            ? `${number.format(coverage.recorded_games)} games with recorded shots`
+            : `${coverage.recorded_games}${coverage.scheduled_games === null ? '' : ` of ${coverage.scheduled_games}`} games with shots`
+              + (coverage.checked_team_boxes ? `. ${coverage.matched_team_games} match both team boxes.` : '.');
         const offMap = data.unlocated + data.otherHalf;
         panel.querySelector('[data-location]').textContent = !data.total.n ? 'No shots for this selection.' :
             offMap ? `${number.format(data.total.n - offMap)} mapped · ${number.format(data.otherHalf)} from the other half · ${number.format(data.unlocated)} with unknown location` : '';
@@ -235,13 +273,10 @@ function renderCoverage() {
     $('coverage-summary').textContent = `${phaseNames[phase]} coverage across the pinned wehoop files. Open the audit to see what each year includes.`;
     $('coverage-rows').replaceChildren(...index.coverage.map(entry => {
         const row = recordedGames(entry, phase);
-        return tableRow([entry.season, `${row.recorded_games} / ${row.scheduled_games}`, row.matched_team_games,
-            number.format(row.attempts), row.unknown]);
+        return tableRow([entry.season, row.scheduled_games === null ? row.recorded_games : `${row.recorded_games} / ${row.scheduled_games}`,
+            row.checked_team_boxes ? row.matched_team_games : 'Unavailable', number.format(row.attempts), number.format(row.unknown)]);
     }));
-    if (index.archiveComparison) {
-        const {exact_shots: shots, shared_games: games} = index.archiveComparison;
-        $('archive-comparison').textContent = `The public 2025 release matched ${number.format(shots)} field goal attempts in Data (1).zip across ${games} games.`;
-    }
+
 }
 
 function tableRow(values) {
@@ -259,11 +294,11 @@ async function historySeries() {
     const version = ++historyVersion;
     const filters = searchFilters();
     const selection = {...model.selection};
-    const league = filters.player === 'all' && filters.team === 'all';
+    const league = filters.player === 'all' && filters.team === 'all' && filters.type === 'all';
     const title = areaDescription().title;
     const player = $('player').selectedOptions[0].textContent;
     const team = $('team').selectedOptions[0].textContent;
-    $('history-context').textContent = `${title} · ${filters.player !== 'all' ? player : team} · ${phaseNames[filters.phase]}`;
+    $('history-context').textContent = `${title} · ${filters.player !== 'all' ? player : team} · ${phaseNames[filters.phase]}${filters.type === 'all' ? '' : ` · ${index.shotTypes[Number(filters.type)]}`}`;
     if (!league) $('history-status').textContent = 'Loading season history…';
     try {
         const series = [];
@@ -304,21 +339,22 @@ function refreshArea() {
 
 async function refresh() {
     const version = ++selectionVersion;
-    const primary = Number($('season').value);
+    const primary = $('season').value === 'all' ? 'all' : Number($('season').value);
     const compare = $('compare').value;
     const years = compare === 'off' || Number(compare) === primary ? [primary] : [primary, Number(compare)];
-    options($('compare'), 'One season', index.seasons.filter(y => y !== primary).map(y => [String(y), y]), compare);
+    options($('compare'), 'No comparison', index.seasons.filter(y => y !== primary).map(y => [String(y), y]), compare);
     $('load-state').textContent = 'Loading selected games…';
     try {
         const seasons = await Promise.all(years.map(seasonData));
         if (version !== selectionVersion) return;
         filtersFor(seasons, searchFilters());
-        model.views = seasons.map(entry => ({entry, era: index.court.eras.find(era => era.id === entry.court)}));
+        model.views = seasons.map(entry => ({entry, era: entry.season === 'all' ? index.court.eras : index.court.eras.filter(era => era.id === entry.court)}));
         $('atlas-content').hidden = false;
         model.hover = [];
         panels.forEach(panel => { panel.querySelector('.court-hover').hidden = true; });
         refreshArea();
         renderCoverage();
+        renderTypes(seasons[0], searchFilters());
         $('load-state').textContent = '';
         document.body.dataset.ready = 'true';
     } catch (error) {
@@ -376,16 +412,17 @@ async function start() {
     index = await json('data/index.json');
     json('data/findings.json').then(({band}) => {
         const [old, current] = band;
-        $('arc-finding').textContent = `In the strip between the old and new arcs in front of the rim, players took ${number.format(old.attempts)} shots in 2012 and ${number.format(current.attempts)} in 2013.`;
+        $('arc-finding').textContent = `In the strip between the old and new arcs in front of the rim, players took ${number.format(old.attempts)} shots in the 2012 regular season and ${number.format(current.attempts)} in 2013.`;
         $('comparison-callout').hidden = false;
     }).catch(error => console.warn(error));
     const total = index.coverage.reduce((sum, row) => sum + row.regular.attempts + row.playoffs.attempts, 0);
     $('total-shots').textContent = `${number.format(total)} recorded attempts`;
-    $('season').append(...index.seasons.map(year => new Option(year, year)));
-    $('season').value = '2025';
+    $('season').append(new Option('All seasons', 'all', true, true), ...index.seasons.slice().reverse().map(year => new Option(year, year)));
+    $('phase').value = 'all';
     const grid = index.grid;
     model.lastSquare = Math.floor((1 - grid.baseline) / grid.size) * grid.cols + Math.floor(index.court.width / grid.size / 2);
     model.selection.value = model.lastSquare;
+    $('shot-type').append(...index.shotTypes.map((name, i) => new Option(name, i)));
     $('zone').append(...index.zones.map((name, i) => new Option(name, i)));
     controls.forEach(control => {
         control.disabled = false;
@@ -402,10 +439,11 @@ async function start() {
     });
     $('compare-rule').addEventListener('click', () => {
         $('season').value = '2012';
-        options($('compare'), 'One season', index.seasons.filter(year => year !== 2012).map(year => [String(year), year]), '2013');
+        options($('compare'), 'No comparison', index.seasons.filter(year => year !== 2012).map(year => [String(year), year]), '2013');
         $('phase').value = '0';
         $('team').value = 'all';
         $('player').value = 'all';
+        $('shot-type').value = 'all';
         model.metric = 'share';
         const square = Math.floor((21 - grid.baseline) / grid.size) * grid.cols + Math.floor(grid.cols / 2);
         model.lastSquare = square;
@@ -420,6 +458,15 @@ async function start() {
     window.addEventListener('resize', resize);
     new MutationObserver(resize).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
     await refresh();
+    Promise.all([json('data/findings.json'), json('data/study.json'), json('data/bayesian.json')])
+        .then(([findings, study, bayesian]) => {
+            if (study.manifestSha256 !== index.manifestSha256) throw new Error('Research data differ from the explorer snapshot');
+            renderStudy(findings, study, index.court, bayesian, palette);
+        })
+        .catch(error => {
+            $('study-status').textContent = 'The research findings could not load. Reload to try again.';
+            console.error(error);
+        });
 }
 
 start().catch(error => {
