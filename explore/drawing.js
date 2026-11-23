@@ -64,6 +64,18 @@ function hatch(ctx, x, y, width, height, colour) {
     ctx.restore();
 }
 
+export function per100(amount, attempts) {
+    return attempts ? 100 * amount / attempts : null;
+}
+
+export function metricValue(area, total, metric) {
+    if (metric === 'attempts') return area.n;
+    if (metric === 'per100') return per100(area.n, total.n);
+    if (metric === 'share') return total.n ? area.n / total.n : null;
+    if (!area.n) return null;
+    return (metric === 'rate' ? area.makes : area.points) / area.n;
+}
+
 export function paintCourt(canvas, court, grid, era, p, squares, focus, hover, metric, limit, floor) {
     const frame = surface(canvas);
     if (!frame) return;
@@ -75,18 +87,19 @@ export function paintCourt(canvas, court, grid, era, p, squares, focus, hover, m
     ctx.fillRect(0, 0, width, height);
     ctx.fillStyle = p['court-alt'];
     for (let strip = 0; strip < 10; strip += 2) ctx.fillRect(strip * width / 10, 0, width / 10, height);
+    const efficiency = metric === 'rate' || metric === 'points';
     for (let i = 0; i < squares.length; i++) {
         const cell = squares[i];
         if (!cell.n) continue;
         const [left, below, above] = bounds(i, grid);
         const xpos = left * scale + .45, ypos = y(below) + .45;
         const w = grid.size * scale - .9, h = y(above) - ypos - .45;
-        if (metric !== 'share' && cell.n < floor) {
+        if (efficiency && cell.n < floor) {
             hatch(ctx, xpos, ypos, w, h, p['court-line']);
             continue;
         }
         const weight = clamp(cell.value / limit, 0, 1);
-        const colourFraction = metric === 'share' ? Math.log1p(60 * weight) / Math.log(61) : weight;
+        const colourFraction = efficiency ? weight : Math.log1p(60 * weight) / Math.log(61);
         ctx.fillStyle = colourFraction <= .5
             ? blend(p['colour-min'], p['colour-mid'], colourFraction * 2)
             : blend(p['colour-mid'], p['colour-max'], (colourFraction - .5) * 2);
@@ -145,17 +158,17 @@ export function paintHistory(canvas, values, years, p, metric) {
     const frame = surface(canvas);
     if (!frame || !values.length) return;
     const {ctx, width, height} = frame;
-    const left = 43, right = width - 19, top = 21, bottom = height - 27;
+    const left = metric === 'attempts' ? 51 : 43, right = width - 19, top = 21, bottom = height - 27;
     const start = values[0].season, end = values.at(-1).season;
     const x = year => left + (year - start) * (right - left) / Math.max(end - start, 1);
-    const series = values.map(({season, area, total}) => {
-        if (metric === 'share') return [season, total.n ? area.n / total.n : null];
-        return [season, area.n ? area[metric === 'rate' ? 'makes' : 'points'] / area.n : null];
-    });
+    const series = values.map(({season, area, total}) => [season, metricValue(area, total, metric)]);
     const max = Math.max(.02, ...series.map(([, m]) => m ?? 0));
-    const limit = metric === 'rate' ? 1 : metric === 'points' ? 3 : Math.min(1, Math.ceil(max * 25) / 25);
+    const limits = {rate: 1, points: 3, share: Math.min(1, Math.ceil(max * 25) / 25),
+        per100: Math.min(100, Math.ceil(max / 4) * 4), attempts: Math.ceil(max / 2) * 2};
+    const limit = limits[metric];
     const y = v => bottom - (bottom - top) * v / limit;
-    const fmt = v => metric === 'points' ? String(v) : `${+(100 * v).toFixed(1)}%`;
+    const fmt = v => metric === 'rate' || metric === 'share'
+        ? `${+(100 * v).toFixed(1)}%` : v.toLocaleString('en-CA');
     ctx.font = `12px ${fonts}`;
     ctx.fillStyle = p.muted;
     ctx.textAlign = 'right';

@@ -1,4 +1,4 @@
-import { paintCourt, paintHistory, canvasSquare } from './drawing.js?v=4';
+import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=5';
 import { renderStudy } from './study-findings.js?v=4';
 
 const $ = id => document.getElementById(id);
@@ -8,7 +8,8 @@ const number = new Intl.NumberFormat('en-CA');
 const percent = new Intl.NumberFormat('en-CA', {style: 'percent', maximumFractionDigits: 1});
 const decimal = new Intl.NumberFormat('en-CA', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 const sampleFloor = 12;
-const metricNames = {share: 'Shot share', rate: 'Make rate', points: 'Points per shot'};
+const metricNames = {share: 'Shot share', per100: 'Attempts per 100 shots', attempts: 'Attempts',
+    rate: 'Make rate', points: 'Points per shot'};
 const yearName = year => year === 'all' ? 'All seasons' : String(year);
 const phaseNames = {'0': 'Regular season', '1': 'Playoffs', all: 'Regular season and playoffs'};
 const model = {metric: 'share', selection: {kind: 'cell', value: 50}, views: [], history: [], hover: []};
@@ -113,10 +114,17 @@ function areaTotals(rows, filters, selection) {
     return {total, area};
 }
 
-function value(part, total, metric = model.metric) {
-    if (metric === 'share') return total.n ? part.n / total.n : null;
-    if (!part.n) return null;
-    return (metric === 'rate' ? part.makes : part.points) / part.n;
+function normalizedComparison() {
+    return model.views.length === 2 && $('normalize-shots').checked;
+}
+
+function frequencyMetric() {
+    if (model.views.length !== 2) return 'share';
+    return normalizedComparison() ? 'per100' : 'attempts';
+}
+
+function displayedMetric() {
+    return model.metric === 'share' ? frequencyMetric() : model.metric;
 }
 
 function recordedGames(coverage, phase) {
@@ -142,6 +150,8 @@ function areaDescription() {
 
 function format(value, metric) {
     if (value === null) return 'Unavailable';
+    if (metric === 'attempts') return number.format(value);
+    if (metric === 'per100') return value > 0 && value < .01 ? '<0.01' : decimal.format(value);
     return metric === 'points' ? decimal.format(value) : percent.format(value);
 }
 
@@ -168,9 +178,15 @@ function renderStats() {
         heading.textContent = yearName(entry.season);
         const list = document.createElement('dl');
         const part = data.area;
-        addStat(list, 'Made / attempts', `${number.format(part.makes)} / ${number.format(part.n)}`);
-        addStat(list, 'Field goal points', number.format(part.points));
-        addStat(list, 'Share of shots', format(value(part, data.total, 'share'), 'share'));
+        if (normalizedComparison()) {
+            for (const [label, amount] of [['Attempts', part.n], ['Makes', part.makes], ['Points', part.points]]) {
+                addStat(list, `${label} per 100 shots`, format(per100(amount, data.total.n), 'per100'));
+            }
+        } else {
+            addStat(list, 'Made / attempts', `${number.format(part.makes)} / ${number.format(part.n)}`);
+            addStat(list, 'Field goal points', number.format(part.points));
+            addStat(list, 'Share of shots', format(value(part, data.total, 'share'), 'share'));
+        }
         addStat(list, 'Make rate', format(value(part, data.total, 'rate'), 'rate'));
         addStat(list, 'Points per shot', format(value(part, data.total, 'points'), 'points'));
         const note = document.createElement('p');
@@ -189,31 +205,38 @@ function palette() {
         .map(name => [name, css.getPropertyValue('--' + name).trim()]));
 }
 
-function activeScale() {
-    if (model.metric === 'rate') return 1;
-    if (model.metric === 'points') return 3;
-    return Math.max(0.01, ...model.views.flatMap(({data}) => data.cells.map(cell => value(cell, data.total) ?? 0)));
+function activeScale(metric) {
+    if (metric === 'rate') return 1;
+    if (metric === 'points') return 3;
+    const minimum = metric === 'share' ? .01 : 1;
+    return Math.max(minimum, ...model.views.flatMap(({data}) => data.cells.map(cell => value(cell, data.total, metric) ?? 0)));
 }
 
 function draw() {
     if (!model.views.length) return;
-    const limit = activeScale();
+    const metric = displayedMetric();
+    const limit = activeScale(metric);
     const colours = palette();
     model.views.forEach(({entry, data, era}, i) => {
         const focus = model.selection.kind === 'cell' ? model.selection.value : null;
-        const squares = data.cells.map(cell => ({n: cell.n, value: value(cell, data.total)}));
+        const squares = data.cells.map(cell => ({n: cell.n, value: value(cell, data.total, metric)}));
         paintCourt(panels[i].querySelector('canvas'), index.court, index.grid, era, colours,
-            squares, focus, model.hover[i], model.metric, limit, sampleFloor);
+            squares, focus, model.hover[i], metric, limit, sampleFloor);
     });
-    $('legend-low').textContent = model.metric === 'points' ? '0' : '0%';
-    $('legend-high').textContent = format(limit, model.metric);
+    $('legend-low').textContent = metric === 'share' || metric === 'rate' ? '0%' : '0';
+    $('legend-high').textContent = format(limit, metric) + (metric === 'per100' ? ' per 100' : '');
+    $('history-unit').textContent = metricNames[metric];
     const metricNotes = {
         share: 'Shot share is the percentage of all selected attempts taken in a square. The total includes attempts outside the map.',
+        per100: 'Each square shows how many of every 100 attempts came from that spot. The total for each selection includes shots outside the map. Both courts use the same colour scale.',
+        attempts: 'Colour shows the number of selected attempts in each square. Both courts use the same scale.',
         rate: 'Colour shows the share of shots made. Patterned squares have fewer than 12 attempts.',
         points: 'Colour shows points from the floor divided by attempts. Patterned squares have fewer than 12 attempts.'
     };
-    $('metric-note').textContent = metricNotes[model.metric];
-    paintHistory($('history-chart'), model.history, model.views.map(v => v.entry.season), colours, model.metric);
+    const summaryNote = normalizedComparison() && (metric === 'rate' || metric === 'points')
+        ? ' The selected area also shows attempts, makes and points per 100 shots.' : '';
+    $('metric-note').textContent = metricNotes[metric] + summaryNote;
+    paintHistory($('history-chart'), model.history, model.views.map(v => v.entry.season), colours, metric);
 }
 
 function renderTypes(entry, filters) {
@@ -235,8 +258,12 @@ function renderTypes(entry, filters) {
 
 function renderCourts() {
     const phase = $('phase').value;
-    panels[1].hidden = model.views.length === 1;
-    $('workbench').classList.toggle('comparing', model.views.length === 2);
+    const comparing = model.views.length === 2;
+    const normalized = normalizedComparison();
+    $('compare-units').hidden = !comparing;
+    document.querySelector('[data-metric="share"]').textContent = comparing ? 'Shot frequency' : 'Shot share';
+    panels[1].hidden = !comparing;
+    $('workbench').classList.toggle('comparing', comparing);
     model.views.forEach(({entry, data, era}, i) => {
         const panel = panels[i];
         panel.querySelector('[data-year]').textContent = yearName(entry.season);
@@ -254,7 +281,9 @@ function renderCourts() {
         key.hidden = entry.season !== 'all';
         panel.querySelector('[data-total=n]').textContent = number.format(data.total.n);
         panel.querySelector('[data-total=rate]').textContent = format(value(data.total, data.total, 'rate'), 'rate');
-        panel.querySelector('[data-total=points]').textContent = number.format(data.total.points);
+        panel.querySelector('[data-points-label]').textContent = normalized ? 'Points per 100 shots' : 'Points';
+        panel.querySelector('[data-total=points]').textContent = normalized
+            ? format(per100(data.total.points, data.total.n), 'per100') : number.format(data.total.points);
         const coverage = recordedGames(entry.coverage, phase);
         panel.querySelector('[data-coverage]').textContent = entry.season === 'all'
             ? `${number.format(coverage.recorded_games)} games with recorded shots`
@@ -290,6 +319,16 @@ function tableRow(values) {
     return row;
 }
 
+function renderHistoryRows() {
+    const frequency = frequencyMetric();
+    $('history-frequency').textContent = metricNames[frequency];
+    $('history-rows').replaceChildren(...model.history.map(({season, area, total}) => tableRow([
+        season, `${number.format(area.makes)} / ${number.format(area.n)}`,
+        format(value(area, total, frequency), frequency), format(value(area, total, 'rate'), 'rate'),
+        format(value(area, total, 'points'), 'points')
+    ])));
+}
+
 async function historySeries() {
     const version = ++historyVersion;
     const filters = searchFilters();
@@ -313,11 +352,7 @@ async function historySeries() {
         }
         model.history = series;
         $('history-status').textContent = '';
-        $('history-rows').replaceChildren(...series.map(({season, area, total}) => tableRow([
-            season, `${number.format(area.makes)} / ${number.format(area.n)}`,
-            format(value(area, total, 'share'), 'share'), format(value(area, total, 'rate'), 'rate'),
-            format(value(area, total, 'points'), 'points')
-        ])));
+        renderHistoryRows();
         draw();
     } catch (error) {
         if (version === historyVersion) $('history-status').textContent = 'Season history could not load. Change a filter to try again.';
@@ -386,6 +421,10 @@ function bindCourt(panel, i) {
         model.hover[i] = square;
         const x = event.offsetX, y = event.offsetY;
         tooltip.textContent = cell.n ? `${number.format(cell.makes)} made / ${number.format(cell.n)} attempts · ${percent.format(cell.makes / cell.n)}` : 'No recorded shots here';
+        if (cell.n && displayedMetric() === 'per100') {
+            const frequency = format(per100(cell.n, data.total.n), 'per100');
+            tooltip.textContent = `${frequency} per 100 shots · ${tooltip.textContent}`;
+        }
         tooltip.hidden = false;
         const bound = tooltip.offsetWidth / 2 + 4;
         tooltip.style.left = `${Math.min(canvas.clientWidth - bound, Math.max(bound, x))}px`;
@@ -433,6 +472,12 @@ async function start() {
         document.querySelectorAll('[data-metric]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
         draw();
     }));
+    $('normalize-shots').addEventListener('change', () => {
+        model.hover = [];
+        panels.forEach(panel => { panel.querySelector('.court-hover').hidden = true; });
+        renderCourts();
+        renderHistoryRows();
+    });
     $('zone').addEventListener('change', event => {
         model.selection = event.target.value === 'cell' ? {kind:'cell', value:model.lastSquare} : {kind:'zone', value:Number(event.target.value)};
         refreshArea();

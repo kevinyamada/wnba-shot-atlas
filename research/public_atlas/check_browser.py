@@ -94,6 +94,97 @@ class Browser:
             self.proc.wait(timeout=5)
 
 
+def verify_comparison_units(browser):
+    """Recount two seasons of different sizes, including shots outside the map."""
+    js = browser.js
+    years = (2020, 2026)
+    packs = {year: json.loads((ROOT / f'explore/data/{year}.json').read_bytes())['rows']
+             for year in years}
+    assert js("document.getElementById('compare-units').hidden")
+    browser.select('season', years[0])
+    browser.select('compare', years[1])
+    assert js("document.getElementById('phase').selectedIndex === 0")
+    assert js("!document.getElementById('compare-units').hidden && document.getElementById('normalize-shots').checked")
+    browser.select('zone', 3)
+    toggle = "document.getElementById('normalize-shots').click()"
+
+    def check(filters, normalized):
+        browser.wait("document.getElementById('history-rows').rows.length > 0 && !document.getElementById('history-status').textContent")
+        legend = js("document.getElementById('legend-high').textContent")
+        expected_max = 1
+        samples = []
+        for panel, year in zip(('primary', 'secondary'), years):
+            rows = [r for r in packs[year] if all(r[i] == v for i, v in filters.items())]
+            attempts = sum(r[5] for r in rows)
+            points = sum(r[7] for r in rows)
+            area = [r for r in rows if r[4] == 3]
+            n, makes, zone_points = (sum(r[i] for r in area) for i in (5, 6, 7))
+            samples.append((year, n, attempts))
+            cells = {}
+            for r in rows:
+                if r[3] >= 0:
+                    cells[r[3]] = cells.get(r[3], 0) + r[5]
+            peak = max(cells.values(), default=0)
+            expected_max = max(expected_max, 100 * peak / attempts if normalized and attempts else peak)
+            card = f"document.getElementById('court-{panel}')"
+            assert js(f"{card}.querySelector('[data-total=n]').textContent") == f'{attempts:,}'
+            card_points = js(f"{card}.querySelector('[data-total=points]').textContent")
+            stats = js(f"""Object.fromEntries([...document.querySelectorAll('.area-result[data-season="{year}"] dt')]
+                .map(dt => [dt.textContent, dt.nextElementSibling.textContent]))""")
+            hist = js(f"""[...document.getElementById('history-rows').rows]
+                .find(r => r.cells[0].textContent === '{year}').cells[2].textContent""")
+            if normalized:
+                for label, value in [('Attempts', n), ('Makes', makes), ('Points', zone_points)]:
+                    shown = stats[f'{label} per 100 shots']
+                    if attempts:
+                        assert abs(float(shown) - 100 * value / attempts) <= .00500001, (year, label, shown)
+                    else:
+                        assert shown == 'Unavailable'
+                assert hist == stats['Attempts per 100 shots']
+                if attempts:
+                    assert abs(float(card_points) - 100 * points / attempts) <= .00500001
+                else:
+                    assert card_points == 'Unavailable'
+            else:
+                assert stats['Made / attempts'] == f'{makes:,} / {n:,}'
+                assert stats['Field goal points'] == f'{zone_points:,}'
+                assert card_points == f'{points:,}' and hist == f'{n:,}'
+        if normalized:
+            assert legend.endswith(' per 100') and abs(float(legend.split()[0]) - expected_max) <= .00500001
+        else:
+            assert legend == f'{expected_max:,}'
+        return samples
+
+    samples = check({}, True)
+    assert samples[0][2] != samples[1][2]
+    for year, shots, total in samples:
+        print(f'{year} corner three area: {shots:,} of {total:,} attempts, {100 * shots / total:.2f} per 100', flush=True)
+    js("window.normalizedCourts = [...document.querySelectorAll('.court-panel canvas')].map(c => c.toDataURL())")
+    js(toggle)
+    check({}, False)
+    assert js("[...document.querySelectorAll('.court-panel canvas')].some((c,i) => c.toDataURL() !== window.normalizedCourts[i])")
+    for metric in ('rate', 'points'):
+        js(f"document.querySelector('[data-metric={metric}]').click()")
+        js("window.rateCourt = document.querySelector('#court-primary canvas').toDataURL()")
+        js(toggle)
+        assert js("document.querySelector('#court-primary canvas').toDataURL() === window.rateCourt")
+    js("document.querySelector('[data-metric=share]').click()")
+    js(toggle)
+    browser.select('phase', 0)
+    browser.select('shot-type', 0)
+    check({0: 0, 8: 0}, True)
+    players_2020 = {r[2] for r in packs[2020]}
+    player = next(r[2] for r in packs[2026] if r[0] == 0 and r[8] == 0 and r[2] and r[2] not in players_2020)
+    browser.select('player', player)
+    check({0: 0, 2: player, 8: 0}, True)
+    js(toggle)
+    check({0: 0, 2: player, 8: 0}, False)
+    js(toggle)
+    for control, value in [('player', 'all'), ('shot-type', 'all'), ('phase', 'all'), ('compare', 'off'), ('zone', 'cell')]:
+        browser.select(control, value)
+    assert js("document.getElementById('compare-units').hidden")
+
+
 def verify(browser, url):
     index = json.loads((ROOT / 'explore/data/index.json').read_bytes())
     seasons = {row['season']: row for row in index['coverage']}
@@ -110,12 +201,14 @@ def verify(browser, url):
     browser.wait(ready)
     assert js("document.documentElement.dataset.theme") == 'light'
     assert js("document.querySelector('#season').value") == 'all'
-    assert js("document.querySelector('#phase').value") == 'all'
+    combined_first = "document.getElementById('phase').selectedIndex === 0 && document.getElementById('phase').options[0].value === 'all'"
+    assert js(combined_first)
     assert js(attempts) == fmt(sum(row[5] for row in all_pack['rows']))
     assert js(points) == fmt(sum(row[7] for row in all_pack['rows']))
     assert js(arc) == ','.join(str(r['arc_radius']) for r in index['court']['eras'])
     assert js("document.querySelectorAll('#court-primary [data-era-key] span').length") == 3
     browser.save_image('atlas_all_desktop.png')
+    verify_comparison_units(browser)
     for year, row in seasons.items():
         browser.select('season', year)
         assert js(attempts) == fmt(row['regular']['attempts'] + row['playoffs']['attempts']), year
@@ -244,10 +337,14 @@ def verify(browser, url):
         assert js(f"innerWidth==={width} && document.documentElement.scrollWidth<=innerWidth && document.querySelector('#court-primary canvas').clientWidth>220")
         js("document.querySelectorAll('details').forEach(node=>node.open=false);window.scrollTo(0,0)")
         browser.save_image(f'atlas_mobile_{width}.png')
+        browser.select('compare', 2026)
+        assert js("document.getElementById('normalize-shots').getBoundingClientRect().width > 0 && document.documentElement.scrollWidth <= innerWidth")
+        browser.select('compare', 'off')
 
     from urllib.parse import urljoin
     browser.call('Page.navigate', {'url': urljoin(url, 'explore/')})
     browser.wait("location.pathname.endsWith('/explore/') && " + ready)
+    assert js(combined_first)
     assert js(attempts) == fmt(sum(row[5] for row in all_pack['rows']))
     browser.call('Page.navigate', {'url': urljoin(url, 'study/')})
     browser.wait("location.pathname.endsWith('/study/') && document.body?.dataset.ready==='true' && document.body.dataset.recoveryReady==='true'")

@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Compare WNBA shooting from 1997 to 2026 by season, team, player and position on the court.">
   <title>WNBA Shot Atlas | Explore 1997 to 2026</title>
-  <link rel="stylesheet" href="atlas.css?v=4">
+  <link rel="stylesheet" href="atlas.css?v=5">
   <script src="../theme.js?v=light-default"></script>
-  <script type="module" src="atlas.js?v=4"></script>
+  <script type="module" src="atlas.js?v=5"></script>
 </head>
 <body>
   <a class="skip" href="#explorer">Skip to the shot explorer</a>
@@ -30,7 +30,7 @@
       <label>Season<select id="season" disabled></select></label>
       <label>Team<select id="team" disabled><option value="all">Whole league</option></select></label>
       <label>Player<select id="player" disabled><option value="all">All players</option></select></label>
-      <label>Games<select id="phase" disabled><option value="0">Regular season</option><option value="1">Playoffs</option><option value="all" selected>Regular + playoffs</option></select></label>
+      <label>Games<select id="phase" disabled><option value="all" selected>Regular + playoffs</option><option value="0">Regular season</option><option value="1">Playoffs</option></select></label>
       <label>Shot type<select id="shot-type" disabled><option value="all">All shot types</option></select></label>
       <label>Compare with<select id="compare" disabled><option value="off">No comparison</option></select></label>
     </div>
@@ -42,6 +42,10 @@
           <button type="button" data-metric="rate" aria-pressed="false">Make rate</button>
           <button type="button" data-metric="points" aria-pressed="false">Points per shot</button>
         </div>
+        <label id="compare-units" hidden>
+          <input id="normalize-shots" type="checkbox" checked aria-controls="court-pair area-stats history-chart" aria-describedby="metric-note">
+          Normalize per 100 shots
+        </label>
         <div class="legend"><span id="legend-low">0%</span><span class="legend-strip" aria-hidden="true"></span><span id="legend-high"></span></div>
       </div>
       <div class="workbench" id="workbench">
@@ -51,7 +55,7 @@
             <dl class="totals">
               <div><dt>Attempts</dt><dd data-total="n"></dd></div>
               <div><dt>Make rate</dt><dd data-total="rate"></dd></div>
-              <div><dt>Points</dt><dd data-total="points"></dd></div>
+              <div><dt data-points-label>Points</dt><dd data-total="points"></dd></div>
             </dl>
             <div class="court-stage">
               <canvas tabindex="0" aria-label="Shot court. Use the arrow keys to move the selected square."></canvas>
@@ -66,7 +70,7 @@
             <dl class="totals">
               <div><dt>Attempts</dt><dd data-total="n"></dd></div>
               <div><dt>Make rate</dt><dd data-total="rate"></dd></div>
-              <div><dt>Points</dt><dd data-total="points"></dd></div>
+              <div><dt data-points-label>Points</dt><dd data-total="points"></dd></div>
             </dl>
             <div class="court-stage">
               <canvas tabindex="0" aria-label="Comparison court. Use the arrow keys to move the selected square."></canvas>
@@ -93,14 +97,14 @@
       </details>
       <section class="history" aria-labelledby="history-title">
         <div class="section-heading">
-          <div><h2 id="history-title">Across the seasons</h2><p id="history-context"></p></div>
+          <div><h2 id="history-title">Across the seasons</h2><p><span id="history-unit"></span> · <span id="history-context"></span></p></div>
           <p class="line-key"><span aria-hidden="true"></span> Arc moved in 2004 and 2013</p>
         </div>
         <div id="history-status" role="status"></div>
         <div class="history-stage"><canvas id="history-chart" aria-label="The selected area across the seasons. Values are listed below." role="img"></canvas></div>
         <details id="history-details"><summary>View season values</summary>
           <div class="table-scroll">
-            <table><thead><tr><th>Season</th><th>Made / attempts</th><th>Shot share</th><th>Make rate</th><th>Points per shot</th></tr></thead><tbody id="history-rows"></tbody></table>
+            <table><thead><tr><th>Season</th><th>Made / attempts</th><th id="history-frequency">Shot share</th><th>Make rate</th><th>Points per shot</th></tr></thead><tbody id="history-rows"></tbody></table>
           </div>
         </details>
       </section>

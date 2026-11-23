@@ -73,6 +73,9 @@ select { width: 100%; min-height: 42px; padding: .45rem 1.8rem .45rem .65rem; bo
 .metric-group { display: flex; flex-wrap: wrap; gap: .2rem; padding: .2rem; border: 1px solid var(--line); border-radius: .45rem; background: var(--surface); }
 .metric-group button { border: 0; border-radius: .27rem; background: transparent; padding: .42rem .65rem; font-size: .875rem; }
 .metric-group button[aria-pressed='true'] { background: var(--deep); color: var(--surface); font-weight: 650; }
+#compare-units { display: inline-flex; align-items: center; gap: .48rem; cursor: pointer; padding: .42rem .58rem; border: 1px solid var(--line); border-radius: .35rem; background: var(--surface); }
+#compare-units input { width: 1.05rem; height: 1.05rem; margin: 0; accent-color: var(--deep); }
+#compare-units:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
 .legend { display: flex; gap: .6rem; align-items: center; color: var(--muted); font-size: .84rem; }
 .legend-strip { background: linear-gradient(90deg,var(--colour-min),var(--colour-mid),var(--colour-max)); width: clamp(5rem, 11vw, 9rem); height: .48rem; border-radius: 1rem; }
 .workbench { display: grid; grid-template-columns: minmax(0, 1fr) minmax(17rem, .55fr); align-items: start; gap: 1rem; }
