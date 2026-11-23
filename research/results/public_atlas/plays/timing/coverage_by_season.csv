@@ -1,0 +1,301 @@
+season,scope,situation,complete,eligible
+1997,playoffs,Defensive rebound,152,147
+1997,playoffs,Opponent basket,114,110
+1997,playoffs,Opponent free throw,30,29
+1997,playoffs,Opponent turnover,33,33
+1997,playoffs,Steal,46,46
+1997,regular,Defensive rebound,4812,4721
+1997,regular,Opponent basket,4597,4524
+1997,regular,Opponent free throw,1588,1546
+1997,regular,Opponent turnover,1729,1702
+1997,regular,Steal,1957,1916
+1998,playoffs,Defensive rebound,377,367
+1998,playoffs,Opponent basket,373,369
+1998,playoffs,Opponent free throw,105,99
+1998,playoffs,Opponent turnover,92,91
+1998,playoffs,Steal,123,121
+1998,regular,Defensive rebound,6719,6597
+1998,regular,Opponent basket,6430,6307
+1998,regular,Opponent free throw,2225,2163
+1998,regular,Opponent turnover,2234,2208
+1998,regular,Steal,2397,2348
+1999,playoffs,Defensive rebound,500,486
+1999,playoffs,Opponent basket,470,464
+1999,playoffs,Opponent free throw,140,139
+1999,playoffs,Opponent turnover,104,104
+1999,playoffs,Steal,160,155
+1999,regular,Defensive rebound,8347,8177
+1999,regular,Opponent basket,8086,7941
+1999,regular,Opponent free throw,2781,2692
+1999,regular,Opponent turnover,2701,2656
+1999,regular,Steal,2760,2711
+2000,playoffs,Defensive rebound,668,652
+2000,playoffs,Opponent basket,700,688
+2000,playoffs,Opponent free throw,192,187
+2000,playoffs,Opponent turnover,177,171
+2000,playoffs,Steal,246,242
+2000,regular,Defensive rebound,10529,10326
+2000,regular,Opponent basket,10876,10682
+2000,regular,Opponent free throw,3684,3562
+2000,regular,Opponent turnover,3531,3484
+2000,regular,Steal,3811,3742
+2001,playoffs,Defensive rebound,769,754
+2001,playoffs,Opponent basket,735,729
+2001,playoffs,Opponent free throw,220,212
+2001,playoffs,Opponent turnover,205,202
+2001,playoffs,Steal,224,220
+2001,regular,Defensive rebound,11402,11163
+2001,regular,Opponent basket,10797,10607
+2001,regular,Opponent free throw,3459,3336
+2001,regular,Opponent turnover,3294,3249
+2001,regular,Steal,3883,3818
+2002,playoffs,Defensive rebound,759,750
+2002,playoffs,Opponent basket,801,788
+2002,playoffs,Opponent free throw,247,242
+2002,playoffs,Opponent turnover,183,179
+2002,playoffs,Steal,234,227
+2002,regular,Defensive rebound,11165,10936
+2002,regular,Opponent basket,10979,10801
+2002,regular,Opponent free throw,3625,3512
+2002,regular,Opponent turnover,3384,3339
+2002,regular,Steal,3760,3670
+2003,playoffs,Defensive rebound,892,875
+2003,playoffs,Opponent basket,832,818
+2003,playoffs,Opponent free throw,304,298
+2003,playoffs,Opponent turnover,214,209
+2003,playoffs,Steal,247,240
+2003,regular,Defensive rebound,10749,10556
+2003,regular,Opponent basket,10497,10323
+2003,regular,Opponent free throw,3320,3218
+2003,regular,Opponent turnover,3061,3017
+2003,regular,Steal,3383,3316
+2004,playoffs,Defensive rebound,851,838
+2004,playoffs,Opponent basket,824,814
+2004,playoffs,Opponent free throw,254,250
+2004,playoffs,Opponent turnover,235,235
+2004,playoffs,Steal,302,298
+2004,regular,Defensive rebound,10032,9848
+2004,regular,Opponent basket,9650,9482
+2004,regular,Opponent free throw,3167,3057
+2004,regular,Opponent turnover,2879,2836
+2004,regular,Steal,3307,3256
+2005,playoffs,Defensive rebound,788,770
+2005,playoffs,Opponent basket,723,713
+2005,playoffs,Opponent free throw,284,276
+2005,playoffs,Opponent turnover,201,199
+2005,playoffs,Steal,222,216
+2005,regular,Defensive rebound,9783,9603
+2005,regular,Opponent basket,9503,9369
+2005,regular,Opponent free throw,3200,3094
+2005,regular,Opponent turnover,2958,2916
+2005,regular,Steal,3102,3056
+2006,playoffs,Defensive rebound,898,865
+2006,playoffs,Opponent basket,868,843
+2006,playoffs,Opponent free throw,286,275
+2006,playoffs,Opponent turnover,254,247
+2006,playoffs,Steal,236,231
+2006,regular,Defensive rebound,11474,11100
+2006,regular,Opponent basket,11146,10840
+2006,regular,Opponent free throw,3706,3567
+2006,regular,Opponent turnover,3388,3300
+2006,regular,Steal,3527,3381
+2007,playoffs,Defensive rebound,1170,1136
+2007,playoffs,Opponent basket,1125,1092
+2007,playoffs,Opponent free throw,328,306
+2007,playoffs,Opponent turnover,292,284
+2007,playoffs,Steal,285,271
+2007,regular,Defensive rebound,11174,10815
+2007,regular,Opponent basket,10872,10574
+2007,regular,Opponent free throw,3650,3495
+2007,regular,Opponent turnover,3645,3567
+2007,regular,Steal,3400,3295
+2008,playoffs,Defensive rebound,1045,1011
+2008,playoffs,Opponent basket,992,964
+2008,playoffs,Opponent free throw,311,301
+2008,playoffs,Opponent turnover,337,330
+2008,playoffs,Steal,293,285
+2008,regular,Defensive rebound,11864,11490
+2008,regular,Opponent basket,11467,11155
+2008,regular,Opponent free throw,4028,3818
+2008,regular,Opponent turnover,3650,3549
+2008,regular,Steal,3655,3542
+2009,playoffs,Defensive rebound,1042,1006
+2009,playoffs,Opponent basket,1109,1082
+2009,playoffs,Opponent free throw,391,371
+2009,playoffs,Opponent turnover,293,285
+2009,playoffs,Steal,316,308
+2009,regular,Defensive rebound,10983,10644
+2009,regular,Opponent basket,10889,10586
+2009,regular,Opponent free throw,3700,3523
+2009,regular,Opponent turnover,3218,3107
+2009,regular,Steal,3409,3307
+2010,playoffs,Defensive rebound,792,760
+2010,playoffs,Opponent basket,836,815
+2010,playoffs,Opponent free throw,289,275
+2010,playoffs,Opponent turnover,212,210
+2010,playoffs,Steal,226,222
+2010,regular,Defensive rebound,10210,9885
+2010,regular,Opponent basket,10556,10271
+2010,regular,Opponent free throw,3433,3278
+2010,regular,Opponent turnover,2875,2797
+2010,regular,Steal,3217,3117
+2011,playoffs,Defensive rebound,995,967
+2011,playoffs,Opponent basket,977,951
+2011,playoffs,Opponent free throw,308,303
+2011,playoffs,Opponent turnover,225,218
+2011,playoffs,Steal,282,273
+2011,regular,Defensive rebound,10124,9793
+2011,regular,Opponent basket,10346,10053
+2011,regular,Opponent free throw,3057,2921
+2011,regular,Opponent turnover,2822,2748
+2011,regular,Steal,3033,2934
+2012,playoffs,Defensive rebound,890,861
+2012,playoffs,Opponent basket,998,982
+2012,playoffs,Opponent free throw,284,273
+2012,playoffs,Opponent turnover,230,221
+2012,playoffs,Steal,270,262
+2012,regular,Defensive rebound,10214,9928
+2012,regular,Opponent basket,10248,9977
+2012,regular,Opponent free throw,3010,2878
+2012,regular,Opponent turnover,2855,2773
+2012,regular,Steal,3277,3183
+2013,playoffs,Defensive rebound,779,756
+2013,playoffs,Opponent basket,692,670
+2013,playoffs,Opponent free throw,214,204
+2013,playoffs,Opponent turnover,187,183
+2013,playoffs,Steal,207,199
+2013,regular,Defensive rebound,10446,10149
+2013,regular,Opponent basket,10048,9787
+2013,regular,Opponent free throw,3055,2911
+2013,regular,Opponent turnover,2578,2514
+2013,regular,Steal,2969,2876
+2014,playoffs,Defensive rebound,807,781
+2014,playoffs,Opponent basket,877,853
+2014,playoffs,Opponent free throw,269,254
+2014,playoffs,Opponent turnover,184,176
+2014,playoffs,Steal,225,217
+2014,regular,Defensive rebound,10118,9824
+2014,regular,Opponent basket,10218,9902
+2014,regular,Opponent free throw,2929,2786
+2014,regular,Opponent turnover,2507,2433
+2014,regular,Steal,2887,2803
+2015,playoffs,Defensive rebound,1023,992
+2015,playoffs,Opponent basket,1054,1035
+2015,playoffs,Opponent free throw,288,274
+2015,playoffs,Opponent turnover,230,218
+2015,playoffs,Steal,294,276
+2015,regular,Defensive rebound,10475,10162
+2015,regular,Opponent basket,9975,9697
+2015,regular,Opponent free throw,3062,2919
+2015,regular,Opponent turnover,2521,2449
+2015,regular,Steal,2790,2709
+2016,playoffs,Defensive rebound,754,740
+2016,playoffs,Opponent basket,892,858
+2016,playoffs,Opponent free throw,273,263
+2016,playoffs,Opponent turnover,179,174
+2016,playoffs,Steal,220,215
+2016,regular,Defensive rebound,10482,10141
+2016,regular,Opponent basket,10590,10328
+2016,regular,Opponent free throw,3536,3391
+2016,regular,Opponent turnover,2473,2409
+2016,regular,Steal,2838,2745
+2017,playoffs,Defensive rebound,792,772
+2017,playoffs,Opponent basket,779,755
+2017,playoffs,Opponent free throw,221,207
+2017,playoffs,Opponent turnover,174,163
+2017,playoffs,Steal,199,196
+2017,regular,Defensive rebound,10233,9939
+2017,regular,Opponent basket,10440,10195
+2017,regular,Opponent free throw,3156,2991
+2017,regular,Opponent turnover,2492,2415
+2017,regular,Steal,2660,2577
+2018,playoffs,Defensive rebound,823,795
+2018,playoffs,Opponent basket,897,877
+2018,playoffs,Opponent free throw,194,183
+2018,playoffs,Opponent turnover,165,160
+2018,playoffs,Steal,158,156
+2018,regular,Defensive rebound,10341,10059
+2018,regular,Opponent basket,10693,10455
+2018,regular,Opponent free throw,2986,2853
+2018,regular,Opponent turnover,2365,2287
+2018,regular,Steal,2577,2521
+2019,playoffs,Defensive rebound,883,856
+2019,playoffs,Opponent basket,962,936
+2019,playoffs,Opponent free throw,222,219
+2019,playoffs,Opponent turnover,173,169
+2019,playoffs,Steal,197,193
+2019,regular,Defensive rebound,10069,9778
+2019,regular,Opponent basket,9737,9510
+2019,regular,Opponent free throw,2556,2442
+2019,regular,Opponent turnover,2475,2396
+2019,regular,Steal,2673,2608
+2020,playoffs,Defensive rebound,837,817
+2020,playoffs,Opponent basket,817,803
+2020,playoffs,Opponent free throw,211,202
+2020,playoffs,Opponent turnover,178,171
+2020,playoffs,Steal,189,184
+2020,regular,Defensive rebound,7073,6896
+2020,regular,Opponent basket,7168,6982
+2020,regular,Opponent free throw,2100,2016
+2020,regular,Opponent turnover,1717,1664
+2020,regular,Steal,1940,1891
+2021,playoffs,Defensive rebound,960,930
+2021,playoffs,Opponent basket,973,953
+2021,playoffs,Opponent free throw,228,215
+2021,playoffs,Opponent turnover,215,209
+2021,playoffs,Steal,234,228
+2021,regular,Defensive rebound,10579,10273
+2021,regular,Opponent basket,10277,10053
+2021,regular,Opponent free throw,2732,2600
+2021,regular,Opponent turnover,2526,2453
+2021,regular,Steal,2543,2481
+2022,playoffs,Defensive rebound,1312,1277
+2022,playoffs,Opponent basket,1282,1238
+2022,playoffs,Opponent free throw,297,281
+2022,playoffs,Opponent turnover,239,237
+2022,playoffs,Steal,294,285
+2022,regular,Defensive rebound,11552,11227
+2022,regular,Opponent basket,11569,11308
+2022,regular,Opponent free throw,3134,2999
+2022,regular,Opponent turnover,2874,2783
+2022,regular,Steal,3049,2972
+2023,playoffs,Defensive rebound,1069,1046
+2023,playoffs,Opponent basket,1058,1038
+2023,playoffs,Opponent free throw,258,247
+2023,playoffs,Opponent turnover,218,205
+2023,playoffs,Steal,255,246
+2023,regular,Defensive rebound,12975,12600
+2023,regular,Opponent basket,12797,12481
+2023,regular,Opponent free throw,3559,3402
+2023,regular,Opponent turnover,3162,3074
+2023,regular,Steal,3167,3090
+2024,playoffs,Defensive rebound,1175,1132
+2024,playoffs,Opponent basket,1191,1166
+2024,playoffs,Opponent free throw,306,286
+2024,playoffs,Opponent turnover,261,253
+2024,playoffs,Steal,282,279
+2024,regular,Defensive rebound,13039,12674
+2024,regular,Opponent basket,12916,12619
+2024,regular,Opponent free throw,3485,3326
+2024,regular,Opponent turnover,3115,3007
+2024,regular,Steal,3389,3292
+2025,playoffs,Defensive rebound,1235,1195
+2025,playoffs,Opponent basket,1200,1169
+2025,playoffs,Opponent free throw,308,299
+2025,playoffs,Opponent turnover,256,245
+2025,playoffs,Steal,310,302
+2025,regular,Defensive rebound,15049,14629
+2025,regular,Opponent basket,15051,14687
+2025,regular,Opponent free throw,4104,3951
+2025,regular,Opponent turnover,3555,3431
+2025,regular,Steal,4000,3896
+2026,playoffs,Defensive rebound,1195,1157
+2026,playoffs,Opponent basket,1089,1061
+2026,playoffs,Opponent free throw,408,388
+2026,playoffs,Opponent turnover,242,231
+2026,playoffs,Steal,300,289
+2026,regular,Defensive rebound,17200,16707
+2026,regular,Opponent basket,18041,17654
+2026,regular,Opponent free throw,5467,5225
+2026,regular,Opponent turnover,4026,3896
+2026,regular,Steal,4599,4465

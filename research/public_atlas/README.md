@@ -38,6 +38,8 @@ python research/public_atlas/play_sources.py
 python research/public_atlas/league_turns.py
 python research/public_atlas/play_value.py
 python research/public_atlas/verify_plays.py
+python research/public_atlas/shot_timing.py
+python research/public_atlas/verify_timing.py
 python research/public_atlas/check_browser.py
 ```
 
@@ -47,6 +49,7 @@ The restore step checks the pinned bytes and reports any upstream changes. An ex
 
 A separate check compares the ESPN shot tables with the WNBA Stats shot release on confidently matched games in 2025 and 2026. Its [source pins](reference_manifest.json), [season totals](../results/public_atlas/official_reference_summary.csv) and [game differences](../results/public_atlas/official_reference_games.csv) keep both versions visible. They agree on attempts, makes and points in 661 of 662 games. ESPN records one additional miss in game 401857099, where the ESPN team box also has one fewer attempt than its shot release. The prediction sample excludes that game through the box score check.
 
+- [How soon teams shoot after a change of possession](../results/public_atlas/plays/timing/README.md)
 - [Shot sources, next shot probability and expected points from play histories](../results/public_atlas/plays/README.md)
 - [Shot type at the same distance, rolling tests and source agreement](../results/public_atlas/shot_form/README.md)
 - [Data coverage, shot counts and arc patterns](../results/public_atlas/eda.md)

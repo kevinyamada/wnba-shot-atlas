@@ -1,4 +1,4 @@
-import { locationPanel, playSection, sourceBreakdown } from './play-value.js?v=1';
+import { locationPanel, playSection, sourceBreakdown } from './play-value.js?v=2';
 import { formComparison } from './shot-form.js?v=1';
 import { posteriorView } from './posterior.js?v=4';
 
@@ -281,7 +281,7 @@ function possessions(data, plays) {
     return node;
 }
 
-export function renderStudy(findings, data, rules, surfaces, palette, forms, plays) {
+export function renderStudy(findings, data, rules, surfaces, palette, forms, plays, timing) {
     const target = document.getElementById('public-study');
     const helpers = {el, table, details, section, picker};
     const shotStudy = shotSection(data, rules, surfaces, palette, forms);
@@ -290,7 +290,7 @@ export function renderStudy(findings, data, rules, surfaces, palette, forms, pla
     lineStudy.append(el('p','A shot just outside the line can earn an extra point. The records show where the ball was released. Whether a player deliberately stepped back would require movement data.'));
     document.getElementById('comparison-callout').append(lineStudy);
     sourceBreakdown(plays, helpers);
-    target.replaceChildren(playSection(plays, helpers), shotStudy, possessions(data, plays));
+    target.replaceChildren(playSection(plays, helpers, timing), shotStudy, possessions(data, plays));
     target.hidden = false;
     document.getElementById('study-status').textContent = '';
 }

@@ -185,6 +185,45 @@ def verify_comparison_units(browser):
     assert js("document.getElementById('compare-units').hidden")
 
 
+def verify_shot_timing(browser):
+    data = json.loads((ROOT / 'explore/data/shot-timing.json').read_bytes())
+    js = browser.js
+    assert js("document.getElementById('timing-games').selectedIndex === 0 && document.getElementById('timing-games').value === 'both'")
+    assert js("document.getElementById('timing-seconds').value") == '6'
+    for phase, block in data['scopes'].items():
+        browser.select('timing-games', phase)
+        for t in range(data['maxSeconds'] + 1):
+            js(f"(()=>{{ const time=document.getElementById('timing-seconds'); time.value={t}; time.dispatchEvent(new Event('input')); }})()")
+            cards = js("""[...document.querySelectorAll('.timing-card')].map(c => ({
+                name: c.dataset.situation, rate: c.querySelector('strong').textContent,
+                sources: c.querySelector('small').textContent, points: c.querySelector('small:last-child').textContent,
+                filled: c.querySelectorAll('.attempted').length, dots: c.querySelectorAll('i').length}))""")
+            assert len(cards) == 2
+            for card in cards:
+                g = block['groups'][card['name']]
+                rate = 100*g['shots'][t]/g['starts']
+                assert card['rate'] == f'{rate:.1f}%' and card['filled'] == int(rate + .5) and card['dots'] == 100
+                assert card['sources'] == f"{g['shots'][t]:,} of {g['starts']:,} possessions"
+                assert card['points'] == f"{100*g['points'][t]/g['starts']:.1f} points from first shots per 100 possessions"
+            displayed = js("[...document.querySelector('#shot-timing table tbody').rows].map(r => [...r.cells].map(c => c.textContent))")
+            assert len(displayed) == len(block['groups'])
+            for cells, g in zip(displayed, block['groups'].values()):
+                assert cells[1:] == [f"{g['starts']:,}", f"{g['shots'][t]:,}", f"{g['makes'][t]:,}", f"{100*g['points'][t]/g['starts']:.1f}"]
+    forecasts = sorted(data['forecasts'], key=lambda r: (r['season'], r['scope'] != 'regular'))
+    displayed = js("[...document.querySelectorAll('#shot-timing table')[1].tBodies[0].rows].map(r => [...r.cells].map(c => c.textContent))")
+    for cells, row in zip(displayed, forecasts, strict=True):
+        assert cells[1:4] == [f"{row['starts']:,}", f"{row['baseline']:.5f}", f"{row['model']:.5f}"]
+    browser.select('timing-games', 'both')
+    js("document.getElementById('timing-seconds').value=6;document.getElementById('timing-seconds').focus()")
+    for event in ['keyDown', 'keyUp']:
+        browser.call('Input.dispatchKeyEvent', {'type': event, 'key': 'ArrowRight', 'code': 'ArrowRight', 'windowsVirtualKeyCode': 39})
+    assert js("document.getElementById('timing-seconds').value") == '7'
+    js("document.getElementById('timing-seconds').value=6;document.getElementById('timing-seconds').dispatchEvent(new Event('input'))")
+    js("document.getElementById('shot-timing').scrollIntoView({block:'start'})")
+    browser.save_image('atlas_shot_timing_desktop.png')
+    print('SHOT_TIMING_BROWSER_VERIFIED', data['scopes']['both']['eligible'], 'possessions, all clock settings and game types', flush=True)
+
+
 def verify(browser, url):
     index = json.loads((ROOT / 'explore/data/index.json').read_bytes())
     seasons = {row['season']: row for row in index['coverage']}
@@ -254,6 +293,7 @@ def verify(browser, url):
     assert 'Layup' in js("document.querySelector('#history-context').textContent")
     assert js("document.querySelector('#type-rows').rows.length") == len(index['shotTypes'])
 
+    verify_shot_timing(browser)
     plays=json.loads((ROOT/'explore/data/plays.json').read_bytes())
     forms=json.loads((ROOT/'explore/data/shot-form.json').read_bytes())
     assert js("document.querySelector('#miss-scope').value")=='both'
@@ -337,14 +377,19 @@ def verify(browser, url):
         assert js(f"innerWidth==={width} && document.documentElement.scrollWidth<=innerWidth && document.querySelector('#court-primary canvas').clientWidth>220")
         js("document.querySelectorAll('details').forEach(node=>node.open=false);window.scrollTo(0,0)")
         browser.save_image(f'atlas_mobile_{width}.png')
+        assert js("[...document.querySelectorAll('.timing-card')].every(c => c.offsetWidth > 0 && c.getBoundingClientRect().right <= innerWidth)")
+        if width == 390:
+            js("document.getElementById('shot-timing').scrollIntoView({block:'start'})")
+            browser.save_image('atlas_shot_timing_mobile.png')
         browser.select('compare', 2026)
         assert js("document.getElementById('normalize-shots').getBoundingClientRect().width > 0 && document.documentElement.scrollWidth <= innerWidth")
         browser.select('compare', 'off')
 
     from urllib.parse import urljoin
-    browser.call('Page.navigate', {'url': urljoin(url, 'explore/')})
+    browser.call('Page.navigate', {'url': urljoin(url, 'explore/#shot-timing')})
     browser.wait("location.pathname.endsWith('/explore/') && " + ready)
     assert js(combined_first)
+    browser.wait("document.getElementById('shot-timing')?.getBoundingClientRect().top < innerHeight && document.getElementById('shot-timing').getBoundingClientRect().bottom > 0")
     assert js(attempts) == fmt(sum(row[5] for row in all_pack['rows']))
     browser.call('Page.navigate', {'url': urljoin(url, 'study/')})
     browser.wait("location.pathname.endsWith('/study/') && document.body?.dataset.ready==='true' && document.body.dataset.recoveryReady==='true'")

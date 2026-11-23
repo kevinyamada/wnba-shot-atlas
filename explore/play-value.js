@@ -1,3 +1,5 @@
+import { shotTiming } from './shot-timing.js?v=1';
+
 const num = new Intl.NumberFormat('en-CA');
 const pc = a => (100*a).toFixed(1) + '%';
 const names = {
@@ -6,7 +8,7 @@ const names = {
     'Opponent basket':'After an opponent basket','Opponent free throw':'After an opponent free throw'
 };
 
-export function playSection(data, {el, table, details, section, picker}) {
+export function playSection(data, {el, table, details, section, picker}, timing) {
     const node = section('plays-title','What happens on the next play?');
     const steal=data.situations.find(r=>r.situation==='Steal');
     const basket=data.situations.find(r=>r.situation==='Opponent basket');
@@ -66,7 +68,9 @@ export function playSection(data, {el, table, details, section, picker}) {
         ...(metrics.filter(r=>r.model==='Up to ten actions').every(r=>r.brier_low<=0 && r.brier_high>=0 && r.mse_low<=0 && r.mse_high>=0)
             ? [el('p','In both the 2026 regular season and playoffs, the longer history and the most recent action gave almost identical predictions. The uncertainty ranges included a tie for both shot chance and points.')] : []),
         el('p','Lower scores mean closer predictions. These events capture shots, free throws, rebounds, fouls and turnovers. Passes, cuts and defender positions would require player and ball tracking.'));
-    node.append(label,output,details('Compare all play situations',
+    const clock = timing ? shotTiming(timing, {el, table, details, picker})
+        : el('p', 'The shot timing comparison could not load. Reload the page to try again.', 'caption');
+    node.append(clock, details('Compare all play situations', label, output,
         table(['Situation','Chances observed','Shot next','Scored in the turn','Points remaining'],ordered.map(s=>[
             names[s.situation],num.format(s.states),pc(s.next_shots/s.states),pc(s.scoring_turns/s.states),(s.points/s.states).toFixed(2)])),
         el('p','These are league averages in complete turns with verified scores and a clear change of control. The game clock, players and defense can differ across situations.')),

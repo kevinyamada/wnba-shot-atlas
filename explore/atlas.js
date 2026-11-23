@@ -1,5 +1,5 @@
 import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=5';
-import { renderStudy } from './study-findings.js?v=4';
+import { renderStudy } from './study-findings.js?v=5';
 
 const $ = id => document.getElementById(id);
 const controls = ['season', 'team', 'player', 'phase', 'shot-type', 'compare'].map($);
@@ -503,10 +503,12 @@ async function start() {
     window.addEventListener('resize', resize);
     new MutationObserver(resize).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
     await refresh();
-    Promise.all([json('data/findings.json'), json('data/study.json'), json('data/bayesian.json'), json('data/shot-form.json'), json('data/plays.json')])
-        .then(([findings, study, bayesian, forms, plays]) => {
+    Promise.all([json('data/findings.json'), json('data/study.json'), json('data/bayesian.json'), json('data/shot-form.json'), json('data/plays.json'),
+        json('data/shot-timing.json').catch(error => { console.warn(error); return null; })])
+        .then(([findings, study, bayesian, forms, plays, timing]) => {
             if ([study, forms, plays].some(result => result.manifestSha256 !== index.manifestSha256)) throw new Error('Research data differ from the explorer snapshot');
-            renderStudy(findings, study, index.court, bayesian, palette, forms, plays);
+            const matchedTiming = timing?.manifestSha256 === index.manifestSha256 && timing.playManifestSha256 === plays.playManifestSha256;
+            renderStudy(findings, study, index.court, bayesian, palette, forms, plays, matchedTiming ? timing : null);
         })
         .catch(error => {
             $('study-status').textContent = 'The research findings could not load. Reload to try again.';
