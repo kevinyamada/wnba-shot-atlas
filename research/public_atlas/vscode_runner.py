@@ -83,6 +83,6 @@ def send(step, extra):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--send', nargs='+', metavar=('STEP', 'ARG'), help='run one step, for example --send shooters.py')
+    parser.add_argument('--send', nargs=argparse.REMAINDER, metavar='STEP', help='run one step with its own options, for example --send recount.py --live')
     args = parser.parse_args()
     sys.exit(send(args.send[0], args.send[1:]) if args.send else serve())
