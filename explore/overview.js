@@ -595,6 +595,103 @@ export function prediction(target, data, court, teams) {
     target.replaceChildren(...parts, ...teamParts, shooterTitle, dotKey(last, data.season), shooterChart, shooterNote, check);
 }
 
+const startNames = {'Steal': 'After a steal', 'Defensive rebound': 'After a defensive rebound', 'Opponent basket': 'After the opponent scores a basket',
+    'Opponent turnover': 'After a turnover with no steal', 'Opponent free throw': 'After opponent free throws'};
+const partOrder = ['rim', 'other_two', 'three', 'free_throw', 'second'];
+let startScope = 'all';
+
+export function startPoints(target, data) {
+    const redraw = () => startPoints(target, data);
+    const scope = data.scopes[startScope];
+    const years = `${scope.first} to ${scope.last}`;
+    const byStart = Object.fromEntries(scope.starts.map(row => [row.start, row]));
+    const [steal, basket] = data.compare.map(name => byStart[name]);
+    const gap = Object.fromEntries(scope.gap.map(row => [row.part, row]));
+    const lead = el('p', `For every 100 times a team got the ball with a steal, it scored ${steal.points.toFixed(0)} points. After the opponent scored a basket, it scored ${basket.points.toFixed(0)}. `
+        + `Almost all of the extra ${gap.total.gap.toFixed(0)} points come from layups and dunks.`);
+
+    const pick = el('div', null, 'metric-group');
+    pick.id = 'start-scope';
+    pick.setAttribute('role', 'group');
+    pick.setAttribute('aria-label', 'Seasons');
+    for (const [value, item] of Object.entries(data.scopes)) {
+        const button = el('button', value === 'all' ? `All seasons, ${item.first} to ${item.last}` : `${item.first} to ${item.last} only`);
+        button.type = 'button';
+        button.setAttribute('aria-pressed', String(value === startScope));
+        button.addEventListener('click', () => { startScope = value; redraw(); });
+        pick.append(button);
+    }
+
+    const legend = el('p', null, 'series-key');
+    legend.append(...partOrder.map((part, i) => el('span', data.parts[part], `series-${i + 1}`)));
+    const chart = el('div', null, 'start-chart');
+    chart.id = 'start-chart';
+    const most = Math.max(...scope.starts.map(row => row.points));
+    for (const row of scope.starts) {
+        const line = el('div', null, 'start-row');
+        line.dataset.start = row.start;
+        line.dataset.points = row.points;
+        const head = el('div', null, 'start-head');
+        head.append(el('span', startNames[row.start]), el('strong', `${row.points.toFixed(0)} points`));
+        const bar = el('div', null, 'start-bar');
+        bar.style.width = (100 * row.points / most) + '%';
+        bar.setAttribute('role', 'img');
+        bar.setAttribute('aria-label', `${startNames[row.start]}: ${row.points.toFixed(1)} points per 100 possessions. ` + partOrder.map(part => `${data.parts[part]} ${row[part].toFixed(1)}`).join(', ') + '.');
+        partOrder.forEach((part, i) => {
+            const piece = el('i', row[part] / most >= .1 ? row[part].toFixed(0) : '', `series-${i + 1}`);
+            piece.style.flexGrow = row[part];
+            piece.title = `${data.parts[part]}: ${row[part].toFixed(1)} points per 100 possessions`;
+            bar.append(piece);
+        });
+        line.append(head, bar);
+        chart.append(line);
+    }
+    const chartNote = el('p', `Points per 100 possessions, ${years}, regular season and playoffs. Every possession counts, including the ${steal.no_shot.toFixed(0)} in 100 after a steal that end with no shot at all. Second chances are all points scored after an offensive rebound.`, 'caption');
+
+    const points = el('ul', null, 'takeaways');
+    points.append(
+        takeaway(`${steal.rim_attempts.toFixed(0)} to ${basket.rim_attempts.toFixed(0)}`, `layups and dunks for every 100 possessions, after a steal against after the opponent scored. Getting more of them is worth ${gap.rim_volume.gap.toFixed(0)} of the extra points.`),
+        takeaway(`${whole(steal.rim_make_rate)} to ${whole(basket.rim_make_rate)}`, `of those layups and dunks go in. Making more of them is worth ${gap.rim_finishing.gap.toFixed(0)} more points.`),
+        takeaway(`${Math.abs(gap.other_two.gap + gap.three.gap).toFixed(0)} ${gap.other_two.gap + gap.three.gap < 0 ? 'fewer' : 'more'}`, `points from jump shots and other shots away from the rim, because teams take fewer of them after a steal. Free throws add ${gap.free_throw.gap.toFixed(0)} and second chances are about the same.`));
+
+    const gapTitle = el('h3', `Where the extra ${gap.total.gap.toFixed(0)} points come from`);
+    const list = el('div', null, 'area-list');
+    list.id = 'start-gap';
+    const limit = Math.max(...partOrder.map(part => Math.max(Math.abs(gap[part].low), Math.abs(gap[part].high))));
+    for (const part of [...partOrder].sort((a, b) => gap[b].gap - gap[a].gap)) {
+        const value = gap[part].gap;
+        const line = el('div', null, 'area-line');
+        line.dataset.part = part;
+        line.dataset.value = value;
+        const track = el('span', null, 'mini-track');
+        const bar = el('i', null, value >= 0 ? 'good' : 'bad');
+        bar.style.width = (50 * Math.abs(value) / limit) + '%';
+        bar.style[value >= 0 ? 'left' : 'right'] = '50%';
+        track.append(bar);
+        line.title = `Likely range ${signed(gap[part].low)} to ${signed(gap[part].high)}`;
+        line.append(el('span', data.parts[part]), track, el('em', `${moreWords(value)} points`, value >= 0 ? 'good' : 'bad'));
+        list.append(line);
+    }
+    const gapNote = el('p', `A steal compared with the opponent scoring, in points per 100 possessions. The five lines add up to ${gap.total.gap.toFixed(1)}. Hover over a line for its likely range.`, 'caption');
+
+    const table = el('table');
+    table.id = 'start-table';
+    const head = table.createTHead().insertRow();
+    for (const text of ['How the team got the ball', 'Possessions', 'Points per 100', ...partOrder.map(part => data.parts[part]), 'Layups and dunks per 100', 'Layups and dunks made', 'No shot per 100']) head.append(Object.assign(el('th', text), {scope: 'col'}));
+    const body = table.createTBody();
+    for (const row of scope.starts) {
+        const line = body.insertRow();
+        line.append(Object.assign(el('th', startNames[row.start]), {scope: 'row'}), el('td', count.format(row.possessions)), el('td', row.points.toFixed(1)),
+            ...partOrder.map(part => el('td', row[part].toFixed(1))), el('td', row.rim_attempts.toFixed(1)), el('td', (100 * row.rim_make_rate).toFixed(1) + '%'), el('td', row.no_shot.toFixed(1)));
+    }
+    const wrap = el('div', null, 'table-scroll');
+    wrap.append(table);
+    const numbers = el('details');
+    numbers.append(el('summary', 'See every number'), wrap,
+        el('p', `${count.format(scope.games)} games. A layup or dunk is a shot the league event file describes as a layup, dunk or tip, taken before any offensive rebound in the possession. These numbers describe what happened. They do not show that forcing more steals would add the same points.`, 'caption'));
+    target.replaceChildren(lead, pick, legend, chart, chartNote, points, gapTitle, list, gapNote, numbers);
+}
+
 export function teamStory(data, year, id) {
     const teams = data.seasons[year] ?? [];
     const team = teams.find(row => row.id === id);

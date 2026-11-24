@@ -115,6 +115,20 @@ The two views can disagree. A team can shoot poorly and still score well per pos
 | LaToya Sanders | 464 | +6.7 | +2.9 to +10.5 |
 | Nneka Ogwumike | 4,790 | +6.3 | +4.9 to +7.6 |
 
+### Why a steal is worth so much
+
+Across 987,140 complete possessions from 1997 to 2026, teams scored 113.8 points per 100 possessions after a steal and 95.8 after an opponent's basket. Every possession counts, including those that ended without a shot. The points are split by where they came from, and the parts add up to the total.
+
+| How the team got the ball | Possessions | Points per 100 | Layups and dunks | Other twos | Threes | Free throws | Second chances |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Steal | 101,035 | 113.8 | 46.9 | 18.5 | 16.7 | 18.5 | 13.2 |
+| Defensive rebound | 345,444 | 99.2 | 25.9 | 22.8 | 20.4 | 17.1 | 13.0 |
+| Opponent basket | 342,699 | 95.8 | 21.2 | 25.1 | 21.5 | 15.1 | 12.9 |
+| Opponent turnover | 92,798 | 94.2 | 20.3 | 26.4 | 20.1 | 13.6 | 13.8 |
+| Opponent free throw | 105,164 | 94.1 | 19.7 | 24.1 | 20.1 | 16.0 | 14.3 |
+
+The gap of 18.0 points (95% range 17.2 to 18.8) is a layup story. After a steal teams took 34.2 first chance layups and dunks per 100 possessions and made 68.5% of them, against 18.5 and 57.3% after an opponent's basket. Layups and dunks account for +25.7 points per 100 possessions: 19.8 from taking more of them and 5.9 from making more of them. Other two point shots give back 6.7 and three point shots 4.7, because teams take fewer of them. Free throws add 3.4 and second chances 0.3. These describe what happened and do not show that forcing more steals would add the same points.
+
 ### Why distance is hard to beat
 
 ![Share of forecast error removed by distance and by each further kind of information](research/results/public_atlas/report/information_ladder.png)
@@ -204,6 +218,7 @@ The [pipeline notes](research/public_atlas/README.md) list every command. Each s
 - [Shot mix and conversion](research/results/public_atlas/shot_mix/README.md)
 - [League expected points](research/results/public_atlas/expected_points/README.md)
 - [What a team controls](research/results/public_atlas/teams/README.md) and [whole possessions](research/results/public_atlas/teams/POSSESSIONS.md)
+- [Where the points come from after each way of getting the ball](research/results/public_atlas/plays/starts/README.md)
 - [Shooters against expectation](research/results/public_atlas/shooters/README.md)
 - [Why distance is hard to beat](research/results/public_atlas/why_distance/README.md)
 - [Predictions for 2027](research/results/public_atlas/prediction_2027/README.md) and the [Bayesian court surface](research/results/public_atlas/prediction_2027/SURFACE.md)

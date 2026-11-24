@@ -35,6 +35,10 @@ def main():
     league = pd.read_csv(RESULTS / 'prediction_2027/league.csv')
     shooters = json.loads((SITE / 'shooters.json').read_bytes())
     lab = pd.read_csv(RESULTS / 'methods_lab/scores.csv')
+    starts = pd.read_csv(RESULTS / 'plays/starts/by_start.csv')
+    starts = starts[starts.scope.eq('all')].set_index('start')
+    steal_gap = pd.read_csv(RESULTS / 'plays/starts/steal_gap.csv')
+    steal_gap = steal_gap[steal_gap.scope.eq('all')].set_index('part')
     moran = pd.read_csv(RESULTS / 'methods_lab/morans_i.csv').set_index('residual')
     density = pd.read_csv(RESULTS / 'methods_lab/intensity_scores.csv')
     cox, reuse = ((density[name] * density.shots).sum() / density.shots.sum() for name in ('cox_process', 'last_season'))
@@ -116,6 +120,19 @@ def main():
              table(players[players.attempts.ge(200)].sort_values('per_100', ascending=False).head(8).assign(
                  a=lambda f: f.attempts.map('{:,}'.format), b=lambda f: f.per_100.map('{:+.1f}'.format), c=lambda f: [f'{x:+.1f} to {y:+.1f}' for x, y in zip(f.low, f.high)])[
                      ['name', 'a', 'b', 'c']].rename(columns={'name': 'Player', 'a': 'Attempts', 'b': 'Makes per 100 shots above expectation', 'c': '95% interval'})),
+             '### Why a steal is worth so much', '',
+             f"Across {int(starts.possessions.sum()):,} complete possessions from 1997 to 2026, teams scored {starts.loc['Steal', 'points']:.1f} points per 100 possessions after a steal and {starts.loc['Opponent basket', 'points']:.1f} after an opponent's basket. "
+             'Every possession counts, including those that ended without a shot. The points are split by where they came from, and the parts add up to the total.', '',
+             table(pd.DataFrame({'How the team got the ball': starts.index, 'Possessions': starts.possessions.map('{:,}'.format), 'Points per 100': starts.points.map('{:.1f}'.format),
+                                 'Layups and dunks': starts.rim.map('{:.1f}'.format), 'Other twos': starts.other_two.map('{:.1f}'.format), 'Threes': starts.three.map('{:.1f}'.format),
+                                 'Free throws': starts.free_throw.map('{:.1f}'.format), 'Second chances': starts.second.map('{:.1f}'.format)})),
+             f"The gap of {steal_gap.loc['total', 'gap']:.1f} points (95% range {steal_gap.loc['total', 'low']:.1f} to {steal_gap.loc['total', 'high']:.1f}) is a layup story. "
+             f"After a steal teams took {starts.loc['Steal', 'rim_attempts']:.1f} first chance layups and dunks per 100 possessions and made {100 * starts.loc['Steal', 'rim_make_rate']:.1f}% of them, "
+             f"against {starts.loc['Opponent basket', 'rim_attempts']:.1f} and {100 * starts.loc['Opponent basket', 'rim_make_rate']:.1f}% after an opponent's basket. "
+             f"Layups and dunks account for {steal_gap.loc['rim', 'gap']:+.1f} points per 100 possessions: {steal_gap.loc['rim_volume', 'gap']:.1f} from taking more of them and {steal_gap.loc['rim_finishing', 'gap']:.1f} from making more of them. "
+             f"Other two point shots give back {abs(steal_gap.loc['other_two', 'gap']):.1f} and three point shots {abs(steal_gap.loc['three', 'gap']):.1f}, because teams take fewer of them. "
+             f"Free throws add {steal_gap.loc['free_throw', 'gap']:.1f} and second chances {steal_gap.loc['second', 'gap']:.1f}. "
+             'These describe what happened and do not show that forcing more steals would add the same points.', '',
              '### Why distance is hard to beat', '',
              '![Share of forecast error removed by distance and by each further kind of information](research/results/public_atlas/report/information_ladder.png)', '',
              f"On {int(full.attempts):,} shots from the 2026 regular season, with models fitted on 2022 to 2024 and tuned on 2025:", '',
@@ -168,6 +185,7 @@ def main():
              '- [Shot mix and conversion](research/results/public_atlas/shot_mix/README.md)',
              '- [League expected points](research/results/public_atlas/expected_points/README.md)',
              '- [What a team controls](research/results/public_atlas/teams/README.md) and [whole possessions](research/results/public_atlas/teams/POSSESSIONS.md)',
+             '- [Where the points come from after each way of getting the ball](research/results/public_atlas/plays/starts/README.md)',
              '- [Shooters against expectation](research/results/public_atlas/shooters/README.md)',
              '- [Why distance is hard to beat](research/results/public_atlas/why_distance/README.md)',
              '- [Predictions for 2027](research/results/public_atlas/prediction_2027/README.md) and the [Bayesian court surface](research/results/public_atlas/prediction_2027/SURFACE.md)',

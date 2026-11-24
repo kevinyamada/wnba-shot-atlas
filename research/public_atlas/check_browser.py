@@ -562,6 +562,46 @@ def verify_team_report(browser):
     print('TEAM_REPORT_BROWSER_VERIFIED', len(data['seasons']), 'seasons of team tables and one full report', flush=True)
 
 
+def verify_starts(browser):
+    """Match the points by start chart, the gap list and the table with the saved study."""
+    js = browser.js
+    data = json.loads((ROOT / 'explore/data/start-points.json').read_bytes())
+    parts = ['rim', 'other_two', 'three', 'free_throw', 'second']
+    browser.wait("!document.getElementById('more-starts').hidden")
+    js("document.getElementById('more-starts').open = true")
+    rows = "[...document.querySelectorAll('#start-chart .start-row')].map(r => [r.dataset.start, Number(r.dataset.points), parseFloat(r.querySelector('.start-bar').style.width), [...r.querySelectorAll('.start-bar i')].map(i => Number(i.style.flexGrow))])"
+    for i, scope in enumerate(('all', 'recent')):
+        js(f"document.querySelectorAll('#start-scope button')[{i}].click()")
+        saved = data['scopes'][scope]
+        most = max(row['points'] for row in saved['starts'])
+        shown = js(rows)
+        assert [row[0] for row in shown] == [row['start'] for row in saved['starts']], scope
+        for (start, points, width, pieces), row in zip(shown, saved['starts'], strict=True):
+            assert points == row['points'] and abs(width - 100 * row['points'] / most) < .01 and pieces == [row[part] for part in parts], (scope, start)
+            assert abs(sum(pieces) - points) < .001, 'the five parts should add up to the total'
+        gap = {row['part']: row['gap'] for row in saved['gap']}
+        listed = js("[...document.querySelectorAll('#start-gap .area-line')].map(r => [r.dataset.part, Number(r.dataset.value)])")
+        assert listed == sorted(([part, gap[part]] for part in parts), key=lambda item: -item[1]), scope
+        assert abs(sum(gap[part] for part in parts) - gap['total']) < .001 and abs(gap['rim_volume'] + gap['rim_finishing'] - gap['rim']) < .001
+        table = js("[...document.getElementById('start-table').tBodies[0].rows].map(r => [r.cells[1].textContent, r.cells[2].textContent])")
+        assert table == [[f"{row['possessions']:,}", f"{row['points']:.1f}"] for row in saved['starts']], scope
+    js("document.querySelectorAll('#start-scope button')[0].click()")
+    steal, basket = (next(row for row in data['scopes']['all']['starts'] if row['start'] == name) for name in data['compare'])
+    lead = js("document.querySelector('#start-points > p').textContent")
+    assert f"{steal['points']:.0f} points" in lead and f"scored {basket['points']:.0f}." in lead, lead
+    js("document.getElementById('more-starts').scrollIntoView({block:'start'})")
+    browser.save_image('atlas_starts_desktop.png')
+    browser.call('Emulation.setDeviceMetricsOverride', {'width': 390, 'height': 844, 'deviceScaleFactor': 1, 'mobile': True})
+    time.sleep(.3)
+    assert js("document.documentElement.scrollWidth <= innerWidth && [...document.querySelectorAll('#start-chart .start-bar')].every(b => b.getBoundingClientRect().right <= innerWidth)"), 'the points by start chart overflows on a phone'
+    js("document.getElementById('more-starts').scrollIntoView({block:'start'})")
+    browser.save_image('atlas_starts_mobile_390.png')
+    browser.call('Emulation.setDeviceMetricsOverride', {'width': 1440, 'height': 1000, 'deviceScaleFactor': 1, 'mobile': False})
+    time.sleep(.3)
+    js("document.getElementById('more-starts').open = false")
+    print('STARTS_BROWSER_VERIFIED', len(data['scopes']['all']['starts']), 'kinds of start and', len(parts), 'parts', flush=True)
+
+
 def verify_prediction(browser):
     """Match the 2027 prediction section and the shooter prediction option with the saved predictions."""
     js = browser.js
@@ -703,6 +743,7 @@ def verify(browser, url):
     verify_overview(browser)
     verify_team_report(browser)
     verify_prediction(browser)
+    verify_starts(browser)
     verify_court_areas(browser)
     verify_area_selection(browser)
     verify_comparison_units(browser)

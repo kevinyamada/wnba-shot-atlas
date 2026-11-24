@@ -1,7 +1,7 @@
 import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=7';
 import { renderStudy } from './study-findings.js?v=6';
 import { shotMix } from './shot-mix.js?v=4';
-import { headline, shooters, ladder, teamReport, teamControl, prediction, teamStory } from './overview.js?v=8';
+import { headline, shooters, ladder, teamReport, teamControl, prediction, teamStory, startPoints } from './overview.js?v=9';
 
 const $ = id => document.getElementById(id);
 const controls = ['season', 'team', 'player', 'phase', 'shot-type', 'compare'].map($);
@@ -790,6 +790,11 @@ async function start() {
         if (!matches(data)) return;
         extras.possessions = data;
         renderTeam();
+    }).catch(error => console.warn(error));
+    json('data/start-points.json').then(data => {
+        if (!matches(data)) return;
+        startPoints($('start-points'), data);
+        $('more-starts').hidden = false;
     }).catch(error => console.warn(error));
     json('data/model-ladder.json').then(data => {
         if (!matches(data)) return;
