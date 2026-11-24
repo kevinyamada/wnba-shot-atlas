@@ -441,23 +441,32 @@ def verify_team_report(browser):
     browser.wait("!document.getElementById('team-report').hidden && !!document.getElementById('team-table')")
     latest = max(data['seasons'])
     assert latest in js("document.getElementById('team-title').textContent")
-    rows = "[...document.querySelectorAll('#team-table tbody tr')].map(r => [...r.cells].map(c => c.textContent))"
+    def per_game(team, key, field='estimate'):
+        own = key.startswith('offence')
+        return (1 if own else -1) * team[key][field] * (team['shots'] if own else team['shotsAgainst']) / team['games'] / 100
+
+    net = lambda team: sum(per_game(team, key) for key in order)
+    rows = "[...document.querySelectorAll('#team-table tbody tr')].map(r => [r.cells[0].textContent, ...[...r.cells].slice(1).map(c => Number(c.dataset.value))])"
     for season in (latest, '2016'):
         browser.select('season', season)
-        teams = data['seasons'][season]
-        assert js(rows) == [[t['name'], *[signed(t[key]['estimate']) for key in order], signed(t['net'])] for t in teams], season
+        teams = sorted(data['seasons'][season], key=lambda team: -net(team))
+        shown = js(rows)
+        assert [row[0] for row in shown] == [team['name'] for team in teams], season
+        for row, team in zip(shown, teams):
+            assert all(abs(value - per_game(team, key)) <= .0011 for value, key in zip(row[1:5], order)) and abs(row[5] - net(team)) <= .0011, (season, row)
+        bars = js("[...document.querySelectorAll('#team-table .mini-track i')].map(i => [i.className, parseFloat(i.style.width), i.parentElement.parentElement.dataset.value])")
+        assert len(bars) == 4 * len(teams) and all((kind == 'good') == (float(value) >= 0) and 0 <= width <= 50 for kind, width, value in bars)
         assert all(t[key]['low'] <= t[key]['estimate'] <= t[key]['high'] for t in teams for key in order)
     browser.select('season', latest)
-    team = data['seasons'][latest][0]
+    team = max(data['seasons'][latest], key=net)
     js(f"document.querySelector('#team-table button[data-team=\"{team['id']}\"]').click()")
-    browser.wait(f"document.getElementById('team-chart') && document.getElementById('team').value === '{team['id']}'")
+    browser.wait(f"!!document.getElementById('team-chart') && document.getElementById('team').value === '{team['id']}'")
     assert js("document.getElementById('team-title').textContent") == f"{team['name']} in {latest}"
-    shown = js("Object.fromEntries([...document.querySelectorAll('#team-chart .relative-row[data-measure]')].map(r => [r.dataset.measure, r.querySelector('em').textContent]))")
+    shown = js("Object.fromEntries([...document.querySelectorAll('#team-chart .relative-row[data-measure]')].map(r => [r.dataset.measure, [Number(r.dataset.value), r.querySelector('em').textContent]]))")
     for key in order:
-        better = sorted(data['seasons'][latest], key=lambda t: -t[key]['estimate'] if key.startswith('offence') else t[key]['estimate'])
-        assert shown[key].startswith(signed(team[key]['estimate']) + ' · ') and shown[key].endswith(f" of {len(better)}"), shown
-        rank = better.index(team) + 1
-        assert shown[key].split(' · ')[1].startswith(str(rank)), (key, shown[key], rank)
+        ranking = sorted(data['seasons'][latest], key=lambda t: -per_game(t, key))
+        value, note = shown[key]
+        assert abs(value - per_game(team, key)) <= .0011 and note.endswith(f" of {len(ranking)}") and note.startswith(str(ranking.index(team) + 1)), (key, shown[key])
     starts = js("[...document.querySelectorAll('.team-starts table')].map(t => [...t.tBodies[0].rows].map(r => r.cells[2].textContent))")
     for cells, side in zip(starts, ('offence', 'defence'), strict=True):
         for text, row in zip(cells, team['starts'][side], strict=True):
@@ -505,6 +514,21 @@ def verify_prediction(browser):
         assert shown_name == p['name'] and text.endswith(f" · {p['attempts']:,} shots") and abs(number(text.split(' · ')[0]) - p['estimate']) <= .0501, text
     assert 'Predicted for 2027' in js("document.querySelector('#shooters > p.caption').textContent")
     browser.select('shooter-season', 'career')
+    pack = json.loads((ROOT / 'explore/data/prediction.json').read_bytes())
+    assert js("[...document.getElementById('compare').options].at(-1).textContent") == '2027 prediction'
+    browser.select('season', 2026)
+    browser.select('compare', 'prediction')
+    browser.wait("document.querySelector('#court-secondary [data-year]').textContent === '2027 prediction'")
+    attempts, makes, points = (sum(row[i] for row in pack['rows']) for i in (5, 6, 7))
+    assert js("document.querySelector('#court-secondary [data-total=n]').textContent") == f'{attempts:,}'
+    assert abs(float(js("document.querySelector('#court-secondary [data-total=rate]').textContent").rstrip('%')) - 100 * makes / attempts) <= .0501
+    assert abs(float(js("document.querySelector('#court-secondary [data-total=points]').textContent")) - 100 * points / attempts) <= .00501
+    assert js("[...document.querySelectorAll('#area-rows tr td:first-child')].filter(c => c.textContent === '2027 prediction').length") == 7
+    assert 'Bayesian mesh model' in js("document.querySelector('#court-secondary [data-location]').textContent")
+    assert js("document.querySelectorAll('.area-result[data-season=prediction] .leaders').length") == 0
+    browser.save_image('atlas_compare_prediction_desktop.png')
+    browser.select('compare', 'off')
+    browser.select('season', 'all')
     surface = json.loads((ROOT / 'explore/data/prediction-surface.json').read_bytes())
     browser.wait("document.querySelector('#prediction-surface .posterior-numbers strong')?.textContent.includes('estimated make chance')")
     depth, lateral = 15 - 5, 25 - 25

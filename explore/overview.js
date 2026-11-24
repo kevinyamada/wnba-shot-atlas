@@ -186,13 +186,23 @@ export function ladder(target, data) {
 }
 
 const measureOrder = ['offence_quality', 'offence_making', 'defence_quality', 'defence_making'];
-const helps = (name, value) => name.startsWith('offence') ? value >= 0 : value <= 0;
 const place = n => n + (n % 100 > 10 && n % 100 < 14 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th');
 
+const plain = {offence_quality: 'Gets good shots', offence_making: 'Makes its shots', defence_quality: 'Limits good shots', defence_making: 'Opponents miss'};
+
+// Points a game against an average team, signed so that a positive value always helps the team.
+function perGame(row, name, field = 'estimate') {
+    const own = name.startsWith('offence');
+    return (own ? 1 : -1) * row[name][field] * (own ? row.shots : row.shotsAgainst) / row.games / 100;
+}
+
+const netPerGame = row => measureOrder.reduce((sum, name) => sum + perGame(row, name), 0);
+const gameWords = value => Math.abs(value) < .05 ? 'level with an average team' : `${Math.abs(value).toFixed(1)} points a game ${value > 0 ? 'better' : 'worse'}`;
+
 function phrase(name, value) {
-    const size = Math.abs(value) < .5 ? 'about average' : `${Math.abs(value).toFixed(1)} points per 100 shots ${value > 0 ? 'above' : 'below'} the league`;
-    return {offence_quality: `Its shots are worth ${size}`, offence_making: `It scores ${size} on those shots`,
-        defence_quality: `Opponents get shots worth ${size}`, defence_making: `Opponents score ${size} on them`}[name].replace('worth about average', 'of about average value') + '.';
+    const lead = {offence_quality: 'Where it shoots from is worth', offence_making: 'Its shot making is worth', defence_quality: 'Where opponents shoot from is worth',
+        defence_making: 'Opponents’ shot making is worth'}[name];
+    return Math.abs(value) < .05 ? `${lead} about the same as for an average team.` : `${lead} ${Math.abs(value).toFixed(1)} points a game ${value > 0 ? 'for' : 'against'} it.`;
 }
 
 function startsTable(rows, heading) {
@@ -216,20 +226,22 @@ export function teamReport(target, data, shooterData, {season, team, pick}) {
     const teams = data.seasons[year];
     const chosen = teams.find(row => String(row.id) === String(team));
     const repeat = Object.fromEntries(data.repeatability.map(row => [row.measure, row.split_half]));
-    const trust = el('p', 'How often each number shows up again in other games of the same season: '
-        + measureOrder.map(name => `${data.measures[name].toLowerCase()} ${repeat[name].toFixed(2)}`).join(', ')
-        + '. Closer to 1 means the team controls it. Closer to 0 means mostly chance.', 'caption');
+    const trust = el('p', 'How much of each bar is the team and how much is luck, on a scale from 0 to 1: '
+        + measureOrder.map(name => `${plain[name].toLowerCase()} ${repeat[name].toFixed(2)}`).join(', ')
+        + '. Closer to 1 means it repeats from game to game. Closer to 0 means mostly chance.', 'caption');
     const scope = el('p', (String(season) === year ? '' : `Showing ${year}. Team reports cover ${years[0]} to ${years.at(-1)}. `)
-        + 'Regular season. Points per 100 shots against the rest of the league, with small samples pulled toward average.', 'caption');
+        + 'Regular season, field goals only. Each value compares the team with the rest of the league, with small samples pulled toward average.', 'caption');
     if (!chosen) {
-        const title = el('h2', `What each team controlled in ${year}`);
+        const title = el('h2', `Where each team gained and lost points in ${year}`);
         title.id = 'team-title';
+        const ranked = [...teams].sort((x, y) => netPerGame(y) - netPerGame(x));
+        const limit = Math.max(...teams.flatMap(row => measureOrder.map(name => Math.abs(perGame(row, name)))));
         const table = el('table');
         table.id = 'team-table';
         const head = table.createTHead().insertRow();
-        for (const text of ['Team', ...measureOrder.map(name => data.measures[name]), 'Net']) head.append(Object.assign(el('th', text), {scope: 'col'}));
+        for (const text of ['Team', ...measureOrder.map(name => plain[name]), 'Overall']) head.append(Object.assign(el('th', text), {scope: 'col'}));
         const body = table.createTBody();
-        for (const row of teams) {
+        for (const row of ranked) {
             const line = body.insertRow();
             const name = el('th');
             name.scope = 'row';
@@ -238,43 +250,62 @@ export function teamReport(target, data, shooterData, {season, team, pick}) {
             button.dataset.team = row.id;
             button.addEventListener('click', () => pick(row.id, year));
             name.append(button);
-            line.append(name, ...measureOrder.map(key => el('td', signed(row[key].estimate), helps(key, row[key].estimate) ? 'good' : 'bad')),
-                el('td', signed(row.net), row.net >= 0 ? 'good' : 'bad'));
+            line.append(name);
+            for (const key of measureOrder) {
+                const value = perGame(row, key);
+                const cell = el('td', null, 'bar-cell');
+                cell.dataset.value = value.toFixed(3);
+                cell.title = `${plain[key]}: ${gameWords(value)}`;
+                const track = el('span', null, 'mini-track');
+                const bar = el('i', null, value >= 0 ? 'good' : 'bad');
+                bar.style.width = (50 * Math.abs(value) / limit) + '%';
+                bar.style[value >= 0 ? 'left' : 'right'] = '50%';
+                track.append(bar);
+                cell.setAttribute('aria-label', cell.title);
+                cell.append(track);
+                line.append(cell);
+            }
+            const net = netPerGame(row);
+            const overall = el('td', Math.abs(net) < .05 ? 'Level' : `${Math.abs(net).toFixed(1)} ${net > 0 ? 'better' : 'worse'}`, net >= 0 ? 'good' : 'bad');
+            overall.dataset.value = net.toFixed(3);
+            line.append(overall);
         }
         const wrap = el('div', null, 'table-scroll');
         wrap.append(table);
-        const key = el('p', 'Blue helps the team and orange hurts it. Net adds the four together. Pick a team for its full report.', 'caption');
+        const key = el('p', 'Each bar is field goal points a game against an average team. A blue bar to the right helps the team. An orange bar to the left hurts it. Overall adds the four. Pick a team for its full report.', 'caption');
         target.replaceChildren(title, wrap, key, trust, scope);
         target.hidden = false;
         return;
     }
     const title = el('h2', `${chosen.name} in ${year}`);
     title.id = 'team-title';
-    const summary = el('p', measureOrder.map(name => phrase(name, chosen[name].estimate)).join(' '));
+    const summary = el('p', measureOrder.map(name => phrase(name, perGame(chosen, name))).join(' ') + ` Overall it is ${gameWords(netPerGame(chosen))}.`);
     summary.id = 'team-summary';
-    const limit = Math.ceil(Math.max(...teams.flatMap(row => measureOrder.flatMap(name => [Math.abs(row[name].low), Math.abs(row[name].high)]))) / 2) * 2;
+    const ends = (row, name) => [perGame(row, name, 'low'), perGame(row, name, 'high')].sort((x, y) => x - y);
+    const limit = Math.ceil(Math.max(...teams.flatMap(row => measureOrder.flatMap(name => ends(row, name).map(Math.abs)))));
     const chart = el('div', null, 'relative-chart');
     chart.id = 'team-chart';
     const scale = el('div', null, 'relative-key');
-    scale.append(el('span', `${limit} below`), el('span', 'League average'), el('span', `${limit} above`));
+    scale.append(el('span', `${limit} points a game worse`), el('span', 'Average team'), el('span', `${limit} better`));
     chart.append(scale);
     for (const name of measureOrder) {
-        const value = chosen[name];
-        const better = (a, b) => name.startsWith('offence') ? b[name].estimate - a[name].estimate : a[name].estimate - b[name].estimate;
-        const rank = [...teams].sort(better).indexOf(chosen) + 1;
+        const value = perGame(chosen, name);
+        const [low, high] = ends(chosen, name);
+        const rank = [...teams].sort((x, y) => perGame(y, name) - perGame(x, name)).indexOf(chosen) + 1;
         const row = el('div', null, 'relative-row');
         row.dataset.measure = name;
+        row.dataset.value = value.toFixed(3);
         const track = el('div', null, 'relative-track');
         const interval = el('span', null, 'relative-interval');
         const point = el('span', null, 'relative-point');
         const at = x => 50 + 50 * Math.max(-1, Math.min(1, x / limit));
-        interval.style.left = at(value.low) + '%';
-        interval.style.width = (at(value.high) - at(value.low)) + '%';
-        point.style.left = at(value.estimate) + '%';
+        interval.style.left = at(low) + '%';
+        interval.style.width = (at(high) - at(low)) + '%';
+        point.style.left = at(value) + '%';
         track.append(interval, point);
-        const note = el('em', `${signed(value.estimate)} · ${place(rank)} of ${teams.length}`);
-        note.className = helps(name, value.estimate) ? 'good' : 'bad';
-        row.append(el('span', data.measures[name]), track, note);
+        const note = el('em', `${place(rank)} of ${teams.length}`);
+        note.className = value >= 0 ? 'good' : 'bad';
+        row.append(el('span', plain[name]), track, note);
         chart.append(row);
     }
     const parts = [title, summary, chart, trust];

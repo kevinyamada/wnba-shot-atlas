@@ -1,21 +1,21 @@
 import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=6';
 import { renderStudy } from './study-findings.js?v=6';
 import { shotMix } from './shot-mix.js?v=3';
-import { headline, shooters, ladder, teamReport, teamControl, prediction } from './overview.js?v=4';
+import { headline, shooters, ladder, teamReport, teamControl, prediction } from './overview.js?v=5';
 
 const $ = id => document.getElementById(id);
 const controls = ['season', 'team', 'player', 'phase', 'shot-type', 'compare'].map($);
 const panels = ['court-primary', 'court-secondary'].map($);
-const number = new Intl.NumberFormat('en-CA');
+const number = new Intl.NumberFormat('en-CA', {maximumFractionDigits: 0});
 const percent = new Intl.NumberFormat('en-CA', {style: 'percent', maximumFractionDigits: 1});
 const decimal = new Intl.NumberFormat('en-CA', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-const dataRelease = 'r7';
+const dataRelease = 'r8';
 const extras = {teams: null, shooters: null};
 const sampleFloor = 12;
 const mappedAreas = 5;
 const metricNames = {share: 'Shot share', per100: 'Attempts per 100 shots', attempts: 'Attempts',
     rate: 'Make rate', points: 'Points per shot'};
-const yearName = year => year === 'all' ? 'All seasons' : String(year);
+const yearName = year => year === 'all' ? 'All seasons' : year === 'prediction' ? '2027 prediction' : String(year);
 const phaseNames = {'0': 'Regular season', '1': 'Playoffs', all: 'Regular season and playoffs'};
 const model = {metric: 'share', selection: {kind: 'cell', value: 50}, views: [], history: [], hover: []};
 const cache = new Map();
@@ -260,7 +260,8 @@ function renderStats() {
         note.textContent = !filtered ? '' : league.area.n ? `The league made ${leagueRate} here.` : 'The league has no recorded shots here.';
         if (part.n > 0 && part.n < sampleFloor) note.textContent += ' Small sample.';
         note.hidden = !note.textContent;
-        block.append(heading, list, note, leaderList(found));
+        block.append(heading, list, note);
+        if (!entry.prediction) block.append(leaderList(found));
         target.append(block);
     }
 }
@@ -451,7 +452,9 @@ function renderCourts() {
         panel.querySelector('[data-total=points]').textContent = normalized
             ? format(per100(data.total.points, data.total.n), 'per100') : number.format(data.total.points);
         const offMap = data.unlocated + data.otherHalf;
-        panel.querySelector('[data-location]').textContent = !data.total.n ? 'No shots for this selection.' :
+        panel.querySelector('[data-location]').textContent = entry.prediction
+            ? `Predicted for the whole league. Shot locations repeat the ${entry.basis} regular season and make chances come from the Bayesian mesh model.`
+            : !data.total.n ? 'No shots for this selection.' :
             offMap ? `${number.format(data.total.n - offMap)} mapped · ${number.format(data.otherHalf)} from the other half · ${number.format(data.unlocated)} with unknown location` : '';
     });
     renderStats();
@@ -521,10 +524,12 @@ async function historySeries() {
 
 function refreshArea() {
     const filters = searchFilters();
+    const everything = {phase: 'all', team: 'all', player: 'all', type: 'all'};
     for (const view of model.views) {
-        view.data = totals(view.entry.rows, filters);
-        view.league = areaTotals(view.entry.rows, {...filters, team:'all', player:'all'}, model.selection);
-        view.leaders = leaders(view.entry, filters, model.selection);
+        const own = view.entry.prediction ? everything : filters;
+        view.data = totals(view.entry.rows, own);
+        view.league = areaTotals(view.entry.rows, {...own, team:'all', player:'all'}, model.selection);
+        view.leaders = leaders(view.entry, own, model.selection);
     }
     model.history = [];
     $('history-rows').replaceChildren();
@@ -536,13 +541,14 @@ async function refresh() {
     const version = ++selectionVersion;
     const primary = $('season').value === 'all' ? 'all' : Number($('season').value);
     const compare = $('compare').value;
-    const years = compare === 'off' || Number(compare) === primary ? [primary] : [primary, Number(compare)];
-    options($('compare'), 'No comparison', index.seasons.filter(y => y !== primary).map(y => [String(y), y]), compare);
+    const other = compare === 'prediction' ? 'prediction' : Number(compare);
+    const years = compare === 'off' || other === primary ? [primary] : [primary, other];
+    options($('compare'), 'No comparison', [...index.seasons.filter(y => y !== primary).map(y => [String(y), y]), ['prediction', '2027 prediction']], compare);
     $('load-state').textContent = 'Loading selected games…';
     try {
         const seasons = await Promise.all(years.map(seasonData));
         if (version !== selectionVersion) return;
-        filtersFor(seasons, searchFilters());
+        filtersFor(seasons.filter(entry => !entry.prediction), searchFilters());
         model.views = seasons.map(entry => ({entry, era: entry.season === 'all' ? index.court.eras : index.court.eras.filter(era => era.id === entry.court)}));
         $('atlas-content').hidden = false;
         model.hover = [];

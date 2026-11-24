@@ -158,6 +158,12 @@ select { width: 100%; min-height: 42px; padding: .45rem 1.8rem .45rem .65rem; bo
 #team-table { max-width: 60rem; }
 #team-table button, #team-back { padding: 0; border: 0; background: none; color: var(--deep); font-weight: 650; text-align: left; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em; }
 #team-back { margin-top: .8rem; }
+#team-table th:not(:first-child), #team-table td { text-align: center; }
+#team-table td:last-child { text-align: right; white-space: nowrap; }
+.bar-cell { min-width: 4.5rem; }
+.mini-track { position: relative; display: block; height: 1rem; background: linear-gradient(90deg, transparent calc(50% - .5px), var(--muted) 0, var(--muted) calc(50% + .5px), transparent 0); }
+.mini-track i { position: absolute; top: .15rem; bottom: .15rem; min-width: 2px; border-radius: .12rem; background: var(--deep); }
+.mini-track i.bad { background: var(--accent); }
 .good { color: var(--deep); font-weight: 650; }
 .bad { color: var(--accent); font-weight: 650; }
 #team-chart { max-width: 48rem; margin-top: .8rem; }

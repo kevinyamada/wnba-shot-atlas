@@ -106,6 +106,17 @@ def main():
     past = past[past.scope.eq('regular') & past.season.between(2019, 2026)]
     assert len(past) == pooled.loc[('p_distance', 'league'), 'attempts'] and np.isclose(np.mean((past.p_distance - past.made) ** 2), pooled.loc[('p_distance', 'league'), 'brier'])
 
+    court = json.loads((SITE / 'prediction.json').read_bytes())
+    last = pd.read_csv(DERIVED / 'shots_2026.csv.gz', usecols=['scope', 'cell', 'depth_ft', 'lateral_ft', 'made'], low_memory=False)
+    last = last[last.scope.eq('regular')]
+    rows = pd.DataFrame(court['rows'], columns=['phase', 'team', 'player', 'cell', 'zone', 'attempts', 'made', 'points', 'shot_type'])
+    assert court['manifestSha256'] == manifest_digest() and rows.attempts.sum() == len(last) == court['summary']['attempts']
+    by_cell = last.groupby('cell').size()
+    assert (rows.groupby('cell').attempts.sum().reindex(by_cell.index) == by_cell).all() and rows.cell.nunique() == len(by_cell)
+    on_court = last[last.cell.ge(0)]
+    chance = surface.set_index(['x', 'y']).probability.reindex(pd.MultiIndex.from_arrays([on_court.depth_ft.round().astype(int), on_court.lateral_ft.round().astype(int)]))
+    assert abs(chance.sum() - rows[rows.cell.ge(0)].made.sum()) < 1 and (rows.points >= 2 * rows.made - .002).all() and (rows.points <= 3 * rows.made + .002).all()
+
     site = json.loads((SITE / 'prediction-2027.json').read_bytes())
     assert site['manifestSha256'] == manifest_digest() and site['season'] == 2027 and len(site['teams']) == 15
     for team in site['teams']:
