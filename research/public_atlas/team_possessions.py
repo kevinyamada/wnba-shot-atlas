@@ -49,8 +49,9 @@ def game_counts():
         own = turns.groupby(['game_id', 'team'])[COUNTS].sum().rename_axis(['game_id', 'team_id']).add_prefix('off_')
         against = turns.groupby(['game_id', 'opponent'])[COUNTS].sum().rename_axis(['game_id', 'team_id']).add_prefix('def_')
         table = own.join(against, how='outer').fillna(0).reset_index().assign(season=year)
-        table['team_id'] = table.team_id.map(link)
-        frames.append(table.dropna(subset=['team_id']).astype({'team_id': 'int64'}))
+        table['opponent_id'] = [other[game][team] for game, team in zip(table.game_id, table.team_id)]
+        table['team_id'], table['opponent_id'] = table.team_id.map(link), table.opponent_id.map(link)
+        frames.append(table.dropna(subset=['team_id', 'opponent_id']).astype({'team_id': 'int64', 'opponent_id': 'int64'}))
     return pd.concat(frames, ignore_index=True)
 
 
@@ -104,6 +105,39 @@ def pooled(table):
     return table, spread
 
 
+def adjusted(games, spread):
+    """Estimate each offence and each defence together from single games, so a team is judged against the opponents it met.
+
+    A game rate is the league rate plus the offence's effect plus the defence's effect plus noise that shrinks with the
+    number of possessions or misses. Effects have normal priors with the spreads found by pooling.
+    """
+    rows = []
+    for season, part in games.groupby('season'):
+        teams = np.sort(pd.unique(part[['team_id', 'opponent_id']].to_numpy().ravel()))
+        place = {team: k for k, team in enumerate(teams)}
+        design = np.zeros((len(part), 2 * len(teams)))
+        design[np.arange(len(part)), part.team_id.map(place)] = 1
+        design[np.arange(len(part)), part.opponent_id.map(place) + len(teams)] = 1
+        league = dict(part[[f'off_{name}' for name in COUNTS]].sum())
+        found = {team: dict(season=season, team_id=team) for team in teams}
+        for name, (_, bottom) in RATES.items():
+            weight = part[f'off_{bottom}'].to_numpy(dtype=float)
+            keep = weight > 0
+            value = (rate(part[keep], 'off', name) - rate(league, 'off', name)).to_numpy()
+            per_unit = np.average(value ** 2 * weight[keep], weights=np.ones(keep.sum()))
+            prior = np.repeat([1 / spread[f'offence_{name}'] ** 2, 1 / spread[f'defence_{name}'] ** 2], len(teams))
+            w = weight[keep] / per_unit
+            covariance = np.linalg.inv(design[keep].T @ (design[keep] * w[:, None]) + np.diag(prior))
+            mean = covariance @ (design[keep].T @ (w * value))
+            sd = np.sqrt(np.diag(covariance))
+            for team, k in place.items():
+                for side, at in [('offence', k), ('defence', k + len(teams))]:
+                    found[team].update({f'{side}_{name}_adjusted': mean[at], f'{side}_{name}_adjusted_low': mean[at] - 1.96 * sd[at],
+                                        f'{side}_{name}_adjusted_high': mean[at] + 1.96 * sd[at]})
+        rows += list(found.values())
+    return pd.DataFrame(rows)
+
+
 def repeatability(games):
     """Correlation of each measure between alternating games of the same team season."""
     columns = [f'{side}_{name}' for side in ('off', 'def') for name in COUNTS]
@@ -138,7 +172,10 @@ def main():
     names = pd.read_csv(OUT / 'team_seasons.csv', usecols=['season', 'team_id', 'team'])
     table = table.merge(names, on=['season', 'team_id'], how='left')
     table['team'] = table.team.fillna('Team ' + table.team_id.astype(str))
-    table['net'] = table.offence_points_estimate - table.defence_points_estimate
+    table = table.merge(adjusted(games, spread), on=['season', 'team_id'], validate='one_to_one')
+    table['net'] = table.offence_points_adjusted - table.defence_points_adjusted
+    closest = min(float(np.corrcoef(table[f'{name}_estimate'], table[f'{name}_adjusted'])[0, 1]) for name in LABELS)
+    largest = max(float((table[f'{name}_adjusted'] - table[f'{name}_estimate']).abs().max()) for name in ('offence_points', 'defence_points'))
     repeats = repeatability(games)
     table.to_csv(OUT / 'possession_factors.csv', index=False)
     repeats.to_csv(OUT / 'possession_repeatability.csv', index=False)
@@ -151,15 +188,17 @@ def main():
     lines += ['', 'Possessions come from the play by play reconstruction, which keeps only possessions whose start, events and end could be confirmed. Points include free throws. '
               'A turnover is a possession that ended with one. Offensive rebounds are counted per missed field goal that had an identifiable rebound. Free throw points are possession points minus field goal points.', '',
               f'Each team is compared with the rest of the league in the same season. Noise comes from drawing its games again {DRAWS:,} times, and each gap is pulled toward zero in proportion to that noise. '
-              'These are descriptions of past seasons. They are not adjusted for opponents.', '',
+              'The values on the site are adjusted for opponents by estimating every offence and defence together from single games. '
+              f'The adjusted and unadjusted values correlate at {closest:.2f} or more, and the largest change in points per 100 possessions for any team season is {largest:.1f}. '
+              'These are descriptions of past seasons.', '',
               '[Team seasons](possession_factors.csv) · [Repeatability](possession_repeatability.csv)', '']
     (OUT / 'POSSESSIONS.md').write_text('\n'.join(lines), encoding='utf-8', newline='\n')
 
     def record(row):
         item = dict(id=int(row.team_id), name=row.team, games=int(row.games), possessions=int(row.possessions), net=round(float(row.net), 2))
         for name in LABELS:
-            item[name] = dict(value=round(float(row[name]), 1), league=round(float(row[f'{name}_league']), 1), estimate=round(float(row[f'{name}_estimate']), 2),
-                              low=round(float(row[f'{name}_low']), 2), high=round(float(row[f'{name}_high']), 2))
+            item[name] = dict(value=round(float(row[name]), 1), league=round(float(row[f'{name}_league']), 1), estimate=round(float(row[f'{name}_adjusted']), 2),
+                              low=round(float(row[f'{name}_adjusted_low']), 2), high=round(float(row[f'{name}_adjusted_high']), 2))
         return item
     site = dict(manifestSha256=manifest_digest(), labels=LABELS, spread={k: round(v, 3) for k, v in spread.items()},
                 repeatability=json.loads(repeats.to_json(orient='records')),

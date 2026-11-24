@@ -103,8 +103,23 @@ def main():
     for name in ('offence_points', 'defence_points', 'offence_turnovers', 'defence_turnovers'):
         assert (factors[f'{name}_low'] <= factors[f'{name}_estimate']).all() and (factors[f'{name}_estimate'] <= factors[f'{name}_high']).all()
         assert (factors[f'{name}_estimate'].abs() <= (factors[name] - factors[f'{name}_league']).abs() + 1e-9).all()
+    for name in ('offence_points', 'defence_points', 'defence_turnovers'):
+        assert (factors[f'{name}_adjusted_low'] <= factors[f'{name}_adjusted']).all() and (factors[f'{name}_adjusted'] <= factors[f'{name}_adjusted_high']).all()
+        assert np.corrcoef(factors[f'{name}_estimate'], factors[f'{name}_adjusted'])[0, 1] > .9
+        assert (factors[f'{name}_adjusted'] - factors[f'{name}_estimate']).abs().max() < 2.5 * factors[f'{name}_estimate'].abs().max()
+    assert np.allclose(factors.net, factors.offence_points_adjusted - factors.defence_points_adjusted)
     drawn = json.loads((recount.SITE / 'team-possessions.json').read_bytes())
     assert drawn['manifestSha256'] == manifest_digest() and sum(len(v) for v in drawn['seasons'].values()) == len(factors)
+
+    counted, _, _ = recount.espn_season(2026)
+    counted = counted[counted.phase.isin(recount.PHASES)]
+    defender = np.where(counted.team_id.eq(counted.home_id), counted.away_id, counted.home_id)
+    by_defender = counted.groupby(defender).size()
+    allowed = pd.DataFrame(json.loads((recount.SITE / 'against-2026.json').read_bytes())['rows']).groupby(1)[5].sum()
+    assert allowed.drop(0, errors='ignore').to_dict() == {int(team): int(n) for team, n in by_defender.items()}
+    for name in ('2026', 'all'):
+        taken, against = (json.loads((recount.SITE / f'{prefix}{name}.json').read_bytes())['rows'] for prefix in ('', 'against-'))
+        assert [sum(row[i] for row in taken) for i in (5, 6, 7)] == [sum(row[i] for row in against) for i in (5, 6, 7)]
 
     site = json.loads((recount.SITE / 'teams.json').read_bytes())
     assert site['manifestSha256'] == manifest_digest()

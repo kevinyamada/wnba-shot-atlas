@@ -34,7 +34,7 @@ An independent recount reads the raw files directly and is compared with every p
 
 **Pooling.** A team or player margin is an observed value plus noise of known size. True margins are treated as normal around the league average, with a spread estimated by maximum likelihood. The pooled estimate keeps the share of the observed margin that the spread can explain, and the 95% interval comes from the resulting normal posterior.
 
-**Four team measures.** Shot quality is the expected points of the shots. Shot making is the points scored above expectation. Both are measured for the shots a team takes and the shots it allows. A model that estimates every offence and defence together from single games adjusts for opponents. The schedule is nearly balanced, so the adjustment is small: adjusted and unadjusted values correlate at 0.99 or more.
+**Four team measures.** Shot quality is the expected points of the shots. Shot making is the points scored above expectation. Both are measured for the shots a team takes and the shots it allows. A model that estimates every offence and defence together from single games adjusts for opponents, for the shot measures and the whole possession measures alike. The schedule is nearly balanced, so the adjustment is small: adjusted and unadjusted values correlate at 0.99 or more.
 
 **What repeats.** Each team season is split into alternating games by date and the two halves are compared. A measure that matches across halves reflects something the team does.
 
@@ -48,7 +48,15 @@ An independent recount reads the raw files directly and is compared with every p
 
 ## Results
 
+### The league changed its shots
+
+![Share of shots by court area in the first and last five seasons, with points per shot in each](research/results/public_atlas/report/shot_diet.png)
+
+Bar width is the share of attempts from each area. Teams traded midrange shots for threes while scoring more near the basket.
+
 ### What a team controls
+
+![How much each team measure repeats between alternating games](research/results/public_atlas/report/repeatability.png)
 
 | Measure | Repeats between alternating games | 95% interval | Repeats the next season |
 | --- | ---: | ---: | ---: |
@@ -76,21 +84,21 @@ Shot values are points per 100 shots against the league, adjusted for opponents.
 
 | Team | Shot quality taken | Shot making | Shot quality allowed | Shot making allowed | Whole possessions, net |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Indiana Fever | +1.0 | +7.0 | +1.1 | -0.3 | +6.2 |
-| Las Vegas Aces | -4.6 | +9.8 | -1.9 | +0.5 | +5.8 |
-| Minnesota Lynx | +0.7 | +4.0 | +1.4 | -2.4 | +6.3 |
-| New York Liberty | +1.0 | +2.5 | -0.8 | +0.2 | +2.4 |
-| Dallas Wings | -4.2 | +5.6 | -1.7 | +0.0 | +4.7 |
-| Golden State Valkyries | -2.9 | -0.4 | -3.2 | -2.7 | +6.6 |
-| Washington Mystics | +1.6 | -4.1 | -2.0 | -1.6 | +3.0 |
-| Los Angeles Sparks | +1.0 | +1.2 | +1.4 | +1.6 | -3.8 |
-| Portland Fire | +0.7 | +1.2 | +0.7 | +1.9 | -4.6 |
-| Chicago Sky | +3.4 | -6.3 | +2.2 | -2.5 | -4.2 |
-| Phoenix Mercury | -2.3 | +0.3 | -1.9 | +3.4 | -3.1 |
-| Seattle Storm | -1.6 | -4.0 | -0.8 | -1.2 | -6.6 |
-| Atlanta Dream | +5.2 | -6.5 | +1.8 | +0.6 | +7.0 |
-| Toronto Tempo | +1.8 | -3.5 | +3.2 | +1.9 | -8.2 |
-| Connecticut Sun | -1.1 | -7.0 | +0.4 | +0.6 | -10.5 |
+| Indiana Fever | +1.0 | +7.0 | +1.1 | -0.3 | +5.7 |
+| Las Vegas Aces | -4.6 | +9.8 | -1.9 | +0.5 | +5.2 |
+| Minnesota Lynx | +0.7 | +4.0 | +1.4 | -2.4 | +5.6 |
+| New York Liberty | +1.0 | +2.5 | -0.8 | +0.2 | +2.1 |
+| Dallas Wings | -4.2 | +5.6 | -1.7 | +0.0 | +4.1 |
+| Golden State Valkyries | -2.9 | -0.4 | -3.2 | -2.7 | +5.6 |
+| Washington Mystics | +1.6 | -4.1 | -2.0 | -1.6 | +2.3 |
+| Los Angeles Sparks | +1.0 | +1.2 | +1.4 | +1.6 | -3.5 |
+| Portland Fire | +0.7 | +1.2 | +0.7 | +1.9 | -4.3 |
+| Chicago Sky | +3.4 | -6.3 | +2.2 | -2.5 | -3.9 |
+| Phoenix Mercury | -2.3 | +0.3 | -1.9 | +3.4 | -2.9 |
+| Seattle Storm | -1.6 | -4.0 | -0.8 | -1.2 | -6.0 |
+| Atlanta Dream | +5.2 | -6.5 | +1.8 | +0.6 | +6.3 |
+| Toronto Tempo | +1.8 | -3.5 | +3.2 | +1.9 | -7.3 |
+| Connecticut Sun | -1.1 | -7.0 | +0.4 | +0.6 | -9.1 |
 
 The two views can disagree. A team can shoot poorly and still score well per possession through offensive rebounds and free throws.
 
@@ -109,6 +117,8 @@ The two views can disagree. A team can shoot poorly and still score well per pos
 
 ### Why distance is hard to beat
 
+![Share of forecast error removed by distance and by each further kind of information](research/results/public_atlas/report/information_ladder.png)
+
 On 44,478 shots from the 2026 regular season, with models fitted on 2022 to 2024 and tuned on 2025:
 
 | Information | Brier error | Drop from distance |
@@ -124,6 +134,8 @@ On 44,478 shots from the 2026 regular season, with models fitted on 2022 to 2024
 A single shot either goes in or it does not. If the full model's make chances were exactly right its error would still be 0.2263. Better information can only spread predicted chances further apart: distance spreads them by 12.5 percentage points and everything recorded reaches 14.6. The files hold no defender positions, passes or movement, so the gain from tracking data cannot be measured here.
 
 ### Predicting the next season
+
+![Past error of four prediction rules, relative to assuming the league average](research/results/public_atlas/report/prediction_error.png)
 
 Each season from 2019 to 2026 was predicted using only earlier seasons. Error is the root mean squared error against what was then observed.
 
@@ -155,7 +167,7 @@ For 2027 the league prediction is 36.53 for share of shots from the three point 
 - The record has shot locations and event order. It has no passes, cuts, defender positions or lineups on the floor, so individual actions and defensive pressure cannot be valued.
 - Shot types are assigned by scorers and may be recorded differently for makes and misses.
 - Locations are whole feet, missing for about a quarter of shots before 2011, and recorded differently across providers.
-- The whole possession measures are not adjusted for opponents, and possessions come only from games whose event order could be confirmed.
+- Whole possessions come only from games whose event order could be confirmed.
 - No prediction knows about trades, injuries, the draft or coaching changes.
 
 ## The 2027 test

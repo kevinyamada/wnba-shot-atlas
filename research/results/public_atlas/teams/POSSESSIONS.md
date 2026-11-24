@@ -15,6 +15,6 @@ Across 136 team seasons from 2016 to 2026 and 358,901 complete regular season po
 
 Possessions come from the play by play reconstruction, which keeps only possessions whose start, events and end could be confirmed. Points include free throws. A turnover is a possession that ended with one. Offensive rebounds are counted per missed field goal that had an identifiable rebound. Free throw points are possession points minus field goal points.
 
-Each team is compared with the rest of the league in the same season. Noise comes from drawing its games again 1,000 times, and each gap is pulled toward zero in proportion to that noise. These are descriptions of past seasons. They are not adjusted for opponents.
+Each team is compared with the rest of the league in the same season. Noise comes from drawing its games again 1,000 times, and each gap is pulled toward zero in proportion to that noise. The values on the site are adjusted for opponents by estimating every offence and defence together from single games. The adjusted and unadjusted values correlate at 0.99 or more, and the largest change in points per 100 possessions for any team season is 1.2. These are descriptions of past seasons.
 
 [Team seasons](possession_factors.csv) · [Repeatability](possession_repeatability.csv)

@@ -386,6 +386,30 @@ def verify_shot_mix(browser):
     print('SHOT_MIX_BROWSER_VERIFIED', len(data['comparisons']), 'comparisons and 30 seasons', flush=True)
 
 
+def verify_shots_allowed(browser):
+    """Switch the court to shots allowed and recount a defending team's total."""
+    js = browser.js
+    attempts = "document.querySelector('#court-primary [data-total=n]').textContent"
+    league = js(attempts)
+    js("document.querySelector('[data-side=allowed]').click()")
+    browser.wait("document.getElementById('player').disabled && document.querySelector('#load-state').textContent === ''")
+    assert js(attempts) == league and 'shots allowed' in js("document.getElementById('area-context').textContent")
+    browser.select('season', 2026)
+    pack = json.loads((ROOT / 'explore/data/against-2026.json').read_bytes())
+    team = next(int(key) for key in pack['teams'] if key != '0')
+    browser.select('team', team)
+    assert js(attempts) == f"{sum(row[5] for row in pack['rows'] if row[1] == team):,}"
+    assert js("document.querySelectorAll('.area-result .leaders').length") == 0
+    browser.wait(f"document.querySelector('#history-rows').rows.length === 30 && !document.getElementById('history-status').textContent")
+    browser.save_image('atlas_shots_allowed_desktop.png')
+    browser.select('team', 'all')
+    js("document.querySelector('[data-side=taken]').click()")
+    browser.wait("!document.getElementById('player').disabled && document.querySelector('#load-state').textContent === ''")
+    browser.select('season', 'all')
+    assert js(attempts) == league and js("document.querySelectorAll('.area-result .leaders').length") == 1
+    print('SHOTS_ALLOWED_BROWSER_VERIFIED', flush=True)
+
+
 def verify_overview(browser):
     """Match the main visual, the shooter comparison and the information ladder with their saved values."""
     js = browser.js
@@ -633,6 +657,7 @@ def verify(browser, url):
     browser.save_image('atlas_all_desktop.png')
     assert js("[...document.querySelectorAll('details.more')].every(node => !node.open)")
     js("document.querySelectorAll('details.more').forEach(node => { node.open = true; })")
+    verify_shots_allowed(browser)
     verify_overview(browser)
     verify_team_report(browser)
     verify_prediction(browser)

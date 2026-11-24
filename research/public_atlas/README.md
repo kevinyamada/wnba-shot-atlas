@@ -56,6 +56,8 @@ python research/public_atlas/predict_surface.py
 python research/public_atlas/prediction_pack.py
 python research/public_atlas/predict_2027.py
 python research/public_atlas/verify_prediction.py
+python research/public_atlas/against_packs.py
+python research/public_atlas/report_figures.py
 python research/public_atlas/write_report.py
 python research/public_atlas/check_browser.py
 ```

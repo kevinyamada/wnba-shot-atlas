@@ -7,7 +7,7 @@
   <title>WNBA Shot Atlas | Explore 1997 to 2026</title>
   <link rel="stylesheet" href="atlas.css?v=14">
   <script src="../theme.js?v=light-default"></script>
-  <script type="module" src="atlas.js?v=15"></script>
+  <script type="module" src="atlas.js?v=16"></script>
 </head>
 <body>
   <a class="skip" href="#explorer">Skip to the shot explorer</a>
@@ -41,6 +41,10 @@
           <button type="button" data-metric="share" aria-pressed="true">Shot share</button>
           <button type="button" data-metric="rate" aria-pressed="false">Make rate</button>
           <button type="button" data-metric="points" aria-pressed="false">Points per shot</button>
+        </div>
+        <div class="metric-group" role="group" aria-label="Whose shots">
+          <button type="button" data-side="taken" aria-pressed="true">Shots taken</button>
+          <button type="button" data-side="allowed" aria-pressed="false">Shots allowed</button>
         </div>
         <label id="compare-units" hidden>
           <input id="normalize-shots" type="checkbox" checked aria-controls="court-pair area-table area-stats history-chart" aria-describedby="metric-note">

@@ -9,7 +9,7 @@ const panels = ['court-primary', 'court-secondary'].map($);
 const number = new Intl.NumberFormat('en-CA', {maximumFractionDigits: 0});
 const percent = new Intl.NumberFormat('en-CA', {style: 'percent', maximumFractionDigits: 1});
 const decimal = new Intl.NumberFormat('en-CA', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-const dataRelease = 'r9';
+const dataRelease = 'r10';
 const extras = {teams: null, shooters: null, possessions: null};
 const sampleFloor = 12;
 const mappedAreas = 5;
@@ -17,7 +17,7 @@ const metricNames = {share: 'Shot share', per100: 'Attempts per 100 shots', atte
     rate: 'Make rate', points: 'Points per shot'};
 const yearName = year => year === 'all' ? 'All seasons' : year === 'prediction' ? '2027 prediction' : String(year);
 const phaseNames = {'0': 'Regular season', '1': 'Playoffs', all: 'Regular season and playoffs'};
-const model = {metric: 'share', selection: {kind: 'cell', value: 50}, views: [], history: [], hover: []};
+const model = {side: 'taken', metric: 'share', selection: {kind: 'cell', value: 50}, views: [], history: [], hover: []};
 const cache = new Map();
 let index;
 let selectionVersion = 0;
@@ -32,14 +32,16 @@ async function json(url) {
 }
 
 function seasonData(year) {
-    if (!cache.has(year)) {
-        const promise = json(`data/${year}.json`).catch(error => {
-            cache.delete(year);
+    const allowed = model.side === 'allowed' && year !== 'prediction';
+    const key = allowed ? `against-${year}` : String(year);
+    if (!cache.has(key)) {
+        const promise = json(`data/${key}.json`).catch(error => {
+            cache.delete(key);
             throw error;
         });
-        cache.set(year, promise);
+        cache.set(key, promise);
     }
-    return cache.get(year);
+    return cache.get(key);
 }
 
 function options(select, first, items, selected) {
@@ -261,7 +263,7 @@ function renderStats() {
         if (part.n > 0 && part.n < sampleFloor) note.textContent += ' Small sample.';
         note.hidden = !note.textContent;
         block.append(heading, list, note);
-        if (!entry.prediction) block.append(leaderList(found));
+        if (!entry.prediction && !entry.against) block.append(leaderList(found));
         target.append(block);
     }
 }
@@ -311,7 +313,7 @@ function draw() {
 function selectionLabel(filters) {
     const who = filters.player !== 'all' ? $('player').selectedOptions[0].textContent : $('team').selectedOptions[0].textContent;
     const type = filters.type === 'all' ? '' : ` · ${index.shotTypes[Number(filters.type)]}`;
-    return `${who} · ${phaseNames[filters.phase]}${type}`;
+    return `${who}${model.side === 'allowed' ? ', shots allowed' : ''} · ${phaseNames[filters.phase]}${type}`;
 }
 
 function areaLeaders(zones) {
@@ -498,7 +500,7 @@ async function historySeries() {
     const version = ++historyVersion;
     const filters = searchFilters();
     const selection = {...model.selection};
-    const league = filters.player === 'all' && filters.team === 'all' && filters.type === 'all';
+    const league = filters.player === 'all' && filters.team === 'all' && filters.type === 'all' && model.side === 'taken';
     $('history-context').textContent = `${areaDescription().title} · ${selectionLabel(filters)}`;
     if (!league) $('history-status').textContent = 'Loading season history…';
     try {
@@ -661,6 +663,13 @@ async function start() {
         model.metric = button.dataset.metric;
         document.querySelectorAll('[data-metric]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
         draw();
+    }));
+    document.querySelectorAll('[data-side]').forEach(button => button.addEventListener('click', () => {
+        model.side = button.dataset.side;
+        document.querySelectorAll('[data-side]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        $('player').value = 'all';
+        $('player').disabled = model.side === 'allowed';
+        refresh();
     }));
     $('normalize-shots').addEventListener('change', () => {
         model.hover = [];

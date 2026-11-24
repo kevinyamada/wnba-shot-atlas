@@ -78,7 +78,7 @@ def main():
              '**Pooling.** A team or player margin is an observed value plus noise of known size. True margins are treated as normal around the league average, with a spread estimated by maximum likelihood. '
              'The pooled estimate keeps the share of the observed margin that the spread can explain, and the 95% interval comes from the resulting normal posterior.', '',
              '**Four team measures.** Shot quality is the expected points of the shots. Shot making is the points scored above expectation. Both are measured for the shots a team takes and the shots it allows. '
-             'A model that estimates every offence and defence together from single games adjusts for opponents. '
+             'A model that estimates every offence and defence together from single games adjusts for opponents, for the shot measures and the whole possession measures alike. '
              f"The schedule is nearly balanced, so the adjustment is small: adjusted and unadjusted values correlate at {shift.correlation.min():.2f} or more.", '',
              '**What repeats.** Each team season is split into alternating games by date and the two halves are compared. A measure that matches across halves reflects something the team does.', '',
              '**Whole possessions.** For complete possessions rebuilt from the play by play, the study counts points, turnovers, offensive rebounds per miss and free throw points, for each team and against it.', '',
@@ -88,7 +88,11 @@ def main():
              '**Bayesian models for prediction.** A season model gives each team and shooter a true level that drifts from year to year. A normal belief is updated on every past season and carried forward. '
              f'A spatial model puts a Gaussian field with Matern covariance on a triangle mesh of {drawn["nodes"]:,} nodes over the court, with a smooth curve in distance as its mean, and gives the make chance at every spot with a credible range.', '',
              '## Results', '',
+             '### The league changed its shots', '',
+             '![Share of shots by court area in the first and last five seasons, with points per shot in each](research/results/public_atlas/report/shot_diet.png)', '',
+             'Bar width is the share of attempts from each area. Teams traded midrange shots for threes while scoring more near the basket.', '',
              '### What a team controls', '',
+             '![How much each team measure repeats between alternating games](research/results/public_atlas/report/repeatability.png)', '',
              table(pd.DataFrame({'Measure': repeats.label, 'Repeats between alternating games': repeats.split_half.map('{:.2f}'.format),
                                  '95% interval': [f'{a:.2f} to {b:.2f}' for a, b in zip(repeats.split_half_low, repeats.split_half_high)],
                                  'Repeats the next season': repeats.next_season.map('{:.2f}'.format)})),
@@ -109,6 +113,7 @@ def main():
                  a=lambda f: f.attempts.map('{:,}'.format), b=lambda f: f.per_100.map('{:+.1f}'.format), c=lambda f: [f'{x:+.1f} to {y:+.1f}' for x, y in zip(f.low, f.high)])[
                      ['name', 'a', 'b', 'c']].rename(columns={'name': 'Player', 'a': 'Attempts', 'b': 'Makes per 100 shots above expectation', 'c': '95% interval'})),
              '### Why distance is hard to beat', '',
+             '![Share of forecast error removed by distance and by each further kind of information](research/results/public_atlas/report/information_ladder.png)', '',
              f"On {int(full.attempts):,} shots from the 2026 regular season, with models fitted on 2022 to 2024 and tuned on 2025:", '',
              table(pd.DataFrame({'Information': ['League make rate only' if s == 'League rate' else s for s in ladder.step], 'Brier error': ladder.brier.map('{:.5f}'.format),
                                  'Drop from distance': ['' if pd.isna(v) or s == 'Distance' else f'{v:.2f}%' for v, s in zip(ladder.drop_vs_distance_pct, ladder.step)]})),
@@ -116,6 +121,7 @@ def main():
              f"Better information can only spread predicted chances further apart: distance spreads them by {100 * summary['distance_spread']:.1f} percentage points and everything recorded reaches {100 * summary['full_spread']:.1f}. "
              'The files hold no defender positions, passes or movement, so the gain from tracking data cannot be measured here.', '',
              '### Predicting the next season', '',
+             '![Past error of four prediction rules, relative to assuming the league average](research/results/public_atlas/report/prediction_error.png)', '',
              'Each season from 2019 to 2026 was predicted using only earlier seasons. Error is the root mean squared error against what was then observed.', '',
              table(pd.DataFrame({'Measure': backtest.label, 'League average': backtest.rmse_league.map('{:.2f}'.format), 'Same as last season': backtest.rmse_same.map('{:.2f}'.format),
                                  'Simple carry over': backtest.rmse_carried.map('{:.2f}'.format), 'Bayesian season model': backtest.rmse_bayes.map('{:.2f}'.format),
@@ -135,7 +141,7 @@ def main():
              '- The record has shot locations and event order. It has no passes, cuts, defender positions or lineups on the floor, so individual actions and defensive pressure cannot be valued.',
              '- Shot types are assigned by scorers and may be recorded differently for makes and misses.',
              '- Locations are whole feet, missing for about a quarter of shots before 2011, and recorded differently across providers.',
-             '- The whole possession measures are not adjusted for opponents, and possessions come only from games whose event order could be confirmed.',
+             '- Whole possessions come only from games whose event order could be confirmed.',
              '- No prediction knows about trades, injuries, the draft or coaching changes.', '',
              '## The 2027 test', '',
              'Every season used here has already been examined. The [test plan](research/public_atlas/PROSPECTIVE_2027.md) freezes the models and the data rules, records the predictions, and sets how the 2027 season will be scored once, whichever way it goes.', '',
