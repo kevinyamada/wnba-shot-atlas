@@ -934,7 +934,7 @@ def verify_links(browser, url):
     browser.call('Page.reload', {'ignoreCache': True})
     browser.wait(f"!window.leaving && {settled}")
     assert [value(ident) for ident in ('season', 'team', 'player', 'phase')] == ['all', 'all', 'all', 'all'], 'a reload should show every team'
-    assert js("document.getElementById('team-title').textContent").startswith('Where each team gained and lost points')
+    browser.wait("document.getElementById('team-title')?.textContent.startsWith('Where each team gained and lost points')")
 
     visit(f'?season=2012&compare=2013&side=allowed&team={team}')
     assert [value('season'), value('compare')] == ['2012', '2013'] and not js("document.getElementById('court-secondary').hidden")
