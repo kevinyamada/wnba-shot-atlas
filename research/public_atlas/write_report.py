@@ -34,6 +34,10 @@ def main():
     drawn = json.loads((SITE / 'prediction-surface.json').read_bytes())
     league = pd.read_csv(RESULTS / 'prediction_2027/league.csv')
     shooters = json.loads((SITE / 'shooters.json').read_bytes())
+    lab = pd.read_csv(RESULTS / 'methods_lab/scores.csv')
+    moran = pd.read_csv(RESULTS / 'methods_lab/morans_i.csv').set_index('residual')
+    density = pd.read_csv(RESULTS / 'methods_lab/intensity_scores.csv')
+    cox, reuse = ((density[name] * density.shots).sum() / density.shots.sum() for name in ('cox_process', 'last_season'))
 
     attempts, makes, pts = (int(counts[c].sum()) for c in ('attempts', 'makes', 'points'))
     mapped, unknown = int(counts.mapped_half.sum()), int(counts.unknown_location.sum())
@@ -131,6 +135,19 @@ def main():
              f"The spatial mesh model did not improve on the plain distance curve. Across {int(surface.loc[('mesh', 'p_distance'), 'attempts']):,} past shots its error was {abs(surface.loc[('mesh', 'p_distance'), 'drop_pct']):.2f}% "
              f"{'higher' if surface.loc[('mesh', 'p_distance'), 'drop_pct'] < 0 else 'lower'}, and makes fell inside its 95% range at {100 * drawn['coverage']:.0f}% of busy court spots. Its value is the map of credible ranges, not accuracy.", '',
              'For 2027 the league prediction is ' + ' and '.join(f"{r.prediction:.2f} for {r.measure.lower()} (range {r.low:.2f} to {r.high:.2f})" for r in league.itertuples()) + '.', '',
+             '### Eleven spatial methods on one question', '',
+             f"Eleven methods were given the same task: learn the make chance at each court spot from three regular seasons and predict the next, for {int(density.season.min())} to {int(density.season.max())} "
+             f"({int(lab.attempts.max()):,} shots in {int(lab.games.max()):,} games). A positive change means lower error than the distance curve, and the range comes from resampling whole games.", '',
+             table(pd.DataFrame({'Method': lab.method, 'Kind': lab.family, 'Brier error': lab.brier.map('{:.5f}'.format),
+                                 'Change from the distance curve': ['' if m == 'Distance curve' else f'{v:+.2f}%' for m, v in zip(lab.method, lab.drop_vs_distance_pct)],
+                                 '95% range': ['' if m == 'Distance curve' else f'{x:+.2f}% to {y:+.2f}%' for m, x, y in zip(lab.method, lab.low_pct, lab.high_pct)]})),
+             f"The best method, the {lab.method.iloc[0]}, lowered error by {lab.drop_vs_distance_pct.iloc[0]:.2f}%. Once distance from the rim is known, a detailed map of the court adds very little. "
+             f"Moran's I shows why: neighbouring cells have similar make rates (I = {moran.loc['Observed make rate', 'morans_i']:.2f}), "
+             f"the distance curve removes most of that (I = {moran.loc['After the distance curve', 'morans_i']:.2f}) "
+             f"and nothing is left after the mesh model with a trend (I = {moran.loc['After the mesh model with trend', 'morans_i']:.2f}, p = {moran.loc['After the mesh model with trend', 'p_value']:.2f}).", '',
+             f"For where shots come from, a log Gaussian Cox process scored {cox:.4f} in average log score per shot, "
+             f"against {reuse:.4f} for reusing last season's shares of shots by cell. Lower is better, so the Cox process {'did' if cox < reuse else 'did not'} beat the simple rule. "
+             f"The [Methods lab]({SITE_URL}lab/) shows every surface, the variogram and the ensemble weights.", '',
              '## What a team could do with this', '',
              '- Judge a defence by the shots it allows, since that repeats and opponent shot making mostly does not.',
              '- Separate an offence that gets good shots from one that makes hard ones, because the second depends more on who is shooting.',

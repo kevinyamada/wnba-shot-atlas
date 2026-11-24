@@ -154,6 +154,28 @@ The spatial mesh model did not improve on the plain distance curve. Across 246,3
 
 For 2027 the league prediction is 36.53 for share of shots from the three point area (range 33.28 to 39.78) and 1.02 for field goal points per shot (range 0.98 to 1.06).
 
+### Eleven spatial methods on one question
+
+Eleven methods were given the same task: learn the make chance at each court spot from three regular seasons and predict the next, for 2024 to 2026 (115,908 shots in 853 games). A positive change means lower error than the distance curve, and the range comes from resampling whole games.
+
+| Method | Kind | Brier error | Change from the distance curve | 95% range |
+| --- | ---: | ---: | ---: | ---: |
+| Gaussian process | Bayesian field | 0.23064 | +0.09% | +0.04% to +0.14% |
+| Stacked ensemble | Ensemble | 0.23064 | +0.09% | +0.05% to +0.13% |
+| Simple average | Ensemble | 0.23067 | +0.07% | +0.03% to +0.12% |
+| SPDE mesh with trend | Bayesian field | 0.23077 | +0.03% | -0.02% to +0.09% |
+| SPDE mesh field | Bayesian field | 0.23077 | +0.03% | -0.02% to +0.09% |
+| Distance curve | Baseline | 0.23085 |  |  |
+| Universal kriging | Geostatistics | 0.23098 | -0.06% | -0.14% to +0.02% |
+| Ordinary kriging | Geostatistics | 0.23099 | -0.06% | -0.14% to +0.02% |
+| Areal CAR model | Areal data | 0.23108 | -0.10% | -0.17% to -0.02% |
+| Inverse distance weighting | Interpolation | 0.23136 | -0.22% | -0.31% to -0.14% |
+| League rate | Baseline | 0.24697 | -6.98% | -7.31% to -6.65% |
+
+The best method, the Gaussian process, lowered error by 0.09%. Once distance from the rim is known, a detailed map of the court adds very little. Moran's I shows why: neighbouring cells have similar make rates (I = 0.53), the distance curve removes most of that (I = 0.07) and nothing is left after the mesh model with a trend (I = -0.08, p = 0.97).
+
+For where shots come from, a log Gaussian Cox process scored 5.0628 in average log score per shot, against 5.0612 for reusing last season's shares of shots by cell. Lower is better, so the Cox process did not beat the simple rule. The [Methods lab](https://kevinyamada.github.io/wnba-shot-atlas/lab/) shows every surface, the variogram and the ensemble weights.
+
 ## What a team could do with this
 
 - Judge a defence by the shots it allows, since that repeats and opponent shot making mostly does not.
