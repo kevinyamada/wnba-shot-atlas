@@ -1,6 +1,6 @@
 import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=6';
 import { renderStudy } from './study-findings.js?v=5';
-import { shotMix } from './shot-mix.js?v=1';
+import { shotMix } from './shot-mix.js?v=2';
 
 const $ = id => document.getElementById(id);
 const controls = ['season', 'team', 'player', 'phase', 'shot-type', 'compare'].map($);
