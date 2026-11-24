@@ -1,0 +1,37 @@
+{
+  "season": 2026,
+  "rehearsal": true,
+  "manifestSha256": "a3638e383085063601ae6fee398ef9adb0ab99a221ef4e2870105d26f56eb8fa",
+  "results": [
+    {
+      "season": 2026,
+      "split": "playoffs",
+      "attempts": 2927,
+      "games": 22,
+      "distance_brier": 0.2286537611,
+      "full_brier": 0.2266159161,
+      "distance_log_loss": 0.6495091065,
+      "full_log_loss": 0.6447601699,
+      "drop_pct": 0.8912361598,
+      "low_pct": -0.1752256999,
+      "high_pct": 1.9039789348,
+      "predicted_minus_observed": 0.0153200345,
+      "holds_up": false
+    },
+    {
+      "season": 2026,
+      "split": "test",
+      "attempts": 44478,
+      "games": 325,
+      "distance_brier": 0.2307737717,
+      "full_brier": 0.2263997646,
+      "distance_log_loss": 0.6539250725,
+      "full_log_loss": 0.6441826128,
+      "drop_pct": 1.8953657934,
+      "low_pct": 1.592353518,
+      "high_pct": 2.1760085323,
+      "predicted_minus_observed": -0.0033868034,
+      "holds_up": true
+    }
+  ]
+}

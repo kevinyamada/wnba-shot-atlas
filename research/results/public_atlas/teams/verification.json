@@ -1,0 +1,12 @@
+{
+  "shots": 353293,
+  "team_seasons": 136,
+  "split_half_shot_quality": 0.839,
+  "saved_split_half": {
+    "offence_quality": 0.839,
+    "offence_making": 0.724,
+    "defence_quality": 0.672,
+    "defence_making": 0.287
+  },
+  "manifestSha256": "a3638e383085063601ae6fee398ef9adb0ab99a221ef4e2870105d26f56eb8fa"
+}

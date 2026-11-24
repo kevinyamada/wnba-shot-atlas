@@ -34,4 +34,12 @@ A forecast counts as holding up if its interval for the drop in error lies above
 
 ## When the files arrive
 
-Add 2027 to the season range in `fetch.py` and the last season of the current court in `court_rules.json`, then run the build and the scoring steps listed in the README. No scoring script for 2027 exists yet. Write it without opening the 2027 outcomes, and test it on 2026 first, where the answers are already known.
+Add 2027 to the season range in `fetch.py` and the last season of the current court in `court_rules.json`, pin the files, then run the build. Score the shot models once with
+
+```sh
+python research/public_atlas/score_future.py --season 2027
+```
+
+The script loads the frozen models, applies the benchmark sample rules to 2027 and writes the results to `research/results/public_atlas/prospective/`. Run on 2026, it reproduces all 47,405 saved predictions exactly, which is the check that the frozen rule is the one being scored. It refuses to run for a season that has not been built.
+
+The shooter, league expectation and first shot forecasts are rolling rules in `shooters.py`, `shot_form.py` and `shot_timing.py`. Extend their season ranges by one year and run them once. Their code must not change first.

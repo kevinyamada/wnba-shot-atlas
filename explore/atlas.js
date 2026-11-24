@@ -1,7 +1,7 @@
 import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=6';
 import { renderStudy } from './study-findings.js?v=5';
 import { shotMix } from './shot-mix.js?v=3';
-import { headline, shooters, ladder } from './overview.js?v=1';
+import { headline, shooters, ladder, teamReport, teamControl } from './overview.js?v=2';
 
 const $ = id => document.getElementById(id);
 const controls = ['season', 'team', 'player', 'phase', 'shot-type', 'compare'].map($);
@@ -9,7 +9,8 @@ const panels = ['court-primary', 'court-secondary'].map($);
 const number = new Intl.NumberFormat('en-CA');
 const percent = new Intl.NumberFormat('en-CA', {style: 'percent', maximumFractionDigits: 1});
 const decimal = new Intl.NumberFormat('en-CA', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-const dataRelease = 'r4';
+const dataRelease = 'r5';
+const extras = {teams: null, shooters: null};
 const sampleFloor = 12;
 const mappedAreas = 5;
 const metricNames = {share: 'Shot share', per100: 'Attempts per 100 shots', attempts: 'Attempts',
@@ -549,6 +550,7 @@ async function refresh() {
         refreshArea();
         renderCoverage();
         renderTypes(seasons[0], searchFilters());
+        renderTeam();
         $('load-state').textContent = '';
         document.body.dataset.ready = 'true';
     } catch (error) {
@@ -609,6 +611,16 @@ function bindCourt(panel, i) {
         const row = Math.min(rows - 1, Math.max(0, Math.floor(model.lastSquare / cols) + move[1]));
         selectSquare(row * cols + col);
     });
+}
+
+function renderTeam() {
+    if (!extras.teams) return;
+    teamReport($('team-report'), extras.teams, extras.shooters, {season: $('season').value, team: $('team').value, pick(team, year) {
+        if (team !== 'all' && $('season').value === 'all') $('season').value = year;
+        $('team').value = String(team);
+        $('player').value = 'all';
+        refresh();
+    }});
 }
 
 function reveal() {
@@ -675,15 +687,23 @@ async function start() {
     new MutationObserver(resize).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
     await refresh();
     const matches = data => data.manifestSha256 === index.manifestSha256;
-    Promise.all([json('data/shot-mix.json'), json('data/shot-timing.json').catch(() => null)]).then(([mix, timing]) => {
+    Promise.all([json('data/shot-mix.json'), json('data/shot-timing.json').catch(() => null), json('data/teams.json').catch(() => null)]).then(([mix, timing, teams]) => {
         if (!matches(mix)) return;
-        headline($('headline'), mix, timing && matches(timing) ? timing : null);
+        const usable = data => data && matches(data) ? data : null;
+        headline($('headline'), mix, usable(timing), usable(teams));
         shotMix($('shot-mix'), mix, palette);
+        if (!usable(teams)) return;
+        extras.teams = teams;
+        teamControl($('team-control'), teams);
+        $('more-control').hidden = false;
+        renderTeam();
     }).catch(error => console.warn(error));
     json('data/shooters.json').then(data => {
         if (!matches(data)) return;
+        extras.shooters = data;
         shooters($('shooters'), data);
         $('more-shooters').hidden = false;
+        renderTeam();
     }).catch(error => console.warn(error));
     json('data/model-ladder.json').then(data => {
         if (!matches(data)) return;

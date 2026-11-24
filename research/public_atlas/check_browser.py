@@ -400,7 +400,7 @@ def verify_overview(browser):
     points = js("[...document.querySelectorAll('.takeaways strong')].map(node => node.textContent)")
     groups = timing['scopes']['both']['groups']
     steal = round(100 * groups['Steal']['shots'][timing['mainSeconds']] / groups['Steal']['starts'])
-    assert points == [f"{round(100 * areas[2]['share_after'])}%", f"{change['after']:.2f}", f'{steal}%'], points
+    assert points[:3] == [f"{round(100 * areas[2]['share_after'])}%", f"{change['after']:.2f}", f'{steal}%'], points
     js("document.getElementById('headline').scrollIntoView({block:'start'})")
     browser.save_image('atlas_headline_desktop.png')
 
@@ -429,6 +429,53 @@ def verify_overview(browser):
     js("document.getElementById('more-shooters').scrollIntoView({block:'start'})")
     browser.save_image('atlas_shooters_desktop.png')
     print('OVERVIEW_BROWSER_VERIFIED main visual, shooter comparison and information ladder', flush=True)
+
+
+def verify_team_report(browser):
+    """Match the team table and one full team report with the saved team study."""
+    js = browser.js
+    data = json.loads((ROOT / 'explore/data/teams.json').read_bytes())
+    shooters = json.loads((ROOT / 'explore/data/shooters.json').read_bytes())
+    order = ['offence_quality', 'offence_making', 'defence_quality', 'defence_making']
+    signed = lambda value: ('−' if value < 0 else '+') + f'{abs(value):.1f}'
+    browser.wait("!document.getElementById('team-report').hidden && !!document.getElementById('team-table')")
+    latest = max(data['seasons'])
+    assert latest in js("document.getElementById('team-title').textContent")
+    rows = "[...document.querySelectorAll('#team-table tbody tr')].map(r => [...r.cells].map(c => c.textContent))"
+    for season in (latest, '2016'):
+        browser.select('season', season)
+        teams = data['seasons'][season]
+        assert js(rows) == [[t['name'], *[signed(t[key]['estimate']) for key in order], signed(t['net'])] for t in teams], season
+        assert all(t[key]['low'] <= t[key]['estimate'] <= t[key]['high'] for t in teams for key in order)
+    browser.select('season', latest)
+    team = data['seasons'][latest][0]
+    js(f"document.querySelector('#team-table button[data-team=\"{team['id']}\"]').click()")
+    browser.wait(f"document.getElementById('team-chart') && document.getElementById('team').value === '{team['id']}'")
+    assert js("document.getElementById('team-title').textContent") == f"{team['name']} in {latest}"
+    shown = js("Object.fromEntries([...document.querySelectorAll('#team-chart .relative-row[data-measure]')].map(r => [r.dataset.measure, r.querySelector('em').textContent]))")
+    for key in order:
+        better = sorted(data['seasons'][latest], key=lambda t: -t[key]['estimate'] if key.startswith('offence') else t[key]['estimate'])
+        assert shown[key].startswith(signed(team[key]['estimate']) + ' · ') and shown[key].endswith(f" of {len(better)}"), shown
+        rank = better.index(team) + 1
+        assert shown[key].split(' · ')[1].startswith(str(rank)), (key, shown[key], rank)
+    starts = js("[...document.querySelectorAll('.team-starts table')].map(t => [...t.tBodies[0].rows].map(r => r.cells[2].textContent))")
+    for cells, side in zip(starts, ('offence', 'defence'), strict=True):
+        for text, row in zip(cells, team['starts'][side], strict=True):
+            value, margin = (float(part) for part in text.split(' ± '))
+            assert abs(value - row['per100']) <= .5 and abs(margin - row['margin']) <= .5, (text, row)
+    roster = [p for p in shooters['seasons'][latest] if p.get('team') == team['id']][:3]
+    text = js("document.getElementById('team-report').textContent")
+    assert all(p['name'] in text for p in roster) and len(roster) > 0
+    assert js("document.querySelector('#court-primary [data-year]').textContent") == latest
+    js("document.getElementById('team-report').scrollIntoView({block:'start'})")
+    browser.save_image('atlas_team_report_desktop.png')
+    js("document.getElementById('team-back').click()")
+    browser.wait("document.getElementById('team-table') && document.getElementById('team').value === 'all'")
+    control = js("[...document.querySelector('#team-control table').tBodies[0].rows].map(r => r.cells[1].textContent.split(' ')[0])")
+    assert control == [f"{row['split_half']:.2f}" for row in data['repeatability']]
+    assert js("document.querySelectorAll('.takeaways li').length") == 4
+    browser.select('season', 'all')
+    print('TEAM_REPORT_BROWSER_VERIFIED', len(data['seasons']), 'seasons of team tables and one full report', flush=True)
 
 
 def verify_shot_timing(browser):
@@ -496,6 +543,7 @@ def verify(browser, url):
     assert js("[...document.querySelectorAll('details.more')].every(node => !node.open)")
     js("document.querySelectorAll('details.more').forEach(node => { node.open = true; })")
     verify_overview(browser)
+    verify_team_report(browser)
     verify_court_areas(browser)
     verify_area_selection(browser)
     verify_comparison_units(browser)
@@ -634,6 +682,9 @@ def verify(browser, url):
         js("document.getElementById('headline').scrollIntoView({block:'start'})")
         assert js("[...document.querySelectorAll('#headline .diet-bar > div')].every(d => d.scrollWidth <= d.clientWidth + 1 && d.getBoundingClientRect().right <= innerWidth)"), width
         browser.save_image(f'atlas_headline_mobile_{width}.png')
+        js("document.getElementById('team-report').scrollIntoView({block:'start'})")
+        assert js("(() => { const t = document.getElementById('team-table'); return t.scrollWidth <= t.parentElement.clientWidth + 1 || t.parentElement.scrollWidth > t.parentElement.clientWidth; })()"), width
+        browser.save_image(f'atlas_team_report_mobile_{width}.png')
         js("document.querySelectorAll('details.more').forEach(node => { node.open = true; })")
         assert js("[...document.querySelectorAll('.timing-card')].every(c => c.offsetWidth > 0 && c.getBoundingClientRect().right <= innerWidth)")
         assert js("(() => { const t = document.getElementById('area-table'); return t.scrollWidth <= t.parentElement.clientWidth && t.getBoundingClientRect().right <= innerWidth; })()"), width

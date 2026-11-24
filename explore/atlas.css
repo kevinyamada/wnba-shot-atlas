@@ -154,6 +154,17 @@ select { width: 100%; min-height: 42px; padding: .45rem 1.8rem .45rem .65rem; bo
 .takeaways li:last-child { border-bottom: 0; }
 .takeaways strong { font-family: var(--serif); font-size: 1.9rem; font-weight: 400; line-height: 1; color: var(--deep); font-variant-numeric: tabular-nums; }
 .takeaways span { font-size: .95rem; }
+#team-report > p { max-width: 78ch; margin-top: .6rem; }
+#team-table { max-width: 60rem; }
+#team-table button, #team-back { padding: 0; border: 0; background: none; color: var(--deep); font-weight: 650; text-align: left; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em; }
+#team-back { margin-top: .8rem; }
+.good { color: var(--deep); font-weight: 650; }
+.bad { color: var(--accent); font-weight: 650; }
+#team-chart { max-width: 48rem; margin-top: .8rem; }
+#team-chart .relative-row { grid-template-columns: minmax(8rem, .8fr) minmax(4rem, 1fr) minmax(7rem, .6fr); }
+#team-chart .relative-row em { font-style: normal; }
+.team-starts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem 2rem; max-width: 60rem; margin-top: .6rem; }
+@media (max-width: 48rem) { .team-starts { grid-template-columns: minmax(0, 1fr); } #team-table { font-size: .78rem; } #team-table th, #team-table td { padding: .45rem .25rem; } }
 .more-list { margin-top: 2.2rem; border-bottom: 1px solid var(--line); }
 .more { margin: 0; padding: 0; border-top: 1px solid var(--line); }
 .more > summary { padding: .95rem 0; font-size: 1.05rem; font-weight: 650; }

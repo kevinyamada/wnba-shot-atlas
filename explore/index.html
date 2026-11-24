@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Compare WNBA shooting from 1997 to 2026 by season, team, player and position on the court.">
   <title>WNBA Shot Atlas | Explore 1997 to 2026</title>
-  <link rel="stylesheet" href="atlas.css?v=9">
+  <link rel="stylesheet" href="atlas.css?v=10">
   <script src="../theme.js?v=light-default"></script>
-  <script type="module" src="atlas.js?v=10"></script>
+  <script type="module" src="atlas.js?v=11"></script>
 </head>
 <body>
   <a class="skip" href="#explorer">Skip to the shot explorer</a>
@@ -102,6 +102,7 @@
         </aside>
       </div>
       <p class="caption" id="metric-note"></p>
+      <section class="headline" id="team-report" aria-labelledby="team-title" hidden></section>
       <section class="headline" id="headline" aria-labelledby="headline-title" hidden></section>
       <div class="more-list">
         <details class="more" id="more-history"><summary>How has this spot changed over the years?</summary>
@@ -119,6 +120,7 @@
             </details>
           </section>
         </details>
+        <details class="more" id="more-control" hidden><summary>What does a team actually control?</summary><div id="team-control"></div></details>
         <details class="more" id="more-shooters" hidden><summary>Who makes more shots than expected?</summary><div id="shooters"></div></details>
         <details class="more" id="more-mix"><summary>Better spots or better shooting?</summary>
           <section id="shot-mix" aria-labelledby="mix-title" hidden></section>

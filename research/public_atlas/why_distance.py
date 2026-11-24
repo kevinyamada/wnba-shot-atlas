@@ -63,8 +63,10 @@ def play_context(year):
     return shots[KEY + ['repeat', 'previous_event', 'previous_same_team', 'seconds_since_previous', 'margin']].assign(season=year)
 
 
-def sample():
-    shots, _ = dataset()
+def sample(shots=None):
+    """Add the play context and coded categories to benchmark shots. Category levels always come from the training seasons."""
+    if shots is None:
+        shots, _ = dataset()
     shots['repeat'] = shots.groupby(['season'] + KEY, dropna=False).cumcount()
     context = pd.concat([play_context(year) for year in sorted(shots.season.unique())])
     joined = shots.merge(context, on=['season', 'repeat'] + KEY, how='left', validate='one_to_one')

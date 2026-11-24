@@ -110,6 +110,42 @@
       "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
       "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
       "problemMatcher": []
+    },
+    {
+      "label": "WNBA public: league expected points",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "-u", "${workspaceFolder}/research/public_atlas/expected_points.py"],
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
+      "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
+      "problemMatcher": []
+    },
+    {
+      "label": "WNBA public: what teams control",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "-u", "${workspaceFolder}/research/public_atlas/team_value.py"],
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
+      "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
+      "problemMatcher": []
+    },
+    {
+      "label": "WNBA public: verify team study from raw files",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "-u", "${workspaceFolder}/research/public_atlas/verify_teams.py"],
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
+      "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
+      "problemMatcher": []
+    },
+    {
+      "label": "WNBA public: rehearse frozen scoring on 2026",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "-u", "${workspaceFolder}/research/public_atlas/score_future.py", "--season", "2026"],
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
+      "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
+      "problemMatcher": []
     }
   ]
 }

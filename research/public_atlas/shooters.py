@@ -23,7 +23,7 @@ def load():
     shots = pd.read_csv(DERIVED / 'shot_form_predictions.csv.gz')
     frames = []
     for year, season in shots.groupby('season'):
-        names = pd.read_csv(DERIVED / f'shots_{year}.csv.gz', usecols=['source_row', 'player_id', 'athlete_name_1'])
+        names = pd.read_csv(DERIVED / f'shots_{year}.csv.gz', usecols=['source_row', 'player_id', 'athlete_name_1', 'team_id'])
         frames.append(season.merge(names, on='source_row', validate='one_to_one'))
     shots = pd.concat(frames, ignore_index=True)
     return shots[shots.player_id.ne(0)].copy()
@@ -34,7 +34,8 @@ def player_totals(shots, column=EXPECTED):
     shots = shots.assign(p=shots[column])
     league = shots.groupby('season').agg(league_makes=('made', 'sum'), league_expected=('p', 'sum'))
     totals = shots.groupby(['season', 'player_id']).agg(attempts=('made', 'size'), makes=('made', 'sum'), raw_expected=('p', 'sum'),
-                                                         name=('athlete_name_1', lambda s: s.mode().iat[0] if s.notna().any() else 'Unknown shooter')).reset_index()
+                                                         name=('athlete_name_1', lambda s: s.mode().iat[0] if s.notna().any() else 'Unknown shooter'),
+                                                         team_id=('team_id', lambda s: s.mode().iat[0])).reset_index()
     totals = totals.join(league, on='season')
     totals['season_level'] = (totals.league_makes - totals.makes) / (totals.league_expected - totals.raw_expected)
     level = shots.set_index(['season', 'player_id']).index.map(totals.set_index(['season', 'player_id']).season_level)
@@ -101,9 +102,14 @@ def forecast_check(shots, totals):
 
 def records(frame, minimum):
     keep = frame[frame.attempts.ge(minimum)].sort_values('per_100', ascending=False)
-    return [dict(id=int(r.player_id), name=r.name, attempts=int(r.attempts), makes=int(r.makes), expected=round(float(r.expected), 1),
-                 raw=round(float(r.raw_per_100), 2), estimate=round(float(r.per_100), 2), low=round(float(r.low), 2), high=round(float(r.high), 2))
-            for r in keep.itertuples()]
+    rows = []
+    for r in keep.itertuples():
+        row = dict(id=int(r.player_id), name=r.name, attempts=int(r.attempts), makes=int(r.makes), expected=round(float(r.expected), 1),
+                   raw=round(float(r.raw_per_100), 2), estimate=round(float(r.per_100), 2), low=round(float(r.low), 2), high=round(float(r.high), 2))
+        if hasattr(r, 'team_id'):
+            row['team'] = int(r.team_id)
+        rows.append(row)
+    return rows
 
 
 def main():

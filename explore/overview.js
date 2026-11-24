@@ -16,7 +16,7 @@ function takeaway(number, text) {
     return item;
 }
 
-export function headline(target, mix, timing) {
+function headlineParts(mix, timing) {
     const [change] = mix.comparisons;
     const areas = mix.comparisonAreas.filter(area => area.comparison === change.comparison).slice(0, 3);
     const names = ['Near the basket', 'Midrange', 'Threes'];
@@ -56,6 +56,15 @@ export function headline(target, mix, timing) {
         const {Steal: steal, 'Opponent basket': basket} = timing.scopes.both.groups;
         const quick = group => 100 * group.shots[timing.mainSeconds] / group.starts;
         points.append(takeaway(Math.round(quick(steal)) + '%', `of possessions after a steal get a shot up within ${timing.mainSeconds} seconds. After a made basket it is ${Math.round(quick(basket))}%.`));
+    }
+    return {title, figure, points};
+}
+
+export function headline(target, mix, timing, teams) {
+    const {title, figure, points} = headlineParts(mix, timing);
+    if (teams) {
+        const repeat = Object.fromEntries(teams.repeatability.map(row => [row.measure, row.split_half]));
+        points.append(takeaway(repeat.offence_quality.toFixed(2), `is how closely a team’s shot quality repeats between games, on a scale to 1. Opponents’ shot making against it repeats only ${repeat.defence_making.toFixed(2)}.`));
     }
     const grid = el('div', null, 'headline-grid');
     grid.append(figure, points);
@@ -168,4 +177,135 @@ export function ladder(target, data) {
     wrap.append(table);
     const note = el('p', `${count.format(steps[0].attempts)} shots from the 2026 regular season. Models learned from 2022 to 2024 and were tuned on 2025. Error is the Brier score, where lower is better.`, 'caption');
     target.replaceChildren(lead, legend, bar, why, wrap, note);
+}
+
+const measureOrder = ['offence_quality', 'offence_making', 'defence_quality', 'defence_making'];
+const helps = (name, value) => name.startsWith('offence') ? value >= 0 : value <= 0;
+const place = n => n + (n % 100 > 10 && n % 100 < 14 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th');
+
+function phrase(name, value) {
+    const size = Math.abs(value) < .5 ? 'about average' : `${Math.abs(value).toFixed(1)} points per 100 shots ${value > 0 ? 'above' : 'below'} the league`;
+    return {offence_quality: `Its shots are worth ${size}`, offence_making: `It scores ${size} on those shots`,
+        defence_quality: `Opponents get shots worth ${size}`, defence_making: `Opponents score ${size} on them`}[name].replace('worth about average', 'of about average value') + '.';
+}
+
+function startsTable(rows, heading) {
+    const table = el('table');
+    const head = table.createTHead().insertRow();
+    for (const text of [heading, 'Share', 'Points per 100', 'Rest of league']) head.append(Object.assign(el('th', text), {scope: 'col'}));
+    const body = table.createTBody();
+    for (const row of rows) {
+        const line = body.insertRow();
+        line.append(Object.assign(el('th', row.start.replace('Opponent', 'After opponent').replace('Steal', 'After a steal').replace('Defensive rebound', 'After a defensive rebound')), {scope: 'row'}),
+            el('td', whole(row.share)), el('td', `${row.per100.toFixed(0)} ± ${row.margin.toFixed(0)}`), el('td', row.league.toFixed(0)));
+    }
+    const wrap = el('div', null, 'table-scroll');
+    wrap.append(table);
+    return wrap;
+}
+
+export function teamReport(target, data, shooterData, {season, team, pick}) {
+    const years = Object.keys(data.seasons).sort();
+    const year = years.includes(String(season)) ? String(season) : years.at(-1);
+    const teams = data.seasons[year];
+    const chosen = teams.find(row => String(row.id) === String(team));
+    const repeat = Object.fromEntries(data.repeatability.map(row => [row.measure, row.split_half]));
+    const trust = el('p', 'How often each number shows up again in other games of the same season: '
+        + measureOrder.map(name => `${data.measures[name].toLowerCase()} ${repeat[name].toFixed(2)}`).join(', ')
+        + '. Closer to 1 means the team controls it. Closer to 0 means mostly chance.', 'caption');
+    const scope = el('p', (String(season) === year ? '' : `Showing ${year}. Team reports cover ${years[0]} to ${years.at(-1)}. `)
+        + 'Regular season. Points per 100 shots against the rest of the league, with small samples pulled toward average.', 'caption');
+    if (!chosen) {
+        const title = el('h2', `What each team controlled in ${year}`);
+        title.id = 'team-title';
+        const table = el('table');
+        table.id = 'team-table';
+        const head = table.createTHead().insertRow();
+        for (const text of ['Team', ...measureOrder.map(name => data.measures[name]), 'Net']) head.append(Object.assign(el('th', text), {scope: 'col'}));
+        const body = table.createTBody();
+        for (const row of teams) {
+            const line = body.insertRow();
+            const name = el('th');
+            name.scope = 'row';
+            const button = el('button', row.name);
+            button.type = 'button';
+            button.dataset.team = row.id;
+            button.addEventListener('click', () => pick(row.id, year));
+            name.append(button);
+            line.append(name, ...measureOrder.map(key => el('td', signed(row[key].estimate), helps(key, row[key].estimate) ? 'good' : 'bad')),
+                el('td', signed(row.net), row.net >= 0 ? 'good' : 'bad'));
+        }
+        const wrap = el('div', null, 'table-scroll');
+        wrap.append(table);
+        const key = el('p', 'Blue helps the team and orange hurts it. Net adds the four together. Pick a team for its full report.', 'caption');
+        target.replaceChildren(title, wrap, key, trust, scope);
+        target.hidden = false;
+        return;
+    }
+    const title = el('h2', `${chosen.name} in ${year}`);
+    title.id = 'team-title';
+    const summary = el('p', measureOrder.map(name => phrase(name, chosen[name].estimate)).join(' '));
+    summary.id = 'team-summary';
+    const limit = Math.ceil(Math.max(...teams.flatMap(row => measureOrder.flatMap(name => [Math.abs(row[name].low), Math.abs(row[name].high)]))) / 2) * 2;
+    const chart = el('div', null, 'relative-chart');
+    chart.id = 'team-chart';
+    const scale = el('div', null, 'relative-key');
+    scale.append(el('span', `${limit} below`), el('span', 'League average'), el('span', `${limit} above`));
+    chart.append(scale);
+    for (const name of measureOrder) {
+        const value = chosen[name];
+        const better = (a, b) => name.startsWith('offence') ? b[name].estimate - a[name].estimate : a[name].estimate - b[name].estimate;
+        const rank = [...teams].sort(better).indexOf(chosen) + 1;
+        const row = el('div', null, 'relative-row');
+        row.dataset.measure = name;
+        const track = el('div', null, 'relative-track');
+        const interval = el('span', null, 'relative-interval');
+        const point = el('span', null, 'relative-point');
+        const at = x => 50 + 50 * Math.max(-1, Math.min(1, x / limit));
+        interval.style.left = at(value.low) + '%';
+        interval.style.width = (at(value.high) - at(value.low)) + '%';
+        point.style.left = at(value.estimate) + '%';
+        track.append(interval, point);
+        const note = el('em', `${signed(value.estimate)} · ${place(rank)} of ${teams.length}`);
+        note.className = helps(name, value.estimate) ? 'good' : 'bad';
+        row.append(el('span', data.measures[name]), track, note);
+        chart.append(row);
+    }
+    const parts = [title, summary, chart, trust];
+    if (chosen.starts.offence.length) {
+        const starts = el('div', null, 'team-starts');
+        starts.append(startsTable(chosen.starts.offence, 'When it has the ball'), startsTable(chosen.starts.defence, 'When opponents have the ball'));
+        parts.push(starts);
+    }
+    const roster = shooterData?.seasons[year]?.filter(player => player.team === chosen.id).slice(0, 3) ?? [];
+    if (roster.length) {
+        parts.push(el('p', 'Best shooters against expectation: ' + roster.map(player => `${player.name} ${signed(player.estimate)} (${signed(player.low)} to ${signed(player.high)})`).join(', ')
+            + ' makes per 100 shots.'));
+    }
+    const back = el('button', 'See all teams');
+    back.type = 'button';
+    back.id = 'team-back';
+    back.addEventListener('click', () => pick('all', year));
+    target.replaceChildren(...parts, back, scope);
+    target.hidden = false;
+}
+
+export function teamControl(target, data) {
+    const lead = el('p', 'Split each team season into alternating games and compare the two halves. A number that matches across the halves reflects something the team does. One that does not is mostly chance.');
+    const table = el('table');
+    const head = table.createTHead().insertRow();
+    for (const text of ['Measure', 'Same season', 'Following season', 'Spread between teams']) head.append(Object.assign(el('th', text), {scope: 'col'}));
+    const body = table.createTBody();
+    for (const row of data.repeatability) {
+        const line = body.insertRow();
+        line.append(Object.assign(el('th', row.label), {scope: 'row'}), el('td', `${row.split_half.toFixed(2)} (${row.split_half_low.toFixed(2)} to ${row.split_half_high.toFixed(2)})`),
+            el('td', `${row.next_season.toFixed(2)} (${row.next_season_low.toFixed(2)} to ${row.next_season_high.toFixed(2)})`), el('td', data.spread[row.measure].spread.toFixed(1)));
+    }
+    const wrap = el('div', null, 'table-scroll');
+    wrap.append(table);
+    const strongest = [...data.repeatability].sort((a, b) => b.split_half - a.split_half);
+    const meaning = el('p', `${strongest[0].label} repeats most (${strongest[0].split_half.toFixed(2)}) and ${strongest.at(-1).label.toLowerCase()} repeats least (${strongest.at(-1).split_half.toFixed(2)}). `
+        + 'For a defence, the shots it allows say more than whether opponents happened to make them. These are descriptions of past seasons and do not show that changing a scheme would move a number.');
+    const note = el('p', `${data.repeatability[0].team_seasons} team seasons from 2016 to 2026. Values are correlations with 95% ranges. Spread is one standard deviation in points per 100 shots.`, 'caption');
+    target.replaceChildren(lead, wrap, meaning, note);
 }
