@@ -73,6 +73,39 @@ def main():
     mine = np.corrcoef(first, second)[0, 1]
     assert abs(mine - repeats.loc['offence_quality', 'split_half']) < .02, mine
 
+    # Opponent adjustment for one season, solved as least squares with one extra row per prior.
+    year = regular[regular.season.eq(2026)]
+    level = year.points.sum() / year.xp.sum()
+    games = year.groupby(['game_id', 'team_id', 'defence_id']).agg(n=('points', 'size'), points=('points', 'sum'), expected=('xp', 'sum')).reset_index()
+    teams = sorted(set(games.team_id) | set(games.defence_id))
+    spreads = json.loads((recount.SITE / 'teams.json').read_bytes())['spread']
+    noise = np.var(100 * (year.points - level * year.xp))
+    rows, target = [], []
+    for game in games.itertuples():
+        line = np.zeros(2 * len(teams))
+        line[teams.index(game.team_id)] = line[len(teams) + teams.index(game.defence_id)] = np.sqrt(game.n / noise)
+        rows.append(line)
+        target.append(np.sqrt(game.n / noise) * 100 * (game.points - level * game.expected) / game.n)
+    prior = np.diag(np.repeat([1 / spreads['offence_making']['spread'], 1 / spreads['defence_making']['spread']], len(teams)))
+    solution = np.linalg.lstsq(np.vstack([np.array(rows), prior]), np.concatenate([target, np.zeros(2 * len(teams))]), rcond=None)[0]
+    for k, team in enumerate(teams):
+        assert abs(solution[k] - saved.loc[(2026, team), 'offence_making_adjusted']) < 1e-6, team
+        assert abs(solution[len(teams) + k] - saved.loc[(2026, team), 'defence_making_adjusted']) < 1e-6, team
+    shift = pd.read_csv(RESULTS / 'teams/opponent_adjustment.csv')
+    assert shift.correlation.min() > .9
+
+    factors = pd.read_csv(RESULTS / 'teams/possession_factors.csv')
+    turns = pd.read_csv(DERIVED / 'league_turns/turns_2026.csv.gz')
+    turns = turns[turns.scope.eq('regular')]
+    assert abs(factors[factors.season.eq(2026)].possessions.sum() - len(turns)) <= .01 * len(turns)
+    latest = factors[factors.season.eq(2026)]
+    assert np.isclose(np.average(latest.offence_points, weights=latest.possessions), 100 * turns.points.sum() / len(turns), atol=.5)
+    for name in ('offence_points', 'defence_points', 'offence_turnovers', 'defence_turnovers'):
+        assert (factors[f'{name}_low'] <= factors[f'{name}_estimate']).all() and (factors[f'{name}_estimate'] <= factors[f'{name}_high']).all()
+        assert (factors[f'{name}_estimate'].abs() <= (factors[name] - factors[f'{name}_league']).abs() + 1e-9).all()
+    drawn = json.loads((recount.SITE / 'team-possessions.json').read_bytes())
+    assert drawn['manifestSha256'] == manifest_digest() and sum(len(v) for v in drawn['seasons'].values()) == len(factors)
+
     site = json.loads((recount.SITE / 'teams.json').read_bytes())
     assert site['manifestSha256'] == manifest_digest()
     for season, teams in site['seasons'].items():
@@ -80,8 +113,8 @@ def main():
         assert len(teams) == len(table)
         for team in teams:
             row = table.loc[team['id']]
-            assert team['shots'] == row.shots and np.isclose(team['offence_quality']['estimate'], row.offence_quality_estimate, atol=.006)
-            assert np.isclose(team['defence_making']['estimate'], row.defence_making_estimate, atol=.006) and np.isclose(team['net'], row.net, atol=.006)
+            assert team['shots'] == row.shots and np.isclose(team['offence_quality']['estimate'], row.offence_quality_adjusted, atol=.006)
+            assert np.isclose(team['defence_making']['estimate'], row.defence_making_adjusted, atol=.006) and np.isclose(team['net'], row.net, atol=.006)
     starts = pd.read_csv(RESULTS / 'teams/possession_starts.csv')
     assert np.allclose(starts.per_100, 100 * starts.points / starts.possessions) and starts.share.between(0, 1).all()
     assert np.allclose(starts.groupby(['season', 'side', 'team_id']).share.sum(), 1)

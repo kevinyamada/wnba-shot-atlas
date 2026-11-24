@@ -13,10 +13,16 @@ Shot quality is the league expected points of the shots a team takes or allows. 
 
 A higher correlation means the measure reflects something a team does. A correlation near zero means most of what is seen in one stretch of games is chance. These are descriptions of past seasons. They do not show that changing a scheme would move a measure.
 
+## Adjusting for opponents
+
+The values shown on the site come from a model that estimates every offence and every defence together from single games, so a team that met strong defences is not marked down for it. The schedule is close to balanced, so the adjustment is small. Across the four measures the adjusted and unadjusted values correlate at 0.985 or more, and the largest change for any team season is 2.7 points per 100 shots.
+
 ## Method
 
 The league expectation comes from `expected_points.py` and uses no team or player. Before a team is compared, the expectation is scaled so that the rest of the league scores exactly what is expected that season. Noise for each team season comes from drawing its games again 1,000 times. Each measure is then pulled toward the league average in proportion to that noise, and the 95% interval is the range of the resulting normal posterior. The same season check splits each team season into alternating games by date. The following season check pairs a franchise with its next season. Intervals for the correlations resample team seasons.
 
 Possession starts use the play by play reconstruction of complete possessions in regular season games. Each start is compared with the rest of the league, and the margin of error is 1.96 standard errors of the mean.
 
-[Team seasons](team_seasons.csv) · [Repeatability](repeatability.csv) · [Possession starts](possession_starts.csv)
+The opponent adjustment treats a game value as the offence effect plus the defence effect plus noise that shrinks with the number of shots. Both effects have normal priors centred on the league, with the spreads found by pooling, and the posterior is exact.
+
+[Team seasons](team_seasons.csv) · [Repeatability](repeatability.csv) · [Opponent adjustment](opponent_adjustment.csv) · [Possession starts](possession_starts.csv) · [Whole possessions](POSSESSIONS.md)

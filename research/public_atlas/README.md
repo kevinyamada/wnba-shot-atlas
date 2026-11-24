@@ -49,12 +49,14 @@ python research/public_atlas/shooters.py
 python research/public_atlas/verify_models.py
 python research/public_atlas/expected_points.py
 python research/public_atlas/team_value.py
+python research/public_atlas/team_possessions.py
 python research/public_atlas/verify_teams.py
 python research/public_atlas/score_future.py --season 2026
 python research/public_atlas/predict_surface.py
 python research/public_atlas/prediction_pack.py
 python research/public_atlas/predict_2027.py
 python research/public_atlas/verify_prediction.py
+python research/public_atlas/write_report.py
 python research/public_atlas/check_browser.py
 ```
 
@@ -66,7 +68,9 @@ The restore step checks the pinned bytes and reports any upstream changes. An ex
 
 A separate check compares the ESPN shot tables with the WNBA Stats shot release on confidently matched games in 2025 and 2026. Its [source pins](reference_manifest.json), [season totals](../results/public_atlas/official_reference_summary.csv) and [game differences](../results/public_atlas/official_reference_games.csv) keep both versions visible. They agree on attempts, makes and points in 661 of 662 games. ESPN records one additional miss in game 401857099, where the ESPN team box also has one fewer attempt than its shot release. The prediction sample excludes that game through the box score check.
 
+- [The research report](../../REPORT.md), written from the results files by `write_report.py`
 - [What a team controls: shot quality and shot making on offence and defence](../results/public_atlas/teams/README.md)
+- [Whole possessions: turnovers, offensive rebounds and free throws for and against each team](../results/public_atlas/teams/POSSESSIONS.md)
 - [League expected points per shot](../results/public_atlas/expected_points/README.md)
 - [Why distance is hard to beat](../results/public_atlas/why_distance/README.md)
 - [Shooters against expectation, with pooling and intervals](../results/public_atlas/shooters/README.md)
@@ -90,9 +94,10 @@ The original public benchmark models train on 2022 to 2024 regular season games,
 The site and the studies are organised around questions a WNBA staff could act on.
 
 - Where do we and our opponents shoot, and what are those shots worth? The court, the area overview and `expected_points.py`.
-- Are we getting good shots or making hard ones, and what do we allow? `team_value.py` gives four numbers for every team season from 2016 to 2026.
+- Are we getting good shots or making hard ones, and what do we allow? `team_value.py` gives four numbers for every team season from 2016 to 2026, adjusted for opponents.
+- What happens on whole possessions? `team_possessions.py` adds turnovers, offensive rebounds and free throws, for and against.
 - Which of those numbers should we trust? The same study compares alternating games. Shot quality taken repeats at 0.84 and opponents' shot making at 0.29.
-- Which shooters beat expectation? `shooters.py`, with pooling and intervals.
+- Which shooters beat expectation, and from where? `shooters.py`, with pooling and intervals, overall and by court area.
 - How do possessions start, and what do they yield? The team report and the play studies.
 
 The public files hold shot locations and event order. They hold no passes, cuts, defender positions or lineups on the floor, so they cannot value individual actions or defensive pressure. That needs tracking data from the league or a team.

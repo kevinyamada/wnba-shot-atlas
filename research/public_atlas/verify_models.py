@@ -82,6 +82,20 @@ def shooters():
         for player in players:
             row = expected.loc[player['id']]
             assert player['attempts'] == row.attempts and player['makes'] == row.makes and np.isclose(player['estimate'], row.per_100, atol=.006)
+    areas = pd.read_csv(RESULTS / 'shooters/player_areas.csv')
+    zones = pd.concat([pd.read_csv(DERIVED / f'shots_{year}.csv.gz', usecols=['source_row', 'zone']).assign(season=year) for year in sorted(shots.season.unique())])
+    placed = shots.merge(zones, on=['season', 'source_row'], validate='one_to_one')
+    placed = placed[placed.zone.le(4)]
+    counted = placed.groupby(['season', 'athlete_id_1', 'zone']).made.agg(attempts='size', makes='sum').reset_index().rename(columns={'athlete_id_1': 'player_id'})
+    both = areas.merge(counted, on=['season', 'player_id', 'zone'], validate='one_to_one', suffixes=('', '_raw'))
+    assert len(both) == len(areas) == len(counted) and both.attempts.eq(both.attempts_raw).all() and both.makes.eq(both.makes_raw).all()
+    assert (areas.low <= areas.per_100).all() and (areas.per_100 <= areas.high).all() and (areas.per_100.abs() <= areas.raw_per_100.abs() + 1e-9).all()
+    drawn = json.loads((recount.SITE / 'shooter-areas.json').read_bytes())
+    assert drawn['manifestSha256'] == manifest_digest()
+    for season, players in drawn['seasons'].items():
+        table = areas[areas.season.eq(int(season))].set_index(['player_id', 'zone'])
+        for player, rows in players.items():
+            assert all(table.loc[(int(player), zone), 'attempts'] == n and abs(table.loc[(int(player), zone), 'per_100'] - value) < .006 for zone, n, _, value, _, _ in rows)
     check = pd.read_csv(RESULTS / 'shooters/forecast_check.csv').set_index(['shots', 'forecast'])
     assert check.loc[('all shots', 'pooled'), 'brier'] < check.loc[('all shots', 'pooled'), 'league_brier']
     return dict(player_seasons=len(mine), shots=len(shots), skill_spread_per_100=round(float(100 * np.sqrt(tau2)), 3))

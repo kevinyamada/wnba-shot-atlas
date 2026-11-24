@@ -1,7 +1,7 @@
-import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=6';
+import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=7';
 import { renderStudy } from './study-findings.js?v=6';
 import { shotMix } from './shot-mix.js?v=3';
-import { headline, shooters, ladder, teamReport, teamControl, prediction } from './overview.js?v=5';
+import { headline, shooters, ladder, teamReport, teamControl, prediction } from './overview.js?v=6';
 
 const $ = id => document.getElementById(id);
 const controls = ['season', 'team', 'player', 'phase', 'shot-type', 'compare'].map($);
@@ -9,8 +9,8 @@ const panels = ['court-primary', 'court-secondary'].map($);
 const number = new Intl.NumberFormat('en-CA', {maximumFractionDigits: 0});
 const percent = new Intl.NumberFormat('en-CA', {style: 'percent', maximumFractionDigits: 1});
 const decimal = new Intl.NumberFormat('en-CA', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-const dataRelease = 'r8';
-const extras = {teams: null, shooters: null};
+const dataRelease = 'r9';
+const extras = {teams: null, shooters: null, possessions: null};
 const sampleFloor = 12;
 const mappedAreas = 5;
 const metricNames = {share: 'Shot share', per100: 'Attempts per 100 shots', attempts: 'Attempts',
@@ -626,7 +626,7 @@ function renderTeam() {
         $('team').value = String(team);
         $('player').value = 'all';
         refresh();
-    }});
+    }}, extras.possessions);
 }
 
 function reveal() {
@@ -708,12 +708,17 @@ async function start() {
         if (!matches(data)) return;
         forecast = forecast && matches(forecast) ? forecast : null;
         extras.shooters = data;
-        shooters($('shooters'), data, forecast);
+        shooters($('shooters'), data, forecast, {rules: index.court, grid: index.grid, palette, load: () => json('data/shooter-areas.json')});
         $('more-shooters').hidden = false;
         renderTeam();
         if (!forecast) return;
         prediction($('prediction'), forecast, surface && matches(surface) ? {surface, rules: index.court, palette} : null);
         $('more-prediction').hidden = false;
+    }).catch(error => console.warn(error));
+    json('data/team-possessions.json').then(data => {
+        if (!matches(data)) return;
+        extras.possessions = data;
+        renderTeam();
     }).catch(error => console.warn(error));
     json('data/model-ladder.json').then(data => {
         if (!matches(data)) return;

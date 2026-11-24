@@ -86,6 +86,38 @@ def pooled(table):
     return table, spread
 
 
+def adjusted(shots, spread):
+    """Estimate every offence and every defence together from single games, so each is judged against the opponents it met.
+
+    A game value is the offence's effect plus the defence's effect plus noise that shrinks with the number of shots.
+    Effects have normal priors centred on the league with the spreads found by pooling. The posterior is exact.
+    """
+    rows = []
+    for season, part in shots.groupby('season'):
+        level, centre = part.points.sum() / part.xp.sum(), part.xp.mean()
+        games = part.groupby(['game_id', 'team_id', 'defence_id']).agg(n=('points', 'size'), points=('points', 'sum'), expected=('xp', 'sum')).reset_index()
+        teams = np.sort(pd.unique(games[['team_id', 'defence_id']].to_numpy().ravel()))
+        place = {team: k for k, team in enumerate(teams)}
+        design = np.zeros((len(games), 2 * len(teams)))
+        design[np.arange(len(games)), games.team_id.map(place)] = 1
+        design[np.arange(len(games)), games.defence_id.map(place) + len(teams)] = 1
+        targets = {'quality': 100 * (games.expected / games.n - centre), 'making': 100 * (games.points - level * games.expected) / games.n}
+        per_shot = {'quality': np.var(100 * part.xp), 'making': np.var(100 * (part.points - level * part.xp))}
+        found = {team: dict(season=season, team_id=team) for team in teams}
+        for kind, target in targets.items():
+            prior = np.repeat([1 / spread[f'offence_{kind}']['spread'] ** 2, 1 / spread[f'defence_{kind}']['spread'] ** 2], len(teams))
+            weight = (games.n / per_shot[kind]).to_numpy()
+            covariance = np.linalg.inv(design.T @ (design * weight[:, None]) + np.diag(prior))
+            mean = covariance @ (design.T @ (weight * target.to_numpy()))
+            sd = np.sqrt(np.diag(covariance))
+            for team, k in place.items():
+                for side, at in [('offence', k), ('defence', k + len(teams))]:
+                    found[team].update({f'{side}_{kind}_adjusted': mean[at], f'{side}_{kind}_adjusted_low': mean[at] - 1.96 * sd[at],
+                                        f'{side}_{kind}_adjusted_high': mean[at] + 1.96 * sd[at]})
+        rows += list(found.values())
+    return pd.DataFrame(rows)
+
+
 def correlation(a, b):
     rng = np.random.default_rng(SEED)
     keep = np.isfinite(a) & np.isfinite(b)
@@ -165,7 +197,12 @@ def main():
                        for year in sorted(table.season.unique())])
     table = table.merge(names, on=['season', 'team_id'], how='left', validate='one_to_one')
     assert table.team.notna().all()
-    table['net'] = table.offence_quality_estimate + table.offence_making_estimate - table.defence_quality_estimate - table.defence_making_estimate
+    table = table.merge(adjusted(shots, spread), on=['season', 'team_id'], validate='one_to_one')
+    table['net'] = table.offence_quality_adjusted + table.offence_making_adjusted - table.defence_quality_adjusted - table.defence_making_adjusted
+    shift = pd.DataFrame([dict(measure=name, label=label, correlation=float(np.corrcoef(table[f'{name}_estimate'], table[f'{name}_adjusted'])[0, 1]),
+                               largest_change=float((table[f'{name}_adjusted'] - table[f'{name}_estimate']).abs().max()),
+                               typical_change=float((table[f'{name}_adjusted'] - table[f'{name}_estimate']).abs().median())) for name, label in MEASURES.items()])
+    shift.to_csv(OUT / 'opponent_adjustment.csv', index=False)
     repeats = repeatability(games, table)
     starts = possession_starts(table)
     table.to_csv(OUT / 'team_seasons.csv', index=False)
@@ -184,19 +221,24 @@ def main():
              '| --- | ---: | --- | ---: | --- | ---: | ---: |', *[line(row) for row in repeats.itertuples()], '',
              'A higher correlation means the measure reflects something a team does. A correlation near zero means most of what is seen in one stretch of games is chance. '
              'These are descriptions of past seasons. They do not show that changing a scheme would move a measure.', '',
+             '## Adjusting for opponents', '',
+             'The values shown on the site come from a model that estimates every offence and every defence together from single games, so a team that met strong defences is not marked down for it. '
+             f"The schedule is close to balanced, so the adjustment is small. Across the four measures the adjusted and unadjusted values correlate at {shift.correlation.min():.3f} or more, "
+             f"and the largest change for any team season is {shift.largest_change.max():.1f} points per 100 shots.", '',
              '## Method', '',
              'The league expectation comes from `expected_points.py` and uses no team or player. Before a team is compared, the expectation is scaled so that the rest of the league scores exactly what is expected that season. '
              f'Noise for each team season comes from drawing its games again {DRAWS:,} times. Each measure is then pulled toward the league average in proportion to that noise, and the 95% interval is the range of the resulting normal posterior. '
              'The same season check splits each team season into alternating games by date. The following season check pairs a franchise with its next season. Intervals for the correlations resample team seasons.', '',
              'Possession starts use the play by play reconstruction of complete possessions in regular season games. Each start is compared with the rest of the league, and the margin of error is 1.96 standard errors of the mean.', '',
-             '[Team seasons](team_seasons.csv) · [Repeatability](repeatability.csv) · [Possession starts](possession_starts.csv)', '']
+             'The opponent adjustment treats a game value as the offence effect plus the defence effect plus noise that shrinks with the number of shots. Both effects have normal priors centred on the league, with the spreads found by pooling, and the posterior is exact.', '',
+             '[Team seasons](team_seasons.csv) · [Repeatability](repeatability.csv) · [Opponent adjustment](opponent_adjustment.csv) · [Possession starts](possession_starts.csv) · [Whole possessions](POSSESSIONS.md)', '']
     (OUT / 'README.md').write_text('\n'.join(lines), encoding='utf-8', newline='\n')
 
     def record(row):
         item = dict(id=int(row.team_id), name=row.team, games=int(row.games), shots=int(row.shots), shotsAgainst=int(row.shots_against), net=round(float(row.net), 2))
         for name in MEASURES:
-            item[name] = dict(observed=round(float(row[f'{name}_observed']), 2), estimate=round(float(row[f'{name}_estimate']), 2),
-                              low=round(float(row[f'{name}_low']), 2), high=round(float(row[f'{name}_high']), 2))
+            item[name] = dict(observed=round(float(row[f'{name}_observed']), 2), estimate=round(float(row[f'{name}_adjusted']), 2),
+                              low=round(float(row[f'{name}_adjusted_low']), 2), high=round(float(row[f'{name}_adjusted_high']), 2))
         mine = starts[starts.season.eq(row.season) & starts.team_id.eq(row.team_id)]
         item['starts'] = {side: [dict(start=r.situation, possessions=int(r.possessions), share=round(float(r.share), 4), per100=round(float(r.per_100), 1),
                                       league=round(float(r.league_per_100), 1), margin=round(float(r.margin_of_error), 1))

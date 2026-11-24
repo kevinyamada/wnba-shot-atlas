@@ -23,7 +23,7 @@ def load():
     shots = pd.read_csv(DERIVED / 'shot_form_predictions.csv.gz')
     frames = []
     for year, season in shots.groupby('season'):
-        names = pd.read_csv(DERIVED / f'shots_{year}.csv.gz', usecols=['source_row', 'player_id', 'athlete_name_1', 'team_id'])
+        names = pd.read_csv(DERIVED / f'shots_{year}.csv.gz', usecols=['source_row', 'player_id', 'athlete_name_1', 'team_id', 'zone'])
         frames.append(season.merge(names, on='source_row', validate='one_to_one'))
     shots = pd.concat(frames, ignore_index=True)
     return shots[shots.player_id.ne(0)].copy()
@@ -44,6 +44,28 @@ def player_totals(shots, column=EXPECTED):
     totals['expected'] = totals.raw_expected * totals.season_level
     totals['chance_variance'] = pd.MultiIndex.from_frame(totals[['season', 'player_id']]).map(spread).to_numpy()
     return totals.drop(columns=['league_makes', 'league_expected'])
+
+
+AREAS = ['At the rim', 'Short two area', 'Midrange area', 'Corner three area', 'Above the break']
+
+
+def area_totals(shots, totals):
+    """Makes and expected makes for each player in each mapped court area, with the same season level as the overall comparison."""
+    level = shots.set_index(['season', 'player_id']).index.map(totals.set_index(['season', 'player_id']).season_level)
+    chance = np.clip(shots[EXPECTED].to_numpy() * level.to_numpy(), 0, 1)
+    frame = shots.assign(chance=chance, spread=chance * (1 - chance))
+    frame = frame[frame.zone.lt(len(AREAS))]
+    return frame.groupby(['season', 'player_id', 'zone']).agg(attempts=('made', 'size'), makes=('made', 'sum'), expected=('chance', 'sum'),
+                                                              chance_variance=('spread', 'sum')).reset_index()
+
+
+def pool_by_area(table):
+    """Pool within each court area, because skill spreads differently at the rim and from three."""
+    parts = []
+    for _, part in table.groupby('zone'):
+        excess = ((part.makes - part.expected) / part.attempts).to_numpy()
+        parts.append(pool(part, talent_variance(excess, (part.chance_variance / part.attempts ** 2).to_numpy())))
+    return pd.concat(parts, ignore_index=True)
 
 
 def talent_variance(excess, noise):
@@ -124,6 +146,10 @@ def main():
     distance_only = pool(player_totals(shots, 'p_distance'), tau2)
     seasons['per_100_distance_only'] = distance_only.per_100.to_numpy()
     check = forecast_check(shots, totals)
+    by_area = area_totals(shots, totals)
+    season_areas = pool_by_area(by_area)
+    career_areas = pool_by_area(by_area.groupby(['player_id', 'zone'])[['attempts', 'makes', 'expected', 'chance_variance']].sum().reset_index())
+    season_areas.assign(area=season_areas.zone.map(dict(enumerate(AREAS)))).to_csv(OUT / 'player_areas.csv', index=False)
     seasons.drop(columns=['season_level']).to_csv(OUT / 'player_seasons.csv', index=False)
     career.to_csv(OUT / 'players_2016_to_2026.csv', index=False)
     check.to_csv(OUT / 'forecast_check.csv', index=False)
@@ -136,7 +162,7 @@ def main():
     gain = 100 * np.average((seasons.per_100 / 100) ** 2, weights=seasons.attempts) / head.league_brier
     lines = ['# Shooters against expectation', '',
              f"Across {len(shots):,} shots from 2016 to 2026, the estimated spread of true shooting skill between players is {spread:.1f} makes per 100 shots (one standard deviation), "
-             f"after accounting for distance and recorded shot type. A shooter with 300 attempts in a season keeps about {100 * typical.weight.median():.0f}% of her observed margin after pooling.", '',
+             f"after accounting for distance and recorded shot type. A shooter with 300 attempts in a season keeps about {100 * typical.weight.median():.0f}% of the observed margin after pooling.", '',
              f"Using last season's pooled estimate lowered Brier error on the next season's shots by {head.drop_pct:.2f}% (95% game interval {head.low_pct:.2f}% to {head.high_pct:.2f}%). "
              f"Using last season's raw margin instead changed it by {naive.drop_pct:.2f}% ({naive.low_pct:.2f}% to {naive.high_pct:.2f}%). "
              f"Even perfect knowledge of each shooter's skill at this spread would lower shot error by only about {gain:.2f}%, which is one reason distance is hard to beat.", '',
@@ -165,6 +191,15 @@ def main():
                 seasons={str(year): records(frame, SITE_MINIMUM['season']) for year, frame in seasons.groupby('season')},
                 career=records(career, SITE_MINIMUM['career']))
     write_json(SITE / 'shooters.json', site)
+
+    def area_records(frame, ids):
+        keep = frame[frame.player_id.isin(ids)]
+        return {str(player): [[int(r.zone), int(r.attempts), int(r.makes), round(float(r.per_100), 2), round(float(r.low), 2), round(float(r.high), 2)] for r in part.itertuples()]
+                for player, part in keep.groupby('player_id')}
+    write_json(SITE / 'shooter-areas.json', dict(
+        manifestSha256=manifest_digest(), areas=AREAS,
+        seasons={str(year): area_records(season_areas[season_areas.season.eq(year)], {p['id'] for p in site['seasons'][str(year)]}) for year in sorted(seasons.season.unique())},
+        career=area_records(career_areas, {p['id'] for p in site['career']})))
     print('SHOOTERS', dict(player_seasons=len(seasons), players=len(career), skill_spread_per_100=round(float(spread), 3),
                            forecast_drop_pct=round(float(head.drop_pct), 3)), flush=True)
 

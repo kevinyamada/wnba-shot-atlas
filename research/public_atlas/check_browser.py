@@ -416,7 +416,17 @@ def verify_overview(browser):
     browser.select('shooter-player', outside['id'])
     assert js(rows)[-1] == [outside['name'], f"{signed(outside['estimate'])} · {outside['attempts']:,} shots"] and len(js(rows)) == 11
     assert js("document.querySelectorAll('#shooter-chart .relative-row.chosen').length") == 1
+    areas = json.loads((ROOT / 'explore/data/shooter-areas.json').read_bytes())
+    browser.wait("!document.getElementById('shooter-areas').hidden")
+    shown_areas = js("[...document.querySelectorAll('#shooter-areas .area-line')].map(r => [Number(r.dataset.zone), Number(r.dataset.value)])")
+    assert shown_areas == [[row[0], row[3]] for row in areas['career'][str(outside['id'])]], shown_areas
+    assert outside['name'] in js("document.querySelector('#shooter-areas h3').textContent")
+    browser.wait("(() => { const c = document.querySelector('#shooter-areas canvas'); return c.width > 50 && c.getContext('2d').getImageData(0, 0, c.width, c.height).data.some(v => v > 0); })()")
+    js("document.getElementById('shooter-areas').scrollIntoView({block:'center'})")
+    browser.save_image('atlas_shooter_areas_desktop.png')
     browser.select('shooter-player', '')
+    assert js("document.getElementById('shooter-areas').hidden")
+    assert js("[...document.querySelectorAll('.footer-links a')].some(a => a.textContent === 'Research report' && a.href.endsWith('/wnba-shot-atlas/blob/main/REPORT.md'))")
 
     steps = json.loads((ROOT / 'explore/data/model-ladder.json').read_bytes())
     shown = js("[...document.querySelector('#model-ladder table').tBodies[0].rows].map(r => [...r.cells].map(c => c.textContent))")
@@ -451,7 +461,7 @@ def verify_team_report(browser):
         browser.select('season', season)
         teams = sorted(data['seasons'][season], key=lambda team: -net(team))
         shown = js(rows)
-        assert [row[0] for row in shown] == [team['name'] for team in teams], season
+        assert js("[...document.querySelectorAll('#team-table tbody tr button')].map(b => b.textContent)") == [team['name'] for team in teams], season
         for row, team in zip(shown, teams):
             assert all(abs(value - per_game(team, key)) <= .0011 for value, key in zip(row[1:5], order)) and abs(row[5] - net(team)) <= .0011, (season, row)
         bars = js("[...document.querySelectorAll('#team-table .mini-track i')].map(i => [i.className, parseFloat(i.style.width), i.parentElement.parentElement.dataset.value])")
@@ -472,6 +482,10 @@ def verify_team_report(browser):
         for text, row in zip(cells, team['starts'][side], strict=True):
             value, margin = (float(part) for part in text.split(' ± '))
             assert abs(value - row['per100']) <= .5 and abs(margin - row['margin']) <= .5, (text, row)
+    whole = json.loads((ROOT / 'explore/data/team-possessions.json').read_bytes())
+    mine = next(row for row in whole['seasons'][latest] if row['id'] == team['id'])
+    detail = js("Object.fromEntries([...document.querySelectorAll('#team-possessions tbody tr')].map(r => [r.dataset.measure, [r.cells[1].textContent, r.cells[2].textContent]]))")
+    assert len(detail) == 8 and all(detail[name] == [f"{mine[name]['value']:.1f}", f"{mine[name]['league']:.1f}"] for name in whole['labels']), detail
     roster = [p for p in shooters['seasons'][latest] if p.get('team') == team['id']][:3]
     text = js("document.getElementById('team-report').textContent")
     assert all(p['name'] in text for p in roster) and len(roster) > 0
@@ -480,6 +494,18 @@ def verify_team_report(browser):
     browser.save_image('atlas_team_report_desktop.png')
     js("document.getElementById('team-back').click()")
     browser.wait("document.getElementById('team-table') && document.getElementById('team').value === 'all'")
+    js("document.querySelector('#team-view [data-view=possessions]').click()")
+    factors = [('offence_turnovers', -1), ('offence_rebounds', 1), ('offence_free_throws', 1), ('defence_turnovers', 1), ('defence_rebounds', -1), ('defence_free_throws', -1)]
+    listed = js(rows)
+    ranked = sorted(whole['seasons'][latest], key=lambda row: -row['net'])
+    assert js("[...document.querySelectorAll('#team-table tbody tr button')].map(b => b.textContent)") == [row['name'] for row in ranked]
+    for cells, row in zip(listed, ranked):
+        assert all(abs(value - sign * row[key]['estimate']) <= .0011 for value, (key, sign) in zip(cells[1:7], factors)) and abs(cells[7] - row['net']) <= .0011, cells
+    assert 'possessions' in js("document.getElementById('team-title').textContent")
+    js("document.getElementById('team-report').scrollIntoView({block:'start'})")
+    browser.save_image('atlas_team_possessions_desktop.png')
+    js("document.querySelector('#team-view [data-view=shots]').click()")
+    assert js("document.querySelectorAll('#team-table thead th').length") == 6
     control = js("[...document.querySelector('#team-control table').tBodies[0].rows].map(r => r.cells[1].textContent.split(' ')[0])")
     assert control == [f"{row['split_half']:.2f}" for row in data['repeatability']]
     assert js("document.querySelectorAll('#headline .takeaways li').length") == 4

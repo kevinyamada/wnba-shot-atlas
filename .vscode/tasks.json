@@ -182,6 +182,24 @@
       "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
       "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
       "problemMatcher": []
+    },
+    {
+      "label": "WNBA public: whole possessions by team",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "-u", "${workspaceFolder}/research/public_atlas/team_possessions.py"],
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
+      "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
+      "problemMatcher": []
+    },
+    {
+      "label": "WNBA public: write the research report",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "-u", "${workspaceFolder}/research/public_atlas/write_report.py"],
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
+      "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
+      "problemMatcher": []
     }
   ]
 }

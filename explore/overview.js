@@ -1,4 +1,5 @@
 import { posteriorView } from './posterior.js?v=5';
+import { paintAreaMap } from './drawing.js?v=7';
 
 const count = new Intl.NumberFormat('en-CA');
 const whole = value => Math.round(100 * value) + '%';
@@ -90,7 +91,7 @@ function shooterRow(player, limit, chosen) {
     return row;
 }
 
-export function shooters(target, data, predicted) {
+export function shooters(target, data, predicted, court) {
     const seasons = Object.keys(data.seasons).sort().reverse();
     const first = seasons.at(-1), last = seasons[0];
     const lead = el('p', 'Makes per 100 shots above what an average shooter would make from the same distances and shot types. The line shows the range the data support. Short records are pulled toward the middle.');
@@ -136,16 +137,61 @@ export function shooters(target, data, predicted) {
             : `Top ten of ${list.length} players with at least ${minimum} eligible attempts` + (chosen && shown.length > 10 ? `, plus ${chosen.name}.` : '.');
     }
 
+    const scouting = el('div', null, 'area-scout');
+    scouting.id = 'shooter-areas';
+    scouting.hidden = true;
+    let areaData = null;
+
+    async function scout() {
+        const chosen = players().find(player => String(player.id) === who.value);
+        if (!court || !chosen || season.value === 'prediction') { scouting.hidden = true; return; }
+        areaData ??= await court.load();
+        const rows = (season.value === 'career' ? areaData.career : areaData.seasons[season.value])?.[chosen.id] ?? [];
+        if (String(chosen.id) !== who.value || !rows.length) { scouting.hidden = true; return; }
+        const limit = Math.max(4, ...rows.map(row => Math.abs(row[3])));
+        const canvas = el('canvas');
+        canvas.setAttribute('role', 'img');
+        canvas.setAttribute('aria-label', `${chosen.name} by court area. ` + rows.map(row => `${areaData.areas[row[0]]} ${signed(row[3])}`).join(', ') + ' makes per 100 shots against expectation.');
+        const list = el('div', null, 'area-list');
+        for (const [zone, attempts, makes, estimate, low, high] of rows) {
+            const line = el('div', null, 'area-line');
+            line.dataset.zone = zone;
+            line.dataset.value = estimate;
+            const track = el('span', null, 'mini-track');
+            const bar = el('i', null, estimate >= 0 ? 'good' : 'bad');
+            bar.style.width = (50 * Math.min(1, Math.abs(estimate) / limit)) + '%';
+            bar.style[estimate >= 0 ? 'left' : 'right'] = '50%';
+            track.append(bar);
+            const words = `${Math.abs(estimate).toFixed(1)} ${estimate >= 0 ? 'more' : 'fewer'} per 100`;
+            line.title = `${makes} of ${attempts} made. Range ${signed(low)} to ${signed(high)}.`;
+            line.append(el('span', areaData.areas[zone]), track, el('em', `${words} · ${count.format(attempts)} shots`, estimate >= 0 ? 'good' : 'bad'));
+            list.append(line);
+        }
+        const title = el('h3', `${chosen.name} by court area`);
+        const key = el('p', 'Blue areas are where the player makes more than an average shooter would from the same shots. Orange areas are where the player makes fewer. Small samples are pulled toward the middle.', 'caption');
+        const body = el('div', null, 'area-scout-body');
+        body.append(canvas, list);
+        scouting.replaceChildren(title, body, key);
+        scouting.hidden = false;
+        const paint = () => paintAreaMap(canvas, court.rules, court.grid, court.rules.eras.at(-1), court.palette(), rows.map(row => [row[0], row[3]]), limit);
+        requestAnimationFrame(paint);
+        scouting.repaint = paint;
+    }
+
+    window.addEventListener('resize', () => { if (!scouting.hidden) scouting.repaint?.(); });
+    new MutationObserver(() => { if (!scouting.hidden) scouting.repaint?.(); }).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
+
     function fill() {
         const current = who.value;
         who.replaceChildren(new Option('Top ten only', ''), ...[...players()].sort((a, b) => a.name.localeCompare(b.name)).map(p => new Option(p.name, p.id)));
         who.value = [...who.options].some(option => option.value === current) ? current : '';
         render();
+        scout();
     }
 
     season.addEventListener('change', fill);
-    who.addEventListener('change', render);
-    target.replaceChildren(lead, pickers, chart, note, method);
+    who.addEventListener('change', () => { render(); scout(); });
+    target.replaceChildren(lead, pickers, chart, note, scouting, method);
     fill();
 }
 
@@ -220,7 +266,90 @@ function startsTable(rows, heading) {
     return wrap;
 }
 
-export function teamReport(target, data, shooterData, {season, team, pick}) {
+const factorOrder = [['offence_turnovers', 'Keeps the ball', -1], ['offence_rebounds', 'Wins second chances', 1], ['offence_free_throws', 'Gets to the line', 1],
+    ['defence_turnovers', 'Forces turnovers', 1], ['defence_rebounds', 'Ends it with the rebound', -1], ['defence_free_throws', 'Keeps them off the line', -1]];
+let teamView = 'shots';
+
+function miniBar(value, limit, title) {
+    const cell = el('td', null, 'bar-cell');
+    cell.dataset.value = value.toFixed(3);
+    cell.title = title;
+    cell.setAttribute('aria-label', title);
+    const track = el('span', null, 'mini-track');
+    const bar = el('i', null, value >= 0 ? 'good' : 'bad');
+    bar.style.width = (50 * Math.min(1, Math.abs(value) / limit)) + '%';
+    bar.style[value >= 0 ? 'left' : 'right'] = '50%';
+    track.append(bar);
+    cell.append(track);
+    return cell;
+}
+
+function viewSwitch(redraw) {
+    const group = el('div', null, 'metric-group');
+    group.id = 'team-view';
+    group.setAttribute('role', 'group');
+    group.setAttribute('aria-label', 'Team table shows');
+    for (const [value, text] of [['shots', 'Shots'], ['possessions', 'Whole possessions']]) {
+        const button = el('button', text);
+        button.type = 'button';
+        button.dataset.view = value;
+        button.setAttribute('aria-pressed', String(teamView === value));
+        button.addEventListener('click', () => { teamView = value; redraw(); });
+        group.append(button);
+    }
+    return group;
+}
+
+function possessionTable(teams, year, pick) {
+    const ranked = [...teams].sort((a, b) => b.net - a.net);
+    const limits = Object.fromEntries(factorOrder.map(([name]) => [name, Math.max(...teams.map(row => Math.abs(row[name].estimate)))]));
+    const table = el('table');
+    table.id = 'team-table';
+    const head = table.createTHead().insertRow();
+    for (const text of ['Team', ...factorOrder.map(([, label]) => label), 'Overall']) head.append(Object.assign(el('th', text), {scope: 'col'}));
+    const body = table.createTBody();
+    for (const row of ranked) {
+        const line = body.insertRow();
+        const name = el('th');
+        name.scope = 'row';
+        const button = el('button', row.name);
+        button.type = 'button';
+        button.dataset.team = row.id;
+        button.addEventListener('click', () => pick(row.id, year));
+        const words = Math.abs(row.net) < .05 ? 'Level' : `${Math.abs(row.net).toFixed(1)} ${row.net > 0 ? 'better' : 'worse'}`;
+        name.append(button, el('small', words, 'team-overall ' + (row.net >= 0 ? 'good' : 'bad')));
+        line.append(name);
+        for (const [key, label, sign] of factorOrder) line.append(miniBar(sign * row[key].estimate, limits[key], `${label}: ${row[key].value} against ${row[key].league} for the rest of the league`));
+        const overall = el('td', words, row.net >= 0 ? 'good' : 'bad');
+        overall.dataset.value = row.net.toFixed(3);
+        line.append(overall);
+    }
+    const wrap = el('div', null, 'table-scroll');
+    wrap.append(table);
+    return wrap;
+}
+
+function possessionDetail(row, labels, count) {
+    const table = el('table');
+    table.id = 'team-possessions';
+    const head = table.createTHead().insertRow();
+    for (const text of ['Whole possessions', 'This team', 'Rest of league', '']) head.append(Object.assign(el('th', text), {scope: 'col'}));
+    const body = table.createTBody();
+    const order = [['offence_points', 1], ['offence_turnovers', -1], ['offence_rebounds', 1], ['offence_free_throws', 1], ['defence_points', -1], ['defence_turnovers', 1], ['defence_rebounds', -1], ['defence_free_throws', -1]];
+    for (const [name, sign] of order) {
+        const line = body.insertRow();
+        line.dataset.measure = name;
+        const spread = Math.max(Math.abs(row[name].low), Math.abs(row[name].high), 1e-6);
+        line.append(Object.assign(el('th', labels[name]), {scope: 'row'}), el('td', row[name].value.toFixed(1)), el('td', row[name].league.toFixed(1)),
+            miniBar(sign * row[name].estimate, 1.5 * spread, sign * row[name].estimate >= 0 ? 'Helps the team' : 'Hurts the team'));
+    }
+    const wrap = el('div', null, 'table-scroll');
+    wrap.append(table);
+    return wrap;
+}
+
+export function teamReport(target, data, shooterData, {season, team, pick}, possessionData) {
+    const redraw = () => teamReport(target, data, shooterData, {season, team, pick}, possessionData);
     const years = Object.keys(data.seasons).sort();
     const year = years.includes(String(season)) ? String(season) : years.at(-1);
     const teams = data.seasons[year];
@@ -232,6 +361,15 @@ export function teamReport(target, data, shooterData, {season, team, pick}) {
     const scope = el('p', (String(season) === year ? '' : `Showing ${year}. Team reports cover ${years[0]} to ${years.at(-1)}. `)
         + 'Regular season, field goals only. Each value compares the team with the rest of the league, with small samples pulled toward average.', 'caption');
     if (!chosen) {
+        const factors = possessionData?.seasons[year];
+        if (factors && teamView === 'possessions') {
+            const title = el('h2', `What each team did with its possessions in ${year}`);
+            title.id = 'team-title';
+            const key = el('p', 'Each bar compares the team with the rest of the league. Blue to the right helps the team and orange to the left hurts it. The columns use different units, so compare bars within a column. Overall is points per 100 possessions scored minus allowed, free throws included.', 'caption');
+            target.replaceChildren(title, viewSwitch(redraw), possessionTable(factors, year, pick), key, scope);
+            target.hidden = false;
+            return;
+        }
         const title = el('h2', `Where each team gained and lost points in ${year}`);
         title.id = 'team-title';
         const ranked = [...teams].sort((x, y) => netPerGame(y) - netPerGame(x));
@@ -249,31 +387,22 @@ export function teamReport(target, data, shooterData, {season, team, pick}) {
             button.type = 'button';
             button.dataset.team = row.id;
             button.addEventListener('click', () => pick(row.id, year));
-            name.append(button);
+            const net = netPerGame(row);
+            const words = Math.abs(net) < .05 ? 'Level' : `${Math.abs(net).toFixed(1)} ${net > 0 ? 'better' : 'worse'}`;
+            name.append(button, el('small', words, 'team-overall ' + (net >= 0 ? 'good' : 'bad')));
             line.append(name);
             for (const key of measureOrder) {
                 const value = perGame(row, key);
-                const cell = el('td', null, 'bar-cell');
-                cell.dataset.value = value.toFixed(3);
-                cell.title = `${plain[key]}: ${gameWords(value)}`;
-                const track = el('span', null, 'mini-track');
-                const bar = el('i', null, value >= 0 ? 'good' : 'bad');
-                bar.style.width = (50 * Math.abs(value) / limit) + '%';
-                bar.style[value >= 0 ? 'left' : 'right'] = '50%';
-                track.append(bar);
-                cell.setAttribute('aria-label', cell.title);
-                cell.append(track);
-                line.append(cell);
+                line.append(miniBar(value, limit, `${plain[key]}: ${gameWords(value)}`));
             }
-            const net = netPerGame(row);
-            const overall = el('td', Math.abs(net) < .05 ? 'Level' : `${Math.abs(net).toFixed(1)} ${net > 0 ? 'better' : 'worse'}`, net >= 0 ? 'good' : 'bad');
+            const overall = el('td', words, net >= 0 ? 'good' : 'bad');
             overall.dataset.value = net.toFixed(3);
             line.append(overall);
         }
         const wrap = el('div', null, 'table-scroll');
         wrap.append(table);
         const key = el('p', 'Each bar is field goal points a game against an average team. A blue bar to the right helps the team. An orange bar to the left hurts it. Overall adds the four. Pick a team for its full report.', 'caption');
-        target.replaceChildren(title, wrap, key, trust, scope);
+        target.replaceChildren(title, ...(factors ? [viewSwitch(redraw)] : []), wrap, key, trust, scope);
         target.hidden = false;
         return;
     }
@@ -309,6 +438,8 @@ export function teamReport(target, data, shooterData, {season, team, pick}) {
         chart.append(row);
     }
     const parts = [title, summary, chart, trust];
+    const whole = possessionData?.seasons[year]?.find(row => row.id === chosen.id);
+    if (whole) parts.push(possessionDetail(whole, possessionData.labels, count));
     if (chosen.starts.offence.length) {
         const starts = el('div', null, 'team-starts');
         starts.append(startsTable(chosen.starts.offence, 'When it has the ball'), startsTable(chosen.starts.defence, 'When opponents have the ball'));
@@ -410,7 +541,7 @@ export function prediction(target, data, court) {
     wrap.id = 'prediction-backtest';
     wrap.append(table);
     const keeps = Object.fromEntries(data.seasonModel.map(row => [row.measure, row.persistence]));
-    const past = el('p', `Each season from 2019 to 2026 was predicted using only earlier seasons. Lower error is better. The model estimates that a shooter keeps ${whole(keeps.shooter)} of her margin from one season to the next and a team keeps ${whole(keeps.net)} of its net. These predictions will be scored once against the ${data.season} season.`, 'caption');
+    const past = el('p', `Each season from 2019 to 2026 was predicted using only earlier seasons. Lower error is better. The model estimates that a shooter keeps ${whole(keeps.shooter)} of a margin from one season to the next and a team keeps ${whole(keeps.net)} of its net. These predictions will be scored once against the ${data.season} season.`, 'caption');
     const parts = [lead, league];
     if (court) {
         const title = el('h3', 'Predicted make chance by spot');

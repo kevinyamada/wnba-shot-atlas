@@ -1,6 +1,6 @@
 # Shooters against expectation
 
-Across 353,290 shots from 2016 to 2026, the estimated spread of true shooting skill between players is 3.9 makes per 100 shots (one standard deviation), after accounting for distance and recorded shot type. A shooter with 300 attempts in a season keeps about 74% of her observed margin after pooling.
+Across 353,290 shots from 2016 to 2026, the estimated spread of true shooting skill between players is 3.9 makes per 100 shots (one standard deviation), after accounting for distance and recorded shot type. A shooter with 300 attempts in a season keeps about 74% of the observed margin after pooling.
 
 Using last season's pooled estimate lowered Brier error on the next season's shots by 0.23% (95% game interval 0.19% to 0.28%). Using last season's raw margin instead changed it by -0.18% (-0.26% to -0.10%). Even perfect knowledge of each shooter's skill at this spread would lower shot error by only about 0.42%, which is one reason distance is hard to beat.
 

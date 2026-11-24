@@ -265,3 +265,23 @@ export function paintHistory(canvas, values, years, p, metric) {
         ctx.fillText('No attempts in this area', width / 2, height / 2);
     }
 }
+
+export function paintAreaMap(canvas, court, grid, rule, p, areas, limit) {
+    paintCourt(canvas, court, grid, [rule], p, [], null, null, 'rate', 1, 1);
+    const width = canvas.clientWidth, height = canvas.clientHeight;
+    if (!width || !height) return;
+    const ctx = canvas.getContext('2d');
+    const scale = width / court.width;
+    const y = depth => height * (depth - grid.baseline) / (grid.midcourt - grid.baseline);
+    const x = lateral => width / 2 + lateral * scale;
+    for (const [zone, value] of areas) {
+        const path = areaPath(zone, rule, grid, x, y, scale);
+        ctx.globalAlpha = .25 + .6 * Math.min(1, Math.abs(value) / limit);
+        ctx.fillStyle = value >= 0 ? p.deep : p.accent;
+        ctx.fill(path, 'evenodd');
+        ctx.globalAlpha = 1;
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = p.surface;
+        ctx.stroke(path);
+    }
+}
