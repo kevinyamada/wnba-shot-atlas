@@ -495,7 +495,7 @@ def verify_prediction(browser):
         for (shown_name, text), t in zip(js(rows), teams, strict=True):
             now, before = text.split(' · was ')
             assert shown_name == t['name'] and abs(number(now) - t[name]['prediction']) <= .0501 and abs(number(before) - t[name]['last']) <= .0501, (name, shown_name, text)
-        assert all(t[name]['low'] < t[name]['prediction'] < t[name]['high'] and abs(t[name]['prediction']) <= abs(t[name]['last']) + .006 for t in teams)
+        assert all(t[name]['low'] < t[name]['prediction'] < t[name]['high'] for t in teams)
     browser.select('prediction-measure', 'net')
     top = js("[...document.querySelectorAll('#prediction-shooters .relative-row > span:first-child')].map(node => node.textContent)")
     assert top == [p['name'] for p in data['shooters'][:10]]
@@ -505,6 +505,15 @@ def verify_prediction(browser):
         assert shown_name == p['name'] and text.endswith(f" · {p['attempts']:,} shots") and abs(number(text.split(' · ')[0]) - p['estimate']) <= .0501, text
     assert 'Predicted for 2027' in js("document.querySelector('#shooters > p.caption').textContent")
     browser.select('shooter-season', 'career')
+    surface = json.loads((ROOT / 'explore/data/prediction-surface.json').read_bytes())
+    browser.wait("document.querySelector('#prediction-surface .posterior-numbers strong')?.textContent.includes('estimated make chance')")
+    depth, lateral = 15 - 5, 25 - 25
+    cell = next(row for row in surface['surface'] if row[0] == depth and row[1] == lateral)
+    assert js("document.querySelector('#prediction-surface .posterior-numbers strong').textContent") == f"{100 * cell[2]:.1f}% estimated make chance"
+    assert f"{100 * cell[3]:.1f}% to {100 * cell[4]:.1f}%" in js("document.querySelector('#prediction-surface .posterior-numbers').textContent")
+    assert js("(() => { const c = document.querySelector('#prediction-surface canvas'); return c.width > 100 && c.getContext('2d').getImageData(0, 0, c.width, c.height).data.some(v => v > 0); })()")
+    shown = js("[...document.querySelector('#prediction-backtest table').tBodies[0].rows].map(r => r.cells[4].textContent)")
+    assert shown == [f"{row['rmse_bayes']:.2f}" for row in data['backtest']] and all(row['rmse_bayes'] <= row['rmse_carried'] for row in data['backtest'])
     js("document.getElementById('more-prediction').scrollIntoView({block:'start'})")
     browser.save_image('atlas_prediction_desktop.png')
     print('PREDICTION_BROWSER_VERIFIED', len(data['teams']), 'teams and', len(data['shooters']), 'shooters', flush=True)
@@ -686,15 +695,15 @@ def verify(browser, url):
             else:
                 n = next(r['attempts'] for r in study['shots'] if r['split'] == split)
                 assert fmt(n) in js(f"{prefix}.querySelector('.finding-body').textContent")
-    js("for(let n=document.querySelector('.posterior-view');n;n=n.parentElement){if(n.tagName==='DETAILS') n.open=true;}")
-    browser.wait("document.querySelector('.posterior-numbers strong')?.textContent.includes('estimated make chance')")
-    before = js("document.querySelector('.posterior-numbers').textContent")
-    js("document.querySelector('.posterior-court canvas').dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowUp',bubbles:true,cancelable:true}))")
-    assert js("document.querySelector('.posterior-numbers').textContent") != before
-    js("""document.querySelectorAll('.posterior-controls select').forEach((node,i)=>{
+    js("for(let n=document.querySelector('#public-study .posterior-view');n;n=n.parentElement){if(n.tagName==='DETAILS') n.open=true;}")
+    browser.wait("document.querySelector('#public-study .posterior-numbers strong')?.textContent.includes('estimated make chance')")
+    before = js("document.querySelector('#public-study .posterior-numbers').textContent")
+    js("document.querySelector('#public-study .posterior-court canvas').dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowUp',bubbles:true,cancelable:true}))")
+    assert js("document.querySelector('#public-study .posterior-numbers').textContent") != before
+    js("""document.querySelectorAll('#public-study .posterior-controls select').forEach((node,i)=>{
         node.value=i ? 'spread' : 'spde'; node.dispatchEvent(new Event('change',{bubbles:true}));})""")
-    assert 'wider intervals' in js("document.querySelector('.posterior-aside .caption').textContent")
-    js("document.querySelector('.posterior-view').scrollIntoView({block:'center'})")
+    assert 'wider intervals' in js("document.querySelector('#public-study .posterior-aside .caption').textContent")
+    js("document.querySelector('#public-study .posterior-view').scrollIntoView({block:'center'})")
     browser.save_image('atlas_bayesian_desktop.png')
 
     before_colours = js("getComputedStyle(document.documentElement).getPropertyValue('--colour-mid').trim()")

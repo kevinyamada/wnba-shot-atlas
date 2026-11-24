@@ -2,7 +2,7 @@ import { paintCourt, canvasSquare } from './drawing.js?v=4';
 
 const pct = value => `${(100 * value).toFixed(1)}%`;
 
-export function posteriorView(rules, surfaceData, palette) {
+export function posteriorView(rules, surfaceData, palette, choices = [['matern', 'Bayesian court model'], ['spde', 'Bayesian mesh model']]) {
     const root = document.createElement('div');
     root.className = 'posterior-view';
     const chart = document.createElement('div');
@@ -15,9 +15,11 @@ export function posteriorView(rules, surfaceData, palette) {
     aside.className = 'posterior-aside';
     const options = document.createElement('div');
     options.className = 'posterior-controls';
-    options.innerHTML = `<label>Model<select><option value="matern">Bayesian court model</option><option value="spde">Bayesian mesh model</option></select></label>
+    options.innerHTML = `<label>Model<select></select></label>
       <label>Colour by<select><option value="chance">Estimated make chance</option><option value="spread">Uncertainty</option></select></label>`;
     const [model, metric] = options.querySelectorAll('select');
+    model.append(...choices.map(([value, name]) => new Option(name, value)));
+    model.parentElement.hidden = choices.length < 2;
     const result = document.createElement('p');
     result.className = 'posterior-numbers';
     result.setAttribute('aria-live', 'polite');

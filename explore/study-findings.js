@@ -1,6 +1,6 @@
 import { locationPanel, playSection, sourceBreakdown } from './play-value.js?v=2';
 import { formComparison } from './shot-form.js?v=1';
-import { posteriorView } from './posterior.js?v=4';
+import { posteriorView } from './posterior.js?v=5';
 
 const count = new Intl.NumberFormat('en-CA');
 const format = (value, digits = 2) => Number(value).toFixed(digits);

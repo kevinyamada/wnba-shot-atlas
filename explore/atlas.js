@@ -1,7 +1,7 @@
 import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=6';
-import { renderStudy } from './study-findings.js?v=5';
+import { renderStudy } from './study-findings.js?v=6';
 import { shotMix } from './shot-mix.js?v=3';
-import { headline, shooters, ladder, teamReport, teamControl, prediction } from './overview.js?v=3';
+import { headline, shooters, ladder, teamReport, teamControl, prediction } from './overview.js?v=4';
 
 const $ = id => document.getElementById(id);
 const controls = ['season', 'team', 'player', 'phase', 'shot-type', 'compare'].map($);
@@ -9,7 +9,7 @@ const panels = ['court-primary', 'court-secondary'].map($);
 const number = new Intl.NumberFormat('en-CA');
 const percent = new Intl.NumberFormat('en-CA', {style: 'percent', maximumFractionDigits: 1});
 const decimal = new Intl.NumberFormat('en-CA', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-const dataRelease = 'r6';
+const dataRelease = 'r7';
 const extras = {teams: null, shooters: null};
 const sampleFloor = 12;
 const mappedAreas = 5;
@@ -698,7 +698,7 @@ async function start() {
         $('more-control').hidden = false;
         renderTeam();
     }).catch(error => console.warn(error));
-    Promise.all([json('data/shooters.json'), json('data/prediction-2027.json').catch(() => null)]).then(([data, forecast]) => {
+    Promise.all([json('data/shooters.json'), json('data/prediction-2027.json').catch(() => null), json('data/prediction-surface.json').catch(() => null)]).then(([data, forecast, surface]) => {
         if (!matches(data)) return;
         forecast = forecast && matches(forecast) ? forecast : null;
         extras.shooters = data;
@@ -706,7 +706,7 @@ async function start() {
         $('more-shooters').hidden = false;
         renderTeam();
         if (!forecast) return;
-        prediction($('prediction'), forecast);
+        prediction($('prediction'), forecast, surface && matches(surface) ? {surface, rules: index.court, palette} : null);
         $('more-prediction').hidden = false;
     }).catch(error => console.warn(error));
     json('data/model-ladder.json').then(data => {

@@ -5,16 +5,49 @@ import numpy as np
 import pandas as pd
 
 from fetch import manifest_digest
-from recount import RESULTS, SITE
+from recount import RESULTS, ROOT, SITE
 
 OUT = RESULTS / 'prediction_2027'
+DERIVED = ROOT / 'research/data/public_wnba/derived'
 PARTS = ['offence_quality', 'offence_making', 'defence_quality', 'defence_making']
 
 
-def spread(values, noise):
-    grid = np.linspace(0, 100, 100001)[1:]
-    loss = [np.sum(np.log(t + noise) + values ** 2 / (t + noise)) for t in grid]
-    return grid[int(np.argmin(loss))]
+def belief(seasons, values, noise, rho, tau2, until):
+    """Normal updating written as precision weighted averages, apart from the study code. Returns the forecast and the log likelihood."""
+    mean, precision, loglik = 0.0, 1 / tau2, 0.0
+    previous = None
+    for season, value, v in zip(seasons, values, noise):
+        if previous is not None:
+            shrink = rho ** (season - previous)
+            mean, precision = shrink * mean, 1 / (shrink ** 2 / precision + (1 - shrink ** 2) * tau2)
+        total = 1 / precision + v
+        loglik += -.5 * np.log(2 * np.pi * total) - .5 * (value - mean) ** 2 / total
+        mean = (precision * mean + value / v) / (precision + 1 / v)
+        precision, previous = precision + 1 / v, season
+    shrink = rho ** (until - previous)
+    return shrink * mean, shrink ** 2 / precision + (1 - shrink ** 2) * tau2, loglik
+
+
+def check_series(history, settings, saved, key):
+    rho, tau2 = settings.persistence, settings.spread ** 2
+    assert 0 < rho < 1 and tau2 > 0
+
+    def likelihood(r, t):
+        return sum(belief(part.season.to_numpy(), part.observed.to_numpy(), part.noise.to_numpy(), r, t, 2027)[2] for _, part in history.groupby('entity'))
+    here = likelihood(rho, tau2)
+    for r, t in [(rho * .9, tau2), (min(rho * 1.05, .999), tau2), (rho, tau2 * .8), (rho, tau2 * 1.25)]:
+        assert likelihood(r, t) <= here + 1e-3, 'the saved settings are not at the top of the likelihood'
+    checked = 0
+    for entity, part in history.groupby('entity'):
+        if entity not in saved.index:
+            continue
+        mean, var, _ = belief(part.season.to_numpy(), part.observed.to_numpy(), part.noise.to_numpy(), rho, tau2, 2027)
+        row = saved.loc[entity]
+        noise = part.noise.iloc[-1]
+        assert abs(row.prediction - mean) < .02 and abs(row.belief_variance - var) < .02 * max(var, 1), (key, entity)
+        assert np.isclose(row.high - row.low, 2 * 1.96 * np.sqrt(row.belief_variance + noise), rtol=1e-6)
+        checked += 1
+    return checked
 
 
 def main():
@@ -23,47 +56,55 @@ def main():
     table['net_observed'] = table.offence_quality_observed + table.offence_making_observed - table.defence_quality_observed - table.defence_making_observed
     table['net_noise'] = table[[f'{name}_noise' for name in PARTS]].sum(axis=1)
     saved = pd.read_csv(OUT / 'teams.csv')
+    settings = pd.read_csv(OUT / 'season_model.csv').set_index('measure')
     backtest = pd.read_csv(OUT / 'backtest.csv').set_index('measure')
     for name in [*PARTS, 'net']:
-        tau2 = spread(table[f'{name}_observed'].to_numpy(), table[f'{name}_noise'].to_numpy())
-        table['pooled'] = tau2 / (tau2 + table[f'{name}_noise']) * table[f'{name}_observed']
-        following = table.set_index(['season', 'team_id'])[f'{name}_observed']
-        pairs = table[[(season + 1, team) in following.index for season, team in zip(table.season, table.team_id)]]
-        nxt = np.array([following[(season + 1, team)] for season, team in zip(pairs.season, pairs.team_id)])
-        slope = np.sum(pairs.pooled * nxt) / np.sum(pairs.pooled ** 2)
-        mine = table[table.season.eq(2026)].set_index('team_id').pooled
+        history = pd.DataFrame({'entity': table.team_id, 'season': table.season, 'observed': table[f'{name}_observed'], 'noise': table[f'{name}_noise']}).sort_values('season')
         rows = saved[saved.measure.eq(name)].set_index('team_id')
-        assert len(rows) == len(mine) == 15
-        assert np.allclose(rows.estimate_2026, mine.loc[rows.index], atol=.02) and abs(rows.carry_over.iloc[0] - slope) < .01, name
-        assert np.allclose(rows.prediction, rows.carry_over * rows.estimate_2026)
-        assert np.allclose(rows.high - rows.low, 2 * 1.96 * backtest.loc[name, 'rmse_carried'])
-        assert 0 < rows.carry_over.iloc[0] < 1, 'a carry over factor should shrink toward the league'
+        assert check_series(history, settings.loc[name], rows, name) == len(rows) == 15
+        following = table.set_index(['season', 'team_id'])[f'{name}_observed']
         tested = table[table.season.between(2019, 2026)]
         tested = tested[[(season - 1, team) in following.index for season, team in zip(tested.season, tested.team_id)]]
         assert len(tested) == backtest.loc[name, 'predictions']
         assert np.isclose(np.sqrt(np.mean(tested[f'{name}_observed'] ** 2)), backtest.loc[name, 'rmse_league'])
-        assert backtest.loc[name, 'rmse_carried'] < backtest.loc[name, 'rmse_league']
+        assert backtest.loc[name, 'rmse_bayes'] < backtest.loc[name, 'rmse_league'] and .85 <= backtest.loc[name, 'inside_95'] <= 1
 
     seasons = pd.read_csv(RESULTS / 'shooters/player_seasons.csv')
     assert seasons.season.max() == 2026
     shooters = pd.read_csv(OUT / 'shooters.csv').set_index('player_id')
-    last = seasons[seasons.season.eq(2026) & seasons.attempts.ge(100)].set_index('player_id')
-    assert len(shooters) == len(last) and np.allclose(shooters.estimate_2026, last.per_100.loc[shooters.index], atol=.05)
-    assert np.allclose(shooters.prediction, shooters.carry_over * shooters.estimate_2026) and shooters.prediction.is_monotonic_decreasing
-    assert (shooters.low < shooters.prediction).all() and (shooters.prediction < shooters.high).all() and 0 < shooters.carry_over.iloc[0] < 1
-    assert backtest.loc['shooter', 'rmse_carried'] < backtest.loc['shooter', 'rmse_league']
+    history = pd.DataFrame({'entity': seasons.player_id, 'season': seasons.season, 'observed': seasons.raw_per_100,
+                            'noise': 1e4 * seasons.chance_variance / seasons.attempts ** 2}).sort_values('season')
+    last = seasons[seasons.season.eq(2026) & seasons.attempts.ge(100)]
+    assert check_series(history, settings.loc['shooter'], shooters, 'shooter') == len(shooters) == len(last)
+    assert shooters.prediction.is_monotonic_decreasing and (shooters.low < shooters.prediction).all() and (shooters.prediction < shooters.high).all()
+    assert backtest.loc['shooter', 'rmse_bayes'] < backtest.loc['shooter', 'rmse_league']
 
     mix = pd.read_csv(RESULTS / 'shot_mix/by_season.csv').set_index('season')
     league = pd.read_csv(OUT / 'league.csv').set_index('measure')
     for label, column, scale in [('Share of shots from the three point area', 'share Three point area', 100), ('Field goal points per shot', 'actual', 1)]:
         row = league.loc[label]
         recent = scale * mix[column].loc[2022:2026]
-        assert np.isclose(row.value_2026, recent.loc[2026])
         design = np.column_stack([np.ones(5), recent.index])
         trend = np.array([1, 2027]) @ np.linalg.lstsq(design, recent.to_numpy(), rcond=None)[0]
         expected = recent.loc[2026] if row.rule == 'Same as last season' else trend
-        assert np.isclose(row.prediction, expected) and row.low < row.prediction < row.high
-        assert (row.rmse_trend < row.rmse_same_as_last) == (row.rule == 'Five season trend')
+        assert np.isclose(row.value_2026, recent.loc[2026]) and np.isclose(row.prediction, expected) and row.low < row.prediction < row.high
+
+    surface = pd.read_csv(OUT / 'surface_2027.csv')
+    assert len(surface) == 47 * 51 and ((0 < surface.lower) & (surface.lower < surface.probability) & (surface.probability < surface.upper) & (surface.upper < 1)).all()
+    shots = pd.read_csv(DERIVED / 'shot_form_predictions.csv.gz', usecols=['season', 'source_row', 'scope', 'made', 'p_distance'])
+    shots = shots[shots.scope.eq('regular') & shots.season.between(2024, 2026)]
+    place = pd.concat([pd.read_csv(DERIVED / f'shots_{year}.csv.gz', usecols=['source_row', 'depth_ft', 'lateral_ft']).assign(season=year) for year in (2024, 2025, 2026)])
+    shots = shots.merge(place, on=['season', 'source_row'], validate='one_to_one')
+    shots['x'], shots['y'] = shots.depth_ft.round().astype(int), shots.lateral_ft.round().astype(int)
+    joined = shots.merge(surface, on=['x', 'y'], how='inner')
+    assert len(joined) > .98 * len(shots)
+    assert abs(joined.probability.mean() - joined.made.mean()) < .005, 'the surface should match the overall make rate of the seasons it learned from'
+    bands = joined.groupby(pd.cut(np.hypot(joined.x, joined.y), [0, 3, 8, 16, 22, 30], include_lowest=True), observed=True).agg(shots=('made', 'size'), made=('made', 'mean'), surface=('probability', 'mean'))
+    assert (bands.made - bands.surface).abs().max() < .02, bands
+    pooled = pd.read_csv(OUT / 'surface_backtest.csv').set_index(['forecast', 'compared_with'])
+    past = pd.read_csv(DERIVED / 'shot_form_predictions.csv.gz', usecols=['season', 'scope', 'made', 'p_distance'])
+    past = past[past.scope.eq('regular') & past.season.between(2019, 2026)]
+    assert len(past) == pooled.loc[('p_distance', 'league'), 'attempts'] and np.isclose(np.mean((past.p_distance - past.made) ** 2), pooled.loc[('p_distance', 'league'), 'brier'])
 
     site = json.loads((SITE / 'prediction-2027.json').read_bytes())
     assert site['manifestSha256'] == manifest_digest() and site['season'] == 2027 and len(site['teams']) == 15
@@ -71,8 +112,10 @@ def main():
         rows = saved[saved.team_id.eq(team['id'])].set_index('measure')
         assert all(np.isclose(team[name]['prediction'], rows.loc[name, 'prediction'], atol=.006) for name in [*PARTS, 'net'])
     assert [p['id'] for p in site['shooters']] == list(shooters.index)
-    certificate = dict(teams=15, shooters=len(shooters), carry_over=saved.groupby('measure').carry_over.first().round(3).to_dict(),
-                       shooter_carry_over=round(float(shooters.carry_over.iloc[0]), 3), manifestSha256=manifest_digest())
+    drawn = json.loads((SITE / 'prediction-surface.json').read_bytes())
+    assert drawn['manifestSha256'] == manifest_digest() and np.allclose(np.array(drawn['surface']), surface.to_numpy(), atol=1e-6)
+    certificate = dict(teams=15, shooters=len(shooters), persistence=settings.persistence.round(3).to_dict(), surface_cells=len(surface),
+                       surface_minus_observed_make_rate=round(float(joined.probability.mean() - joined.made.mean()), 4), manifestSha256=manifest_digest())
     (OUT / 'verification.json').write_text(json.dumps(certificate, indent=2) + '\n', encoding='utf-8', newline='\n')
     print('PREDICTIONS_VERIFIED', certificate, flush=True)
 

@@ -1,3 +1,5 @@
+import { posteriorView } from './posterior.js?v=5';
+
 const count = new Intl.NumberFormat('en-CA');
 const whole = value => Math.round(100 * value) + '%';
 const signed = value => (value < 0 ? '−' : '+') + Math.abs(value).toFixed(1);
@@ -314,8 +316,8 @@ export function teamControl(target, data) {
     target.replaceChildren(lead, wrap, meaning, note);
 }
 
-export function prediction(target, data) {
-    const lead = el('p', `Written on ${data.written}, before any ${data.season} game. Each number is last season’s estimate scaled by how much such estimates carried over to the next season in the past.`);
+export function prediction(target, data, court) {
+    const lead = el('p', `Written on ${data.written}, before any ${data.season} game. Teams and shooters come from a Bayesian season model: each has a true level that drifts from year to year, and the belief about it is updated on every past season and carried forward.`);
     const league = el('ul', null, 'takeaways');
     for (const row of data.league) {
         const share = row.measure.startsWith('Share');
@@ -366,16 +368,29 @@ export function prediction(target, data) {
     const shooterNote = el('p', `Makes per 100 shots above expectation, for a season with as many attempts as in ${data.season - 1}. All ${data.shooters.length} predicted players are under “Who makes more shots than expected?”.`, 'caption');
     const table = el('table');
     const head = table.createTHead().insertRow();
-    for (const text of ['Past error of each rule', 'League average', 'Same as last season', 'This rule']) head.append(Object.assign(el('th', text), {scope: 'col'}));
+    for (const text of ['Past error', 'League average', 'Same as last season', 'Simple carry over', 'Bayesian model', 'Inside its 95% range']) head.append(Object.assign(el('th', text), {scope: 'col'}));
     const body = table.createTBody();
     for (const item of data.backtest) {
         const line = body.insertRow();
-        line.append(Object.assign(el('th', item.label), {scope: 'row'}), el('td', item.rmse_league.toFixed(2)), el('td', item.rmse_same.toFixed(2)), el('td', item.rmse_carried.toFixed(2)));
+        line.append(Object.assign(el('th', item.label), {scope: 'row'}), el('td', item.rmse_league.toFixed(2)), el('td', item.rmse_same.toFixed(2)),
+            el('td', item.rmse_carried.toFixed(2)), el('td', item.rmse_bayes.toFixed(2)), el('td', whole(item.inside_95)));
     }
     const wrap = el('div', null, 'table-scroll');
+    wrap.id = 'prediction-backtest';
     wrap.append(table);
-    const past = el('p', 'Each season from 2019 to 2026 was predicted from the one before, using only earlier seasons. Lower error is better. These predictions will be scored once against the 2027 season.', 'caption');
-    target.replaceChildren(lead, league, label, chart, teamNote, shooterTitle, shooterChart, shooterNote, wrap, past);
+    const keeps = Object.fromEntries(data.seasonModel.map(row => [row.measure, row.persistence]));
+    const past = el('p', `Each season from 2019 to 2026 was predicted using only earlier seasons. Lower error is better. The model estimates that a shooter keeps ${whole(keeps.shooter)} of her margin from one season to the next and a team keeps ${whole(keeps.net)} of its net. These predictions will be scored once against the ${data.season} season.`, 'caption');
+    const parts = [lead, league];
+    if (court) {
+        const title = el('h3', 'Predicted make chance by spot');
+        const view = posteriorView(court.rules, {spde: court.surface.surface}, court.palette, [['spde', 'Bayesian mesh model']]);
+        view.id = 'prediction-surface';
+        const fit = court.surface.backtest.find(row => row.forecast === 'mesh' && row.compared_with === 'p_distance');
+        const note = el('p', `A Bayesian spatial model: a smooth curve in distance plus a random field on a triangle mesh with ${count.format(court.surface.nodes)} nodes, fitted to ${count.format(court.surface.training_shots)} shots from the three seasons before ${data.season}. `
+            + `Pick a spot for its make chance and 95% credible range. On past seasons its error was within ${Math.abs(fit.drop_pct).toFixed(2)}% of the plain distance curve, and makes fell inside its 95% range at ${whole(court.surface.coverage)} of busy spots.`, 'caption');
+        parts.push(title, view, note);
+    }
+    target.replaceChildren(...parts, el('h3', 'Teams'), label, chart, teamNote, shooterTitle, shooterChart, shooterNote, wrap, past);
     select.addEventListener('change', render);
     render();
 }

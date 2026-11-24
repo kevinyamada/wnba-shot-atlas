@@ -26,7 +26,7 @@ A forecast counts as holding up if its interval for the drop in error lies above
 
 ## Predictions already written down
 
-`predict_2027.py` wrote predictions on 24 November 2026 for the league shot mix and points per shot, for every team's four measures and their net, and for every shooter with at least 100 eligible attempts in 2026. They are in `research/results/public_atlas/prediction_2027/` and on the site under Prediction. When 2027 is complete, compare each with what happened: the error of the rule against the league average and against repeating 2026, and how many outcomes fall inside their 95% ranges.
+`predict_2027.py` wrote predictions on 24 November 2026 for the league shot mix and points per shot, for every team's four measures and their net, and for every shooter with at least 100 eligible attempts in 2026. Teams and shooters use a Bayesian season model. `predict_surface.py` wrote a Bayesian mesh surface of make chance by court location with credible ranges. They are in `research/results/public_atlas/prediction_2027/` and on the site under Prediction. When 2027 is complete, compare each with what happened: the error of the rule against the league average and against repeating 2026, and how many outcomes fall inside their 95% ranges.
 
 ## Rules for the test
 
