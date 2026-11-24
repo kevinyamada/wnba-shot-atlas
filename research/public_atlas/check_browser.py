@@ -822,13 +822,11 @@ def verify(browser, url):
     js("document.querySelector('#theme-toggle').click()")
     assert js("getComputedStyle(document.documentElement).getPropertyValue('--colour-mid').trim()") != before_colours
     assert js("document.documentElement.dataset.theme") == 'dark'
-    kept = js("location.search")
     browser.call('Page.reload', {'ignoreCache': True})
     browser.wait(ready)
-    assert js("document.documentElement.dataset.theme") == 'dark' and js("location.search") == kept, 'a reload should keep the theme and the selection'
+    assert js("document.documentElement.dataset.theme") == 'dark'
+    assert js("[location.search, document.getElementById('season').value, document.getElementById('team').value]") == ['', 'all', 'all'], 'a reload should return to all seasons and all teams'
     js("document.querySelector('#theme-toggle').click()")
-    browser.call('Page.navigate', {'url': url})
-    browser.wait(ready + " && location.search === ''")
     for width in [390, 320]:
         browser.call('Emulation.setDeviceMetricsOverride', {'width': width, 'height': 844, 'deviceScaleFactor': 1, 'mobile': True})
         time.sleep(.2)
@@ -909,7 +907,7 @@ def verify(browser, url):
 
 
 def verify_links(browser, url):
-    """Open the page from links that carry a selection, and check that the address follows the controls."""
+    """Open the page from links that carry a selection, and check that a plain visit or a reload shows every team."""
     js = browser.js
     season = json.loads((ROOT / 'explore/data/2026.json').read_bytes())
     team = next(ident for ident, name in season['teams'].items() if name == 'Las Vegas Aces')
@@ -925,11 +923,18 @@ def verify_links(browser, url):
     visit(f'?season=2026&team={team}&player={player}&games=0&colour=points')
     assert [value(ident) for ident in ('season', 'team', 'player', 'phase')] == ['2026', team, player, '0']
     assert js("document.querySelector('[data-metric][aria-pressed=true]').dataset.metric") == 'points'
-    assert js("new URLSearchParams(location.search).get('player')") == player
+    assert js("location.search") == '', 'the address should not keep the selection after a link opens'
     browser.select('player', 'all')
     browser.wait("!document.getElementById('team-report').hidden && document.getElementById('team-title').textContent === 'Las Vegas Aces in 2026'")
-    assert js("location.search") == f'?season=2026&team={team}&games=0&colour=points'
-    assert js("document.getElementById('copy-link').textContent") == 'Copy link to this view'
+    js("window.prompt = () => null; document.getElementById('copy-link').click()")
+    browser.wait("document.getElementById('copy-link').dataset.link")
+    assert js("new URL(document.getElementById('copy-link').dataset.link).search") == f'?season=2026&team={team}&games=0&colour=points'
+    assert js("location.search") == ''
+    js("window.leaving = true")
+    browser.call('Page.reload', {'ignoreCache': True})
+    browser.wait(f"!window.leaving && {settled}")
+    assert [value(ident) for ident in ('season', 'team', 'player', 'phase')] == ['all', 'all', 'all', 'all'], 'a reload should show every team'
+    assert js("document.getElementById('team-title').textContent").startswith('Where each team gained and lost points')
 
     visit(f'?season=2012&compare=2013&side=allowed&team={team}')
     assert [value('season'), value('compare')] == ['2012', '2013'] and not js("document.getElementById('court-secondary').hidden")

@@ -597,7 +597,6 @@ async function refresh(opening = {}) {
         renderTypes(seasons[0], searchFilters());
         renderTeam();
         $('load-state').textContent = '';
-        history.replaceState(null, '', shareLink());
         document.body.dataset.ready = 'true';
     } catch (error) {
         if (version === selectionVersion) {
@@ -700,15 +699,17 @@ async function start() {
     document.querySelectorAll('[data-metric]').forEach(button => button.addEventListener('click', () => {
         setMetric(button.dataset.metric);
         draw();
-        history.replaceState(null, '', shareLink());
     }));
     document.querySelectorAll('[data-side]').forEach(button => button.addEventListener('click', () => {
         setSide(button.dataset.side);
         refresh();
     }));
     $('copy-link').addEventListener('click', async () => {
-        const copied = await navigator.clipboard?.writeText(shareLink().href).then(() => true, () => false);
-        $('copy-link').textContent = copied ? 'Link copied' : 'Copy the address from the address bar';
+        const link = shareLink().href;
+        $('copy-link').dataset.link = link;
+        const copied = await navigator.clipboard?.writeText(link).then(() => true, () => false);
+        if (!copied) window.prompt('Copy this link', link);
+        $('copy-link').textContent = copied ? 'Link copied' : 'Copy link to this view';
         setTimeout(() => { $('copy-link').textContent = 'Copy link to this view'; }, 2500);
     });
     $('normalize-shots').addEventListener('change', () => {
@@ -740,6 +741,7 @@ async function start() {
     window.addEventListener('resize', resize);
     new MutationObserver(resize).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
     await refresh(openLink());
+    if (location.search) history.replaceState(null, '', location.pathname + location.hash);
     const matches = data => data.manifestSha256 === index.manifestSha256;
     const teamData = json('data/teams.json').catch(() => null);
     Promise.all([json('data/shot-mix.json'), json('data/shot-timing.json').catch(() => null), teamData]).then(([mix, timing, teams]) => {
