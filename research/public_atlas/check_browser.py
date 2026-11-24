@@ -429,7 +429,7 @@ def verify_overview(browser):
     browser.save_image('atlas_headline_desktop.png')
 
     data = json.loads((ROOT / 'explore/data/shooters.json').read_bytes())
-    signed = lambda value: ('−' if value < 0 else '+') + f'{abs(value):.1f}'
+    signed = lambda value: f"{abs(value):.1f} {'fewer' if value < 0 else 'more'}"
     rows = "[...document.querySelectorAll('#shooter-chart .relative-row')].map(r => [r.querySelector('span').textContent, r.querySelector('em').textContent])"
     for choice, players in [('career', data['career']), ('2026', data['seasons']['2026']), ('2016', data['seasons']['2016'])]:
         browser.select('shooter-season', choice)
@@ -558,15 +558,31 @@ def verify_prediction(browser):
     assert js("document.querySelector('#more-prediction summary').textContent").startswith('Prediction')
     shown = js("[...document.querySelectorAll('#prediction .takeaways strong')].map(node => node.textContent)")
     assert shown == [f"{row['prediction']:.1f}%" if row['measure'].startswith('Share') else f"{row['prediction']:.2f}" for row in data['league']], shown
-    rows = "[...document.querySelectorAll('#prediction-teams .relative-row')].map(r => [r.querySelector('span').textContent, r.querySelector('em').textContent])"
+    rows = "[...document.querySelectorAll('#prediction-teams .relative-row')].map(r => [r.querySelector('span').textContent, r.querySelector('em').textContent, Number(r.dataset.value), Number(r.dataset.last)])"
+    past = {row['id']: row for row in json.loads((ROOT / 'explore/data/teams.json').read_bytes())['seasons'][str(data['season'] - 1)]}
+
+    def a_game(team, name, field):
+        row = past[team['id']]
+        own, other = row['shots'] / row['games'] / 100, row['shotsAgainst'] / row['games'] / 100
+        return team[name][field] * ((own + other) / 2 if name == 'net' else own if name.startswith('offence') else -other)
+
+    def number(text):
+        value = float(text.split()[0])
+        return -value if 'fewer' in text or 'worse' in text else value
+
+    assert js("[...document.getElementById('prediction-measure').options].map(o => o.textContent)") == ['Overall', 'Gets good shots', 'Makes its shots', 'Limits good shots', 'Opponents miss']
     for name in ('net', 'defence_quality'):
         browser.select('prediction-measure', name)
-        teams = sorted(data['teams'], key=lambda t: t[name]['prediction'] if name.startswith('defence') else -t[name]['prediction'])
-        number = lambda text: float(text.replace('−', '-').replace('+', ''))
-        for (shown_name, text), t in zip(js(rows), teams, strict=True):
-            now, before = text.split(' · was ')
-            assert shown_name == t['name'] and abs(number(now) - t[name]['prediction']) <= .0501 and abs(number(before) - t[name]['last']) <= .0501, (name, shown_name, text)
+        teams = sorted(data['teams'], key=lambda t: -a_game(t, name, 'prediction'))
+        for (shown_name, text, value, before), t in zip(js(rows), teams, strict=True):
+            expected = a_game(t, name, 'prediction')
+            assert shown_name == t['name'] and abs(value - expected) <= .001 and abs(before - a_game(t, name, 'last')) <= .001, (name, shown_name, text)
+            assert text == 'Level' or (abs(number(text) - expected) <= .0501 and text.endswith('better' if expected > 0 else 'worse')), (name, shown_name, text)
         assert all(t[name]['low'] < t[name]['prediction'] < t[name]['high'] for t in teams)
+    assert js("document.querySelectorAll('#prediction-teams .relative-last').length") == len(data['teams'])
+    assert 'points a game' in js("document.querySelector('#prediction-teams .relative-key').textContent")
+    words = js("document.getElementById('prediction').textContent")
+    assert not any(term in words for term in ('credible', 'random field', 'triangle mesh', 'per 100 shots against the league')), 'the prediction section should read in plain words'
     browser.select('prediction-measure', 'net')
     top = js("[...document.querySelectorAll('#prediction-shooters .relative-row > span:first-child')].map(node => node.textContent)")
     assert top == [p['name'] for p in data['shooters'][:10]]
@@ -586,7 +602,7 @@ def verify_prediction(browser):
     assert abs(float(js("document.querySelector('#court-secondary [data-total=rate]').textContent").rstrip('%')) - 100 * makes / attempts) <= .0501
     assert abs(float(js("document.querySelector('#court-secondary [data-total=points]').textContent")) - 100 * points / attempts) <= .00501
     assert js("[...document.querySelectorAll('#area-rows tr td:first-child')].filter(c => c.textContent === '2027 prediction').length") == 7
-    assert 'Bayesian mesh model' in js("document.querySelector('#court-secondary [data-location]').textContent")
+    assert 'prediction model' in js("document.querySelector('#court-secondary [data-location]').textContent")
     assert js("document.querySelectorAll('.area-result[data-season=prediction] .leaders').length") == 0
     browser.save_image('atlas_compare_prediction_desktop.png')
     browser.select('compare', 'off')
@@ -859,6 +875,8 @@ def verify(browser, url):
         value = lab['surfaces'][name][15 * lab['grid']['cols'] + 25]
         assert js("document.getElementById('lab-spot').textContent").endswith(f'{100 * value:.1f}%'), name
     assert js("document.querySelectorAll('#lab-spot-all tbody tr').length") == len(lab['methods'])
+    about = js("document.querySelector('#lab-surface .caption').textContent")
+    assert ' In technical terms: ' in about and not about.startswith(' In technical terms'), about
     assert js("[...document.querySelectorAll('#lab-moran .area-line')].map(r => r.dataset.value)") == [f"{row['morans_i']:.3f}" for row in lab['moran']]
     assert js("[...document.querySelectorAll('#lab-weights .area-line')].map(r => Number(r.dataset.value))") == [row['weight'] for row in lab['weights']]
     browser.wait("(() => { const c = document.getElementById('lab-variogram'); return c.width > 100 && c.getContext('2d').getImageData(0, 0, c.width, c.height).data.some(v => v > 0); })()")

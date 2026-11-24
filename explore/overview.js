@@ -5,6 +5,8 @@ const count = new Intl.NumberFormat('en-CA');
 const whole = value => Math.round(100 * value) + '%';
 const signed = value => (value < 0 ? '−' : '+') + Math.abs(value).toFixed(1);
 const span = text => { const [a, b] = text.split(' to '); return a === b ? a : text; };
+const moreWords = value => `${Math.abs(value).toFixed(1)} ${value < 0 ? 'fewer' : 'more'}`;
+const betterWords = value => Math.abs(value) < .05 ? 'Level' : `${Math.abs(value).toFixed(1)} ${value > 0 ? 'better' : 'worse'}`;
 
 function el(tag, text, className) {
     const node = document.createElement(tag);
@@ -89,7 +91,7 @@ function shooterRow(player, limit, chosen) {
     interval.style.width = (at(player.high) - at(player.low)) + '%';
     point.style.left = at(player.estimate) + '%';
     track.append(interval, point);
-    row.append(el('span', player.name), track, el('em', `${signed(player.estimate)} · ${count.format(player.attempts)} shots`));
+    row.append(el('span', player.name), track, el('em', `${moreWords(player.estimate)} · ${count.format(player.attempts)} shots`));
     row.title = (player.makes == null ? 'Predicted. ' : `${player.makes} made, ${player.expected} expected. `) + `Range ${signed(player.low)} to ${signed(player.high)}.`;
     return row;
 }
@@ -97,7 +99,7 @@ function shooterRow(player, limit, chosen) {
 export function shooters(target, data, predicted, court) {
     const seasons = Object.keys(data.seasons).sort().reverse();
     const first = seasons.at(-1), last = seasons[0];
-    const lead = el('p', 'Makes per 100 shots above what an average shooter would make from the same distances and shot types. The line shows the range the data support. Short records are pulled toward the middle.');
+    const lead = el('p', 'For every 100 shots, how many more went in than an average shooter would make from the same distances with the same kinds of shot. The line shows how sure the number is: more shots give a shorter line. Players with few shots are pulled toward the middle, so one hot week does not top the list.');
     const season = el('select');
     season.id = 'shooter-season';
     season.append(new Option(`${first} to ${last}`, 'career'), ...(predicted ? [new Option(`${predicted.season} prediction`, 'prediction')] : []),
@@ -116,9 +118,9 @@ export function shooters(target, data, predicted, court) {
     const note = el('p', null, 'caption');
     const forecast = data.forecast.find(row => row.shots === 'all shots' && row.forecast === 'pooled');
     const raw = data.forecast.find(row => row.shots === 'all shots' && row.forecast === 'raw');
-    const method = el('p', `Does it hold up? Using last season’s pooled estimate lowered the error of next season’s shot forecasts by ${forecast.drop_pct.toFixed(2)}%. `
-        + `Using the raw margin without pooling made them ${Math.abs(raw.drop_pct).toFixed(2)}% ${raw.drop_pct < 0 ? 'worse' : 'better'}. `
-        + `True skill differs between players by about ${data.skillSpread.toFixed(1)} makes per 100 shots. The estimate reflects the shots a player took and cannot separate skill from shot selection or defensive attention.`, 'caption');
+    const method = el('p', `Does it hold up? Knowing a player’s number from last season made forecasts of next season’s shots ${forecast.drop_pct.toFixed(2)}% more accurate. `
+        + `Without the pull toward the middle, they were ${Math.abs(raw.drop_pct).toFixed(2)}% ${raw.drop_pct < 0 ? 'less' : 'more'} accurate than forecasts that ignore who is shooting. `
+        + `Players truly differ by about ${data.skillSpread.toFixed(1)} makes per 100 shots. The number reflects the shots a player took, so it cannot separate skill from shot choice or from how closely the player is guarded.`, 'caption');
 
     function players() {
         if (season.value === 'prediction') return predicted.shooters;
@@ -129,7 +131,7 @@ export function shooters(target, data, predicted, court) {
         const list = players();
         const limit = Math.ceil(Math.max(...list.map(p => Math.max(Math.abs(p.low), Math.abs(p.high)))) / 2) * 2;
         const key = el('div', null, 'relative-key');
-        key.append(el('span', `${limit} fewer`), el('span', 'League expectation'), el('span', `${limit} more`));
+        key.append(el('span', `${limit} fewer`), el('span', 'Average shooter'), el('span', `${limit} more`));
         const chosen = list.find(player => String(player.id) === who.value);
         const shown = list.slice(0, 10);
         if (chosen && !shown.includes(chosen)) shown.push(chosen);
@@ -203,8 +205,8 @@ export function ladder(target, data) {
     const removed = 1 - summary.distance_brier / summary.league_brier;
     const extra = (summary.distance_brier - summary.full_brier) / summary.league_brier;
     const parts = [['Distance', removed, 'area-0'], ['Everything else recorded', extra, 'area-2'], ['Still unexplained', 1 - removed - extra, 'area-1']];
-    const lead = el('p', `Start with a forecast that gives every shot the league make rate. Distance removes ${(100 * removed).toFixed(1)}% of its error. `
-        + `Court position, shot type, the clock and score, the previous event and the shooter’s record remove ${(100 * extra).toFixed(1)}% more.`);
+    const lead = el('p', `Guess that every shot has the league’s average chance of going in and the guess will be off by some amount. Knowing only how far the shot is from the rim removes ${(100 * removed).toFixed(1)}% of that error. `
+        + `Adding court position, shot type, the clock and score, the previous event and the shooter’s record removes just ${(100 * extra).toFixed(1)}% more.`);
     const bar = el('div', null, 'diet-bar ladder-bar');
     bar.setAttribute('role', 'img');
     bar.setAttribute('aria-label', parts.map(([name, value]) => `${name} ${(100 * value).toFixed(1)}%`).join(', '));
@@ -216,8 +218,8 @@ export function ladder(target, data) {
     }
     const legend = el('p', null, 'diet-key');
     legend.append(...parts.map(([name, , tone]) => el('span', name, tone)));
-    const why = el('p', `One shot either goes in or it does not, so most of the error is chance that no forecast can remove. To beat distance by 10%, predicted make chances would need to spread about ${(100 * data.ceiling.find(row => row.target_drop_pct === 10).spread_needed).toFixed(0)} points around the average. `
-        + `Distance spreads them ${(100 * summary.distance_spread).toFixed(1)} points and everything recorded today reaches ${(100 * summary.full_spread).toFixed(1)}. `
+    const why = el('p', `One shot either goes in or it does not, so most of the error is chance that no forecast can remove. To do 10% better than distance, a forecast would have to tell easy shots from hard ones much more sharply: on a typical shot its make chance would sit about ${(100 * data.ceiling.find(row => row.target_drop_pct === 10).spread_needed).toFixed(0)} percentage points from the average. `
+        + `Distance manages ${(100 * summary.distance_spread).toFixed(1)} and everything recorded today reaches ${(100 * summary.full_spread).toFixed(1)}. `
         + 'These files have no defender positions, passes or movement, so the gain from tracking data cannot be measured here.');
     const table = el('table');
     const head = table.createTHead().insertRow();
@@ -230,7 +232,7 @@ export function ladder(target, data) {
     }
     const wrap = el('div', null, 'table-scroll');
     wrap.append(table);
-    const note = el('p', `${count.format(steps[0].attempts)} shots from the 2026 regular season. Models learned from 2022 to 2024 and were tuned on 2025. Error is the Brier score, where lower is better.`, 'caption');
+    const note = el('p', `${count.format(steps[0].attempts)} shots from the 2026 regular season. Models learned from 2022 to 2024 and were tuned on 2025. Error is the average squared gap between the forecast chance and what happened, known as the Brier score. Lower is better.`, 'caption');
     target.replaceChildren(lead, legend, bar, why, wrap, note);
 }
 
@@ -451,8 +453,7 @@ export function teamReport(target, data, shooterData, {season, team, pick}, poss
     }
     const roster = shooterData?.seasons[year]?.filter(player => player.team === chosen.id).slice(0, 3) ?? [];
     if (roster.length) {
-        parts.push(el('p', 'Best shooters against expectation: ' + roster.map(player => `${player.name} ${signed(player.estimate)} (${signed(player.low)} to ${signed(player.high)})`).join(', ')
-            + ' makes per 100 shots.'));
+        parts.push(el('p', 'Best shooters, in makes per 100 shots against an average shooter: ' + roster.map(player => `${player.name} ${moreWords(player.estimate)}`).join(', ') + '.'));
     }
     const back = el('button', 'See all teams');
     back.type = 'button';
@@ -482,59 +483,91 @@ export function teamControl(target, data) {
     target.replaceChildren(lead, wrap, meaning, note);
 }
 
-export function prediction(target, data, court) {
-    const lead = el('p', `Written on ${data.written}, before any ${data.season} game. Teams and shooters come from a Bayesian season model: each has a true level that drifts from year to year, and the belief about it is updated on every past season and carried forward.`);
+function dotKey(last, season) {
+    const key = el('p', null, 'dot-key');
+    for (const [kind, text] of [['hollow', String(last)], ['', `${season} prediction`], ['range', 'Likely range']]) {
+        const item = el('span', text);
+        item.prepend(el('i', null, kind));
+        key.append(item);
+    }
+    return key;
+}
+
+export function prediction(target, data, court, teams) {
+    const last = data.season - 1;
+    const lead = el('p', `Written on ${data.written}, before any ${data.season} game. Each prediction starts from what a team or shooter did in past seasons and pulls it part of the way back toward average, because a very good or very bad year rarely repeats in full.`);
     const league = el('ul', null, 'takeaways');
     for (const row of data.league) {
         const share = row.measure.startsWith('Share');
         const show = value => share ? value.toFixed(1) + '%' : value.toFixed(2);
-        league.append(takeaway(show(row.prediction), `${share ? 'of shots from the three point area' : 'field goal points per shot'}. Range ${show(row.low)} to ${show(row.high)}. In ${data.season - 1} it was ${show(row.value_2026)}.`));
+        league.append(takeaway(show(row.prediction), `${share ? 'of shots from the three point area' : 'field goal points per shot'}. Likely range ${show(row.low)} to ${show(row.high)}. In ${last} it was ${show(row.value_2026)}.`));
     }
-    const label = el('label', 'Team measure', 'study-picker');
-    const select = el('select');
-    select.id = 'prediction-measure';
-    for (const name of ['net', 'offence_quality', 'offence_making', 'defence_quality', 'defence_making']) select.append(new Option(data.measures[name], name));
-    label.append(select);
-    const chart = el('div', null, 'relative-chart');
-    chart.id = 'prediction-teams';
-    chart.setAttribute('aria-live', 'polite');
 
-    function row(name, value, limit, note) {
+    function dotRow(name, value, limit, words) {
         const line = el('div', null, 'relative-row');
+        line.dataset.value = value.prediction.toFixed(3);
+        line.dataset.last = value.last.toFixed(3);
+        line.title = `In ${last}: ${words(value.last)}. Likely range ${words(value.low)} to ${words(value.high)}.`;
         const track = el('div', null, 'relative-track');
         const interval = el('span', null, 'relative-interval');
+        const before = el('span', null, 'relative-last');
         const point = el('span', null, 'relative-point');
         const at = x => 50 + 50 * Math.max(-1, Math.min(1, x / limit));
         interval.style.left = at(value.low) + '%';
         interval.style.width = (at(value.high) - at(value.low)) + '%';
+        before.style.left = at(value.last) + '%';
         point.style.left = at(value.prediction) + '%';
-        track.append(interval, point);
-        line.append(el('span', name), track, el('em', note));
+        track.append(interval, before, point);
+        line.append(el('span', name), track, el('em', words(value.prediction)));
         return line;
     }
 
-    function render() {
-        const name = select.value;
-        const better = name.startsWith('defence') ? 1 : -1;
-        const teams = [...data.teams].sort((a, b) => better * (a[name].prediction - b[name].prediction));
-        const limit = Math.ceil(Math.max(...teams.flatMap(team => [Math.abs(team[name].low), Math.abs(team[name].high)])) / 2) * 2;
-        const key = el('div', null, 'relative-key');
-        key.append(el('span', `${limit} below`), el('span', 'League average'), el('span', `${limit} above`));
-        chart.replaceChildren(key, ...teams.map(team => row(team.name, team[name], limit, `${signed(team[name].prediction)} · was ${signed(team[name].last)}`)));
+    const teamParts = [];
+    const past = teams?.seasons[last] ?? [];
+    if (past.length) {
+        const pace = row => ({own: row.shots / row.games / 100, other: row.shotsAgainst / row.games / 100});
+        const usual = {own: past.reduce((sum, row) => sum + pace(row).own, 0) / past.length, other: past.reduce((sum, row) => sum + pace(row).other, 0) / past.length};
+        const aGame = (team, name, field) => {
+            const {own, other} = pace(past.find(row => row.id === team.id) ?? {shots: 100 * usual.own, shotsAgainst: 100 * usual.other, games: 1});
+            return team[name][field] * (name === 'net' ? (own + other) / 2 : name.startsWith('offence') ? own : -other);
+        };
+        const label = el('label', 'Show', 'study-picker');
+        const select = el('select');
+        select.id = 'prediction-measure';
+        for (const [name, text] of [['net', 'Overall'], ...measureOrder.map(name => [name, plain[name]])]) select.append(new Option(text, name));
+        label.append(select);
+        const chart = el('div', null, 'relative-chart');
+        chart.id = 'prediction-teams';
+        chart.setAttribute('aria-live', 'polite');
+        const render = () => {
+            const name = select.value;
+            const rows = data.teams.map(team => {
+                const [low, high] = [aGame(team, name, 'low'), aGame(team, name, 'high')].sort((a, b) => a - b);
+                return {name: team.name, prediction: aGame(team, name, 'prediction'), last: aGame(team, name, 'last'), low, high};
+            }).sort((a, b) => b.prediction - a.prediction);
+            const limit = Math.ceil(Math.max(...rows.flatMap(row => [Math.abs(row.low), Math.abs(row.high)])));
+            const key = el('div', null, 'relative-key');
+            key.append(el('span', `${limit} points a game worse`), el('span', 'Average team'), el('span', `${limit} better`));
+            chart.replaceChildren(key, ...rows.map(row => dotRow(row.name, row, limit, betterWords)));
+        };
+        select.addEventListener('change', render);
+        render();
+        const teamNote = el('p', `Field goal points a game against an average team, for a season with as many shots a game as in ${last}. The lines are wide because one season says only so much about the next, and the prediction knows nothing about trades, injuries, the draft or coaching changes.`, 'caption');
+        teamParts.push(el('h3', 'Teams'), label, dotKey(last, data.season), chart, teamNote);
     }
 
-    const teamNote = el('p', 'Points per 100 shots against the league. The lines are wide because one season says only so much about the next, and the rule knows nothing about trades, injuries, the draft or coaching changes.', 'caption');
-    const shooterTitle = el('h3', 'Shooters most likely to beat expectation');
-    const limit = Math.ceil(Math.max(...data.shooters.slice(0, 10).flatMap(p => [Math.abs(p.low), Math.abs(p.high)])) / 2) * 2;
+    const shooterTitle = el('h3', 'Shooters most likely to beat an average shooter');
+    const top = data.shooters.slice(0, 10);
+    const limit = Math.ceil(Math.max(...top.flatMap(p => [Math.abs(p.low), Math.abs(p.high)])) / 2) * 2;
     const shooterChart = el('div', null, 'relative-chart');
     shooterChart.id = 'prediction-shooters';
     const key = el('div', null, 'relative-key');
-    key.append(el('span', `${limit} fewer`), el('span', 'League expectation'), el('span', `${limit} more`));
-    shooterChart.append(key, ...data.shooters.slice(0, 10).map(p => row(p.name, {prediction: p.estimate, low: p.low, high: p.high}, limit, `${signed(p.estimate)} · was ${signed(p.last)}`)));
-    const shooterNote = el('p', `Makes per 100 shots above expectation, for a season with as many attempts as in ${data.season - 1}. All ${data.shooters.length} predicted players are under “Who makes more shots than expected?”.`, 'caption');
+    key.append(el('span', `${limit} fewer`), el('span', 'Average shooter'), el('span', `${limit} more`));
+    shooterChart.append(key, ...top.map(p => dotRow(p.name, {prediction: p.estimate, last: p.last, low: p.low, high: p.high}, limit, moreWords)));
+    const shooterNote = el('p', `Makes per 100 shots against an average shooter, for a season with as many attempts as in ${last}. All ${data.shooters.length} predicted players are under “Who makes more shots than expected?”.`, 'caption');
     const table = el('table');
     const head = table.createTHead().insertRow();
-    for (const text of ['Past error', 'League average', 'Same as last season', 'Simple carry over', 'Bayesian model', 'Inside its 95% range']) head.append(Object.assign(el('th', text), {scope: 'col'}));
+    for (const text of ['Typical miss', 'Guess the league average', 'Guess the same as last season', 'Simple carry over', 'Bayesian model', 'Real result inside the range']) head.append(Object.assign(el('th', text), {scope: 'col'}));
     const body = table.createTBody();
     for (const item of data.backtest) {
         const line = body.insertRow();
@@ -545,20 +578,21 @@ export function prediction(target, data, court) {
     wrap.id = 'prediction-backtest';
     wrap.append(table);
     const keeps = Object.fromEntries(data.seasonModel.map(row => [row.measure, row.persistence]));
-    const past = el('p', `Each season from 2019 to 2026 was predicted using only earlier seasons. Lower error is better. The model estimates that a shooter keeps ${whole(keeps.shooter)} of a margin from one season to the next and a team keeps ${whole(keeps.net)} of its net. These predictions will be scored once against the ${data.season} season.`, 'caption');
+    const record = el('p', `Each season from 2019 to 2026 was predicted using only earlier seasons and then compared with what happened. Each number is the typical size of the miss, so lower is better. The Bayesian model is the one used above. It finds that a shooter keeps ${whole(keeps.shooter)} of a margin from one season to the next and a team keeps ${whole(keeps.net)} of its overall number. These predictions will be scored once against the ${data.season} season.`, 'caption');
+    const check = el('details');
+    check.id = 'prediction-check';
+    check.append(el('summary', 'How did this method do on past seasons?'), wrap, record);
     const parts = [lead, league];
     if (court) {
         const title = el('h3', 'Predicted make chance by spot');
         const view = posteriorView(court.rules, {spde: court.surface.surface}, court.palette, [['spde', 'Bayesian mesh model']]);
         view.id = 'prediction-surface';
         const fit = court.surface.backtest.find(row => row.forecast === 'mesh' && row.compared_with === 'p_distance');
-        const note = el('p', `A Bayesian spatial model: a smooth curve in distance plus a random field on a triangle mesh with ${count.format(court.surface.nodes)} nodes, fitted to ${count.format(court.surface.training_shots)} shots from the three seasons before ${data.season}. `
-            + `Pick a spot for its make chance and 95% credible range. On past seasons its error was within ${Math.abs(fit.drop_pct).toFixed(2)}% of the plain distance curve, and makes fell inside its 95% range at ${whole(court.surface.coverage)} of busy spots.`, 'caption');
+        const note = el('p', `The colour is the chance that a shot from each spot goes in, learned from ${count.format(court.surface.training_shots)} shots in the three seasons before ${data.season}. Pick a spot for its chance and the range it could reasonably fall in. `
+            + `On past seasons the real make rate fell inside that range at ${whole(court.surface.coverage)} of busy spots, and the forecasts were within ${Math.abs(fit.drop_pct).toFixed(2)}% of the accuracy of using distance alone. The Methods lab tab compares this model with ten others.`, 'caption');
         parts.push(title, view, note);
     }
-    target.replaceChildren(...parts, el('h3', 'Teams'), label, chart, teamNote, shooterTitle, shooterChart, shooterNote, wrap, past);
-    select.addEventListener('change', render);
-    render();
+    target.replaceChildren(...parts, ...teamParts, shooterTitle, dotKey(last, data.season), shooterChart, shooterNote, check);
 }
 
 export function teamStory(data, year, id) {

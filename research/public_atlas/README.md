@@ -105,6 +105,8 @@ The site and the studies are organised around questions a WNBA staff could act o
 - Which shooters beat expectation, and from where? `shooters.py`, with pooling and intervals, overall and by court area.
 - How do possessions start, and what do they yield? The team report and the play studies.
 
+The main page is written for a reader with no statistics background. Team and shooter charts use points a game or makes per 100 shots, with the words better, worse, more and fewer in place of signed numbers. Ranges are called likely ranges. Model names and technical detail live in the Methods lab tab and the research report.
+
 The public files hold shot locations and event order. They hold no passes, cuts, defender positions or lineups on the floor, so they cannot value individual actions or defensive pressure. That needs tracking data from the league or a team.
 
 ## Recount and open data questions

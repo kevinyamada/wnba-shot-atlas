@@ -1,7 +1,7 @@
 import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=7';
 import { renderStudy } from './study-findings.js?v=6';
-import { shotMix } from './shot-mix.js?v=3';
-import { headline, shooters, ladder, teamReport, teamControl, prediction, teamStory } from './overview.js?v=7';
+import { shotMix } from './shot-mix.js?v=4';
+import { headline, shooters, ladder, teamReport, teamControl, prediction, teamStory } from './overview.js?v=8';
 
 const $ = id => document.getElementById(id);
 const controls = ['season', 'team', 'player', 'phase', 'shot-type', 'compare'].map($);
@@ -455,7 +455,7 @@ function renderCourts() {
             ? format(per100(data.total.points, data.total.n), 'per100') : number.format(data.total.points);
         const offMap = data.unlocated + data.otherHalf;
         panel.querySelector('[data-location]').textContent = entry.prediction
-            ? `Predicted for the whole league. Shot locations repeat the ${entry.basis} regular season and make chances come from the Bayesian mesh model.`
+            ? `Predicted for the whole league. Shots are placed where they were taken in the ${entry.basis} regular season, and the chance of each going in comes from the prediction model.`
             : !data.total.n ? 'No shots for this selection.' :
             offMap ? `${number.format(data.total.n - offMap)} mapped · ${number.format(data.otherHalf)} from the other half · ${number.format(data.unlocated)} with unknown location` : '';
     });
@@ -702,7 +702,8 @@ async function start() {
     new MutationObserver(resize).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
     await refresh();
     const matches = data => data.manifestSha256 === index.manifestSha256;
-    Promise.all([json('data/shot-mix.json'), json('data/shot-timing.json').catch(() => null), json('data/teams.json').catch(() => null)]).then(([mix, timing, teams]) => {
+    const teamData = json('data/teams.json').catch(() => null);
+    Promise.all([json('data/shot-mix.json'), json('data/shot-timing.json').catch(() => null), teamData]).then(([mix, timing, teams]) => {
         if (!matches(mix)) return;
         const usable = data => data && matches(data) ? data : null;
         headline($('headline'), mix, usable(timing), usable(teams));
@@ -729,7 +730,7 @@ async function start() {
         $('more-control').hidden = false;
         renderTeam();
     }).catch(error => console.warn(error));
-    Promise.all([json('data/shooters.json'), json('data/prediction-2027.json').catch(() => null), json('data/prediction-surface.json').catch(() => null)]).then(([data, forecast, surface]) => {
+    Promise.all([json('data/shooters.json'), json('data/prediction-2027.json').catch(() => null), json('data/prediction-surface.json').catch(() => null), teamData]).then(([data, forecast, surface, teams]) => {
         if (!matches(data)) return;
         forecast = forecast && matches(forecast) ? forecast : null;
         extras.shooters = data;
@@ -737,7 +738,7 @@ async function start() {
         $('more-shooters').hidden = false;
         renderTeam();
         if (!forecast) return;
-        prediction($('prediction'), forecast, surface && matches(surface) ? {surface, rules: index.court, palette} : null);
+        prediction($('prediction'), forecast, surface && matches(surface) ? {surface, rules: index.court, palette} : null, teams && matches(teams) ? teams : null);
         $('more-prediction').hidden = false;
     }).catch(error => console.warn(error));
     json('data/team-possessions.json').then(data => {

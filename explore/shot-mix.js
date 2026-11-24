@@ -105,7 +105,7 @@ export function shotMix(target, data, palette) {
 
     function part(name, value, low, high, note) {
         const card = el('div', null, 'mix-part');
-        card.append(el('span', name), el('strong', signed(value)), el('small', `95% interval ${signed(low)} to ${signed(high)}`), el('small', note));
+        card.append(el('span', name), el('strong', signed(value)), el('small', `Likely range ${signed(low)} to ${signed(high)}`), el('small', note));
         return card;
     }
 
@@ -113,8 +113,8 @@ export function shotMix(target, data, palette) {
         const row = data.comparisons[Number(select.value)];
         parts.replaceChildren(
             part('Change in points per shot', row.change, row.change_low, row.change_high, `${row.before.toFixed(3)} to ${row.after.toFixed(3)}`),
-            part('From shot mix', row.mix, row.mix_low, row.mix_high, 'where shots came from'),
-            part('From conversion', row.conversion, row.conversion_low, row.conversion_high, 'points per shot within areas'));
+            part('From where teams shot', row.mix, row.mix_low, row.mix_high, 'the mix of court areas'),
+            part('From how well they scored there', row.conversion, row.conversion_low, row.conversion_high, 'points per shot within each area'));
         const rows = data.comparisonAreas.filter(area => area.comparison === row.comparison);
         const rate = value => value == null ? 'Unavailable' : value.toFixed(3);
         areas.replaceChildren(table(['Area', `Share in ${span(row.first)}`, `Share in ${span(row.second)}`, `Points per shot in ${span(row.first)}`, `Points per shot in ${span(row.second)}`],

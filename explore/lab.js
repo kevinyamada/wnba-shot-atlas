@@ -86,13 +86,27 @@ function chart(canvas, series, xLabel, yLabel) {
     }
 }
 
+const plainWords = {
+    'League rate': 'Every shot gets the same chance: the league average.',
+    'Distance curve': 'The chance depends only on how far the shot is from the rim.',
+    'Inverse distance weighting': 'Each spot takes the average of the spots around it, and closer spots count for more.',
+    'Ordinary kriging': 'A weighted average of nearby spots, where the weights come from how quickly make rates change across the court.',
+    'Universal kriging': 'The distance curve first, then kriging on whatever distance leaves over.',
+    'Areal CAR model': 'The court is cut into squares and each square borrows from the squares that touch it.',
+    'Gaussian process': 'One smooth surface over the whole court, built on the idea that nearby spots are alike.',
+    'SPDE mesh field': 'The same smooth surface, built on a net of triangles so that it is quick to fit.',
+    'SPDE mesh with trend': 'The distance curve plus a net of triangles that picks up what distance misses.',
+    'Simple average': 'The plain average of six of the methods.',
+    'Stacked ensemble': 'A weighted average of the same six methods, which gives more say to the ones that did well the season before.',
+};
+
 function scoreboard(data) {
     const section = el('section', null, 'headline');
     const distance = data.methods.find(row => row.method === 'Distance curve');
     const best = data.methods[0];
     section.append(el('h2', 'Which method predicts best?'),
         el('p', `Each method learned from three regular seasons and was scored on the next, for ${data.tested[0]} to ${data.tested.at(-1)}: ${count.format(data.attempts)} shots. `
-            + `${best.method} had the lowest error. Nothing moved far from the plain distance curve, at ${distance.brier.toFixed(5)}.`));
+            + `${best.method} had the lowest error. Nothing moved far from the plain distance curve, at ${distance.brier.toFixed(5)}. In plain words: once you know how far a shot is from the rim, a more detailed map of the court adds very little.`));
     const limit = .3;
     const board = el('div', null, 'relative-chart');
     board.id = 'lab-scores';
@@ -103,7 +117,7 @@ function scoreboard(data) {
     for (const row of data.methods) {
         const line = el('div', null, 'relative-row');
         line.dataset.method = row.method;
-        line.title = row.description;
+        line.title = `${plainWords[row.method] ?? ''} ${row.description}`.trim();
         const name = el('span', row.method);
         name.append(el('small', row.family));
         const track = el('div', null, 'relative-track');
@@ -155,7 +169,7 @@ function surfaces(data, rules) {
         const squares = Array.from({length: grid.rows * grid.cols}, (_, square) => ({n: 1, value: cell(name, square)}));
         paintCourt(canvas, rules, grid, [rules.eras.at(-1)], palette(), squares, selected, null, 'rate', 1, 1);
         const depth = Math.floor(selected / grid.cols) - 5, lateral = selected % grid.cols - 25;
-        about.textContent = data.methods.find(row => row.method === name).description;
+        about.textContent = `${plainWords[name] ?? ''} In technical terms: ${data.methods.find(row => row.method === name).description}`.trim();
         spot.textContent = `${depth < 0 ? `${-depth} ft behind the rim` : `${depth} ft forward`}, ${lateral === 0 ? 'in the centre' : `${Math.abs(lateral)} ft ${lateral < 0 ? 'left' : 'right'}`}: ${pct(cell(name, selected))}`;
         all.replaceChildren(table(['At this spot', 'Make chance'], data.methods.map(row => [row.method, pct(cell(row.method, selected))])));
     }
