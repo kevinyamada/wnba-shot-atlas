@@ -754,7 +754,12 @@ async function start() {
         const example = teams.seasons['2026']?.find(row => row.name === 'Las Vegas Aces');
         if (example) {
             $('example-team').hidden = false;
+            const closeExample = () => {
+                $('season').value = 'all';
+                refresh({team: 'all', player: 'all'});
+            };
             $('example-team').addEventListener('click', async () => {
+                if (!$('example-note').hidden) return closeExample();
                 setSide('taken');
                 $('season').value = '2026';
                 $('compare').value = 'off';
@@ -762,11 +767,9 @@ async function start() {
                 await refresh({team: String(example.id), player: 'all'});
                 $('example-text').textContent = teamStory(teams, '2026', example.id);
                 $('example-note').hidden = false;
+                window.scrollTo(0, 0);
             });
-            $('example-close').addEventListener('click', () => {
-                $('season').value = 'all';
-                refresh({team: 'all', player: 'all'});
-            });
+            $('example-close').addEventListener('click', closeExample);
         }
         teamControl($('team-control'), teams);
         $('more-control').hidden = false;

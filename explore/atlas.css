@@ -56,7 +56,6 @@ a:focus-visible, button:focus-visible, select:focus-visible, canvas:focus-visibl
 .brand-ball::after { transform: rotate(90deg); }
 .text-button { padding: 0; border: 0; background: none; color: var(--deep); font: inherit; font-size: .875rem; text-decoration: underline; text-underline-offset: .18em; cursor: pointer; }
 .text-button:hover { color: var(--accent); }
-.quiet-actions { display: flex; flex-wrap: wrap; gap: .3rem 1.3rem; }
 .example-note { display: flex; flex-wrap: wrap; align-items: baseline; gap: .4rem 1rem; margin: 0 0 .8rem; padding: .7rem .9rem; border-left: 3px solid var(--accent); background: var(--wash); max-width: 78ch; }
 .example-note span { flex: 1 1 22rem; }
 .tabs { display: flex; gap: .2rem; margin-left: .6rem; }
@@ -261,7 +260,8 @@ th, td { text-align: right; border-bottom: 1px solid var(--line); padding: .55re
 th:first-child, td:first-child { text-align: left; }
 .footer { margin-top: 2.7rem; padding: 1.25rem 0 2.2rem; border-top: 1px solid var(--line); display: flex; justify-content: space-between; flex-wrap: wrap; gap: .7rem 1.5rem; font-size: .875rem; }
 .footer p { color: var(--muted); margin-top: .3rem; }
-.footer-links { display: flex; gap: .6rem 1.25rem; flex-wrap: wrap; }
+.footer-links { display: flex; align-items: baseline; gap: .6rem 1.25rem; flex-wrap: wrap; }
+.footer-links .text-button { font-size: inherit; line-height: inherit; text-underline-offset: .24em; }
 @media (max-width: 60rem) {
   .workbench { grid-template-columns: minmax(0,1fr) minmax(15rem,.55fr); }
 }

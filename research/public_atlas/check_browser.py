@@ -544,7 +544,8 @@ def verify_team_report(browser):
     assert js("document.getElementById('team-title').textContent") == 'Las Vegas Aces in 2026' and js("document.getElementById('season').value") == '2026'
     assert 'Las Vegas Aces, 2026' in js("document.getElementById('example-note').textContent")
     browser.save_image('atlas_example_desktop.png')
-    assert js("document.getElementById('example-team').closest('.view-bar') === null && document.getElementById('copy-link').closest('.view-bar') === null")
+    assert js("['example-team', 'copy-link'].every(id => document.getElementById(id).closest('.footer-links'))"), 'both links belong with the footer links'
+    assert js("scrollY") == 0, 'the example should bring the court into view'
     js("document.getElementById('example-close').click()")
     browser.wait("document.getElementById('example-note').hidden && document.getElementById('season').value === 'all' && document.getElementById('team').value === 'all' && document.getElementById('load-state').textContent === ''")
     js("document.getElementById('example-team').click()")
@@ -552,6 +553,10 @@ def verify_team_report(browser):
     browser.select('phase', '0')
     assert js("document.getElementById('example-note').hidden"), 'changing a filter should put the example note away'
     browser.select('phase', 'all')
+    js("document.getElementById('example-team').click()")
+    browser.wait("!document.getElementById('example-note').hidden")
+    js("document.getElementById('example-team').click()")
+    browser.wait("document.getElementById('example-note').hidden && document.getElementById('season').value === 'all' && document.getElementById('team').value === 'all' && document.getElementById('load-state').textContent === ''")
     browser.select('team', 'all')
     browser.select('season', 'all')
     print('TEAM_REPORT_BROWSER_VERIFIED', len(data['seasons']), 'seasons of team tables and one full report', flush=True)
