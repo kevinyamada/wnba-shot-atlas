@@ -1,5 +1,6 @@
-import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=5';
+import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=6';
 import { renderStudy } from './study-findings.js?v=5';
+import { shotMix } from './shot-mix.js?v=1';
 
 const $ = id => document.getElementById(id);
 const controls = ['season', 'team', 'player', 'phase', 'shot-type', 'compare'].map($);
@@ -8,6 +9,7 @@ const number = new Intl.NumberFormat('en-CA');
 const percent = new Intl.NumberFormat('en-CA', {style: 'percent', maximumFractionDigits: 1});
 const decimal = new Intl.NumberFormat('en-CA', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 const sampleFloor = 12;
+const mappedAreas = 5;
 const metricNames = {share: 'Shot share', per100: 'Attempts per 100 shots', attempts: 'Attempts',
     rate: 'Make rate', points: 'Points per shot'};
 const yearName = year => year === 'all' ? 'All seasons' : String(year);
@@ -90,17 +92,19 @@ function totals(rows, filters) {
     const total = counts(), area = counts();
     let unlocated = 0, otherHalf = 0;
     const cells = Array.from({length: index.grid.cols * index.grid.rows}, counts);
+    const zones = index.zones.map(counts);
     const selected = model.selection;
     for (const row of rows) {
         if (!matching(row, filters)) continue;
         const cell = row[3];
         add(total, row);
+        add(zones[row[4]], row);
         if (cell >= 0) add(cells[cell], row);
         if (cell === -1) unlocated += row[5];
         if (cell === -2) otherHalf += row[5];
         if ((selected.kind === 'cell' ? cell : row[4]) === selected.value) add(area, row);
     }
-    return {total, area, cells, unlocated, otherHalf};
+    return {total, area, cells, zones, unlocated, otherHalf};
 }
 
 function areaTotals(rows, filters, selection) {
@@ -112,6 +116,24 @@ function areaTotals(rows, filters, selection) {
         if (row[key] === selection.value) add(area, row);
     }
     return {total, area};
+}
+
+function leaders(entry, filters, selection) {
+    const key = selection.kind === 'cell' ? 3 : 4;
+    const anyPlayer = {...filters, player: 'all'};
+    const byPlayer = new Map();
+    for (const row of entry.rows) {
+        if (!row[2] || row[key] !== selection.value || !matching(row, anyPlayer)) continue;
+        if (!byPlayer.has(row[2])) byPlayer.set(row[2], counts());
+        add(byPlayer.get(row[2]), row);
+    }
+    const ranked = [...byPlayer].map(([id, part]) => ({id, name: entry.players[id] ?? 'Unknown shooter', ...part}))
+        .sort((a, b) => b.points - a.points || b.makes - a.makes || a.n - b.n || a.name.localeCompare(b.name));
+    ranked.forEach((player, i) => { player.rank = i + 1; });
+    const chosen = ranked.find(player => player.id === Number(filters.player)) ?? null;
+    const shown = ranked.slice(0, 5).filter(player => player.points > 0);
+    if (chosen && !shown.includes(chosen)) shown.push(chosen);
+    return {shown, chosen};
 }
 
 function normalizedComparison() {
@@ -138,7 +160,13 @@ function recordedGames(coverage, phase) {
 
 function areaDescription() {
     const {kind, value} = model.selection;
-    if (kind === 'zone') return {title: index.zones[value], description: 'Across this court area'};
+    if (kind === 'zone') {
+        const notes = ['Within 4 ft of the rim', 'From 4 ft to 10 ft from the rim', 'Inside the line, 10 ft or more from the rim',
+            'Outside the line beside the basket', 'Outside the line farther up the court',
+            'Past the half court line. Not drawn on this court', 'No usable location in the source. Not drawn on this court'];
+        const pooled = value >= 2 && value < mappedAreas && model.views[0]?.entry.season === 'all';
+        return {title: index.zones[value], description: notes[value] + (pooled ? '. The outline uses the current line.' : '')};
+    }
     const {cols, size, baseline, midcourt} = index.grid;
     const side = value % cols * size - index.court.width / 2;
     const depth = Math.floor(value / cols) * size + baseline;
@@ -163,6 +191,39 @@ function addStat(list, label, value) {
     list.append(term, definition);
 }
 
+function leaderList(found) {
+    const wrap = document.createElement('div');
+    wrap.className = 'leaders';
+    const title = document.createElement('h4');
+    title.textContent = 'Field goal points leaders';
+    wrap.append(title);
+    if (!found.shown.length) {
+        const empty = document.createElement('p');
+        empty.className = 'caption';
+        empty.textContent = 'No made shots by a named shooter here.';
+        wrap.append(empty);
+        return wrap;
+    }
+    const list = document.createElement('ol');
+    for (const player of found.shown) {
+        const item = document.createElement('li');
+        item.value = player.rank;
+        item.classList.toggle('chosen', player === found.chosen);
+        const line = document.createElement('div');
+        const name = document.createElement('span');
+        const points = document.createElement('strong');
+        const detail = document.createElement('small');
+        name.textContent = player.name;
+        points.textContent = `${number.format(player.points)} points`;
+        detail.textContent = `${number.format(player.makes)} of ${number.format(player.n)} made`;
+        line.append(name, points);
+        item.append(line, detail);
+        list.append(item);
+    }
+    wrap.append(list);
+    return wrap;
+}
+
 function renderStats() {
     const {title, description} = areaDescription();
     $('area-title').textContent = title;
@@ -170,7 +231,7 @@ function renderStats() {
     $('selection-kind').textContent = model.selection.kind === 'cell' ? 'Selected square' : 'Selected area';
     const target = $('area-stats');
     target.replaceChildren();
-    for (const {entry, data, league} of model.views) {
+    for (const {entry, data, league, leaders: found} of model.views) {
         const block = document.createElement('div');
         block.className = 'area-result';
         block.dataset.season = entry.season;
@@ -194,7 +255,7 @@ function renderStats() {
         const leagueRate = format(value(league.area, league.total, 'rate'), 'rate');
         note.textContent = league.area.n ? `${leagueRate} made across the league on ${number.format(league.area.n)} attempts.` : 'The league has no recorded shots here.';
         if (part.n > 0 && part.n < sampleFloor) note.textContent += ' Small sample.';
-        block.append(heading, list, note);
+        block.append(heading, list, note, leaderList(found));
         target.append(block);
     }
 }
@@ -218,10 +279,12 @@ function draw() {
     const limit = activeScale(metric);
     const colours = palette();
     model.views.forEach(({entry, data, era}, i) => {
-        const focus = model.selection.kind === 'cell' ? model.selection.value : null;
+        const {kind, value: chosen} = model.selection;
+        const focus = kind === 'cell' ? chosen : null;
+        const region = kind === 'zone' && chosen < mappedAreas ? {zone: chosen, rule: era.at(-1)} : null;
         const squares = data.cells.map(cell => ({n: cell.n, value: value(cell, data.total, metric)}));
         paintCourt(panels[i].querySelector('canvas'), index.court, index.grid, era, colours,
-            squares, focus, model.hover[i], metric, limit, sampleFloor);
+            squares, focus, model.hover[i], metric, limit, sampleFloor, region);
     });
     $('legend-low').textContent = metric === 'share' || metric === 'rate' ? '0%' : '0';
     $('legend-high').textContent = format(limit, metric) + (metric === 'per100' ? ' per 100' : '');
@@ -237,6 +300,107 @@ function draw() {
         ? ' The selected area also shows attempts, makes and points per 100 shots.' : '';
     $('metric-note').textContent = metricNotes[metric] + summaryNote;
     paintHistory($('history-chart'), model.history, model.views.map(v => v.entry.season), colours, metric);
+}
+
+function selectionLabel(filters) {
+    const who = filters.player !== 'all' ? $('player').selectedOptions[0].textContent : $('team').selectedOptions[0].textContent;
+    const type = filters.type === 'all' ? '' : ` · ${index.shotTypes[Number(filters.type)]}`;
+    return `${who} · ${phaseNames[filters.phase]}${type}`;
+}
+
+function areaLeaders(zones) {
+    const mapped = zones.slice(0, mappedAreas).map((part, zone) => ({...part, zone})).filter(part => part.n);
+    const busiest = mapped.reduce((best, part) => !best || part.n > best.n ? part : best, null);
+    const scoring = mapped.filter(part => part.n >= sampleFloor)
+        .reduce((best, part) => !best || part.points / part.n > best.points / best.n ? part : best, null);
+    return {busiest, scoring};
+}
+
+function areaSentence({total, zones}) {
+    const {busiest, scoring} = areaLeaders(zones);
+    if (!busiest) return 'No located shots for this selection.';
+    const most = `${index.zones[busiest.zone]} had the most shots (${format(value(busiest, total, 'share'), 'share')} of attempts).`;
+    return scoring ? `${most} ${index.zones[scoring.zone]} produced the most points per shot (${format(value(scoring, total, 'points'), 'points')}).` : most;
+}
+
+function areaTableRows(zone) {
+    const comparing = model.views.length === 2;
+    const frequency = frequencyMetric();
+    const picked = model.selection.kind === 'zone' && model.selection.value === zone;
+    const widest = Math.max(1, ...model.views[0].data.zones.map(part => part.n));
+    return model.views.map(({entry, data}, i) => {
+        const part = zone === null ? data.total : data.zones[zone];
+        const tops = areaLeaders(data.zones);
+        const row = document.createElement('tr');
+        const cell = (text, top = false) => {
+            const item = document.createElement('td');
+            item.textContent = text;
+            item.classList.toggle('top', top);
+            row.append(item);
+        };
+        if (zone !== null) {
+            row.dataset.zone = zone;
+            row.classList.toggle('selected', picked);
+            row.classList.toggle('off-map', zone >= mappedAreas);
+        }
+        if (i === 0) {
+            const head = document.createElement('th');
+            head.scope = 'row';
+            head.rowSpan = model.views.length;
+            if (zone === null) head.textContent = 'All attempts';
+            else {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.dataset.zone = zone;
+                button.textContent = index.zones[zone];
+                button.setAttribute('aria-pressed', String(picked));
+                head.append(button);
+                if (!comparing) {
+                    const bar = document.createElement('span');
+                    bar.className = 'share-bar';
+                    if (part.n) {
+                        bar.append(document.createElement('i'));
+                        bar.firstChild.style.width = `${100 * part.n / widest}%`;
+                    }
+                    head.append(bar);
+                }
+            }
+            row.append(head);
+        }
+        const most = zone !== null && tops.busiest?.zone === zone;
+        if (comparing) {
+            cell(yearName(entry.season));
+            cell(format(value(part, data.total, frequency), frequency), most);
+        } else {
+            cell(number.format(part.n));
+            cell(format(value(part, data.total, 'share'), 'share'), most);
+        }
+        cell(format(value(part, data.total, 'rate'), 'rate'));
+        cell(format(value(part, data.total, 'points'), 'points'), zone !== null && tops.scoring?.zone === zone);
+        return row;
+    });
+}
+
+function renderAreas() {
+    const comparing = model.views.length === 2;
+    const focused = $('area-rows').contains(document.activeElement) ? document.activeElement.dataset.zone : null;
+    const seasons = model.views.map(({entry}) => yearName(entry.season));
+    $('area-context').textContent = `${seasons.join(' and ')} · ${selectionLabel(searchFilters())}`;
+    const headings = comparing ? ['Area', 'Season', metricNames[frequencyMetric()], 'Make rate', 'Points per shot']
+        : ['Area', 'Attempts', 'Share', 'Make rate', 'Points per shot'];
+    $('area-head').replaceChildren(...headings.map(text => {
+        const head = document.createElement('th');
+        head.scope = 'col';
+        head.textContent = text;
+        return head;
+    }));
+    $('area-rows').replaceChildren(...index.zones.flatMap((_, zone) => areaTableRows(zone)));
+    $('area-total').replaceChildren(...areaTableRows(null));
+    $('area-summary').textContent = model.views.map(({data}, i) => (comparing ? `${seasons[i]}: ` : '') + areaSentence(data)).join(' ');
+    $('area-note').textContent = 'Select an area to outline it on the court. '
+        + (comparing ? '' : 'Bars show share of shots. ')
+        + 'Bold marks the mapped area with the most shots and the one with the most points per shot. Other half and unknown location complete the total.';
+    if (focused !== null) $('area-rows').querySelector(`button[data-zone="${focused}"]`)?.focus();
 }
 
 function renderTypes(entry, filters) {
@@ -294,6 +458,7 @@ function renderCourts() {
             offMap ? `${number.format(data.total.n - offMap)} mapped · ${number.format(data.otherHalf)} from the other half · ${number.format(data.unlocated)} with unknown location` : '';
     });
     renderStats();
+    renderAreas();
     draw();
 }
 
@@ -334,10 +499,7 @@ async function historySeries() {
     const filters = searchFilters();
     const selection = {...model.selection};
     const league = filters.player === 'all' && filters.team === 'all' && filters.type === 'all';
-    const title = areaDescription().title;
-    const player = $('player').selectedOptions[0].textContent;
-    const team = $('team').selectedOptions[0].textContent;
-    $('history-context').textContent = `${title} · ${filters.player !== 'all' ? player : team} · ${phaseNames[filters.phase]}${filters.type === 'all' ? '' : ` · ${index.shotTypes[Number(filters.type)]}`}`;
+    $('history-context').textContent = `${areaDescription().title} · ${selectionLabel(filters)}`;
     if (!league) $('history-status').textContent = 'Loading season history…';
     try {
         const series = [];
@@ -365,6 +527,7 @@ function refreshArea() {
     for (const view of model.views) {
         view.data = totals(view.entry.rows, filters);
         view.league = areaTotals(view.entry.rows, {...filters, team:'all', player:'all'}, model.selection);
+        view.leaders = leaders(view.entry, filters, model.selection);
     }
     model.history = [];
     $('history-rows').replaceChildren();
@@ -404,7 +567,12 @@ async function refresh() {
 function selectSquare(square) {
     model.selection = {kind: 'cell', value: square};
     model.lastSquare = square;
-    $('zone').value = 'cell';
+    refreshArea();
+}
+
+function selectArea(zone) {
+    const picked = model.selection.kind === 'zone' && model.selection.value === zone;
+    model.selection = picked ? {kind: 'cell', value: model.lastSquare} : {kind: 'zone', value: zone};
     refreshArea();
 }
 
@@ -462,7 +630,6 @@ async function start() {
     model.lastSquare = Math.floor((1 - grid.baseline) / grid.size) * grid.cols + Math.floor(index.court.width / grid.size / 2);
     model.selection.value = model.lastSquare;
     $('shot-type').append(...index.shotTypes.map((name, i) => new Option(name, i)));
-    $('zone').append(...index.zones.map((name, i) => new Option(name, i)));
     controls.forEach(control => {
         control.disabled = false;
         control.addEventListener('change', refresh);
@@ -478,9 +645,9 @@ async function start() {
         renderCourts();
         renderHistoryRows();
     });
-    $('zone').addEventListener('change', event => {
-        model.selection = event.target.value === 'cell' ? {kind:'cell', value:model.lastSquare} : {kind:'zone', value:Number(event.target.value)};
-        refreshArea();
+    $('area-rows').addEventListener('click', event => {
+        const row = event.target.closest('tr[data-zone]');
+        if (row) selectArea(Number(row.dataset.zone));
     });
     $('compare-rule').addEventListener('click', () => {
         $('season').value = '2012';
@@ -493,7 +660,6 @@ async function start() {
         const square = Math.floor((21 - grid.baseline) / grid.size) * grid.cols + Math.floor(grid.cols / 2);
         model.lastSquare = square;
         model.selection = {kind: 'cell', value: square};
-        $('zone').value = 'cell';
         document.querySelectorAll('[data-metric]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.metric === 'share')));
         refresh();
     });
@@ -503,6 +669,9 @@ async function start() {
     window.addEventListener('resize', resize);
     new MutationObserver(resize).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
     await refresh();
+    json('data/shot-mix.json').then(mix => {
+        if (mix.manifestSha256 === index.manifestSha256) shotMix($('shot-mix'), mix, palette);
+    }).catch(error => console.warn(error));
     Promise.all([json('data/findings.json'), json('data/study.json'), json('data/bayesian.json'), json('data/shot-form.json'), json('data/plays.json'),
         json('data/shot-timing.json').catch(error => { console.warn(error); return null; })])
         .then(([findings, study, bayesian, forms, plays, timing]) => {

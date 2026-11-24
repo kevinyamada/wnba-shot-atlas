@@ -76,7 +76,44 @@ export function metricValue(area, total, metric) {
     return (metric === 'rate' ? area.makes : area.points) / area.n;
 }
 
-export function paintCourt(canvas, court, grid, era, p, squares, focus, hover, metric, limit, floor) {
+function areaPath(zone, rule, grid, x, y, scale) {
+    const radius = rule.arc_radius, corner = rule.corner_distance;
+    const join = Math.sqrt(radius * radius - corner * corner);
+    const turn = Math.atan2(join, corner);
+    const path = new Path2D();
+    const ring = distance => {
+        path.moveTo(x(distance), y(0));
+        path.arc(x(0), y(0), distance * scale, 0, 2 * Math.PI);
+    };
+    const arc = () => path.arc(x(0), y(0), radius * scale, Math.PI - turn, turn, true);
+    if (zone === 0) ring(4);
+    if (zone === 1) { ring(10); ring(4); }
+    if (zone === 2) {
+        path.moveTo(x(-corner), y(grid.baseline));
+        path.lineTo(x(-corner), y(join));
+        arc();
+        path.lineTo(x(corner), y(grid.baseline));
+        path.closePath();
+        ring(10);
+    }
+    if (zone === 3) {
+        const height = y(join) - y(grid.baseline);
+        path.rect(0, y(grid.baseline), x(-corner), height);
+        path.rect(x(corner), y(grid.baseline), x(-corner), height);
+    }
+    if (zone === 4) {
+        path.moveTo(0, y(join));
+        path.lineTo(x(-corner), y(join));
+        arc();
+        path.lineTo(2 * x(0), y(join));
+        path.lineTo(2 * x(0), y(grid.midcourt));
+        path.lineTo(0, y(grid.midcourt));
+        path.closePath();
+    }
+    return path;
+}
+
+export function paintCourt(canvas, court, grid, era, p, squares, focus, hover, metric, limit, floor, region = null) {
     const frame = surface(canvas);
     if (!frame) return;
     const {ctx, width, height} = frame;
@@ -140,6 +177,24 @@ export function paintCourt(canvas, court, grid, era, p, squares, focus, hover, m
         line(ctx, points);
         ctx.setLineDash([]);
     }
+    if (region) {
+        const area = areaPath(region.zone, region.rule, grid, x, y, scale);
+        const rest = new Path2D();
+        rest.rect(0, 0, width, height);
+        rest.addPath(area);
+        ctx.save();
+        ctx.globalAlpha = .55;
+        ctx.fillStyle = p.surface;
+        ctx.fill(rest, 'evenodd');
+        ctx.restore();
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = 4.5;
+        ctx.strokeStyle = p.surface;
+        ctx.stroke(area);
+        ctx.lineWidth = 2.2;
+        ctx.strokeStyle = p.ink;
+        ctx.stroke(area);
+    }
     function outline(cell, colour, lineWidth) {
         if (cell === undefined || cell === null) return;
         const [left, below, above] = bounds(cell, grid);
@@ -152,6 +207,7 @@ export function paintCourt(canvas, court, grid, era, p, squares, focus, hover, m
     outline(focus, p.surface, 1.2);
     canvas.dataset.arc = era.map(rule => rule.arc_radius).join(',');
     canvas.dataset.selected = focus === null ? '' : String(focus);
+    canvas.dataset.area = region ? String(region.zone) : '';
 }
 
 export function paintHistory(canvas, values, years, p, metric) {

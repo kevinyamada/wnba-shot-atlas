@@ -1,0 +1,40 @@
+finding,published,recomputed,tolerance,agrees,note
+2026 test attempts scored,44478.0,44478.0,0.0,True,
+"2026 test Brier, Constant baseline",0.24803,0.24803,1e-05,True,
+"2026 test Brier, Distance baseline",0.2316,0.231597,1e-05,True,
+"2026 test Brier, XGBoost context",0.22934,0.229341,1e-05,True,
+"2026 test Brier, Five model average",0.2297,0.229699,1e-05,True,
+"2026 test Brier change from distance, XGBoost context",-0.002256,-0.002256,1e-06,True,
+2026 test game interval lower bound,-0.002849,-0.002859,0.00011799235190846998,True,"new seed, so Monte Carlo error applies"
+2026 test game interval upper bound,-0.001669,-0.001693,0.00011799235190846998,True,"new seed, so Monte Carlo error applies"
+2026 playoffs attempts scored,2927.0,2927.0,0.0,True,
+"2026 playoffs Brier, Constant baseline",0.24358,0.243578,1e-05,True,
+"2026 playoffs Brier, Distance baseline",0.23041,0.23041,1e-05,True,
+"2026 playoffs Brier, XGBoost context",0.22844,0.228443,1e-05,True,
+"2026 playoffs Brier, Five model average",0.2284,0.228404,1e-05,True,
+"2026 playoffs Brier change from distance, XGBoost context",-0.001967,-0.001967,1e-06,True,
+2026 playoffs game interval lower bound,-0.00427,-0.004485,0.00047484101153652997,True,"new seed, so Monte Carlo error applies"
+2026 playoffs game interval upper bound,0.000479,0.000545,0.00047484101153652997,True,"new seed, so Monte Carlo error applies"
+"2026 test mean predicted minus observed make rate, Distance baseline",-0.01211,-0.012107,1e-05,True,
+"2026 test mean predicted minus observed make rate, XGBoost context",-0.00971,-0.00971,1e-05,True,
+"shot type test attempts, 2016 to 2026",352612.0,352612.0,0.0,True,
+shot type test games,2590.0,2590.0,0.0,True,
+shot type first test season,2016.0,2016.0,0.0,True,
+"relative Brier reduction from shot type, percent",0.1904,0.19041,0.0001,True,
+"shot type interval lower bound, percent",0.1392,0.143487,0.010101571400185161,True,new seed
+"shot type interval upper bound, percent",0.2402,0.239989,0.010101571400185161,True,new seed
+eligible possessions after a steal,98400.0,98400.0,0.0,True,saved season table
+first shots within six seconds after a steal,32209.0,32209.0,0.0,True,saved season table
+eligible possessions after an opponent basket,334784.0,334784.0,0.0,True,saved season table
+first shots within six seconds after an opponent basket,2329.0,2329.0,0.0,True,saved season table
+"raw scan, percent with a shot within six seconds after a steal",32.7,32.426308,2.0,True,"simple scan of every raw game, without the verified possession filters"
+"raw scan, percent with a shot within six seconds after an opponent basket",0.7,0.721887,0.5,True,"simple scan of every raw game, without the verified possession filters"
+"raw scan, steals counted",98400.0,104591.0,9000.0,True,"simple scan of every raw game, without the verified possession filters"
+"raw scan, seasons where the steal rate was higher",30.0,30.0,0.0,True,"simple scan of every raw game, without the verified possession filters"
+2026 regular decision points,56522.0,56522.0,0.0,True,
+"2026 regular next shot Brier, shot0",0.216555,0.216555,1e-06,True,
+"2026 regular next shot Brier, shot1",0.216352,0.216352,1e-06,True,
+"2026 regular next shot Brier, shot10",0.216361,0.216361,1e-06,True,
+"2026 regular points RMSE, points0",1.1657,1.165671,0.0001,True,
+"2026 regular points RMSE, points1",1.1649,1.164851,0.0001,True,
+"2026 regular points RMSE, points10",1.1648,1.164849,0.0001,True,

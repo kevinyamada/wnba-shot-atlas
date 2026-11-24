@@ -28,6 +28,52 @@
       "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"}},
       "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
       "problemMatcher": []
+    },
+    {
+      "label": "WNBA public: recount raw shots and compare with the site",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "-u", "${workspaceFolder}/research/public_atlas/recount.py", "--live"],
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
+      "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
+      "problemMatcher": []
+    },
+    {
+      "label": "WNBA public: check shooting and possession findings",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "-u", "${workspaceFolder}/research/public_atlas/check_findings.py"],
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
+      "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
+      "problemMatcher": []
+    },
+    {
+      "label": "WNBA public: shot mix and conversion",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "-u", "${workspaceFolder}/research/public_atlas/shot_mix.py"],
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
+      "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
+      "problemMatcher": []
+    },
+    {
+      "label": "WNBA public: verify shot mix from raw files",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "-u", "${workspaceFolder}/research/public_atlas/verify_shot_mix.py"],
+      "dependsOn": "WNBA public: shot mix and conversion",
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
+      "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
+      "problemMatcher": []
+    },
+    {
+      "label": "WNBA public: browser check of the local site",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "-u", "${workspaceFolder}/research/public_atlas/check_browser.py"],
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
+      "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
+      "problemMatcher": []
     }
   ]
 }

@@ -1,0 +1,17 @@
+{
+  "attempts": 902729,
+  "points": 858999,
+  "seasons": 30,
+  "comparisons": 6,
+  "headline": {
+    "before": 0.9106,
+    "after": 1.0028,
+    "mix": 0.015,
+    "conversion": 0.0772
+  },
+  "independent_mix_interval": [
+    0.0132,
+    0.0167
+  ],
+  "manifestSha256": "a3638e383085063601ae6fee398ef9adb0ab99a221ef4e2870105d26f56eb8fa"
+}

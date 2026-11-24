@@ -1,0 +1,391 @@
+season,phase,zone,zone_name,attempts,makes,points
+1997,playoffs,0,At the rim,8,3,6
+1997,playoffs,1,Short two area,86,28,56
+1997,playoffs,2,Midrange area,88,21,42
+1997,playoffs,3,Corner three area,6,0,0
+1997,playoffs,4,Above the break,63,16,48
+1997,playoffs,6,Unknown location,96,59,118
+1997,regular,0,At the rim,542,289,578
+1997,regular,1,Short two area,2894,1061,2122
+1997,regular,2,Midrange area,3480,1271,2544
+1997,regular,3,Corner three area,173,55,165
+1997,regular,4,Above the break,2496,804,2409
+1997,regular,5,Other half,20,0,0
+1997,regular,6,Unknown location,4128,2218,4436
+1998,playoffs,0,At the rim,87,43,86
+1998,playoffs,1,Short two area,199,72,144
+1998,playoffs,2,Midrange area,255,90,180
+1998,playoffs,3,Corner three area,13,2,6
+1998,playoffs,4,Above the break,195,60,180
+1998,playoffs,6,Unknown location,238,152,304
+1998,regular,0,At the rim,1514,791,1582
+1998,regular,1,Short two area,3608,1294,2588
+1998,regular,2,Midrange area,4816,1761,3528
+1998,regular,3,Corner three area,280,90,270
+1998,regular,4,Above the break,3235,1018,3053
+1998,regular,5,Other half,7,0,0
+1998,regular,6,Unknown location,4704,2734,5469
+1999,playoffs,0,At the rim,16,5,10
+1999,playoffs,1,Short two area,232,74,148
+1999,playoffs,2,Midrange area,339,127,254
+1999,playoffs,3,Corner three area,25,8,24
+1999,playoffs,4,Above the break,285,87,261
+1999,playoffs,5,Other half,1,1,3
+1999,playoffs,6,Unknown location,397,225,450
+1999,regular,0,At the rim,1639,874,1748
+1999,regular,1,Short two area,4389,1594,3188
+1999,regular,2,Midrange area,6287,2326,4667
+1999,regular,3,Corner three area,426,142,426
+1999,regular,4,Above the break,4643,1491,4472
+1999,regular,5,Other half,29,0,0
+1999,regular,6,Unknown location,5442,3177,6354
+2000,playoffs,0,At the rim,215,119,238
+2000,playoffs,1,Short two area,343,114,228
+2000,playoffs,2,Midrange area,442,154,308
+2000,playoffs,3,Corner three area,81,24,72
+2000,playoffs,4,Above the break,381,128,384
+2000,playoffs,5,Other half,1,0,0
+2000,playoffs,6,Unknown location,389,247,494
+2000,regular,0,At the rim,2425,1318,2636
+2000,regular,1,Short two area,5872,2138,4276
+2000,regular,2,Midrange area,8117,3062,6124
+2000,regular,3,Corner three area,682,245,735
+2000,regular,4,Above the break,5750,1893,5676
+2000,regular,5,Other half,12,0,0
+2000,regular,6,Unknown location,6849,4176,8353
+2001,playoffs,0,At the rim,105,58,116
+2001,playoffs,1,Short two area,392,147,294
+2001,playoffs,2,Midrange area,589,221,443
+2001,playoffs,3,Corner three area,62,21,63
+2001,playoffs,4,Above the break,425,139,417
+2001,playoffs,5,Other half,2,0,0
+2001,playoffs,6,Unknown location,486,260,520
+2001,regular,0,At the rim,2334,1123,2246
+2001,regular,1,Short two area,5974,2012,4024
+2001,regular,2,Midrange area,8612,3043,6090
+2001,regular,3,Corner three area,686,258,774
+2001,regular,4,Above the break,5908,1958,5873
+2001,regular,5,Other half,14,0,0
+2001,regular,6,Unknown location,6419,3916,7832
+2002,playoffs,0,At the rim,77,43,86
+2002,playoffs,1,Short two area,223,91,182
+2002,playoffs,2,Midrange area,500,176,352
+2002,playoffs,3,Corner three area,66,23,69
+2002,playoffs,4,Above the break,350,124,372
+2002,playoffs,5,Other half,2,0,0
+2002,playoffs,6,Unknown location,467,273,546
+2002,regular,0,At the rim,1612,876,1752
+2002,regular,1,Short two area,4540,1632,3264
+2002,regular,2,Midrange area,8021,2923,5857
+2002,regular,3,Corner three area,666,231,693
+2002,regular,4,Above the break,5452,1858,5572
+2002,regular,5,Other half,26,1,3
+2002,regular,6,Unknown location,8709,4677,9472
+2003,playoffs,0,At the rim,110,56,112
+2003,playoffs,1,Short two area,416,136,272
+2003,playoffs,2,Midrange area,666,255,512
+2003,playoffs,3,Corner three area,31,14,42
+2003,playoffs,4,Above the break,457,143,429
+2003,playoffs,5,Other half,2,0,0
+2003,playoffs,6,Unknown location,599,334,669
+2003,regular,0,At the rim,3200,1708,3416
+2003,regular,1,Short two area,4766,1722,3444
+2003,regular,2,Midrange area,7776,2860,5738
+2003,regular,3,Corner three area,654,240,720
+2003,regular,4,Above the break,5545,1850,5546
+2003,regular,5,Other half,13,1,3
+2003,regular,6,Unknown location,5722,3171,6345
+2004,playoffs,0,At the rim,252,119,238
+2004,playoffs,1,Short two area,388,134,268
+2004,playoffs,2,Midrange area,638,229,459
+2004,playoffs,3,Corner three area,59,21,63
+2004,playoffs,4,Above the break,413,149,446
+2004,playoffs,5,Other half,1,1,2
+2004,playoffs,6,Unknown location,466,259,518
+2004,regular,0,At the rim,2405,1358,2716
+2004,regular,1,Short two area,3837,1379,2758
+2004,regular,2,Midrange area,8004,2956,5929
+2004,regular,3,Corner three area,470,159,477
+2004,regular,4,Above the break,4791,1675,5022
+2004,regular,5,Other half,17,1,3
+2004,regular,6,Unknown location,5777,3085,6170
+2005,playoffs,0,At the rim,200,105,210
+2005,playoffs,1,Short two area,322,122,244
+2005,playoffs,2,Midrange area,651,208,418
+2005,playoffs,3,Corner three area,33,11,33
+2005,playoffs,4,Above the break,355,132,395
+2005,playoffs,5,Other half,1,0,0
+2005,playoffs,6,Unknown location,383,229,458
+2005,regular,0,At the rim,2326,1360,2720
+2005,regular,1,Short two area,3915,1415,2830
+2005,regular,2,Midrange area,8124,2993,5994
+2005,regular,3,Corner three area,535,210,627
+2005,regular,4,Above the break,4634,1550,4644
+2005,regular,5,Other half,25,0,0
+2005,regular,6,Unknown location,5826,3261,6522
+2006,playoffs,0,At the rim,203,103,206
+2006,playoffs,1,Short two area,314,99,198
+2006,playoffs,2,Midrange area,861,318,636
+2006,playoffs,3,Corner three area,49,18,54
+2006,playoffs,4,Above the break,460,158,474
+2006,playoffs,5,Other half,7,0,0
+2006,playoffs,6,Unknown location,570,304,608
+2006,regular,0,At the rim,2633,1525,3050
+2006,regular,1,Short two area,4325,1584,3168
+2006,regular,2,Midrange area,9444,3493,7003
+2006,regular,3,Corner three area,665,228,684
+2006,regular,4,Above the break,6363,2149,6435
+2006,regular,5,Other half,35,0,0
+2006,regular,6,Unknown location,6793,3871,7742
+2007,playoffs,0,At the rim,318,175,350
+2007,playoffs,1,Short two area,297,90,180
+2007,playoffs,2,Midrange area,911,332,665
+2007,playoffs,3,Corner three area,107,36,108
+2007,playoffs,4,Above the break,745,285,855
+2007,playoffs,5,Other half,5,0,0
+2007,playoffs,6,Unknown location,601,331,663
+2007,regular,0,At the rim,2629,1430,2860
+2007,regular,1,Short two area,3609,1291,2582
+2007,regular,2,Midrange area,9040,3322,6655
+2007,regular,3,Corner three area,757,290,870
+2007,regular,4,Above the break,6078,2092,6276
+2007,regular,5,Other half,35,1,3
+2007,regular,6,Unknown location,6496,3607,7217
+2008,playoffs,0,At the rim,308,159,318
+2008,playoffs,1,Short two area,233,78,156
+2008,playoffs,2,Midrange area,892,338,680
+2008,playoffs,3,Corner three area,33,17,51
+2008,playoffs,4,Above the break,561,181,543
+2008,playoffs,5,Other half,6,0,0
+2008,playoffs,6,Unknown location,468,266,532
+2008,regular,0,At the rim,2712,1584,3168
+2008,regular,1,Short two area,4152,1538,3076
+2008,regular,2,Midrange area,9795,3534,7084
+2008,regular,3,Corner three area,514,181,543
+2008,regular,4,Above the break,6757,2298,6888
+2008,regular,5,Other half,52,1,3
+2008,regular,6,Unknown location,6752,3779,7558
+2009,playoffs,0,At the rim,368,218,436
+2009,playoffs,1,Short two area,425,168,336
+2009,playoffs,2,Midrange area,790,292,585
+2009,playoffs,3,Corner three area,69,24,72
+2009,playoffs,4,Above the break,648,243,729
+2009,playoffs,5,Other half,6,0,0
+2009,playoffs,6,Unknown location,545,314,628
+2009,regular,0,At the rim,3445,1983,3966
+2009,regular,1,Short two area,3641,1396,2792
+2009,regular,2,Midrange area,8916,3302,6614
+2009,regular,3,Corner three area,608,239,717
+2009,regular,4,Above the break,6403,2180,6538
+2009,regular,5,Other half,46,2,6
+2009,regular,6,Unknown location,5834,3249,6500
+2010,playoffs,0,At the rim,236,142,284
+2010,playoffs,1,Short two area,337,122,244
+2010,playoffs,2,Midrange area,647,231,464
+2010,playoffs,3,Corner three area,29,8,24
+2010,playoffs,4,Above the break,468,187,561
+2010,playoffs,5,Other half,7,0,0
+2010,playoffs,6,Unknown location,419,268,536
+2010,regular,0,At the rim,3249,1915,3830
+2010,regular,1,Short two area,3591,1363,2726
+2010,regular,2,Midrange area,8168,3168,6349
+2010,regular,3,Corner three area,664,263,789
+2010,regular,4,Above the break,6105,2111,6333
+2010,regular,5,Other half,46,1,3
+2010,regular,6,Unknown location,5263,3118,6236
+2011,playoffs,0,At the rim,759,454,908
+2011,playoffs,1,Short two area,416,159,318
+2011,playoffs,2,Midrange area,830,278,556
+2011,playoffs,3,Corner three area,28,13,39
+2011,playoffs,4,Above the break,540,190,569
+2011,playoffs,5,Other half,6,0,0
+2011,regular,0,At the rim,8068,4970,9940
+2011,regular,1,Short two area,4274,1453,2906
+2011,regular,2,Midrange area,7914,2937,5888
+2011,regular,3,Corner three area,669,249,747
+2011,regular,4,Above the break,5667,1992,5975
+2011,regular,5,Other half,48,4,12
+2012,playoffs,0,At the rim,780,442,884
+2012,playoffs,1,Short two area,304,115,230
+2012,playoffs,2,Midrange area,735,284,569
+2012,playoffs,3,Corner three area,45,21,63
+2012,playoffs,4,Above the break,541,176,527
+2012,playoffs,5,Other half,5,0,0
+2012,playoffs,6,Unknown location,1,0,0
+2012,regular,0,At the rim,8233,4959,9918
+2012,regular,1,Short two area,3868,1302,2604
+2012,regular,2,Midrange area,7661,2755,5531
+2012,regular,3,Corner three area,780,306,918
+2012,regular,4,Above the break,6275,2190,6569
+2012,regular,5,Other half,45,2,6
+2012,regular,6,Unknown location,1,1,2
+2013,playoffs,0,At the rim,694,437,874
+2013,playoffs,1,Short two area,352,117,234
+2013,playoffs,2,Midrange area,735,262,524
+2013,playoffs,3,Corner three area,43,18,54
+2013,playoffs,4,Above the break,382,89,267
+2013,playoffs,5,Other half,7,0,0
+2013,regular,0,At the rim,8423,4965,9930
+2013,regular,1,Short two area,3861,1369,2738
+2013,regular,2,Midrange area,8868,3173,6381
+2013,regular,3,Corner three area,572,207,621
+2013,regular,4,Above the break,5088,1643,4927
+2013,regular,5,Other half,48,1,3
+2013,regular,6,Unknown location,8,3,6
+2014,playoffs,0,At the rim,805,492,984
+2014,playoffs,1,Short two area,315,138,276
+2014,playoffs,2,Midrange area,785,285,574
+2014,playoffs,3,Corner three area,58,19,57
+2014,playoffs,4,Above the break,437,141,423
+2014,playoffs,5,Other half,7,1,3
+2014,regular,0,At the rim,8584,5211,10422
+2014,regular,1,Short two area,3976,1429,2858
+2014,regular,2,Midrange area,8708,3283,6600
+2014,regular,3,Corner three area,532,205,615
+2014,regular,4,Above the break,5036,1643,4926
+2014,regular,5,Other half,62,1,3
+2015,playoffs,0,At the rim,894,506,1012
+2015,playoffs,1,Short two area,329,117,234
+2015,playoffs,2,Midrange area,926,347,696
+2015,playoffs,3,Corner three area,59,19,57
+2015,playoffs,4,Above the break,500,189,566
+2015,playoffs,5,Other half,8,0,0
+2015,regular,0,At the rim,8425,4899,9798
+2015,regular,1,Short two area,3716,1297,2594
+2015,regular,2,Midrange area,8651,3219,6484
+2015,regular,3,Corner three area,547,192,576
+2015,regular,4,Above the break,5285,1728,5183
+2015,regular,5,Other half,57,0,0
+2016,playoffs,0,At the rim,745,466,932
+2016,playoffs,1,Short two area,233,86,172
+2016,playoffs,2,Midrange area,624,259,523
+2016,playoffs,3,Corner three area,36,13,39
+2016,playoffs,4,Above the break,384,128,384
+2016,playoffs,5,Other half,10,0,0
+2016,playoffs,6,Unknown location,2,1,2
+2016,regular,0,At the rim,8918,5222,10444
+2016,regular,1,Short two area,3484,1377,2754
+2016,regular,2,Midrange area,8354,3224,6479
+2016,regular,3,Corner three area,530,194,582
+2016,regular,4,Above the break,5762,1943,5827
+2016,regular,5,Other half,73,1,3
+2017,playoffs,0,At the rim,627,370,740
+2017,playoffs,1,Short two area,247,103,206
+2017,playoffs,2,Midrange area,623,238,485
+2017,playoffs,3,Corner three area,31,9,27
+2017,playoffs,4,Above the break,471,163,489
+2017,playoffs,5,Other half,6,0,0
+2017,regular,0,At the rim,8926,5331,10662
+2017,regular,1,Short two area,3527,1359,2718
+2017,regular,2,Midrange area,8234,3154,6347
+2017,regular,3,Corner three area,633,229,687
+2017,regular,4,Above the break,6299,2144,6432
+2017,regular,5,Other half,71,0,0
+2017,regular,6,Unknown location,4,0,0
+2018,playoffs,0,At the rim,654,443,886
+2018,playoffs,1,Short two area,376,148,296
+2018,playoffs,2,Midrange area,617,239,480
+2018,playoffs,3,Corner three area,48,15,45
+2018,playoffs,4,Above the break,684,230,688
+2018,regular,0,At the rim,7248,4564,9128
+2018,regular,1,Short two area,3723,1597,3194
+2018,regular,2,Midrange area,8924,3475,6983
+2018,regular,3,Corner three area,523,192,576
+2018,regular,4,Above the break,7238,2486,7442
+2018,regular,5,Other half,3,1,3
+2019,playoffs,0,At the rim,420,289,578
+2019,playoffs,1,Short two area,544,263,526
+2019,playoffs,2,Midrange area,668,263,529
+2019,playoffs,3,Corner three area,37,13,39
+2019,playoffs,4,Above the break,619,226,678
+2019,playoffs,5,Other half,4,0,0
+2019,regular,0,At the rim,7260,4361,8722
+2019,regular,1,Short two area,4641,1776,3552
+2019,regular,2,Midrange area,7733,2886,5795
+2019,regular,3,Corner three area,546,213,639
+2019,regular,4,Above the break,7454,2513,7523
+2019,regular,5,Other half,61,0,0
+2020,playoffs,0,At the rim,393,257,514
+2020,playoffs,1,Short two area,487,204,408
+2020,playoffs,2,Midrange area,600,228,458
+2020,playoffs,3,Corner three area,34,11,33
+2020,playoffs,4,Above the break,554,199,596
+2020,playoffs,5,Other half,2,0,0
+2020,regular,0,At the rim,3418,2384,4768
+2020,regular,1,Short two area,4414,1962,3924
+2020,regular,2,Midrange area,4485,1702,3410
+2020,regular,3,Corner three area,240,108,324
+2020,regular,4,Above the break,5280,1815,5434
+2020,regular,5,Other half,29,1,3
+2021,playoffs,0,At the rim,721,425,850
+2021,playoffs,1,Short two area,405,157,314
+2021,playoffs,2,Midrange area,527,211,428
+2021,playoffs,3,Corner three area,66,25,75
+2021,playoffs,4,Above the break,665,235,704
+2021,playoffs,5,Other half,1,0,0
+2021,regular,0,At the rim,6823,4218,8436
+2021,regular,1,Short two area,4706,1929,3858
+2021,regular,2,Midrange area,6634,2493,5012
+2021,regular,3,Corner three area,553,216,648
+2021,regular,4,Above the break,7491,2557,7662
+2021,regular,5,Other half,58,0,0
+2022,playoffs,0,At the rim,870,545,1090
+2022,playoffs,1,Short two area,544,216,432
+2022,playoffs,2,Midrange area,781,326,665
+2022,playoffs,3,Corner three area,69,26,78
+2022,playoffs,4,Above the break,867,297,891
+2022,playoffs,5,Other half,7,1,3
+2022,regular,0,At the rim,8073,5160,10320
+2022,regular,1,Short two area,4773,1905,3810
+2022,regular,2,Midrange area,7009,2634,5341
+2022,regular,3,Corner three area,782,305,915
+2022,regular,4,Above the break,8680,2978,8917
+2022,regular,5,Other half,54,3,9
+2023,playoffs,0,At the rim,629,396,792
+2023,playoffs,1,Short two area,634,265,530
+2023,playoffs,2,Midrange area,587,215,433
+2023,playoffs,3,Corner three area,104,31,93
+2023,playoffs,4,Above the break,832,299,897
+2023,playoffs,5,Other half,8,0,0
+2023,regular,0,At the rim,8574,5453,10906
+2023,regular,1,Short two area,6233,2557,5114
+2023,regular,2,Midrange area,7502,2809,5663
+2023,regular,3,Corner three area,999,393,1179
+2023,regular,4,Above the break,9427,3247,9735
+2023,regular,5,Other half,70,0,0
+2024,playoffs,0,At the rim,630,417,834
+2024,playoffs,1,Short two area,740,323,646
+2024,playoffs,2,Midrange area,632,240,484
+2024,playoffs,3,Corner three area,99,36,108
+2024,playoffs,4,Above the break,903,314,940
+2024,playoffs,5,Other half,6,0,0
+2024,regular,0,At the rim,8461,5427,10854
+2024,regular,1,Short two area,6470,2583,5166
+2024,regular,2,Midrange area,6943,2657,5352
+2024,regular,3,Corner three area,1089,384,1152
+2024,regular,4,Above the break,9739,3297,9878
+2024,regular,5,Other half,59,1,3
+2025,playoffs,0,At the rim,761,481,962
+2025,playoffs,1,Short two area,801,342,684
+2025,playoffs,2,Midrange area,661,258,519
+2025,playoffs,3,Corner three area,146,45,135
+2025,playoffs,4,Above the break,942,316,946
+2025,playoffs,5,Other half,10,0,0
+2025,regular,0,At the rim,9475,6072,12144
+2025,regular,1,Short two area,8244,3421,6842
+2025,regular,2,Midrange area,7079,2795,5642
+2025,regular,3,Corner three area,1462,553,1659
+2025,regular,4,Above the break,12181,4085,12246
+2025,regular,5,Other half,94,0,0
+2026,playoffs,0,At the rim,641,402,804
+2026,playoffs,1,Short two area,631,230,460
+2026,playoffs,2,Midrange area,564,211,428
+2026,playoffs,3,Corner three area,98,38,114
+2026,playoffs,4,Above the break,993,337,1011
+2026,playoffs,5,Other half,7,0,0
+2026,regular,0,At the rim,12257,8033,16066
+2026,regular,1,Short two area,9139,3958,7916
+2026,regular,2,Midrange area,7259,2822,5721
+2026,regular,3,Corner three area,1761,664,1992
+2026,regular,4,Above the break,14766,5002,14994
+2026,regular,5,Other half,115,1,3

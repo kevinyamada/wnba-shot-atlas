@@ -1,6 +1,7 @@
 """Exercise the explorer in a fresh, isolated desktop Chrome session."""
 import argparse
 import base64
+import csv
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import json
@@ -94,6 +95,78 @@ class Browser:
             self.proc.wait(timeout=5)
 
 
+def pick_area(browser, zone):
+    """Select a court area from the overview, or return to the selected square with None."""
+    pressed = browser.js("document.querySelector('#area-rows button[aria-pressed=true]')?.dataset.zone ?? null")
+    target = pressed if zone is None else str(zone)
+    if target is not None and (zone is None or pressed != target):
+        browser.js(f"document.querySelector('#area-rows button[data-zone=\"{target}\"]').click()")
+    expected = 'null' if zone is None else f"'{zone}'"
+    assert browser.js(f"(document.querySelector('#area-rows button[aria-pressed=true]')?.dataset.zone ?? null) === {expected}")
+
+
+def expected_leaders(pack, filters, key, value):
+    """Rank shooters by observed field goal points with the player filter left open."""
+    totals = {}
+    for row in pack['rows']:
+        if row[2] and row[key] == value and all(row[i] == v for i, v in filters.items()):
+            entry = totals.setdefault(row[2], [0, 0, 0])
+            for i in range(3):
+                entry[i] += row[5 + i]
+    ranked = sorted(totals.items(), key=lambda item: (-item[1][2], -item[1][1], item[1][0], pack['players'][str(item[0])]))
+    return [(pack['players'][str(player)], f'{points:,} points', f'{makes:,} of {n:,} made')
+            for player, (n, makes, points) in ranked[:5] if points]
+
+
+def shown_leaders(browser, season):
+    return [tuple(item) for item in browser.js(f"""[...document.querySelectorAll('.area-result[data-season="{season}"] .leaders li')]
+        .map(li => [li.querySelector('span').textContent, li.querySelector('strong').textContent, li.querySelector('small').textContent])""")]
+
+
+def verify_area_selection(browser):
+    """Select areas by click and keyboard, then recount makes, points and leaders."""
+    js = browser.js
+    pack = json.loads((ROOT / 'explore/data/2026.json').read_bytes())
+    zones = json.loads((ROOT / 'explore/data/index.json').read_bytes())['zones']
+    browser.select('season', 2026)
+    square = int(js("document.querySelector('#court-primary canvas').dataset.selected"))
+    assert shown_leaders(browser, 2026) == expected_leaders(pack, {}, 3, square)
+    for zone, name in enumerate(zones):
+        pick_area(browser, zone)
+        rows = [row for row in pack['rows'] if row[4] == zone]
+        n, makes, points = (sum(row[i] for row in rows) for i in (5, 6, 7))
+        stats = js("""Object.fromEntries([...document.querySelectorAll('.area-result dt')]
+            .map(dt => [dt.textContent, dt.nextElementSibling.textContent]))""")
+        assert js("document.getElementById('area-title').textContent") == name
+        assert stats['Made / attempts'] == f'{makes:,} / {n:,}' and stats['Field goal points'] == f'{points:,}', (name, stats)
+        assert js("document.querySelector('#court-primary canvas').dataset.area") == (str(zone) if zone < 5 else '')
+        assert js("document.querySelector('#court-primary canvas').dataset.selected") == ''
+        assert js("document.querySelectorAll('#area-rows tr.selected').length") == 1
+        assert shown_leaders(browser, 2026) == expected_leaders(pack, {}, 4, zone), name
+    browser.select('team', 5)
+    player = int(js("document.querySelector('#player').options[1].value"))
+    browser.select('player', player)
+    pick_area(browser, 0)
+    team_leaders = expected_leaders(pack, {1: 5}, 4, 0)
+    shown = shown_leaders(browser, 2026)
+    assert shown[:len(team_leaders)] == team_leaders and len(shown) <= len(team_leaders) + 1
+    chosen = js("[...document.querySelectorAll('.leaders li.chosen span')].map(node => node.textContent)")
+    assert chosen in ([], [pack['players'][str(player)]])
+    browser.select('player', 'all')
+    browser.select('team', 'all')
+    js("document.querySelector('#area-rows button[data-zone=\"2\"]').focus()")
+    for event in ['keyDown', 'keyUp']:
+        browser.call('Input.dispatchKeyEvent', {'type': event, 'key': 'Enter', 'code': 'Enter', 'windowsVirtualKeyCode': 13, 'text': '\r'})
+    assert js("document.activeElement.dataset.zone === '2' && document.activeElement.getAttribute('aria-pressed') === 'true'")
+    assert js("document.querySelector('#court-primary canvas').dataset.area") == '2'
+    js("document.querySelector('#court-primary canvas').toDataURL()")
+    browser.save_image('atlas_court_area_selected_desktop.png')
+    pick_area(browser, None)
+    assert js("document.querySelector('#court-primary canvas').dataset.selected") == str(square)
+    browser.select('season', 'all')
+    print('COURT_AREA_SELECTION_VERIFIED', len(zones), 'areas, leaders by field goal points, keyboard', flush=True)
+
+
 def verify_comparison_units(browser):
     """Recount two seasons of different sizes, including shots outside the map."""
     js = browser.js
@@ -105,7 +178,7 @@ def verify_comparison_units(browser):
     browser.select('compare', years[1])
     assert js("document.getElementById('phase').selectedIndex === 0")
     assert js("!document.getElementById('compare-units').hidden && document.getElementById('normalize-shots').checked")
-    browser.select('zone', 3)
+    pick_area(browser, 3)
     toggle = "document.getElementById('normalize-shots').click()"
 
     def check(filters, normalized):
@@ -128,6 +201,16 @@ def verify_comparison_units(browser):
             expected_max = max(expected_max, 100 * peak / attempts if normalized and attempts else peak)
             card = f"document.getElementById('court-{panel}')"
             assert js(f"{card}.querySelector('[data-total=n]').textContent") == f'{attempts:,}'
+            table = js(f"""[...document.querySelectorAll('#area-rows tr[data-zone="3"]')]
+                .map(r => [...r.querySelectorAll('td')].map(c => c.textContent)).find(cells => cells[0] === '{year}')""")
+            if normalized and attempts:
+                assert abs(float(table[1]) - 100 * n / attempts) <= .00500001, (year, table)
+            elif not normalized:
+                assert table[1] == f'{n:,}', (year, table)
+            if n:
+                assert abs(float(table[2].rstrip('%')) - 100 * makes / n) <= .0500001 and abs(float(table[3]) - zone_points / n) <= .00500001
+            else:
+                assert table[2:] == ['Unavailable', 'Unavailable']
             card_points = js(f"{card}.querySelector('[data-total=points]').textContent")
             stats = js(f"""Object.fromEntries([...document.querySelectorAll('.area-result[data-season="{year}"] dt')]
                 .map(dt => [dt.textContent, dt.nextElementSibling.textContent]))""")
@@ -180,9 +263,127 @@ def verify_comparison_units(browser):
     js(toggle)
     check({0: 0, 2: player, 8: 0}, False)
     js(toggle)
-    for control, value in [('player', 'all'), ('shot-type', 'all'), ('phase', 'all'), ('compare', 'off'), ('zone', 'cell')]:
+    for control, value in [('player', 'all'), ('shot-type', 'all'), ('phase', 'all'), ('compare', 'off')]:
         browser.select(control, value)
+    pick_area(browser, None)
     assert js("document.getElementById('compare-units').hidden")
+
+
+def zone_totals(rows, zones):
+    totals = [[0, 0, 0] for _ in zones]
+    for row in rows:
+        for i in range(3):
+            totals[row[4]][i] += row[5 + i]
+    return totals
+
+
+def check_area_table(browser, zones, expected, label):
+    shown = browser.js("""[...document.querySelectorAll('#area-table tr')].slice(1)
+        .map(r => [...r.cells].map(c => c.textContent))""")
+    attempts = sum(n for n, _, _ in expected)
+    assert len(shown) == len(zones) + 1, label
+    assert browser.js("document.querySelector('#court-primary [data-total=n]').textContent") == f'{attempts:,}', label
+    for cells, name, (n, made, points) in zip(shown, [*zones, 'All attempts'], [*expected, (attempts,
+            sum(m for _, m, _ in expected), sum(p for _, _, p in expected))]):
+        assert cells[:2] == [name, f'{n:,}'], (label, cells)
+        values = [(cells[2], 100 * n / attempts if attempts else None, .05),
+                  (cells[3], 100 * made / n if n else None, .05),
+                  (cells[4], points / n if n else None, .005)]
+        for text, value, step in values:
+            if value is None:
+                assert text == 'Unavailable', (label, cells)
+            else:
+                assert abs(float(text.rstrip('%').replace(',', '')) - value) <= step + 1e-9, (label, cells)
+    assert shown[-1][2] == ('100%' if attempts else 'Unavailable'), label
+    located = [(n, i) for i, (n, _, _) in enumerate(expected[:-1]) if n]
+    summary = browser.js("document.getElementById('area-summary').textContent")
+    if located:
+        share = max(n for n, _ in located)
+        assert any(summary.startswith(f'{zones[i]} had the most shots') for n, i in located if n == share), (label, summary)
+    return attempts
+
+
+def verify_court_areas(browser):
+    """Match the court area table with the published season zone totals."""
+    index = json.loads((ROOT / 'explore/data/index.json').read_bytes())
+    zones = index['zones']
+    published = {}
+    with open(ROOT / 'research/results/public_atlas/season_zones.csv', newline='') as file:
+        for row in csv.DictReader(file):
+            key = (int(row['season']), int(row['phase']))
+            published.setdefault(key, [[0, 0, 0] for _ in zones])
+            assert zones[int(row['zone'])] == row['zone_name']
+            published[key][int(row['zone'])] = [int(row['attempts']), int(row['made']), int(row['points'])]
+    empty = [[0, 0, 0] for _ in zones]
+
+    def league(seasons, phases):
+        return [[sum(published.get((s, p), empty)[z][i] for s in seasons for p in phases) for i in range(3)]
+                for z in range(len(zones))]
+
+    all_rows = json.loads((ROOT / 'explore/data/all.json').read_bytes())['rows']
+    assert zone_totals(all_rows, zones) == league(index['seasons'], (0, 1))
+    assert browser.js("document.getElementById('phase').value") == 'all'
+    checked = 0
+    for phase, phases in [('all', (0, 1)), (0, (0,)), (1, (1,))]:
+        browser.select('phase', phase)
+        for season in ['all', *index['seasons']]:
+            browser.select('season', season)
+            seasons = index['seasons'] if season == 'all' else [season]
+            total = check_area_table(browser, zones, league(seasons, phases), (season, phase))
+            if season == 'all':
+                print(f'Court areas, all seasons, phase {phase}: {total:,} attempts match season_zones.csv', flush=True)
+            checked += 1
+    browser.select('season', 'all')
+    browser.select('phase', 'all')
+    browser.select('compare', 2026)
+    assert 'All seasons and 2026' in browser.js("document.getElementById('area-context').textContent")
+    heads = browser.js("[...document.querySelectorAll('#area-head th')].map(th => th.textContent)")
+    assert heads == ['Area', 'Season', 'Attempts per 100 shots', 'Make rate', 'Points per shot'], heads
+    shown = browser.js("[...document.querySelectorAll('#area-table tbody tr, #area-table tfoot tr')].map(r => [...r.querySelectorAll('td')].map(c => c.textContent))")
+    assert len(shown) == 2 * (len(zones) + 1)
+    for label, counts in [('All seasons', league(index['seasons'], (0, 1))), ('2026', league([2026], (0, 1)))]:
+        attempts = sum(n for n, _, _ in counts)
+        rows = [cells for cells in shown if cells[0] == label]
+        assert len(rows) == len(zones) + 1
+        for cells, (n, made, points) in zip(rows, counts):
+            assert abs(float(cells[1].lstrip('<')) - 100 * n / attempts) <= .0100001, (label, cells)
+            if n:
+                assert abs(float(cells[2].rstrip('%')) - 100 * made / n) <= .0500001 and abs(float(cells[3]) - points / n) <= .00500001, (label, cells)
+            else:
+                assert cells[2:] == ['Unavailable', 'Unavailable'], (label, cells)
+        assert float(rows[-1][1]) == 100
+    browser.select('compare', 'off')
+    print('COURT_AREAS_VERIFIED', checked, 'season and game selections against season_zones.csv', flush=True)
+
+
+def verify_shot_mix(browser):
+    """Match the shot mix section with the saved study values."""
+    data = json.loads((ROOT / 'explore/data/shot-mix.json').read_bytes())
+    js = browser.js
+    browser.wait("!document.getElementById('shot-mix').hidden")
+    signed = lambda value: ('−' if value < 0 else '+') + f'{abs(value):.3f}'
+    lead = js("document.querySelector('#shot-mix > p').textContent")
+    whole, recent = data['comparisons'][0], data['comparisons'][5]
+    assert f"{round(100 * whole['mix_share'])}% of that rise" in lead and f"{round(100 * recent['mix_share'])}% of the rise" in lead
+    shown = js("[...document.querySelector('#shot-mix details table').tBodies[0].rows].map(r => [...r.cells].map(c => c.textContent))")
+    assert len(shown) == 30
+    for cells, row in zip(shown, data['seasons']):
+        assert cells == [str(row['season']), f"{row['attempts']:,}", f"{row['actual']:.3f}", f"{row['fixed_mix']:.3f}", f"{row['fixed_conversion']:.3f}"]
+    assert sum(row['attempts'] for row in data['seasons']) == 902729
+    for i, row in enumerate(data['comparisons']):
+        browser.select('mix-comparison', i)
+        cards = js("[...document.querySelectorAll('.mix-part strong')].map(node => node.textContent)")
+        assert cards == [signed(row['change']), signed(row['mix']), signed(row['conversion'])], (row['comparison'], cards)
+        areas = js("[...document.querySelectorAll('#shot-mix > div > .table-scroll tbody tr')].map(r => [...r.cells].map(c => c.textContent))")
+        expected = [a for a in data['comparisonAreas'] if a['comparison'] == row['comparison']]
+        assert [cells[0] for cells in areas] == data['areas'] and len(expected) == len(areas)
+        for cells, area in zip(areas, expected):
+            assert cells[1:3] == [f"{100 * area['share_before']:.1f}%", f"{100 * area['share_after']:.1f}%"]
+    browser.select('mix-comparison', 0)
+    assert js("(() => { const c = document.getElementById('mix-chart'); const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; return d.some(v => v > 0); })()")
+    js("document.getElementById('shot-mix').scrollIntoView({block:'start'})")
+    browser.save_image('atlas_shot_mix_desktop.png')
+    print('SHOT_MIX_BROWSER_VERIFIED', len(data['comparisons']), 'comparisons and 30 seasons', flush=True)
 
 
 def verify_shot_timing(browser):
@@ -247,6 +448,8 @@ def verify(browser, url):
     assert js(arc) == ','.join(str(r['arc_radius']) for r in index['court']['eras'])
     assert js("document.querySelectorAll('#court-primary [data-era-key] span').length") == 3
     browser.save_image('atlas_all_desktop.png')
+    verify_court_areas(browser)
+    verify_area_selection(browser)
     verify_comparison_units(browser)
     for year, row in seasons.items():
         browser.select('season', year)
@@ -273,7 +476,7 @@ def verify(browser, url):
     assert js("document.querySelector('#area-position').textContent") != before
     browser.wait(f"document.querySelector('#history-rows').rows.length==={len(seasons)}")
     assert js("document.querySelector('#court-primary canvas').dataset.selected===document.querySelector('#court-secondary canvas').dataset.selected")
-    browser.select('zone', 3)
+    pick_area(browser, 3)
     assert js("document.querySelector('#area-title').textContent") == 'Corner three area'
     for metric in ('share', 'rate', 'points'):
         js(f"document.querySelector('[data-metric={metric}]').click()")
@@ -292,7 +495,10 @@ def verify(browser, url):
     assert js(attempts) == fmt(expected)
     assert 'Layup' in js("document.querySelector('#history-context').textContent")
     assert js("document.querySelector('#type-rows').rows.length") == len(index['shotTypes'])
+    chosen = [row for row in pack['rows'] if row[:3] == [0, 5, player] and row[8] == 1]
+    check_area_table(browser, index['zones'], zone_totals(chosen, index['zones']), 'team, player and shot type')
 
+    verify_shot_mix(browser)
     verify_shot_timing(browser)
     plays=json.loads((ROOT/'explore/data/plays.json').read_bytes())
     forms=json.loads((ROOT/'explore/data/shot-form.json').read_bytes())
@@ -378,6 +584,22 @@ def verify(browser, url):
         js("document.querySelectorAll('details').forEach(node=>node.open=false);window.scrollTo(0,0)")
         browser.save_image(f'atlas_mobile_{width}.png')
         assert js("[...document.querySelectorAll('.timing-card')].every(c => c.offsetWidth > 0 && c.getBoundingClientRect().right <= innerWidth)")
+        assert js("(() => { const t = document.getElementById('area-table'); return t.scrollWidth <= t.parentElement.clientWidth && t.getBoundingClientRect().right <= innerWidth; })()"), width
+        js("document.getElementById('areas-title').scrollIntoView({block:'start'})")
+        spot = js("""(() => { const cell = document.querySelector('#area-rows tr[data-zone="4"] td');
+            cell.scrollIntoView({block: 'center'});
+            const box = cell.getBoundingClientRect();
+            return [box.left + box.width / 2, box.top + box.height / 2]; })()""")
+        browser.call('Emulation.setTouchEmulationEnabled', {'enabled': True})
+        for kind, points in [('touchStart', [{'x': spot[0], 'y': spot[1]}]), ('touchEnd', [])]:
+            browser.call('Input.dispatchTouchEvent', {'type': kind, 'touchPoints': points})
+        browser.wait("document.querySelector('#area-rows button[aria-pressed=true]')?.dataset.zone === '4'")
+        assert js("document.querySelector('#court-primary canvas').dataset.area") == '4'
+        browser.save_image(f'atlas_court_areas_mobile_{width}.png')
+        pick_area(browser, None)
+        js("document.getElementById('shot-mix').scrollIntoView({block:'start'})")
+        assert js("document.getElementById('mix-chart').clientWidth > 220 && [...document.querySelectorAll('.mix-part')].every(c => c.getBoundingClientRect().right <= innerWidth)")
+        browser.save_image(f'atlas_shot_mix_mobile_{width}.png')
         if width == 390:
             js("document.getElementById('shot-timing').scrollIntoView({block:'start'})")
             browser.save_image('atlas_shot_timing_mobile.png')
@@ -401,6 +623,8 @@ def verify(browser, url):
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
+    protocol_version = 'HTTP/1.1'
+
     def log_message(self, *_):
         pass
 

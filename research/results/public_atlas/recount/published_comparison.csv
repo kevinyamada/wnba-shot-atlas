@@ -1,0 +1,40 @@
+item,recount,published,difference
+findings.json attempts,902729,902729,0
+verification.json attempts,902729,902729,0
+findings.json makes,389216,389216,0
+verification.json makes,389216,389216,0
+findings.json points,858999,858999,0
+verification.json points,858999,858999,0
+handoff and eda.md attempts,902729,902729,0
+handoff and eda.md makes,389216,389216,0
+handoff and eda.md points,858999,858999,0
+handoff and eda.md mapped_half,810416,810416,0
+handoff and eda.md other_half,1459,1459,0
+handoff and eda.md unknown_location,90854,90854,0
+"handoff attempts, WNBA Stats 1997 to 2001",120948,120948,0
+"handoff attempts, ESPN 2002 to 2010",274074,274074,0
+"handoff attempts, ESPN 2011 to 2026",507707,507707,0
+"season_coverage.csv attempts, season rows that differ",0,0,0
+"season_coverage.csv makes, season rows that differ",0,0,0
+"season_coverage.csv points, season rows that differ",0,0,0
+"season_coverage.csv mapped_half, season rows that differ",0,0,0
+"season_coverage.csv other_half, season rows that differ",0,0,0
+"season_coverage.csv unknown_location, season rows that differ",0,0,0
+"season_coverage.csv games_with_shots, season rows that differ",0,0,0
+"season_zones.csv, area rows that differ",0,0,0
+season_zones.csv attempts,902729,902729,0
+"local site season files, area rows that differ",0,0,0
+"local site all.json, area rows that differ",0,0,0
+local site all.json attempts,902729,902729,0
+local site all.json makes,389216,389216,0
+local site all.json points,858999,858999,0
+"local site all.json attempts, regular",834428,834428,0
+"local site all.json attempts, playoffs",68301,68301,0
+"live site season files, area rows that differ",0,0,0
+"live site all.json, area rows that differ",0,0,0
+live site all.json attempts,902729,902729,0
+live site all.json makes,389216,389216,0
+live site all.json points,858999,858999,0
+"live site all.json attempts, regular",834428,834428,0
+"live site all.json attempts, playoffs",68301,68301,0
+live data files that differ from the committed revision,0,0,0
