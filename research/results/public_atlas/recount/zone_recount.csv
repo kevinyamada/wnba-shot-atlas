@@ -74,13 +74,13 @@ season,phase,zone,zone_name,attempts,makes,points
 2002,playoffs,4,Above the break,350,124,372
 2002,playoffs,5,Other half,2,0,0
 2002,playoffs,6,Unknown location,467,273,546
-2002,regular,0,At the rim,1612,876,1752
-2002,regular,1,Short two area,4540,1632,3264
-2002,regular,2,Midrange area,8021,2923,5857
-2002,regular,3,Corner three area,666,231,693
-2002,regular,4,Above the break,5452,1858,5572
-2002,regular,5,Other half,26,1,3
-2002,regular,6,Unknown location,8709,4677,9472
+2002,regular,0,At the rim,1653,896,1792
+2002,regular,1,Short two area,4896,1760,3520
+2002,regular,2,Midrange area,8492,3087,6185
+2002,regular,3,Corner three area,704,246,738
+2002,regular,4,Above the break,5767,1959,5875
+2002,regular,5,Other half,28,1,3
+2002,regular,6,Unknown location,7486,4249,8500
 2003,playoffs,0,At the rim,110,56,112
 2003,playoffs,1,Short two area,416,136,272
 2003,playoffs,2,Midrange area,666,255,512

@@ -93,12 +93,12 @@ def main():
     coverage = pd.read_csv(OUT / 'location_coverage.csv')
     assert coverage.attempts.sum() == 902729
     assert (coverage.mapped + coverage.recorded_at_basket + coverage.other_half + coverage.other_unknown).eq(coverage.attempts).all()
-    assert coverage.mapped.sum() == 810416 and coverage.other_half.sum() == 1459
+    counted = pd.read_csv(OUT.parent / 'recount/season_recount.csv')
+    assert coverage.mapped.sum() == counted.mapped_half.sum() and coverage.other_half.sum() == counted.other_half.sum()
     site = json.loads((recount.SITE / 'shot-mix.json').read_bytes())
     assert site['manifestSha256'] == manifest_digest() and site['areas'] == AREAS
     assert len(site['seasons']) == 30 and len(site['comparisons']) == len(comparisons)
-    seasons = pd.read_csv(OUT.parent / 'recount/season_recount.csv').groupby('season').team_not_in_game.sum()
-    assert {row['season']: row['attempts'] for row in site['teamNotInGame']} == seasons[seasons.gt(0)].to_dict()
+
     for shown, row in zip(site['seasons'], saved.reset_index().itertuples()):
         assert shown['season'] == row.season and np.isclose(shown['actual'], row.actual) and np.isclose(shown['fixed_mix'], row.fixed_mix)
     for shown, row in zip(site['comparisons'], comparisons.itertuples()):

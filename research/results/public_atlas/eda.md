@@ -1,6 +1,6 @@
 # WNBA Shot Atlas data review
 
-The public releases contain 902,729 field goal attempts from 1997 to 2026, with 389,216 makes and 858,999 points. The court maps 810,416 attempts. The other half accounts for 1,459 and 90,854 have unknown locations.
+The public releases contain 902,729 field goal attempts from 1997 to 2026, with 389,216 makes and 858,999 points. The court maps 811,637 attempts. The other half accounts for 1,461 and 89,631 have unknown locations.
 
 The regular season share of threes in the available team boxes was 22.4% in 2003 and 37.2% in 2026.
 
@@ -17,7 +17,7 @@ The 1997 to 2001 shot release identifies the game phase. ESPN schedules and box 
 | 1999 | 203 | 24,150 | 10,131 | 22,005 | 18,281 | 5,839 |
 | 2000 | 272 | 31,559 | 13,618 | 29,524 | 24,308 | 7,238 |
 | 2001 | 274 | 32,008 | 13,156 | 28,692 | 25,087 | 6,905 |
-| 2002 | 265 | 30,711 | 12,928 | 28,220 | 21,507 | 9,176 |
+| 2002 | 265 | 30,711 | 12,928 | 28,220 | 22,728 | 7,953 |
 | 2003 | 255 | 29,957 | 12,490 | 27,248 | 23,621 | 6,321 |
 | 2004 | 237 | 27,518 | 11,525 | 25,069 | 21,257 | 6,243 |
 | 2005 | 238 | 27,330 | 11,596 | 25,095 | 21,095 | 6,209 |

@@ -24,6 +24,8 @@ PACK_COLUMNS = [*GROUP_COLUMNS, 'attempts', 'made', 'points', 'shot_type']
 # Two exhibition games have an incomplete description in this provider snapshot.
 SPECIAL_GAMES = {401353913: '2021 Commissioner’s Cup final', 401558893: '2023 All Star Game'}
 DUPLICATE_2011 = (310604005, 400182104)
+# The 2002 schedule lists the Portland Fire as team 12. The shot and player files use 132052.
+SCHEDULE_TEAM_IDS = {2002: {12: 132052}}
 
 
 def write_json(path, value):
@@ -43,6 +45,10 @@ def games_for(year):
     games = source('wnba_schedule', year)
     assert games.game_id.is_unique and games[['home_id', 'away_id', 'game_id', 'game_date']].notna().all().all()
     assert games.home_id.ne(games.away_id).all()
+    for listed, recorded in SCHEDULE_TEAM_IDS.get(year, {}).items():
+        sides = games[['home_id', 'away_id']]
+        assert sides.eq(listed).any().any() and not sides.eq(recorded).any().any()
+        games[['home_id', 'away_id']] = sides.replace(listed, recorded)
     notes = games.notes_headline.fillna('').str.lower()
     special = (notes.str.contains(r'all\W*star|cup championship|cup final|exhibition', regex=True)
                | games.game_id.isin(SPECIAL_GAMES))
@@ -205,6 +211,8 @@ def export_season(year, identities):
         players = pd.DataFrame(columns=['game_id', 'team_id', 'player_id', 'athlete_display_name', *BOX_FIELDS])
     else:
         games = games_for(year)
+        for listed, recorded in SCHEDULE_TEAM_IDS.get(year, {}).items():
+            assert raw.team_id.eq(recorded).any() and not raw.team_id.eq(listed).any()
         shots = field_goals(raw, games, year)
         players = source('player_box', year).rename(columns={'athlete_id': 'player_id'})
     teams = (source('team_box', year) if year >= 2003 else

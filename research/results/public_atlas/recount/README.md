@@ -14,18 +14,17 @@ The raw shot files hold 902,729 regular season and playoff field goal attempts, 
 | feed | games_with_shots | attempts | makes | points | mapped_half | other_half | unknown_location |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | WNBA Stats 1997 to 2001 | 1,021 | 120,948 | 50,837 | 110,135 | 91,714 | 86 | 29,148 |
-| ESPN 2002 to 2010 | 2,204 | 274,074 | 116,132 | 254,072 | 212,052 | 332 | 61,690 |
+| ESPN 2002 to 2010 | 2,204 | 274,074 | 116,132 | 254,072 | 213,273 | 334 | 60,467 |
 | ESPN 2011 to 2026 | 3,757 | 507,707 | 222,247 | 494,792 | 506,650 | 1,041 | 16 |
 
 ## Location
 
-810,416 attempts are on the mapped half, 1,459 on the other half and 90,854 have an unknown location. The unknown group is 89,595 recorded exactly at the basket through 2010, 1,243 where the two coordinate pairs disagree, 16 outside the court and 0 with missing coordinates.
+811,637 attempts are on the mapped half, 1,461 on the other half and 89,631 have an unknown location. The unknown group is 89,595 recorded exactly at the basket through 2010, 20 where the two coordinate pairs disagree, 16 outside the court and 0 with missing coordinates.
 
-1,816 attempts carry a team ID that is neither the home nor the away team in the schedule, so the two coordinate pairs cannot be matched. 573 of them sit exactly at the basket in the raw pair and are counted in the first group here. The published build tests the signed pair first and files all of them under disagreeing pairs. Both routes give the same unknown total.
+25 attempts carry a team ID that is neither the home nor the away team in the schedule, so the two coordinate pairs cannot be matched. 5 of them sit exactly at the basket in the raw pair and are counted in the first group here. The published build tests the signed pair first and files all of them under disagreeing pairs. Both routes give the same unknown total.
 
 | season | phase | attempts | team_not_in_game | unknown_location |
 | --- | --- | --- | --- | --- |
-| 2,002 | regular | 29,026 | 1,791 | 8,709 |
 | 2,003 | regular | 27,676 | 22 | 5,722 |
 | 2,004 | regular | 25,301 | 3 | 5,777 |
 
@@ -67,25 +66,25 @@ Box three point makes 69,227, shot feed three point makes on the same games 68,8
 
 ## Comparison with published numbers
 
-Live site files were fetched for this run.
+Live site files were not fetched in this run.
 
 | item | recount | published | difference |
 | --- | --- | --- | --- |
+| findings.json mapped | 811,637 | 811,637 | 0 |
+| findings.json other_half | 1,461 | 1,461 | 0 |
+| findings.json unknown | 89,631 | 89,631 | 0 |
 | findings.json attempts | 902,729 | 902,729 | 0 |
 | verification.json attempts | 902,729 | 902,729 | 0 |
 | findings.json makes | 389,216 | 389,216 | 0 |
 | verification.json makes | 389,216 | 389,216 | 0 |
 | findings.json points | 858,999 | 858,999 | 0 |
 | verification.json points | 858,999 | 858,999 | 0 |
-| handoff and eda.md attempts | 902,729 | 902,729 | 0 |
-| handoff and eda.md makes | 389,216 | 389,216 | 0 |
-| handoff and eda.md points | 858,999 | 858,999 | 0 |
-| handoff and eda.md mapped_half | 810,416 | 810,416 | 0 |
-| handoff and eda.md other_half | 1,459 | 1,459 | 0 |
-| handoff and eda.md unknown_location | 90,854 | 90,854 | 0 |
-| handoff attempts, WNBA Stats 1997 to 2001 | 120,948 | 120,948 | 0 |
-| handoff attempts, ESPN 2002 to 2010 | 274,074 | 274,074 | 0 |
-| handoff attempts, ESPN 2011 to 2026 | 507,707 | 507,707 | 0 |
+| stated total attempts | 902,729 | 902,729 | 0 |
+| stated total makes | 389,216 | 389,216 | 0 |
+| stated total points | 858,999 | 858,999 | 0 |
+| stated attempts, WNBA Stats 1997 to 2001 | 120,948 | 120,948 | 0 |
+| stated attempts, ESPN 2002 to 2010 | 274,074 | 274,074 | 0 |
+| stated attempts, ESPN 2011 to 2026 | 507,707 | 507,707 | 0 |
 | season_coverage.csv attempts, season rows that differ | 0 | 0 | 0 |
 | season_coverage.csv makes, season rows that differ | 0 | 0 | 0 |
 | season_coverage.csv points, season rows that differ | 0 | 0 | 0 |
@@ -102,11 +101,3 @@ Live site files were fetched for this run.
 | local site all.json points | 858,999 | 858,999 | 0 |
 | local site all.json attempts, regular | 834,428 | 834,428 | 0 |
 | local site all.json attempts, playoffs | 68,301 | 68,301 | 0 |
-| live site season files, area rows that differ | 0 | 0 | 0 |
-| live site all.json, area rows that differ | 0 | 0 | 0 |
-| live site all.json attempts | 902,729 | 902,729 | 0 |
-| live site all.json makes | 389,216 | 389,216 | 0 |
-| live site all.json points | 858,999 | 858,999 | 0 |
-| live site all.json attempts, regular | 834,428 | 834,428 | 0 |
-| live site all.json attempts, playoffs | 68,301 | 68,301 | 0 |
-| live data files that differ from the committed revision | 0 | 0 | 0 |

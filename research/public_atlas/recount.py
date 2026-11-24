@@ -91,6 +91,9 @@ def espn_schedule(year):
                                ['not played', 'special', 'regular', 'playoffs'], default='other')
     if year == 2011:
         games.loc[games.game_id.eq(DUPLICATE_SCHEDULE_ROW), 'phase'] = 'duplicate schedule row'
+    if year == 2002:
+        # The schedule calls the Portland Fire team 12. The shot file calls the same team 132052.
+        games[['home_id', 'away_id']] = games[['home_id', 'away_id']].replace(12, 132052)
     return games[['game_id', 'phase', 'home_id', 'away_id', 'notes_headline', 'game_date']]
 
 
@@ -220,18 +223,18 @@ def compare(seasons, zones, live):
     total = seasons[COUNTS].sum()
     places = seasons[['mapped_half', 'other_half', 'unknown_location']].sum()
     findings = json.loads((SITE / 'findings.json').read_bytes())['totals']
+    for mine, saved in [('mapped_half', 'mapped'), ('other_half', 'other_half'), ('unknown_location', 'unknown')]:
+        note(f'findings.json {saved}', int(places[mine]), findings[saved])
     certificate = json.loads((RESULTS / 'verification.json').read_bytes())['totals']
     for metric in COUNTS:
         note(f'findings.json {metric}', int(total[metric]), findings[metric])
         note(f'verification.json {metric}', int(total[metric]), certificate[metric])
     for metric, stated in [('attempts', 902729), ('makes', 389216), ('points', 858999)]:
-        note(f'handoff and eda.md {metric}', int(total[metric]), stated)
-    for metric, stated in [('mapped_half', 810416), ('other_half', 1459), ('unknown_location', 90854)]:
-        note(f'handoff and eda.md {metric}', int(places[metric]), stated)
+        note(f'stated total {metric}', int(total[metric]), stated)
     by_feed = [('WNBA Stats 1997 to 2001', seasons.season.le(2001), 120948), ('ESPN 2002 to 2010', seasons.season.between(2002, 2010), 274074),
                ('ESPN 2011 to 2026', seasons.season.ge(2011), 507707)]
     for name, rows, stated in by_feed:
-        note(f'handoff attempts, {name}', int(seasons[rows].attempts.sum()), stated)
+        note(f'stated attempts, {name}', int(seasons[rows].attempts.sum()), stated)
 
     coverage = pd.read_csv(RESULTS / 'season_coverage.csv')
     merged = seasons.merge(coverage, on=['season', 'phase'], suffixes=('', '_saved'))

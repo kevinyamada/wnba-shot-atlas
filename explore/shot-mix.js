@@ -122,7 +122,6 @@ export function shotMix(target, data, palette) {
     }
 
     const located = data.coverage.map(row => `${share(row.mapped_share)} in ${row.seasons}`).join(', ');
-    const stray = data.teamNotInGame.reduce((most, row) => row.attempts > most.attempts ? row : most);
     const [main, ...checks] = data.sensitivity;
     const shares = checks.filter(row => row.first === main.first && row.second === main.second).map(row => row.mix_share);
     const methods = el('details');
@@ -130,7 +129,6 @@ export function shotMix(target, data, palette) {
         el('p', 'Shot mix is the share of attempts from each area. Conversion is field goal points per attempt within an area. The mix part multiplies each change in share by the average points per shot of the two periods. The conversion part multiplies each change in points per shot by the average share. The two parts add up to the change exactly.'),
         el('p', 'Near the basket covers mapped shots within 10 ft of the rim and shots recorded exactly at the basket through 2010, which are almost all layups. Midrange is inside the three point line and at least 10 ft out. The three point area is outside the line used in each season.'),
         el('p', `Shots with a mapped location: ${located}. Across other reasonable choices for the same first and last five seasons, such as dropping unmapped shots, using the regular season only or using the seven recorded areas, the shot mix part ranges from ${Math.round(100 * Math.min(...shares))}% to ${Math.round(100 * Math.max(...shares))}% of the change.`),
-        el('p', `In ${stray.season}, ${count.format(stray.attempts)} Portland Fire shots carry a team number that the schedule does not list, so their locations cannot be confirmed. They sit in the other or unknown group and cause the brief dip in the dotted line.`),
         el('p', 'A change in conversion cannot show why scoring rose. Shot selection within an area, defense, rules and how locations were recorded can all play a part. Intervals come from drawing whole games again within each season and do not cover recording changes.'),
         table(['Check', 'Periods', 'Change', 'From shot mix', 'From conversion'],
             data.sensitivity.map(row => [row.check, `${span(row.first)} and ${span(row.second)}`, signed(row.change), signed(row.mix), signed(row.conversion)])));

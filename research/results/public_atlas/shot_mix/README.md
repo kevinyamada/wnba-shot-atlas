@@ -6,7 +6,7 @@ A change in conversion alone cannot establish why players scored more from an ar
 
 ## Areas
 
-Near the basket covers mapped shots within 10 ft of the rim and shots recorded exactly at the basket through 2010. In 2002 the Portland Fire shots carry a team ID that the schedule does not list, so their 1,791 attempts have no confirmed location and stay in other or unknown. Midrange is inside the three point line and 10 ft or more from the rim. The three point area is outside the line used in that season. Other or unknown covers the other half and the remaining shots without a usable location.
+Near the basket covers mapped shots within 10 ft of the rim and shots recorded exactly at the basket through 2010. Midrange is inside the three point line and 10 ft or more from the rim. The three point area is outside the line used in that season. Other or unknown covers the other half and the remaining shots without a usable location.
 
 | area | share_before | share_after | points_per_shot_before | points_per_shot_after | mix | conversion |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -20,7 +20,7 @@ Near the basket covers mapped shots within 10 ft of the rim and shots recorded e
 | comparison | first | second | attempts_first | attempts_second | before | after | change | mix | conversion | mix_share |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | First five seasons to last five | 1997 to 2001 | 2022 to 2026 | 120,948 | 193,966 | 0.911 | 1.003 | 0.092 | 0.015 | 0.077 | 0.163 |
-| First line era to second | 1997 to 2003 | 2004 to 2012 | 181,616 | 271,899 | 0.912 | 0.935 | 0.023 | -0.004 | 0.027 | -0.153 |
+| First line era to second | 1997 to 2003 | 2004 to 2012 | 181,616 | 271,899 | 0.912 | 0.935 | 0.023 | -0.008 | 0.032 | -0.353 |
 | Second line era to current | 2004 to 2012 | 2013 to 2026 | 271,899 | 449,214 | 0.935 | 0.978 | 0.042 | 0.014 | 0.029 | 0.326 |
 | Last season before the line moved to the first after | 2012 to 2012 | 2013 to 2013 | 29,274 | 29,081 | 0.950 | 0.913 | -0.037 | -0.013 | -0.024 | 0.341 |
 | First five seasons with full locations to last five | 2011 to 2015 | 2022 to 2026 | 146,276 | 193,966 | 0.938 | 1.003 | 0.065 | 0.030 | 0.035 | 0.457 |
@@ -31,7 +31,7 @@ Near the basket covers mapped shots within 10 ft of the rim and shots recorded e
 | seasons | attempts | mapped | recorded_at_basket | other_half | other_unknown | mapped_share |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1997 to 2001 | 120,948 | 91,714 | 29,148 | 86 | 0 | 0.758 |
-| 2002 to 2010 | 274,074 | 212,052 | 59,874 | 332 | 1,816 | 0.774 |
+| 2002 to 2010 | 274,074 | 213,273 | 60,442 | 334 | 25 | 0.778 |
 | 2011 to 2026 | 507,707 | 506,650 | 0 | 1,041 | 16 | 0.998 |
 
 ## Sensitivity of the headline comparison

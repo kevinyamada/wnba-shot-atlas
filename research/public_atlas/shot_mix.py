@@ -34,15 +34,13 @@ def load():
     for year in YEARS:
         shots = pd.read_csv(DERIVED / f'shots_{year}.csv.gz', usecols=use if year < 2002 else use + espn, low_memory=False)
         shots = shots[shots.scope.isin(['regular', 'playoffs'])].assign(season=year)
-        shots['team_in_game'] = True
         if year < 2002:
             shots['confirmed'] = True
         else:
             # ESPN gives two coordinate pairs. The pile needs both at the basket and a team that played in the game.
             in_game = shots.team_id.eq(shots.home_id) | shots.team_id.eq(shots.away_id)
-            shots['team_in_game'] = in_game
             shots['confirmed'] = in_game & shots.coordinate_x_raw.eq(25) & shots.coordinate_y_raw.eq(0)
-        frames.append(shots[use + ['season', 'confirmed', 'team_in_game']])
+        frames.append(shots[use + ['season', 'confirmed']])
     shots = pd.concat(frames, ignore_index=True)
     at_basket = shots.location_status.eq('provider_origin_placeholder') & shots.confirmed
     shots['area'] = np.select([shots.zone.le(1) | at_basket, shots.zone.eq(2), shots.zone.isin([3, 4])], AREAS[:3], default=AREAS[3])
@@ -222,7 +220,7 @@ def main():
              f"({100 * head.mix_share_low:.0f}% to {100 * head.mix_share_high:.0f}%).", '',
              'A change in conversion alone cannot establish why players scored more from an area. Defense, rules, shot selection within an area and how scorers record locations can all contribute.', '',
              '## Areas', '',
-             'Near the basket covers mapped shots within 10 ft of the rim and shots recorded exactly at the basket through 2010. In 2002 the Portland Fire shots carry a team ID that the schedule does not list, so their 1,791 attempts have no confirmed location and stay in other or unknown. Midrange is inside the three point line and 10 ft or more from the rim. '
+             'Near the basket covers mapped shots within 10 ft of the rim and shots recorded exactly at the basket through 2010. Midrange is inside the three point line and 10 ft or more from the rim. '
              'The three point area is outside the line used in that season. Other or unknown covers the other half and the remaining shots without a usable location.', '',
              markdown(main_areas), '## Comparisons', '',
              markdown(results[['comparison', 'first', 'second', 'attempts_first', 'attempts_second', 'before', 'after', 'change', 'mix', 'conversion', 'mix_share']]),
@@ -236,9 +234,7 @@ def main():
              '[Season values](by_season.csv) · [Comparisons and intervals](comparisons.csv) · [Areas in each comparison](comparison_areas.csv) · [Sensitivity](sensitivity.csv) · [Location coverage](location_coverage.csv)', '']
     (OUT / 'README.md').write_text('\n'.join(lines), encoding='utf-8', newline='\n')
 
-    stray = shots[~shots.team_in_game].groupby('season').size()
     site = dict(manifestSha256=manifest_digest(), areas=AREAS, seed=SEED, draws=DRAWS,
-                teamNotInGame=[dict(season=int(year), attempts=int(n)) for year, n in stray.items()],
                 pooled=[dict(area=area, share=float(pooled_share[area]), pointsPerShot=float(pooled_rate[area])) for area in AREAS],
                 seasons=json.loads(series.to_json(orient='records')),
                 comparisons=json.loads(results.to_json(orient='records')),
