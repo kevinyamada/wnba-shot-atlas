@@ -1,0 +1,14 @@
+{
+  "ladder": {
+    "scored_shots": 84777,
+    "test_attempts": 44478,
+    "distance_brier": 0.23077,
+    "full_brier": 0.2264
+  },
+  "shooters": {
+    "player_seasons": 1811,
+    "shots": 353290,
+    "skill_spread_per_100": 3.893
+  },
+  "manifestSha256": "a3638e383085063601ae6fee398ef9adb0ab99a221ef4e2870105d26f56eb8fa"
+}

@@ -115,7 +115,7 @@ def expected_leaders(pack, filters, key, value):
                 entry[i] += row[5 + i]
     ranked = sorted(totals.items(), key=lambda item: (-item[1][2], -item[1][1], item[1][0], pack['players'][str(item[0])]))
     return [(pack['players'][str(player)], f'{points:,} points', f'{makes:,} of {n:,} made')
-            for player, (n, makes, points) in ranked[:5] if points]
+            for player, (n, makes, points) in ranked[:3] if points]
 
 
 def shown_leaders(browser, season):
@@ -369,7 +369,7 @@ def verify_shot_mix(browser):
     assert len(shown) == 30
     for cells, row in zip(shown, data['seasons']):
         assert cells == [str(row['season']), f"{row['attempts']:,}", f"{row['actual']:.3f}", f"{row['fixed_mix']:.3f}", f"{row['fixed_conversion']:.3f}"]
-    assert sum(row['attempts'] for row in data['seasons']) == 902729
+    assert sum(row['attempts'] for row in data['seasons']) == sum(row[5] for row in json.loads((ROOT / 'explore/data/all.json').read_bytes())['rows'])
     for i, row in enumerate(data['comparisons']):
         browser.select('mix-comparison', i)
         cards = js("[...document.querySelectorAll('.mix-part strong')].map(node => node.textContent)")
@@ -384,6 +384,51 @@ def verify_shot_mix(browser):
     js("document.getElementById('shot-mix').scrollIntoView({block:'start'})")
     browser.save_image('atlas_shot_mix_desktop.png')
     print('SHOT_MIX_BROWSER_VERIFIED', len(data['comparisons']), 'comparisons and 30 seasons', flush=True)
+
+
+def verify_overview(browser):
+    """Match the main visual, the shooter comparison and the information ladder with their saved values."""
+    js = browser.js
+    mix = json.loads((ROOT / 'explore/data/shot-mix.json').read_bytes())
+    timing = json.loads((ROOT / 'explore/data/shot-timing.json').read_bytes())
+    browser.wait("!document.getElementById('headline').hidden && !document.getElementById('more-shooters').hidden && !document.getElementById('more-ladder').hidden")
+    change = mix['comparisons'][0]
+    areas = [a for a in mix['comparisonAreas'] if a['comparison'] == change['comparison']][:3]
+    bars = js("[...document.querySelectorAll('.diet-row')].map(r => [...r.querySelectorAll('.diet-bar > div')].map(d => [d.querySelector('strong').textContent, d.querySelector('small').textContent]))")
+    for row, share, rate in zip(bars, ('share_before', 'share_after'), ('points_per_shot_before', 'points_per_shot_after'), strict=True):
+        assert row == [[f"{round(100 * a[share])}%", f"{a[rate]:.2f} a shot"] for a in areas], row
+    points = js("[...document.querySelectorAll('.takeaways strong')].map(node => node.textContent)")
+    groups = timing['scopes']['both']['groups']
+    steal = round(100 * groups['Steal']['shots'][timing['mainSeconds']] / groups['Steal']['starts'])
+    assert points == [f"{round(100 * areas[2]['share_after'])}%", f"{change['after']:.2f}", f'{steal}%'], points
+    js("document.getElementById('headline').scrollIntoView({block:'start'})")
+    browser.save_image('atlas_headline_desktop.png')
+
+    data = json.loads((ROOT / 'explore/data/shooters.json').read_bytes())
+    signed = lambda value: ('−' if value < 0 else '+') + f'{abs(value):.1f}'
+    rows = "[...document.querySelectorAll('#shooter-chart .relative-row')].map(r => [r.querySelector('span').textContent, r.querySelector('em').textContent])"
+    for choice, players in [('career', data['career']), ('2026', data['seasons']['2026']), ('2016', data['seasons']['2016'])]:
+        browser.select('shooter-season', choice)
+        assert js(rows) == [[p['name'], f"{signed(p['estimate'])} · {p['attempts']:,} shots"] for p in players[:10]], choice
+        assert all(p['low'] <= p['estimate'] <= p['high'] and abs(p['estimate']) <= abs(p['raw']) + .006 for p in players)
+    browser.select('shooter-season', 'career')
+    outside = data['career'][40]
+    browser.select('shooter-player', outside['id'])
+    assert js(rows)[-1] == [outside['name'], f"{signed(outside['estimate'])} · {outside['attempts']:,} shots"] and len(js(rows)) == 11
+    assert js("document.querySelectorAll('#shooter-chart .relative-row.chosen').length") == 1
+    browser.select('shooter-player', '')
+
+    steps = json.loads((ROOT / 'explore/data/model-ladder.json').read_bytes())
+    shown = js("[...document.querySelector('#model-ladder table').tBodies[0].rows].map(r => [...r.cells].map(c => c.textContent))")
+    assert [cells[1] for cells in shown] == [f"{step['brier']:.5f}" for step in steps['steps']]
+    summary = steps['summary']
+    parts = js("[...document.querySelectorAll('.ladder-bar strong')].map(node => node.textContent)")
+    removed = 1 - summary['distance_brier'] / summary['league_brier']
+    extra = (summary['distance_brier'] - summary['full_brier']) / summary['league_brier']
+    assert parts == [f'{100 * removed:.1f}%', f'{100 * extra:.1f}%', f'{100 * (1 - removed - extra):.1f}%'], parts
+    js("document.getElementById('more-shooters').scrollIntoView({block:'start'})")
+    browser.save_image('atlas_shooters_desktop.png')
+    print('OVERVIEW_BROWSER_VERIFIED main visual, shooter comparison and information ladder', flush=True)
 
 
 def verify_shot_timing(browser):
@@ -448,6 +493,9 @@ def verify(browser, url):
     assert js(arc) == ','.join(str(r['arc_radius']) for r in index['court']['eras'])
     assert js("document.querySelectorAll('#court-primary [data-era-key] span').length") == 3
     browser.save_image('atlas_all_desktop.png')
+    assert js("[...document.querySelectorAll('details.more')].every(node => !node.open)")
+    js("document.querySelectorAll('details.more').forEach(node => { node.open = true; })")
+    verify_overview(browser)
     verify_court_areas(browser)
     verify_area_selection(browser)
     verify_comparison_units(browser)
@@ -503,7 +551,6 @@ def verify(browser, url):
     plays=json.loads((ROOT/'explore/data/plays.json').read_bytes())
     forms=json.loads((ROOT/'explore/data/shot-form.json').read_bytes())
     assert js("document.querySelector('#miss-scope').value")=='both'
-    assert not js("document.querySelector('#comparison-callout').open")
     for r in plays['misses']:
         choice={'both':'both','regular':'regular','playoffs':'post'}[r['scope']]
         browser.select('miss-scope',choice)
@@ -540,8 +587,9 @@ def verify(browser, url):
             assert js("document.querySelector('.form-card strong').textContent")==f"{100*band['sameSpots']['layup_rate']:.1f}%"
         else:
             assert js("document.getElementById('form-match').disabled")
-    assert '511,169' in js("document.querySelector('#source-explanation').textContent")
-    assert '902,729' in js("document.querySelector('#source-explanation').textContent")
+    for key in ('recentAllRecorded', 'regularPlayoffs'):
+        assert fmt(plays['sources'][key]) in js("document.querySelector('#source-explanation').textContent")
+    assert plays['sources']['regularPlayoffs'] == sum(row[5] for row in all_pack['rows'])
     browser.select('form-distance',4)
     browser.select('miss-scope','both')
     for section in ('prediction-title', 'miss-title'):
@@ -583,6 +631,10 @@ def verify(browser, url):
         assert js(f"innerWidth==={width} && document.documentElement.scrollWidth<=innerWidth && document.querySelector('#court-primary canvas').clientWidth>220")
         js("document.querySelectorAll('details').forEach(node=>node.open=false);window.scrollTo(0,0)")
         browser.save_image(f'atlas_mobile_{width}.png')
+        js("document.getElementById('headline').scrollIntoView({block:'start'})")
+        assert js("[...document.querySelectorAll('#headline .diet-bar > div')].every(d => d.scrollWidth <= d.clientWidth + 1 && d.getBoundingClientRect().right <= innerWidth)"), width
+        browser.save_image(f'atlas_headline_mobile_{width}.png')
+        js("document.querySelectorAll('details.more').forEach(node => { node.open = true; })")
         assert js("[...document.querySelectorAll('.timing-card')].every(c => c.offsetWidth > 0 && c.getBoundingClientRect().right <= innerWidth)")
         assert js("(() => { const t = document.getElementById('area-table'); return t.scrollWidth <= t.parentElement.clientWidth && t.getBoundingClientRect().right <= innerWidth; })()"), width
         js("document.getElementById('areas-title').scrollIntoView({block:'start'})")

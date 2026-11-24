@@ -1,13 +1,13 @@
 {
-  "attempts": 902729,
-  "points": 858999,
+  "attempts": 902770,
+  "points": 859086,
   "seasons": 30,
   "comparisons": 6,
   "headline": {
     "before": 0.9106,
-    "after": 1.0028,
+    "after": 1.0029,
     "mix": 0.015,
-    "conversion": 0.0772
+    "conversion": 0.0773
   },
   "independent_mix_interval": [
     0.0132,

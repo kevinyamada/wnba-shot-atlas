@@ -1,10 +1,10 @@
 # WNBA Shot Atlas data review
 
-The public releases contain 902,729 field goal attempts from 1997 to 2026, with 389,216 makes and 858,999 points. The court maps 811,637 attempts. The other half accounts for 1,461 and 89,631 have unknown locations.
+The public releases contain 902,770 field goal attempts from 1997 to 2026, with 389,257 makes and 859,086 points. The court maps 811,678 attempts. The other half accounts for 1,461 and 89,631 have unknown locations.
 
 The regular season share of threes in the available team boxes was 22.4% in 2003 and 37.2% in 2026.
 
-The same physical strip between the old and new arcs contained 2,396 regular season attempts in 2012 and 403 in 2013. Restricting to games that match both team boxes gives 2,186 and 300.
+The same physical strip between the old and new arcs contained 2,397 regular season attempts in 2012 and 403 in 2013. Restricting to games that match both team boxes gives 2,210 and 300.
 
 In 2026 regular season games, shots per square foot were 9.64 times as common in the two feet outside the line as in the two feet inside (95% whole game resampling interval 8.74 to 10.65). Perturbing locations by up to half a foot per axis gave ratios from 7.15 to 8.15. These are descriptive contrasts.
 
@@ -27,18 +27,18 @@ The 1997 to 2001 shot release identifies the game phase. ESPN schedules and box 
 | 2009 | 239 | 31,744 | 13,610 | 29,919 | 25,313 | 6,379 |
 | 2010 | 220 | 29,229 | 12,897 | 28,379 | 23,494 | 5,682 |
 | 2011 | 222 | 29,219 | 12,699 | 27,858 | 29,165 | 0 |
-| 2012 | 220 | 29,274 | 12,553 | 27,821 | 29,222 | 2 |
+| 2012 | 220 | 29,302 | 12,581 | 27,878 | 29,250 | 2 |
 | 2013 | 220 | 29,081 | 12,284 | 26,559 | 29,018 | 8 |
 | 2014 | 221 | 29,305 | 12,848 | 27,741 | 29,236 | 0 |
 | 2015 | 225 | 29,397 | 12,513 | 27,200 | 29,332 | 0 |
 | 2016 | 216 | 29,155 | 12,914 | 28,141 | 29,070 | 2 |
 | 2017 | 219 | 29,699 | 13,100 | 28,793 | 29,618 | 4 |
-| 2018 | 218 | 30,038 | 13,390 | 29,721 | 30,035 | 0 |
-| 2019 | 218 | 29,987 | 12,803 | 28,581 | 29,922 | 0 |
+| 2018 | 218 | 30,042 | 13,394 | 29,730 | 30,039 | 0 |
+| 2019 | 218 | 29,988 | 12,804 | 28,583 | 29,923 | 0 |
 | 2020 | 146 | 19,936 | 8,871 | 19,872 | 19,905 | 0 |
 | 2021 | 209 | 28,650 | 12,466 | 27,987 | 28,591 | 0 |
 | 2022 | 239 | 32,509 | 14,396 | 32,471 | 32,448 | 0 |
-| 2023 | 260 | 35,599 | 15,665 | 35,342 | 35,521 | 0 |
+| 2023 | 260 | 35,607 | 15,673 | 35,361 | 35,529 | 0 |
 | 2024 | 262 | 35,771 | 15,679 | 35,417 | 35,706 | 0 |
 | 2025 | 310 | 41,856 | 18,368 | 41,779 | 41,752 | 0 |
 | 2026 | 352 | 48,231 | 21,698 | 49,509 | 48,109 | 0 |

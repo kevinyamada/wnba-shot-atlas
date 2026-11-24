@@ -1,13 +1,13 @@
 # What shot type adds to distance
 
-From 3.5 feet up to 4.5 feet, players made 10,990 of 20,824 (52.8%) layups and 1,054 of 2,916 (36.1%) jump shots. Giving both groups the same mix of court spots, seasons and game types produced make rates of 49.6% and 40.8% across 136 shared groups.
+From 3.5 feet up to 4.5 feet, players made 11,001 of 20,850 (52.8%) layups and 1,056 of 2,918 (36.2%) jump shots. Giving both groups the same mix of court spots, seasons and game types produced make rates of 49.5% and 40.9% across 136 shared groups.
 
-On 352,612 shots in 2,590 future games across 11 season tests, adding the recorded shot type reduced Brier error by 0.19%. The paired 95% interval was 0.14% to 0.24%. Average error fell in 9 of 11 regular seasons and 10 of 11 playoffs.
+On 353,293 shots in 2,595 future games across 11 season tests, adding the recorded shot type reduced Brier error by 0.19%. The paired 95% interval was 0.14% to 0.24%. Average error fell in 9 of 11 regular seasons and 10 of 11 playoffs.
 
 | Test | Attempts | Distance Brier | With shot type | Relative drop in error | 95% interval |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| Regular | 325,125 | 0.231800 | 0.231378 | 0.18% | 0.13% to 0.23% |
-| Playoffs | 27,487 | 0.233043 | 0.232367 | 0.29% | 0.14% to 0.44% |
+| Regular | 325,806 | 0.231809 | 0.231389 | 0.18% | 0.13% to 0.23% |
+| Playoffs | 27,487 | 0.233038 | 0.232370 | 0.29% | 0.14% to 0.44% |
 
 ## How the comparison works
 

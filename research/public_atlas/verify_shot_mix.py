@@ -60,7 +60,8 @@ def mix_interval(games, first, second):
 
 def main():
     games = raw_games()
-    assert games.attempts.sum() == 902729 and games.points.sum() == 858999
+    counted = pd.read_csv(OUT.parent / 'recount/season_recount.csv')
+    assert games.attempts.sum() == counted.attempts.sum() and games.points.sum() == counted.points.sum()
     saved = pd.read_csv(OUT / 'by_season.csv').set_index('season')
     pooled_share, pooled_rate = shares_and_rates(games)
     for year, season in games.groupby('season'):
@@ -91,9 +92,8 @@ def main():
         assert np.isclose(table.mix.sum(), row.mix) and np.isclose(table.conversion.sum(), row.conversion)
         assert np.isclose(table.share_before.sum(), 1) and np.isclose(table.share_after.sum(), 1)
     coverage = pd.read_csv(OUT / 'location_coverage.csv')
-    assert coverage.attempts.sum() == 902729
+    assert coverage.attempts.sum() == counted.attempts.sum()
     assert (coverage.mapped + coverage.recorded_at_basket + coverage.other_half + coverage.other_unknown).eq(coverage.attempts).all()
-    counted = pd.read_csv(OUT.parent / 'recount/season_recount.csv')
     assert coverage.mapped.sum() == counted.mapped_half.sum() and coverage.other_half.sum() == counted.other_half.sum()
     site = json.loads((recount.SITE / 'shot-mix.json').read_bytes())
     assert site['manifestSha256'] == manifest_digest() and site['areas'] == AREAS

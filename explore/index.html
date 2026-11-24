@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Compare WNBA shooting from 1997 to 2026 by season, team, player and position on the court.">
   <title>WNBA Shot Atlas | Explore 1997 to 2026</title>
-  <link rel="stylesheet" href="atlas.css?v=8">
+  <link rel="stylesheet" href="atlas.css?v=9">
   <script src="../theme.js?v=light-default"></script>
-  <script type="module" src="atlas.js?v=9"></script>
+  <script type="module" src="atlas.js?v=10"></script>
 </head>
 <body>
   <a class="skip" href="#explorer">Skip to the shot explorer</a>
@@ -22,7 +22,7 @@
     <div class="intro">
       <div>
         <h1>Where the WNBA shoots</h1>
-        <p>Explore where players shoot, how often they make it, and how those patterns change across seasons.</p>
+        <p>Pick a season, team or player to see where the shots come from and what they are worth.</p>
       </div>
       <p class="source-credit">ESPN and WNBA Stats via wehoop<br><strong id="total-shots"></strong></p>
     </div>
@@ -62,7 +62,6 @@
               <div class="court-hover" hidden></div>
             </div>
             <div class="era-key" data-era-key hidden></div>
-            <p class="court-note" data-coverage></p>
             <p class="court-note" data-location></p>
           </article>
           <article class="court-panel" id="court-secondary" hidden>
@@ -77,7 +76,6 @@
               <div class="court-hover" hidden></div>
             </div>
             <div class="era-key" data-era-key hidden></div>
-            <p class="court-note" data-coverage></p>
             <p class="court-note" data-location></p>
           </article>
         </div>
@@ -104,41 +102,52 @@
         </aside>
       </div>
       <p class="caption" id="metric-note"></p>
-      <details class="rule-history" id="comparison-callout" hidden><summary>When the three point line moved</summary>
-        <p id="arc-finding"></p><button type="button" id="compare-rule">Compare 2012 and 2013</button>
-      </details>
-      <section class="history" aria-labelledby="history-title">
-        <div class="section-heading">
-          <div><h2 id="history-title">Across the seasons</h2><p><span id="history-unit"></span> · <span id="history-context"></span></p></div>
-          <p class="line-key"><span aria-hidden="true"></span> Arc moved in 2004 and 2013</p>
-        </div>
-        <div id="history-status" role="status"></div>
-        <div class="history-stage"><canvas id="history-chart" aria-label="The selected area across the seasons. Values are listed below." role="img"></canvas></div>
-        <details id="history-details"><summary>View season values</summary>
-          <div class="table-scroll">
-            <table><thead><tr><th>Season</th><th>Made / attempts</th><th id="history-frequency">Shot share</th><th>Make rate</th><th>Points per shot</th></tr></thead><tbody id="history-rows"></tbody></table>
-          </div>
+      <section class="headline" id="headline" aria-labelledby="headline-title" hidden></section>
+      <div class="more-list">
+        <details class="more" id="more-history"><summary>How has this spot changed over the years?</summary>
+          <section aria-labelledby="history-title">
+            <div class="section-heading">
+              <div><h2 id="history-title" hidden>Across the seasons</h2><p><span id="history-unit"></span> · <span id="history-context"></span></p></div>
+              <p class="line-key"><span aria-hidden="true"></span> Arc moved in 2004 and 2013</p>
+            </div>
+            <div id="history-status" role="status"></div>
+            <div class="history-stage"><canvas id="history-chart" aria-label="The selected area across the seasons. Values are listed below." role="img"></canvas></div>
+            <details id="history-details"><summary>View season values</summary>
+              <div class="table-scroll">
+                <table><thead><tr><th>Season</th><th>Made / attempts</th><th id="history-frequency">Shot share</th><th>Make rate</th><th>Points per shot</th></tr></thead><tbody id="history-rows"></tbody></table>
+              </div>
+            </details>
+          </section>
         </details>
-      </section>
-      <section class="history" id="shot-mix" aria-labelledby="mix-title" hidden></section>
-      <section class="foundations" aria-labelledby="types-title">
-        <div class="section-heading"><div><h2 id="types-title">Shot types</h2><p id="types-summary"></p></div></div>
-        <details><summary>Compare the shot types</summary>
-          <p>The table uses the selected season, games, team and player. Shots are grouped by the wording in the source.</p>
+        <details class="more" id="more-shooters" hidden><summary>Who makes more shots than expected?</summary><div id="shooters"></div></details>
+        <details class="more" id="more-mix"><summary>Better spots or better shooting?</summary>
+          <section id="shot-mix" aria-labelledby="mix-title" hidden></section>
+        </details>
+        <details class="more" id="more-ladder" hidden><summary>Why is distance so hard to beat?</summary><div id="model-ladder"></div></details>
+        <details class="more" id="more-types"><summary>Which shot types go in?</summary>
+          <h2 id="types-title" hidden>Shot types</h2>
+          <p id="types-summary"></p>
           <div class="table-scroll"><table><thead><tr><th>Shot type</th><th>Attempts</th><th>Makes</th><th>Make rate</th><th>Points per shot</th></tr></thead><tbody id="type-rows"></tbody></table></div>
+          <p class="caption">Uses the selected season, games, team and player. Shots are grouped by the wording in the source.</p>
         </details>
-      </section>
-      <div id="study-status" role="status"></div>
-      <div id="public-study" hidden></div>
-      <section class="foundations" aria-labelledby="foundation-title">
-        <div class="section-heading"><div><h2 id="foundation-title">What the source covers</h2><p id="coverage-summary"></p></div></div>
-        <details><summary>Where the shot total comes from</summary><div id="source-explanation"></div></details>
-        <details id="coverage-details"><summary>See the audit by season</summary>
-          <p>WNBA Stats provides the shots from 1997 to 2001. ESPN provides the later shots and schedules. From 2003, the audit counts games whose shots agree with both teams’ box scores. The explorer includes disagreements as recorded.</p>
-          <div class="table-scroll"><table><thead><tr><th>Season</th><th>Games with shots</th><th>Games matching both boxes</th><th>Attempts</th><th>Unknown location</th></tr></thead><tbody id="coverage-rows"></tbody></table></div>
-          <p>Free throws, exhibition games, and the Commissioner’s Cup final are separate. Cup qualifying games count in the regular season. Shots from the other half stay in the totals and can be selected as an area. The map uses the three point line from each season. The early arc is shown in front of the rim, where its distance is documented. Attempts recorded exactly at the basket through 2010 stay in the totals with an unknown location.</p>
+        <details class="more" id="comparison-callout" hidden><summary>What happened when the three point line moved?</summary>
+          <p id="arc-finding"></p><button type="button" id="compare-rule">Compare 2012 and 2013</button>
         </details>
-      </section>
+        <details class="more" id="more-research"><summary>Play situations, shot forecasts and rebounds</summary>
+          <div id="study-status" role="status"></div>
+          <div id="public-study" hidden></div>
+        </details>
+        <details class="more" id="more-sources"><summary>Where the numbers come from</summary>
+          <h2 id="foundation-title" hidden>What the source covers</h2>
+          <div id="source-explanation"></div>
+          <details id="coverage-details"><summary>See the audit by season</summary>
+            <p id="coverage-summary"></p>
+            <p>WNBA Stats provides the shots from 1997 to 2001. ESPN provides the later shots and schedules. From 2003, the audit counts games whose shots agree with both teams’ box scores. The explorer includes disagreements as recorded.</p>
+            <div class="table-scroll"><table><thead><tr><th>Season</th><th>Games with shots</th><th>Games matching both boxes</th><th>Attempts</th><th>Unknown location</th></tr></thead><tbody id="coverage-rows"></tbody></table></div>
+            <p>Free throws, exhibition games, and the Commissioner’s Cup final are separate. Cup qualifying games count in the regular season. Shots from the other half stay in the totals and can be selected as an area. The map uses the three point line from each season. The early arc is shown in front of the rim, where its distance is documented. Attempts recorded exactly at the basket through 2010 stay in the totals with an unknown location. A scored row without a shot label counts as a made basket only where the team box confirms it.</p>
+          </details>
+        </details>
+      </div>
     </div>
     <noscript><p>The explorer needs JavaScript to load the shot tables.</p></noscript>
     <footer class="footer">

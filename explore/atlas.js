@@ -1,6 +1,7 @@
 import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=6';
 import { renderStudy } from './study-findings.js?v=5';
-import { shotMix } from './shot-mix.js?v=2';
+import { shotMix } from './shot-mix.js?v=3';
+import { headline, shooters, ladder } from './overview.js?v=1';
 
 const $ = id => document.getElementById(id);
 const controls = ['season', 'team', 'player', 'phase', 'shot-type', 'compare'].map($);
@@ -8,6 +9,7 @@ const panels = ['court-primary', 'court-secondary'].map($);
 const number = new Intl.NumberFormat('en-CA');
 const percent = new Intl.NumberFormat('en-CA', {style: 'percent', maximumFractionDigits: 1});
 const decimal = new Intl.NumberFormat('en-CA', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+const dataRelease = 'r4';
 const sampleFloor = 12;
 const mappedAreas = 5;
 const metricNames = {share: 'Shot share', per100: 'Attempts per 100 shots', attempts: 'Attempts',
@@ -22,7 +24,7 @@ let historyVersion = 0;
 
 async function json(url) {
     const asset = new URL(url, import.meta.url);
-    asset.searchParams.set('snapshot', index?.manifestSha256.slice(0, 12) ?? 'public-2');
+    asset.searchParams.set('snapshot', `${index?.manifestSha256.slice(0, 12) ?? 'index'}-${dataRelease}`);
     const response = await fetch(asset);
     if (!response.ok) throw new Error(`Could not load ${url}`);
     return response.json();
@@ -131,7 +133,7 @@ function leaders(entry, filters, selection) {
         .sort((a, b) => b.points - a.points || b.makes - a.makes || a.n - b.n || a.name.localeCompare(b.name));
     ranked.forEach((player, i) => { player.rank = i + 1; });
     const chosen = ranked.find(player => player.id === Number(filters.player)) ?? null;
-    const shown = ranked.slice(0, 5).filter(player => player.points > 0);
+    const shown = ranked.slice(0, 3).filter(player => player.points > 0);
     if (chosen && !shown.includes(chosen)) shown.push(chosen);
     return {shown, chosen};
 }
@@ -253,8 +255,10 @@ function renderStats() {
         const note = document.createElement('p');
         note.className = 'caption';
         const leagueRate = format(value(league.area, league.total, 'rate'), 'rate');
-        note.textContent = league.area.n ? `${leagueRate} made across the league on ${number.format(league.area.n)} attempts.` : 'The league has no recorded shots here.';
+        const filtered = $('team').value !== 'all' || $('player').value !== 'all';
+        note.textContent = !filtered ? '' : league.area.n ? `The league made ${leagueRate} here.` : 'The league has no recorded shots here.';
         if (part.n > 0 && part.n < sampleFloor) note.textContent += ' Small sample.';
+        note.hidden = !note.textContent;
         block.append(heading, list, note, leaderList(found));
         target.append(block);
     }
@@ -397,9 +401,7 @@ function renderAreas() {
     $('area-rows').replaceChildren(...index.zones.flatMap((_, zone) => areaTableRows(zone)));
     $('area-total').replaceChildren(...areaTableRows(null));
     $('area-summary').textContent = model.views.map(({data}, i) => (comparing ? `${seasons[i]}: ` : '') + areaSentence(data)).join(' ');
-    $('area-note').textContent = 'Select an area to outline it on the court. '
-        + (comparing ? '' : 'Bars show share of shots. ')
-        + 'Bold marks the mapped area with the most shots and the one with the most points per shot. Other half and unknown location complete the total.';
+    $('area-note').textContent = 'Tap an area to outline it on the court. Bold marks the most shots and the most points per shot.';
     if (focused !== null) $('area-rows').querySelector(`button[data-zone="${focused}"]`)?.focus();
 }
 
@@ -413,7 +415,6 @@ function renderTypes(entry, filters) {
         index.shotTypes[i], number.format(part.n), number.format(part.makes),
         format(value(part, part, 'rate'), 'rate'), format(value(part, part, 'points'), 'points')
     ])));
-    $('types-title').textContent = `Shot types in ${yearName(entry.season).toLowerCase()}`;
     const [jump, layup] = byType;
     $('types-summary').textContent = layup.n && jump.n
         ? `Layups went in ${percent.format(layup.makes / layup.n)} of the time, compared with ${percent.format(jump.makes / jump.n)} for jump shots.`
@@ -448,11 +449,6 @@ function renderCourts() {
         panel.querySelector('[data-points-label]').textContent = normalized ? 'Points per 100 shots' : 'Points';
         panel.querySelector('[data-total=points]').textContent = normalized
             ? format(per100(data.total.points, data.total.n), 'per100') : number.format(data.total.points);
-        const coverage = recordedGames(entry.coverage, phase);
-        panel.querySelector('[data-coverage]').textContent = entry.season === 'all'
-            ? `${number.format(coverage.recorded_games)} games with recorded shots`
-            : `${coverage.recorded_games}${coverage.scheduled_games === null ? '' : ` of ${coverage.scheduled_games}`} games with shots`
-              + (coverage.checked_team_boxes ? `. ${coverage.matched_team_games} match both team boxes.` : '.');
         const offMap = data.unlocated + data.otherHalf;
         panel.querySelector('[data-location]').textContent = !data.total.n ? 'No shots for this selection.' :
             offMap ? `${number.format(data.total.n - offMap)} mapped · ${number.format(data.otherHalf)} from the other half · ${number.format(data.unlocated)} with unknown location` : '';
@@ -464,7 +460,7 @@ function renderCourts() {
 
 function renderCoverage() {
     const phase = $('phase').value;
-    $('coverage-summary').textContent = `${phaseNames[phase]} coverage across the pinned wehoop files. Open the audit to see what each year includes.`;
+    $('coverage-summary').textContent = `${phaseNames[phase]} coverage across the pinned wehoop files.`;
     $('coverage-rows').replaceChildren(...index.coverage.map(entry => {
         const row = recordedGames(entry, phase);
         return tableRow([entry.season, row.scheduled_games === null ? row.recorded_games : `${row.recorded_games} / ${row.scheduled_games}`,
@@ -615,6 +611,15 @@ function bindCourt(panel, i) {
     });
 }
 
+function reveal() {
+    const target = location.hash.length > 1 ? document.getElementById(location.hash.slice(1)) : null;
+    if (!target) return;
+    for (let node = target; node; node = node.parentElement) {
+        if (node.tagName === 'DETAILS') node.open = true;
+    }
+    requestAnimationFrame(() => target.scrollIntoView());
+}
+
 async function start() {
     index = await json('data/index.json');
     json('data/findings.json').then(({band}) => {
@@ -669,15 +674,33 @@ async function start() {
     window.addEventListener('resize', resize);
     new MutationObserver(resize).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
     await refresh();
-    json('data/shot-mix.json').then(mix => {
-        if (mix.manifestSha256 === index.manifestSha256) shotMix($('shot-mix'), mix, palette);
+    const matches = data => data.manifestSha256 === index.manifestSha256;
+    Promise.all([json('data/shot-mix.json'), json('data/shot-timing.json').catch(() => null)]).then(([mix, timing]) => {
+        if (!matches(mix)) return;
+        headline($('headline'), mix, timing && matches(timing) ? timing : null);
+        shotMix($('shot-mix'), mix, palette);
     }).catch(error => console.warn(error));
+    json('data/shooters.json').then(data => {
+        if (!matches(data)) return;
+        shooters($('shooters'), data);
+        $('more-shooters').hidden = false;
+    }).catch(error => console.warn(error));
+    json('data/model-ladder.json').then(data => {
+        if (!matches(data)) return;
+        ladder($('model-ladder'), data);
+        $('more-ladder').hidden = false;
+    }).catch(error => console.warn(error));
+    document.addEventListener('toggle', event => {
+        if (event.target.open) window.dispatchEvent(new Event('resize'));
+    }, true);
+    window.addEventListener('hashchange', reveal);
     Promise.all([json('data/findings.json'), json('data/study.json'), json('data/bayesian.json'), json('data/shot-form.json'), json('data/plays.json'),
         json('data/shot-timing.json').catch(error => { console.warn(error); return null; })])
         .then(([findings, study, bayesian, forms, plays, timing]) => {
             if ([study, forms, plays].some(result => result.manifestSha256 !== index.manifestSha256)) throw new Error('Research data differ from the explorer snapshot');
             const matchedTiming = timing?.manifestSha256 === index.manifestSha256 && timing.playManifestSha256 === plays.playManifestSha256;
             renderStudy(findings, study, index.court, bayesian, palette, forms, plays, matchedTiming ? timing : null);
+            reveal();
         })
         .catch(error => {
             $('study-status').textContent = 'The research findings could not load. Reload to try again.';

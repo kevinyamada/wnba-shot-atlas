@@ -73,13 +73,27 @@ def shot_family(labels):
                      [5, 1, 2, 3, 4, 0], default=6).astype('int8')
 
 
-def field_goals(raw, games, year):
+def box_confirmed_makes(raw, labelled, stray, points, boxes):
+    """Scored rows without a shot label count as makes only where the team box has room for them."""
+    key = ['game_id', 'team_id']
+    counted = raw[labelled & points.gt(0)].groupby(key).size().rename('counted')
+    extra = raw[stray].groupby(key).size().rename('extra')
+    box = pd.to_numeric(boxes.set_index(key).field_goals_made, errors='coerce').rename('box')
+    room = pd.concat([extra, counted, box], axis=1).dropna(subset=['extra', 'box'])
+    accepted = room[room.counted.fillna(0) + room.extra <= room.box].index
+    return stray & pd.MultiIndex.from_frame(raw[key]).isin(accepted)
+
+
+def field_goals(raw, games, year, boxes):
     compact = raw.type_text.fillna('').str.lower().str.replace(r'[^a-z]', '', regex=True)
     points = pd.to_numeric(raw.score_value, errors='coerce')
     free_throw = compact.str.contains('freethrow')
     shot_type = compact.str.contains(SHOOTING) & ~compact.str.contains(OTHER_TYPE)
     valid_reward = points.isin([0, 2, 3])
-    field_goal = ~free_throw & shot_type & valid_reward
+    labelled = ~free_throw & shot_type & valid_reward
+    restored = box_confirmed_makes(raw, labelled, ~free_throw & ~shot_type & points.isin([2, 3]), points, boxes)
+    field_goal = labelled | restored
+    raw['box_confirmed_make'] = restored
     raw['record_kind'] = np.select([free_throw, field_goal], ['free throw', 'field goal'], default='ambiguous')
     attempts = raw.loc[field_goal].copy()
     attempts['points'] = points.loc[field_goal].astype('int8')
@@ -98,7 +112,7 @@ def field_goals(raw, games, year):
     attempts.loc[made, 'attempt_value_evidence'] = 'points scored'
     attempts['player_id'] = pd.to_numeric(attempts.athlete_id_1, errors='coerce').fillna(0).astype('int64')
     attempts['source_row'] = attempts.index + 2
-    attempts['repeated_record'] = raw.drop(columns='record_kind').duplicated(keep=False).loc[field_goal]
+    attempts['repeated_record'] = raw.drop(columns=['record_kind', 'box_confirmed_make']).duplicated(keep=False).loc[field_goal]
     attempts = attempts.merge(games[['game_id', 'game_date', 'scope', 'home_id', 'away_id']], on='game_id', how='left', validate='many_to_one')
     attempts['scope'] = attempts.scope.fillna('unknown game')
     attempts['attempts'] = 1
@@ -213,10 +227,11 @@ def export_season(year, identities):
         games = games_for(year)
         for listed, recorded in SCHEDULE_TEAM_IDS.get(year, {}).items():
             assert raw.team_id.eq(recorded).any() and not raw.team_id.eq(listed).any()
-        shots = field_goals(raw, games, year)
         players = source('player_box', year).rename(columns={'athlete_id': 'player_id'})
     teams = (source('team_box', year) if year >= 2003 else
              pd.DataFrame(columns=['game_id', 'team_id', 'team_display_name', *BOX_FIELDS]))
+    if not early:
+        shots = field_goals(raw, games, year, teams)
     shots['team_id'] = shots.team_id.fillna(0).astype('int64')
     teams_check = reconcile(shots, teams, ['game_id', 'team_id'])
     players_check = reconcile(shots[shots.player_id.ne(0)], players, ['game_id', 'team_id', 'player_id'])
@@ -229,7 +244,8 @@ def export_season(year, identities):
              'recorded_scope_counts': {str(k):int(v) for k,v in shots.scope.value_counts().items()},
              'schedule_scope_counts': {str(k):int(v) for k,v in games.scope.value_counts().items()},
              'source': 'WNBA Stats' if early else 'ESPN',
-             'origin_placeholders': int(shots.location_status.eq('provider_origin_placeholder').sum())}
+             'origin_placeholders': int(shots.location_status.eq('provider_origin_placeholder').sum()),
+             'box_confirmed_makes': 0 if early else int(shots.box_confirmed_make.sum())}
     for phase in PHASE:
         audit[phase] = phase_coverage(games, shots, teams_check, players_check, phase)
         if early:
@@ -265,7 +281,7 @@ def export_season(year, identities):
     players_check.assign(season=year).to_csv(DERIVED / f'player_game_audit_{year}.csv.gz', index=False)
     pack = dict(season=year, court=era_for(year)['id'], coverage=audit,
                 players={str(i):names.get(str(i), 'Unknown shooter') for i in sorted(data.player_id.unique())},
-                teams={str(i):teams_names.get(str(i), 'Unknown team' if i == 0 else str(i)) for i in sorted(data.team_id.unique())},
+                teams={str(i):'Unknown team' if i == 0 else teams_names.get(str(i), str(i)) for i in sorted(data.team_id.unique())},
                 rows=groups[PACK_COLUMNS].to_numpy(dtype=int).tolist())
     write_json(SITE / f'{year}.json', pack)
     print(f"{year}: {len(data):,} attempts, {data.cell.ge(0).sum():,} mapped", flush=True)

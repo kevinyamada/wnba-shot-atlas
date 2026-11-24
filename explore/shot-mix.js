@@ -75,6 +75,7 @@ function paint(canvas, seasons, colours) {
 export function shotMix(target, data, palette) {
     const heading = el('h2', 'Better spots or better shooting?');
     heading.id = 'mix-title';
+    heading.hidden = true;
     const [whole, , , , , recent] = data.comparisons;
     const lead = el('p', `Field goal points per shot averaged ${whole.before.toFixed(2)} across ${span(whole.first)} and ${whole.after.toFixed(2)} across ${span(whole.second)}. `
         + `Where teams shot explains about ${Math.round(100 * whole.mix_share)}% of that rise. The rest came from scoring more on shots from the same areas. `

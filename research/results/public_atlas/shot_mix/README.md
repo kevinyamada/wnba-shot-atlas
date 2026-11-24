@@ -12,19 +12,19 @@ Near the basket covers mapped shots within 10 ft of the rim and shots recorded e
 | --- | --- | --- | --- | --- | --- | --- |
 | Near the basket | 0.513 | 0.457 | 0.978 | 1.088 | -0.004 | 0.053 |
 | Midrange | 0.273 | 0.201 | 0.732 | 0.775 | 0.015 | 0.010 |
-| Three point area | 0.213 | 0.340 | 0.980 | 1.029 | 0.006 | 0.014 |
+| Three point area | 0.213 | 0.340 | 0.980 | 1.030 | 0.006 | 0.014 |
 | Other or unknown | 0.001 | 0.002 | 0.035 | 0.042 | -0.001 | 0.000 |
 
 ## Comparisons
 
 | comparison | first | second | attempts_first | attempts_second | before | after | change | mix | conversion | mix_share |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| First five seasons to last five | 1997 to 2001 | 2022 to 2026 | 120,948 | 193,966 | 0.911 | 1.003 | 0.092 | 0.015 | 0.077 | 0.163 |
-| First line era to second | 1997 to 2003 | 2004 to 2012 | 181,616 | 271,899 | 0.912 | 0.935 | 0.023 | -0.008 | 0.032 | -0.353 |
-| Second line era to current | 2004 to 2012 | 2013 to 2026 | 271,899 | 449,214 | 0.935 | 0.978 | 0.042 | 0.014 | 0.029 | 0.326 |
-| Last season before the line moved to the first after | 2012 to 2012 | 2013 to 2013 | 29,274 | 29,081 | 0.950 | 0.913 | -0.037 | -0.013 | -0.024 | 0.341 |
-| First five seasons with full locations to last five | 2011 to 2015 | 2022 to 2026 | 146,276 | 193,966 | 0.938 | 1.003 | 0.065 | 0.030 | 0.035 | 0.457 |
-| Previous five seasons to last five | 2017 to 2021 | 2022 to 2026 | 138,310 | 193,966 | 0.976 | 1.003 | 0.027 | 0.022 | 0.005 | 0.811 |
+| First five seasons to last five | 1997 to 2001 | 2022 to 2026 | 120,948 | 193,974 | 0.911 | 1.003 | 0.092 | 0.015 | 0.077 | 0.163 |
+| First line era to second | 1997 to 2003 | 2004 to 2012 | 181,616 | 271,927 | 0.912 | 0.935 | 0.023 | -0.008 | 0.032 | -0.351 |
+| Second line era to current | 2004 to 2012 | 2013 to 2026 | 271,927 | 449,227 | 0.935 | 0.978 | 0.042 | 0.014 | 0.028 | 0.327 |
+| Last season before the line moved to the first after | 2012 to 2012 | 2013 to 2013 | 29,302 | 29,081 | 0.951 | 0.913 | -0.038 | -0.013 | -0.025 | 0.334 |
+| First five seasons with full locations to last five | 2011 to 2015 | 2022 to 2026 | 146,304 | 193,974 | 0.938 | 1.003 | 0.065 | 0.030 | 0.035 | 0.458 |
+| Previous five seasons to last five | 2017 to 2021 | 2022 to 2026 | 138,315 | 193,974 | 0.976 | 1.003 | 0.027 | 0.022 | 0.005 | 0.811 |
 
 ## Location coverage
 
@@ -32,23 +32,23 @@ Near the basket covers mapped shots within 10 ft of the rim and shots recorded e
 | --- | --- | --- | --- | --- | --- | --- |
 | 1997 to 2001 | 120,948 | 91,714 | 29,148 | 86 | 0 | 0.758 |
 | 2002 to 2010 | 274,074 | 213,273 | 60,442 | 334 | 25 | 0.778 |
-| 2011 to 2026 | 507,707 | 506,650 | 0 | 1,041 | 16 | 0.998 |
+| 2011 to 2026 | 507,748 | 506,691 | 0 | 1,041 | 16 | 0.998 |
 
 ## Sensitivity of the headline comparison
 
 | check | first | second | attempts | before | after | change | mix | conversion | mix_share |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Main: four comparable areas | 1997 to 2001 | 2022 to 2026 | 314,914 | 0.911 | 1.003 | 0.092 | 0.015 | 0.077 | 0.163 |
-| Mix weighted by first period points per shot only | 1997 to 2001 | 2022 to 2026 | 314,914 | 0.911 | 1.003 | 0.092 | 0.017 | 0.076 | 0.180 |
-| Mix weighted by second period points per shot only | 1997 to 2001 | 2022 to 2026 | 314,914 | 0.911 | 1.003 | 0.092 | 0.014 | 0.079 | 0.146 |
-| Seven recorded areas, shots at the basket through 2010 left as unknown | 1997 to 2001 | 2022 to 2026 | 314,914 | 0.911 | 1.003 | 0.092 | 0.005 | 0.087 | 0.053 |
-| Only shots with a mapped location | 1997 to 2001 | 2022 to 2026 | 285,250 | 0.827 | 1.005 | 0.178 | 0.034 | 0.145 | 0.189 |
-| Jump shots recorded at the basket moved to unknown | 1997 to 2001 | 2022 to 2026 | 314,914 | 0.911 | 1.003 | 0.092 | 0.018 | 0.075 | 0.192 |
+| Main: four comparable areas | 1997 to 2001 | 2022 to 2026 | 314,922 | 0.911 | 1.003 | 0.092 | 0.015 | 0.077 | 0.163 |
+| Mix weighted by first period points per shot only | 1997 to 2001 | 2022 to 2026 | 314,922 | 0.911 | 1.003 | 0.092 | 0.017 | 0.076 | 0.179 |
+| Mix weighted by second period points per shot only | 1997 to 2001 | 2022 to 2026 | 314,922 | 0.911 | 1.003 | 0.092 | 0.014 | 0.079 | 0.146 |
+| Seven recorded areas, shots at the basket through 2010 left as unknown | 1997 to 2001 | 2022 to 2026 | 314,922 | 0.911 | 1.003 | 0.092 | 0.005 | 0.087 | 0.053 |
+| Only shots with a mapped location | 1997 to 2001 | 2022 to 2026 | 285,258 | 0.827 | 1.005 | 0.179 | 0.034 | 0.145 | 0.189 |
+| Jump shots recorded at the basket moved to unknown | 1997 to 2001 | 2022 to 2026 | 314,922 | 0.911 | 1.003 | 0.092 | 0.018 | 0.075 | 0.192 |
 | Regular season only | 1997 to 2001 | 2022 to 2026 | 293,175 | 0.911 | 1.004 | 0.093 | 0.015 | 0.078 | 0.166 |
-| Playoffs only | 1997 to 2001 | 2022 to 2026 | 21,739 | 0.901 | 0.986 | 0.084 | 0.010 | 0.075 | 0.114 |
-| Full location seasons, four areas | 2011 to 2015 | 2022 to 2026 | 340,242 | 0.938 | 1.003 | 0.065 | 0.030 | 0.035 | 0.457 |
-| Full location seasons, seven recorded areas | 2011 to 2015 | 2022 to 2026 | 340,242 | 0.938 | 1.003 | 0.065 | 0.005 | 0.060 | 0.079 |
-| Current line only, four areas | 2013 to 2017 | 2022 to 2026 | 340,603 | 0.944 | 1.003 | 0.059 | 0.029 | 0.030 | 0.498 |
+| Playoffs only | 1997 to 2001 | 2022 to 2026 | 21,747 | 0.901 | 0.986 | 0.085 | 0.010 | 0.075 | 0.113 |
+| Full location seasons, four areas | 2011 to 2015 | 2022 to 2026 | 340,278 | 0.938 | 1.003 | 0.065 | 0.030 | 0.035 | 0.458 |
+| Full location seasons, seven recorded areas | 2011 to 2015 | 2022 to 2026 | 340,278 | 0.938 | 1.003 | 0.065 | 0.005 | 0.060 | 0.078 |
+| Current line only, four areas | 2013 to 2017 | 2022 to 2026 | 340,611 | 0.944 | 1.003 | 0.059 | 0.029 | 0.030 | 0.498 |
 
 ## Method
 

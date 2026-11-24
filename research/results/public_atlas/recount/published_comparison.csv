@@ -1,19 +1,16 @@
 item,recount,published,difference
-findings.json mapped,811637,811637,0
+findings.json mapped,811678,811678,0
 findings.json other_half,1461,1461,0
 findings.json unknown,89631,89631,0
-findings.json attempts,902729,902729,0
-verification.json attempts,902729,902729,0
-findings.json makes,389216,389216,0
-verification.json makes,389216,389216,0
-findings.json points,858999,858999,0
-verification.json points,858999,858999,0
-stated total attempts,902729,902729,0
-stated total makes,389216,389216,0
-stated total points,858999,858999,0
-"stated attempts, WNBA Stats 1997 to 2001",120948,120948,0
-"stated attempts, ESPN 2002 to 2010",274074,274074,0
-"stated attempts, ESPN 2011 to 2026",507707,507707,0
+findings.json attempts,902770,902770,0
+verification.json attempts,902770,902770,0
+findings.json makes,389257,389257,0
+verification.json makes,389257,389257,0
+findings.json points,859086,859086,0
+verification.json points,859086,859086,0
+"plays.json attempts, WNBA Stats 1997 to 2001",120948,120948,0
+"plays.json attempts, ESPN 2002 to 2010",274074,274074,0
+"plays.json attempts, ESPN 2011 to 2026",507748,507748,0
 "season_coverage.csv attempts, season rows that differ",0,0,0
 "season_coverage.csv makes, season rows that differ",0,0,0
 "season_coverage.csv points, season rows that differ",0,0,0
@@ -22,11 +19,11 @@ stated total points,858999,858999,0
 "season_coverage.csv unknown_location, season rows that differ",0,0,0
 "season_coverage.csv games_with_shots, season rows that differ",0,0,0
 "season_zones.csv, area rows that differ",0,0,0
-season_zones.csv attempts,902729,902729,0
+season_zones.csv attempts,902770,902770,0
 "local site season files, area rows that differ",0,0,0
 "local site all.json, area rows that differ",0,0,0
-local site all.json attempts,902729,902729,0
-local site all.json makes,389216,389216,0
-local site all.json points,858999,858999,0
-"local site all.json attempts, regular",834428,834428,0
-"local site all.json attempts, playoffs",68301,68301,0
+local site all.json attempts,902770,902770,0
+local site all.json makes,389257,389257,0
+local site all.json points,859086,859086,0
+"local site all.json attempts, regular",834451,834451,0
+"local site all.json attempts, playoffs",68319,68319,0

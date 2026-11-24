@@ -78,7 +78,8 @@ def early_season(year):
     shots['team_in_game'] = True
     rows = dict(season=year, feed='WNBA Stats', source_rows=len(raw), free_throws=0,
                 field_goal_rows=len(shots), other_rows=int((~field_goal).sum()),
-                scored_rows_without_shot_label=0, points_on_those_rows=0, unscored_rows_without_shot_label=0)
+                scored_rows_without_shot_label=0, points_on_those_rows=0, counted_as_makes_with_box_support=0,
+                unscored_rows_without_shot_label=0)
     return shots, rows, None
 
 
@@ -104,7 +105,9 @@ def espn_season(year):
     score = pd.to_numeric(raw.score_value, errors='coerce')
     free_throw = raw.label.str.contains('freethrow')
     not_a_shot = raw.label.str.contains('turnover|foul|violation|notavailable|noshot')
-    field_goal = ~free_throw & ~not_a_shot & score.isin([0, 2, 3])
+    labelled = ~free_throw & ~not_a_shot & score.isin([0, 2, 3])
+    confirmed = box_supported(year, raw, labelled, ~free_throw & not_a_shot & score.isin([2, 3]))
+    field_goal = labelled | confirmed
     shots = raw[field_goal].merge(games, on='game_id', how='left', validate='many_to_one')
     shots['phase'] = shots.phase.fillna('game not in schedule')
     shots['points'] = pd.to_numeric(shots.score_value).astype(int)
@@ -119,26 +122,27 @@ def espn_season(year):
     shots = add_location(shots, year, depth, lateral, trusted)
     shots['team_in_game'] = side != 0
     in_scope = raw.game_id.isin(games[games.phase.isin(PHASES)].game_id)
-    odd = raw[in_scope & ~free_throw & not_a_shot & score.isin([2, 3])]
+    odd = in_scope & ~free_throw & not_a_shot & score.isin([2, 3])
     rows = dict(season=year, feed='ESPN', source_rows=len(raw), free_throws=int(free_throw.sum()),
                 field_goal_rows=len(shots), other_rows=int((~free_throw & ~field_goal).sum()),
-                scored_rows_without_shot_label=len(odd), points_on_those_rows=int(odd.score_value.sum()),
-                unscored_rows_without_shot_label=int((in_scope & ~free_throw & not_a_shot & score.eq(0)).sum()),
-                **mislabelled_makes(year, odd, shots))
+                scored_rows_without_shot_label=int(odd.sum()), points_on_those_rows=int(raw[odd].score_value.sum()),
+                counted_as_makes_with_box_support=int((odd & confirmed).sum()),
+                unscored_rows_without_shot_label=int((in_scope & ~free_throw & not_a_shot & score.eq(0)).sum()))
     return shots, rows, games
 
 
-def mislabelled_makes(year, odd, shots):
-    """Ask the team box whether scored rows without a shot label are real made baskets."""
-    if odd.empty or year < 2003:
-        return {}
-    box = pd.read_csv(RAW / f'team_box_{year}.csv', low_memory=False).set_index(['game_id', 'team_id']).field_goals_made
-    counted = shots.groupby(['game_id', 'team_id']).makes.sum()
-    extra = odd.groupby(['game_id', 'team_id']).size()
-    checked = [key for key in extra.index if key in box.index and pd.notna(box[key])]
-    closes = sum(counted.get(key, 0) + extra[key] == box[key] for key in checked)
-    return dict(team_games_with_those_rows=len(extra), team_games_with_a_box=len(checked),
-                box_makes_reproduced_when_added=int(closes))
+def box_supported(year, raw, labelled, stray):
+    """A scored row without a shot label is a made basket when the team box still has makes to account for."""
+    keep = pd.Series(False, index=raw.index)
+    if year < 2003 or not stray.any():
+        return keep
+    box = pd.read_csv(RAW / f'team_box_{year}.csv', low_memory=False)
+    box = pd.to_numeric(box.set_index(['game_id', 'team_id']).field_goals_made, errors='coerce').dropna()
+    made = raw[labelled & raw.score_value.gt(0)].groupby(['game_id', 'team_id']).size()
+    for key, rows in raw[stray].groupby(['game_id', 'team_id']):
+        if key in box.index and made.get(key, 0) + len(rows) <= box[key]:
+            keep[rows.index] = True
+    return keep
 
 
 def box_check(year, shots, games):
@@ -229,12 +233,9 @@ def compare(seasons, zones, live):
     for metric in COUNTS:
         note(f'findings.json {metric}', int(total[metric]), findings[metric])
         note(f'verification.json {metric}', int(total[metric]), certificate[metric])
-    for metric, stated in [('attempts', 902729), ('makes', 389216), ('points', 858999)]:
-        note(f'stated total {metric}', int(total[metric]), stated)
-    by_feed = [('WNBA Stats 1997 to 2001', seasons.season.le(2001), 120948), ('ESPN 2002 to 2010', seasons.season.between(2002, 2010), 274074),
-               ('ESPN 2011 to 2026', seasons.season.ge(2011), 507707)]
-    for name, rows, stated in by_feed:
-        note(f'stated attempts, {name}', int(seasons[rows].attempts.sum()), stated)
+    for band in json.loads((SITE / 'plays.json').read_bytes())['sources']['bands']:
+        span = seasons.season.between(band['start'], band['end'])
+        note(f"plays.json attempts, {band['source']} {band['start']} to {band['end']}", int(seasons[span].attempts.sum()), band['attempts'])
 
     coverage = pd.read_csv(RESULTS / 'season_coverage.csv')
     merged = seasons.merge(coverage, on=['season', 'phase'], suffixes=('', '_saved'))
@@ -327,13 +328,12 @@ def report(seasons, feeds, boxes, excluded, special_games, checks, pins, live):
              table(excluded.groupby('phase')[['games', 'attempts', 'makes', 'points']].sum().reset_index()),
              '## Scored rows without a shot label', '',
              f"In regular season and playoff games, {int(feeds.scored_rows_without_shot_label.sum())} ESPN rows carry a score value of 2 or 3 "
-             f"({int(feeds.points_on_those_rows.sum())} points) under a turnover, foul, not available or no shot label. They are outside the totals above. "
-             f"They fall in {int(feeds.team_games_with_those_rows.sum())} team games. {int(feeds.team_games_with_a_box.sum())} of those have a team box, "
-             f"and adding the rows reproduces the box count of made field goals in {int(feeds.box_makes_reproduced_when_added.sum())}. "
-             f"A further {int(feeds.unscored_rows_without_shot_label.sum())} rows with those labels have a score value of 0.", '',
+             f"({int(feeds.points_on_those_rows.sum())} points) under a turnover, foul, not available or no shot label. "
+             f"{int(feeds.counted_as_makes_with_box_support.sum())} of them are counted as made baskets in the totals above, because the team box for that game still has that many makes to account for. "
+             f"The rest stay out because the box is missing or already matches the labelled makes. "
+             f"A further {int(feeds.unscored_rows_without_shot_label.sum())} rows with those labels have a score value of 0 and stay out.", '',
              table(feeds[feeds.scored_rows_without_shot_label.gt(0)][['season', 'scored_rows_without_shot_label', 'points_on_those_rows',
-                                                                       'team_games_with_those_rows', 'team_games_with_a_box',
-                                                                       'box_makes_reproduced_when_added']].astype(int)),
+                                                                       'counted_as_makes_with_box_support']].astype(int)),
              '## ESPN team boxes on identical games', '',
              'Games from 2003 on where both teams have a complete box.', '']
     box = boxes.dropna(subset=['box_games']).drop(columns='season').sum().astype(int)

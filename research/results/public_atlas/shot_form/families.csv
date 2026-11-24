@@ -27,11 +27,11 @@ season,scope,shot_type,attempts,makes
 2018,playoffs,Layup,715,433
 2018,playoffs,Tip shot,11,8
 2018,regular,Dunk,1,1
-2018,regular,Floater or runner,727,286
-2018,regular,Hook shot,601,308
-2018,regular,Jump shot,15987,5967
-2018,regular,Layup,7146,4250
-2018,regular,Other field goal,1354,676
+2018,regular,Floater or runner,739,292
+2018,regular,Hook shot,614,314
+2018,regular,Jump shot,16302,6081
+2018,regular,Layup,7282,4334
+2018,regular,Other field goal,1412,707
 2018,regular,Tip shot,56,26
 2019,playoffs,Floater or runner,90,37
 2019,playoffs,Hook shot,41,24
@@ -39,11 +39,12 @@ season,scope,shot_type,attempts,makes
 2019,playoffs,Layup,698,414
 2019,playoffs,Tip shot,7,4
 2019,regular,Dunk,2,2
-2019,regular,Floater or runner,879,359
-2019,regular,Hook shot,628,286
-2019,regular,Jump shot,16451,5892
-2019,regular,Layup,8972,4904
-2019,regular,Tip shot,129,61
+2019,regular,Floater or runner,881,359
+2019,regular,Hook shot,630,286
+2019,regular,Jump shot,16543,5924
+2019,regular,Layup,9021,4926
+2019,regular,Other field goal,1,1
+2019,regular,Tip shot,130,61
 2020,playoffs,Floater or runner,59,24
 2020,playoffs,Hook shot,26,12
 2020,playoffs,Jump shot,1332,487

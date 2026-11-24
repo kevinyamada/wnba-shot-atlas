@@ -44,10 +44,13 @@ python research/public_atlas/recount.py --live
 python research/public_atlas/check_findings.py
 python research/public_atlas/shot_mix.py
 python research/public_atlas/verify_shot_mix.py
+python research/public_atlas/why_distance.py
+python research/public_atlas/shooters.py
+python research/public_atlas/verify_models.py
 python research/public_atlas/check_browser.py
 ```
 
-The same four new steps are available in VS Code under Terminal, Run Task, with names that start with WNBA public. Each writes its details to the results folder and prints a short summary.
+These steps are also available in VS Code under Terminal, Run Task, with names that start with WNBA public. Each writes its details to the results folder and prints a short summary. The task WNBA public: runner keeps a terminal open in VS Code. While it is open, a step started with `python research/public_atlas/vscode_runner.py --send shooters.py` prints there.
 
 The restore step checks the pinned bytes and reports any upstream changes. An explicit refresh creates a new source snapshot using the same release file list. Raw and derived rows stay in the local cache. Each derived shot carries the source file season and original CSV line number.
 
@@ -55,6 +58,9 @@ The restore step checks the pinned bytes and reports any upstream changes. An ex
 
 A separate check compares the ESPN shot tables with the WNBA Stats shot release on confidently matched games in 2025 and 2026. Its [source pins](reference_manifest.json), [season totals](../results/public_atlas/official_reference_summary.csv) and [game differences](../results/public_atlas/official_reference_games.csv) keep both versions visible. They agree on attempts, makes and points in 661 of 662 games. ESPN records one additional miss in game 401857099, where the ESPN team box also has one fewer attempt than its shot release. The prediction sample excludes that game through the box score check.
 
+- [Why distance is hard to beat](../results/public_atlas/why_distance/README.md)
+- [Shooters against expectation, with pooling and intervals](../results/public_atlas/shooters/README.md)
+- [The 2027 season as an untouched test](PROSPECTIVE_2027.md)
 - [Recount of games, attempts, makes and points from the raw files](../results/public_atlas/recount/README.md)
 - [Shot mix and conversion across seasons](../results/public_atlas/shot_mix/README.md)
 - [How soon teams shoot after a change of possession](../results/public_atlas/plays/timing/README.md)
@@ -69,14 +75,14 @@ The original public benchmark models train on 2022 to 2024 regular season games,
 
 ## Recount and open data questions
 
-`recount.py` reads only the raw CSV files and shares no code with `build.py`. On 23 November 2026 it reproduced 902,729 attempts, 389,216 makes and 858,999 field goal points in 6,982 games with shot records. All 39 comparisons with the saved reports, the local site files and the live site files showed no difference. `check_findings.py` rescored the saved 2026 shot forecasts, the shot type test and the possession forecasts from raw outcomes, and recounted the first shot timing result with a simpler scan of the raw play by play (32.4% after a steal and 0.72% after an opponent basket, against the published 32.7% and 0.7%).
+`recount.py` reads only the raw CSV files and shares no code with `build.py`. It reproduces 902,770 attempts, 389,257 makes and 859,086 field goal points in 6,982 games with shot records, with 811,678 mapped, 1,461 on the other half and 89,631 with unknown locations. Every comparison with the saved reports and the site files shows no difference. `check_findings.py` rescored the saved 2026 shot forecasts, the shot type test and the possession forecasts from raw outcomes, and recounted the first shot timing result with a simpler scan of the raw play by play (32.4% after a steal and 0.72% after an opponent basket, against the published 32.7% and 0.7%).
 
-The recount found one location error, which is now corrected. In 2002 the ESPN shot and player files give the Portland Fire team ID 132052, while the schedule lists 12. The build could not confirm which basket those 1,791 attempts were aimed at, so all of them had an unknown location. The build and the recount now treat the two IDs as the same team in 2002. This placed 1,221 attempts on the mapped half and 2 on the other half. The remaining 568 sit exactly at the basket and stay with the unknown locations under the rule for seasons through 2010. Across all seasons 811,637 attempts are now mapped, 1,461 are on the other half and 89,631 have unknown locations. Before the correction those counts were 810,416, 1,459 and 90,854. Attempts, makes and points did not change.
+Three corrections came out of the recount on 23 November 2026.
 
-The recount also found three things the published numbers do not yet reflect. None changes the attempt total.
+- Portland Fire, 2002. The ESPN shot and player files give the team ID 132052, while the schedule lists 12. The build could not confirm which basket those 1,791 attempts were aimed at, so all of them had an unknown location. The build and the recount now treat the two IDs as the same team in 2002. This placed 1,221 attempts on the mapped half and 2 on the other half. The other 568 sit exactly at the basket and stay unknown under the rule for seasons through 2010.
+- Made baskets under the wrong label. 45 ESPN rows carry a score of 2 or 3 under a turnover, foul, not available or no shot label. A row now counts as a made basket when the team box for that game still has that many makes to account for. This restored 41 makes worth 87 points: 28 in 2012, 4 in 2018, 1 in 2019 and 8 in the 2023 playoffs. One 2012 row has no team box and three 2024 rows are not supported by the box, so those four stay out. The benchmark training seasons did not change. The shot type test gained five eligible games.
+- Shots with no team. 26 attempts with no team ID appeared under a label that joined Unknown team with two real team names. They now appear as Unknown team.
 
-- 45 ESPN rows in regular season and playoff games carry a score of 2 or 3 under a turnover, foul, not available or no shot label. The team box agrees with counting them as made baskets in 21 of the 23 team games that have a box. They are outside the totals.
-- 34 completed games in the ESPN schedule from 2002 on have no shot rows. On games from 2003 on where both teams have a box, the shot feed has 3,632 fewer attempts than the boxes (0.5%).
-- 26 attempts with no team ID appear under a team label that reads Unknown team / San Antonio / Connecticut in the all seasons team filter.
+Before these corrections the totals were 902,729 attempts, 389,216 makes and 858,999 points, with 810,416 mapped, 1,459 on the other half and 90,854 unknown.
 
-The 2026 shot forecasts were trained on 2022 to 2024 and predict makes about one percentage point too low on average in 2026, when the league shot better. The longer play histories did not beat the last recorded event on the 2026 regular season next shot test.
+Still open: 34 completed games in the ESPN schedule from 2002 on have no shot rows, and on games from 2003 on where both teams have a box the shot feed has about 0.5% fewer attempts than the boxes. The 2026 benchmark forecasts were trained on 2022 to 2024 and predict makes about one percentage point too low in 2026, when the league shot better. The longer play histories did not beat the last recorded event on the 2026 regular season next shot test.

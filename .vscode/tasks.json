@@ -74,6 +74,42 @@
       "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
       "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
       "problemMatcher": []
+    },
+    {
+      "label": "WNBA public: runner",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "-u", "${workspaceFolder}/research/public_atlas/vscode_runner.py"],
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
+      "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
+      "problemMatcher": []
+    },
+    {
+      "label": "WNBA public: why distance is hard to beat",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "-u", "${workspaceFolder}/research/public_atlas/why_distance.py"],
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
+      "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
+      "problemMatcher": []
+    },
+    {
+      "label": "WNBA public: shooters against expectation",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "-u", "${workspaceFolder}/research/public_atlas/shooters.py"],
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
+      "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
+      "problemMatcher": []
+    },
+    {
+      "label": "WNBA public: verify new models from raw files",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "-u", "${workspaceFolder}/research/public_atlas/verify_models.py"],
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8", "OPENBLAS_NUM_THREADS": "2"}},
+      "presentation": {"reveal": "always", "panel": "dedicated", "clear": true},
+      "problemMatcher": []
     }
   ]
 }
