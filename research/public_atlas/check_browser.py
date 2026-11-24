@@ -533,6 +533,18 @@ def verify_team_report(browser):
     control = js("[...document.querySelector('#team-control table').tBodies[0].rows].map(r => r.cells[1].textContent.split(' ')[0])")
     assert control == [f"{row['split_half']:.2f}" for row in data['repeatability']]
     assert js("document.querySelectorAll('#headline .takeaways li').length") == 4
+    words = lambda value: 'very consistent' if value >= .75 else 'fairly consistent' if value >= .5 else 'only somewhat consistent' if value >= .3 else 'not consistent'
+    repeat = {row['measure']: row['split_half'] for row in data['repeatability']}
+    trust = js("document.getElementById('team-consistency').textContent")
+    assert trust.startswith('How consistent was this across games?') and all(words(repeat[key]) in trust for key in order) and 'luck' not in trust
+    assert js("document.querySelector('#more-control summary').textContent") == 'How consistent is each team number from game to game?'
+    js("document.getElementById('example-team').click()")
+    aces = next(row for row in data['seasons']['2026'] if row['name'] == 'Las Vegas Aces')
+    browser.wait(f"document.getElementById('team').value === '{aces['id']}' && !document.getElementById('example-note').hidden")
+    assert js("document.getElementById('team-title').textContent") == 'Las Vegas Aces in 2026' and js("document.getElementById('season').value") == '2026'
+    assert 'Las Vegas Aces, 2026' in js("document.getElementById('example-note').textContent")
+    browser.save_image('atlas_example_desktop.png')
+    browser.select('team', 'all')
     browser.select('season', 'all')
     print('TEAM_REPORT_BROWSER_VERIFIED', len(data['seasons']), 'seasons of team tables and one full report', flush=True)
 
@@ -647,6 +659,7 @@ def verify(browser, url):
     browser.call('Page.navigate', {'url': url})
     browser.wait(ready)
     assert js("document.documentElement.dataset.theme") == 'light'
+    assert js("[...document.querySelectorAll('.tabs a')].map(a => a.textContent)") == ['Atlas', 'Methods lab']
     assert js("document.querySelector('#season').value") == 'all'
     combined_first = "document.getElementById('phase').selectedIndex === 0 && document.getElementById('phase').options[0].value === 'all'"
     assert js(combined_first)
@@ -833,6 +846,29 @@ def verify(browser, url):
     assert js(combined_first)
     browser.wait("document.getElementById('shot-timing')?.getBoundingClientRect().top < innerHeight && document.getElementById('shot-timing').getBoundingClientRect().bottom > 0")
     assert js(attempts) == fmt(sum(row[5] for row in all_pack['rows']))
+    lab = json.loads((ROOT / 'explore/data/methods-lab.json').read_bytes())
+    browser.call('Emulation.setDeviceMetricsOverride', {'width': 1440, 'height': 1000, 'deviceScaleFactor': 1, 'mobile': False})
+    browser.call('Page.navigate', {'url': urljoin(url, 'lab/')})
+    browser.wait("location.pathname.endsWith('/lab/') && document.body?.dataset.ready === 'true'")
+    assert js("document.querySelector('.tabs a[aria-current=page]').textContent") == 'Methods lab'
+    shown = js("[...document.querySelectorAll('#lab-scores .relative-row[data-method]')].map(r => [r.dataset.method, r.querySelector('em').textContent])")
+    assert shown == [[row['method'], f"{row['brier']:.5f}"] for row in lab['methods']], shown
+    browser.wait("document.getElementById('lab-spot').textContent.includes('%')")
+    for name in ('Gaussian process', 'Areal CAR model', 'Stacked ensemble'):
+        browser.select('lab-method', name) if False else js(f"(() => {{ const s = document.getElementById('lab-method'); s.value = {json.dumps(name)}; s.dispatchEvent(new Event('change')); }})()")
+        value = lab['surfaces'][name][15 * lab['grid']['cols'] + 25]
+        assert js("document.getElementById('lab-spot').textContent").endswith(f'{100 * value:.1f}%'), name
+    assert js("document.querySelectorAll('#lab-spot-all tbody tr').length") == len(lab['methods'])
+    assert js("[...document.querySelectorAll('#lab-moran .area-line')].map(r => r.dataset.value)") == [f"{row['morans_i']:.3f}" for row in lab['moran']]
+    assert js("[...document.querySelectorAll('#lab-weights .area-line')].map(r => Number(r.dataset.value))") == [row['weight'] for row in lab['weights']]
+    browser.wait("(() => { const c = document.getElementById('lab-variogram'); return c.width > 100 && c.getContext('2d').getImageData(0, 0, c.width, c.height).data.some(v => v > 0); })()")
+    browser.wait("(() => { const c = document.querySelector('#lab-density canvas'); return c.width > 100 && c.getContext('2d').getImageData(0, 0, c.width, c.height).data.some(v => v > 0); })()")
+    assert f"{lab['intensity']['scores']['cox_process']:.4f}" in js("document.getElementById('lab-density').parentElement.textContent")
+    browser.save_image('atlas_lab_desktop.png')
+    browser.call('Emulation.setDeviceMetricsOverride', {'width': 390, 'height': 844, 'deviceScaleFactor': 1, 'mobile': True})
+    time.sleep(.3)
+    assert js("document.documentElement.scrollWidth <= innerWidth"), 'the methods lab overflows on a phone'
+    browser.save_image('atlas_lab_mobile_390.png')
     browser.call('Page.navigate', {'url': urljoin(url, 'study/')})
     browser.wait("location.pathname.endsWith('/study/') && document.body?.dataset.ready==='true' && document.body.dataset.recoveryReady==='true'")
     assert js("window.wnbaCheck.shownAttempts") == 38441

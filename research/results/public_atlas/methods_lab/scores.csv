@@ -1,0 +1,12 @@
+method,family,description,attempts,games,brier,drop_vs_distance_pct,low_pct,high_pct
+Gaussian process,Bayesian field,"A Matern Gaussian process on a spectral basis, with a Laplace approximation to the posterior.",115908,853,0.23064024164474475,0.08930123916167414,0.03989699158648228,0.1379154626176933
+Stacked ensemble,Ensemble,A weighted average whose weights were fitted on the season before.,115908,853,0.23064193916852296,0.08856589139394783,0.04948142834019783,0.12595579950027885
+Simple average,Ensemble,The plain average of the spatial methods.,115908,853,0.2306742217160746,0.07458146326179223,0.026517039616950223,0.12111488388234988
+SPDE mesh with trend,Bayesian field,The mesh field with a smooth curve in distance as its mean.,115908,853,0.23076595701708483,0.03484278643934692,-0.01579970127645823,0.08597340406035228
+SPDE mesh field,Bayesian field,A Matern field on a triangle mesh through the stochastic partial differential equation link.,115908,853,0.23076782699832896,0.03403273208180617,-0.020144897672618726,0.08915696934384619
+Distance curve,Baseline,A smooth curve of make rate against distance from the rim.,115908,853,0.23084639033187113,-0.0,-0.0,-0.0
+Universal kriging,Geostatistics,"Kriging with a trend in distance, so the variogram only has to describe what distance misses.",115908,853,0.2309824710864952,-0.05894861705590126,-0.13670061627426625,0.019885935164127982
+Ordinary kriging,Geostatistics,"Best linear prediction from nearby cells, with weights set by a fitted variogram and a constant mean.",115908,853,0.23099386620244813,-0.06388485016596095,-0.1441454958748494,0.016372462538734183
+Areal CAR model,Areal data,"Court cells borrow strength from their neighbours through a conditional autoregressive prior. Bayesian, with a Laplace approximation.",115908,853,0.2310790752846247,-0.1007964440852022,-0.17084771950168187,-0.021810745825960386
+Inverse distance weighting,Interpolation,"Each spot takes a weighted average of nearby cells, with closer cells counting more.",115908,853,0.231364549626716,-0.22446064419718387,-0.3084712575425818,-0.13736838113631147
+League rate,Baseline,Every spot gets the league make rate.,115908,853,0.24696762026978566,-6.983531306137475,-7.3134475041273115,-6.654949458884821

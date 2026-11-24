@@ -56,6 +56,8 @@ python research/public_atlas/predict_surface.py
 python research/public_atlas/prediction_pack.py
 python research/public_atlas/predict_2027.py
 python research/public_atlas/verify_prediction.py
+python research/public_atlas/methods_lab.py
+python research/public_atlas/verify_lab.py
 python research/public_atlas/against_packs.py
 python research/public_atlas/report_figures.py
 python research/public_atlas/write_report.py
@@ -70,6 +72,7 @@ The restore step checks the pinned bytes and reports any upstream changes. An ex
 
 A separate check compares the ESPN shot tables with the WNBA Stats shot release on confidently matched games in 2025 and 2026. Its [source pins](reference_manifest.json), [season totals](../results/public_atlas/official_reference_summary.csv) and [game differences](../results/public_atlas/official_reference_games.csv) keep both versions visible. They agree on attempts, makes and points in 661 of 662 games. ESPN records one additional miss in game 401857099, where the ESPN team box also has one fewer attempt than its shot release. The prediction sample excludes that game through the box score check.
 
+- [Methods lab: kriging, an areal CAR model, a Gaussian process, the SPDE mesh and ensembles on one question](../results/public_atlas/methods_lab/README.md)
 - [The research report](../../REPORT.md), written from the results files by `write_report.py`
 - [What a team controls: shot quality and shot making on offence and defence](../results/public_atlas/teams/README.md)
 - [Whole possessions: turnovers, offensive rebounds and free throws for and against each team](../results/public_atlas/teams/POSSESSIONS.md)

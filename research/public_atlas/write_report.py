@@ -153,7 +153,8 @@ def main():
              '- [What a team controls](research/results/public_atlas/teams/README.md) and [whole possessions](research/results/public_atlas/teams/POSSESSIONS.md)',
              '- [Shooters against expectation](research/results/public_atlas/shooters/README.md)',
              '- [Why distance is hard to beat](research/results/public_atlas/why_distance/README.md)',
-             '- [Predictions for 2027](research/results/public_atlas/prediction_2027/README.md) and the [Bayesian court surface](research/results/public_atlas/prediction_2027/SURFACE.md)', '']
+             '- [Predictions for 2027](research/results/public_atlas/prediction_2027/README.md) and the [Bayesian court surface](research/results/public_atlas/prediction_2027/SURFACE.md)',
+             '- [Methods lab](research/results/public_atlas/methods_lab/README.md): kriging, an areal model, a Gaussian process, the mesh model and ensembles compared on one question, with variograms, Moran\'s I and a point pattern test', '']
     (ROOT / 'REPORT.md').write_text('\n'.join(lines), encoding='utf-8', newline='\n')
     print('REPORT_WRITTEN', len('\n'.join(lines).split()), 'words', flush=True)
 

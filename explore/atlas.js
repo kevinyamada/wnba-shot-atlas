@@ -1,7 +1,7 @@
 import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=7';
 import { renderStudy } from './study-findings.js?v=6';
 import { shotMix } from './shot-mix.js?v=3';
-import { headline, shooters, ladder, teamReport, teamControl, prediction } from './overview.js?v=6';
+import { headline, shooters, ladder, teamReport, teamControl, prediction, teamStory } from './overview.js?v=7';
 
 const $ = id => document.getElementById(id);
 const controls = ['season', 'team', 'player', 'phase', 'shot-type', 'compare'].map($);
@@ -709,6 +709,22 @@ async function start() {
         shotMix($('shot-mix'), mix, palette);
         if (!usable(teams)) return;
         extras.teams = teams;
+        const example = teams.seasons['2026']?.find(row => row.name === 'Las Vegas Aces');
+        if (example) {
+            $('example-team').hidden = false;
+            $('example-team').addEventListener('click', async () => {
+                document.querySelector('[data-side=taken]').click();
+                $('season').value = '2026';
+                $('compare').value = 'off';
+                $('shot-type').value = 'all';
+                await refresh();
+                $('team').value = String(example.id);
+                $('player').value = 'all';
+                await refresh();
+                $('example-note').textContent = teamStory(teams, '2026', example.id);
+                $('example-note').hidden = false;
+            });
+        }
         teamControl($('team-control'), teams);
         $('more-control').hidden = false;
         renderTeam();

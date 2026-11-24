@@ -13,6 +13,9 @@ function el(tag, text, className) {
     return node;
 }
 
+// Plain words for how alike a number is across two sets of games in the same season.
+const steadiness = value => value >= .75 ? 'very consistent' : value >= .5 ? 'fairly consistent' : value >= .3 ? 'only somewhat consistent' : 'not consistent';
+
 function takeaway(number, text) {
     const item = el('li');
     item.append(el('strong', number), el('span', text));
@@ -67,7 +70,7 @@ export function headline(target, mix, timing, teams) {
     const {title, figure, points} = headlineParts(mix, timing);
     if (teams) {
         const repeat = Object.fromEntries(teams.repeatability.map(row => [row.measure, row.split_half]));
-        points.append(takeaway(repeat.offence_quality.toFixed(2), `is how closely a team’s shot quality repeats between games, on a scale to 1. Opponents’ shot making against it repeats only ${repeat.defence_making.toFixed(2)}.`));
+        points.append(takeaway('Steady', `is the word for where a team shoots from: it looks ${steadiness(repeat.offence_quality)} from game to game. Whether opponents make their shots against a team is ${steadiness(repeat.defence_making)}.`));
     }
     const grid = el('div', null, 'headline-grid');
     grid.append(figure, points);
@@ -355,9 +358,10 @@ export function teamReport(target, data, shooterData, {season, team, pick}, poss
     const teams = data.seasons[year];
     const chosen = teams.find(row => String(row.id) === String(team));
     const repeat = Object.fromEntries(data.repeatability.map(row => [row.measure, row.split_half]));
-    const trust = el('p', 'How much of each bar is the team and how much is luck, on a scale from 0 to 1: '
-        + measureOrder.map(name => `${plain[name].toLowerCase()} ${repeat[name].toFixed(2)}`).join(', ')
-        + '. Closer to 1 means it repeats from game to game. Closer to 0 means mostly chance.', 'caption');
+    const trust = el('p', 'How consistent was this across games? '
+        + measureOrder.map(name => `${plain[name]}: ${steadiness(repeat[name])}.`).join(' ')
+        + ' A number that is not consistent can swing a lot from one stretch of games to the next, so read that bar with care.', 'caption');
+    trust.id = 'team-consistency';
     const scope = el('p', (String(season) === year ? '' : `Showing ${year}. Team reports cover ${years[0]} to ${years.at(-1)}. `)
         + 'Regular season, field goals only. Each value compares the team with the rest of the league, with small samples pulled toward average.', 'caption');
     if (!chosen) {
@@ -459,22 +463,22 @@ export function teamReport(target, data, shooterData, {season, team, pick}, poss
 }
 
 export function teamControl(target, data) {
-    const lead = el('p', 'Split each team season into alternating games and compare the two halves. A number that matches across the halves reflects something the team does. One that does not is mostly chance.');
+    const lead = el('p', 'Take one team’s season and deal its games into two piles, like dealing cards. If a number comes out about the same in both piles, it is consistent: it reflects how the team plays. If the two piles disagree, the number swings from game to game and one stretch of games says little.');
     const table = el('table');
     const head = table.createTHead().insertRow();
-    for (const text of ['Measure', 'Same season', 'Following season', 'Spread between teams']) head.append(Object.assign(el('th', text), {scope: 'col'}));
+    for (const text of ['Measure', 'Match between the two piles', 'Match with the next season', 'In words']) head.append(Object.assign(el('th', text), {scope: 'col'}));
     const body = table.createTBody();
     for (const row of data.repeatability) {
         const line = body.insertRow();
         line.append(Object.assign(el('th', row.label), {scope: 'row'}), el('td', `${row.split_half.toFixed(2)} (${row.split_half_low.toFixed(2)} to ${row.split_half_high.toFixed(2)})`),
-            el('td', `${row.next_season.toFixed(2)} (${row.next_season_low.toFixed(2)} to ${row.next_season_high.toFixed(2)})`), el('td', data.spread[row.measure].spread.toFixed(1)));
+            el('td', `${row.next_season.toFixed(2)} (${row.next_season_low.toFixed(2)} to ${row.next_season_high.toFixed(2)})`), el('td', steadiness(row.split_half)));
     }
     const wrap = el('div', null, 'table-scroll');
     wrap.append(table);
     const strongest = [...data.repeatability].sort((a, b) => b.split_half - a.split_half);
-    const meaning = el('p', `${strongest[0].label} repeats most (${strongest[0].split_half.toFixed(2)}) and ${strongest.at(-1).label.toLowerCase()} repeats least (${strongest.at(-1).split_half.toFixed(2)}). `
+    const meaning = el('p', `${strongest[0].label} is the most consistent and ${strongest.at(-1).label.toLowerCase()} the least. `
         + 'For a defence, the shots it allows say more than whether opponents happened to make them. These are descriptions of past seasons and do not show that changing a scheme would move a number.');
-    const note = el('p', `${data.repeatability[0].team_seasons} team seasons from 2016 to 2026. Values are correlations with 95% ranges. Spread is one standard deviation in points per 100 shots.`, 'caption');
+    const note = el('p', `${data.repeatability[0].team_seasons} team seasons from 2016 to 2026. The match is scored from 0 to 1, where 1 means the two piles agree exactly. The range in brackets is where the true value plausibly lies.`, 'caption');
     target.replaceChildren(lead, wrap, meaning, note);
 }
 
@@ -555,4 +559,15 @@ export function prediction(target, data, court) {
     target.replaceChildren(...parts, el('h3', 'Teams'), label, chart, teamNote, shooterTitle, shooterChart, shooterNote, wrap, past);
     select.addEventListener('change', render);
     render();
+}
+
+export function teamStory(data, year, id) {
+    const teams = data.seasons[year] ?? [];
+    const team = teams.find(row => row.id === id);
+    if (!team) return '';
+    const rank = name => [...teams].sort((a, b) => perGame(b, name) - perGame(a, name)).indexOf(team) + 1;
+    const quality = perGame(team, 'offence_quality'), making = perGame(team, 'offence_making');
+    const effect = (value, thing) => `${thing} ${value >= 0 ? 'earned' : 'cost'} them ${Math.abs(value).toFixed(1)} points a game`;
+    return `${team.name}, ${year}: ${place(rank('offence_quality'))} of ${teams.length} for getting good shots and ${place(rank('offence_making'))} for making them. `
+        + `${effect(quality, 'Where they shot from')}, and ${effect(making, 'their shot making')}, compared with an average team. The full report is under the court.`;
 }

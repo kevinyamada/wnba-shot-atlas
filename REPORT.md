@@ -185,3 +185,4 @@ The [pipeline notes](research/public_atlas/README.md) list every command. Each s
 - [Shooters against expectation](research/results/public_atlas/shooters/README.md)
 - [Why distance is hard to beat](research/results/public_atlas/why_distance/README.md)
 - [Predictions for 2027](research/results/public_atlas/prediction_2027/README.md) and the [Bayesian court surface](research/results/public_atlas/prediction_2027/SURFACE.md)
+- [Methods lab](research/results/public_atlas/methods_lab/README.md): kriging, an areal model, a Gaussian process, the mesh model and ensembles compared on one question, with variograms, Moran's I and a point pattern test

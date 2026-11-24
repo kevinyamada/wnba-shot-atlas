@@ -1,0 +1,9 @@
+{
+  "shots": 45040,
+  "quadrats": 64,
+  "chi_square": 220227.43019538186,
+  "degrees_of_freedom": 63,
+  "variance_to_mean": 3495.6734951647913,
+  "sample": 4000,
+  "simulations": 39
+}

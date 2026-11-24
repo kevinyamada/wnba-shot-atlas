@@ -1,0 +1,7 @@
+{
+  "methods": 11,
+  "attempts": 115908,
+  "best": "Gaussian process",
+  "league_brier": 0.24697,
+  "manifestSha256": "a3638e383085063601ae6fee398ef9adb0ab99a221ef4e2870105d26f56eb8fa"
+}

@@ -54,6 +54,30 @@ a:focus-visible, button:focus-visible, select:focus-visible, canvas:focus-visibl
 .brand-ball { inline-size: 1.25rem; block-size: 1.25rem; border: 1.5px solid var(--accent); border-radius: 50%; position: relative; transform: rotate(-28deg); }
 .brand-ball::before, .brand-ball::after { content: ''; position: absolute; inset: 0 46%; border-left: 1px solid var(--accent); }
 .brand-ball::after { transform: rotate(90deg); }
+.example { padding: .42rem .7rem; border: 1px solid var(--deep); border-radius: .35rem; background: var(--surface); color: var(--deep); font-size: .875rem; font-weight: 650; }
+.example-note { margin: 0 0 .8rem; padding: .7rem .9rem; border-left: 3px solid var(--accent); background: var(--wash); max-width: 78ch; }
+.tabs { display: flex; gap: .2rem; margin-left: .6rem; }
+.tabs a { padding: .35rem .7rem; border-radius: .3rem; color: var(--ink); font-size: .92rem; font-weight: 600; text-decoration: none; }
+.tabs a:hover { background: var(--wash); }
+.tabs a[aria-current='page'] { background: var(--deep); color: var(--surface); }
+#lab-status { margin-block: .65rem; color: var(--muted); font-size: .875rem; }
+#lab-status:empty { display: none; }
+#lab-content > section:first-child { margin-top: .6rem; border-top: 0; padding-top: 0; }
+#lab-content p { max-width: 76ch; margin-top: .6rem; }
+#lab-content h3 { margin-top: 1.6rem; font-size: 1.25rem; }
+#lab-scores { max-width: 52rem; margin-top: .9rem; }
+#lab-scores .relative-row { grid-template-columns: minmax(10rem, .9fr) minmax(4rem, 1fr) minmax(4.5rem, .35fr); }
+#lab-scores small { display: block; color: var(--muted); font-size: .76rem; }
+#lab-surface { max-width: 60rem; }
+#lab-spot { font-weight: 650; }
+#lab-density { max-width: 26rem; margin-top: .8rem; }
+#lab-spot-all table { font-size: .8rem; }
+#lab-spot-all th, #lab-spot-all td { padding: .3rem .4rem; }
+#lab-content .history-stage { max-width: 46rem; margin-top: .6rem; }
+#lab-content .history-stage canvas { height: 260px; }
+#lab-content .area-list { max-width: 44rem; margin-top: .6rem; }
+#lab-content table { max-width: 34rem; }
+@media (max-width: 36rem) { .masthead-years { display: none; } .tabs { margin-left: 0; } .tabs a { padding: .3rem .5rem; font-size: .84rem; } #lab-scores .relative-row { grid-template-columns: minmax(7rem, .9fr) minmax(3rem, 1fr) minmax(3.6rem, .4fr); } }
 .masthead-years { margin-left: auto; color: var(--muted); font-size: .875rem; }
 .theme-toggle { width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); font-size: 1.2rem; line-height: 1; }
 .intro { display: flex; justify-content: space-between; align-items: end; gap: 1.5rem; padding-block: 1.3rem .95rem; }

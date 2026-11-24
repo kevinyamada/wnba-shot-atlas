@@ -5,15 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Compare WNBA shooting from 1997 to 2026 by season, team, player and position on the court.">
   <title>WNBA Shot Atlas | Explore 1997 to 2026</title>
-  <link rel="stylesheet" href="atlas.css?v=14">
+  <link rel="stylesheet" href="atlas.css?v=17">
   <script src="../theme.js?v=light-default"></script>
-  <script type="module" src="atlas.js?v=16"></script>
+  <script type="module" src="atlas.js?v=17"></script>
 </head>
 <body>
   <a class="skip" href="#explorer">Skip to the shot explorer</a>
   <header class="masthead">
     <div class="masthead-inner">
       <span class="brand"><span class="brand-ball" aria-hidden="true"></span> WNBA Shot Atlas</span>
+      <nav class="tabs" aria-label="Sections">
+        <a href="../" aria-current="page">Atlas</a>
+        <a href="../lab/">Methods lab</a>
+      </nav>
       <span class="masthead-years">1997 to 2026</span>
       <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">☾</button>
     </div>
@@ -46,12 +50,14 @@
           <button type="button" data-side="taken" aria-pressed="true">Shots taken</button>
           <button type="button" data-side="allowed" aria-pressed="false">Shots allowed</button>
         </div>
+        <button type="button" id="example-team" class="example" hidden>See an example: the 2026 Las Vegas Aces</button>
         <label id="compare-units" hidden>
           <input id="normalize-shots" type="checkbox" checked aria-controls="court-pair area-table area-stats history-chart" aria-describedby="metric-note">
           Normalize per 100 shots
         </label>
         <div class="legend"><span id="legend-low">0%</span><span class="legend-strip" aria-hidden="true"></span><span id="legend-high"></span></div>
       </div>
+      <p class="example-note" id="example-note" role="status" hidden></p>
       <div class="workbench" id="workbench">
         <div class="court-pair" id="court-pair">
           <article class="court-panel" id="court-primary">
@@ -125,7 +131,7 @@
           </section>
         </details>
         <details class="more" id="more-prediction" hidden><summary>Prediction: what will 2027 look like?</summary><div id="prediction"></div></details>
-        <details class="more" id="more-control" hidden><summary>What does a team actually control?</summary><div id="team-control"></div></details>
+        <details class="more" id="more-control" hidden><summary>How consistent is each team number from game to game?</summary><div id="team-control"></div></details>
         <details class="more" id="more-shooters" hidden><summary>Who makes more shots than expected?</summary><div id="shooters"></div></details>
         <details class="more" id="more-mix"><summary>Better spots or better shooting?</summary>
           <section id="shot-mix" aria-labelledby="mix-title" hidden></section>

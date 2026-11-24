@@ -1,0 +1,4 @@
+residual,morans_i,p_value,cells,neighbour_pairs
+Observed make rate,0.5314145386367781,0.001,346,633
+After the distance curve,0.0672258704959568,0.037,346,633
+After the mesh model with trend,-0.07751862614730293,0.974,346,633
