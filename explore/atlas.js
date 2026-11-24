@@ -50,6 +50,42 @@ function options(select, first, items, selected) {
     select.value = [...select.options].some(option => option.value === selected) ? selected : select.options[0].value;
 }
 
+const linkNames = [['season', 'season', 'all'], ['team', 'team', 'all'], ['player', 'player', 'all'], ['phase', 'games', 'all'], ['shot-type', 'type', 'all'], ['compare', 'compare', 'off']];
+
+function shareLink() {
+    const link = new URL(location.href);
+    link.search = '';
+    for (const [id, name, unset] of linkNames) {
+        if ($(id).value !== unset) link.searchParams.set(name, $(id).value);
+    }
+    if (model.side !== 'taken') link.searchParams.set('side', model.side);
+    if (model.metric !== 'share') link.searchParams.set('colour', model.metric);
+    return link;
+}
+
+function setSide(side) {
+    model.side = side;
+    document.querySelectorAll('[data-side]').forEach(item => item.setAttribute('aria-pressed', String(item.dataset.side === side)));
+    $('player').value = 'all';
+    $('player').disabled = side === 'allowed';
+}
+
+function setMetric(metric) {
+    model.metric = metric;
+    document.querySelectorAll('[data-metric]').forEach(item => item.setAttribute('aria-pressed', String(item.dataset.metric === metric)));
+}
+
+function openLink() {
+    const wanted = new URLSearchParams(location.search);
+    if (['taken', 'allowed'].includes(wanted.get('side'))) setSide(wanted.get('side'));
+    if (['share', 'rate', 'points'].includes(wanted.get('colour'))) setMetric(wanted.get('colour'));
+    options($('compare'), 'No comparison', [...index.seasons.map(year => [String(year), year]), ['prediction', '2027 prediction']], wanted.get('compare'));
+    for (const [id, name] of linkNames.filter(([id]) => ['season', 'phase', 'shot-type'].includes(id))) {
+        if ([...$(id).options].some(option => option.value === wanted.get(name))) $(id).value = wanted.get(name);
+    }
+    return {team: wanted.get('team') ?? 'all', player: wanted.get('player') ?? 'all'};
+}
+
 function searchFilters() {
     return {phase: $('phase').value, team: $('team').value, player: $('player').value, type: $('shot-type').value};
 }
@@ -539,7 +575,7 @@ function refreshArea() {
     historySeries();
 }
 
-async function refresh() {
+async function refresh(opening = {}) {
     const version = ++selectionVersion;
     const primary = $('season').value === 'all' ? 'all' : Number($('season').value);
     const compare = $('compare').value;
@@ -550,7 +586,7 @@ async function refresh() {
     try {
         const seasons = await Promise.all(years.map(seasonData));
         if (version !== selectionVersion) return;
-        filtersFor(seasons.filter(entry => !entry.prediction), searchFilters());
+        filtersFor(seasons.filter(entry => !entry.prediction), {...searchFilters(), ...opening});
         model.views = seasons.map(entry => ({entry, era: entry.season === 'all' ? index.court.eras : index.court.eras.filter(era => era.id === entry.court)}));
         $('atlas-content').hidden = false;
         model.hover = [];
@@ -560,6 +596,7 @@ async function refresh() {
         renderTypes(seasons[0], searchFilters());
         renderTeam();
         $('load-state').textContent = '';
+        history.replaceState(null, '', shareLink());
         document.body.dataset.ready = 'true';
     } catch (error) {
         if (version === selectionVersion) {
@@ -657,20 +694,22 @@ async function start() {
     $('shot-type').append(...index.shotTypes.map((name, i) => new Option(name, i)));
     controls.forEach(control => {
         control.disabled = false;
-        control.addEventListener('change', refresh);
+        control.addEventListener('change', () => refresh());
     });
     document.querySelectorAll('[data-metric]').forEach(button => button.addEventListener('click', () => {
-        model.metric = button.dataset.metric;
-        document.querySelectorAll('[data-metric]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        setMetric(button.dataset.metric);
         draw();
+        history.replaceState(null, '', shareLink());
     }));
     document.querySelectorAll('[data-side]').forEach(button => button.addEventListener('click', () => {
-        model.side = button.dataset.side;
-        document.querySelectorAll('[data-side]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
-        $('player').value = 'all';
-        $('player').disabled = model.side === 'allowed';
+        setSide(button.dataset.side);
         refresh();
     }));
+    $('copy-link').addEventListener('click', async () => {
+        const copied = await navigator.clipboard?.writeText(shareLink().href).then(() => true, () => false);
+        $('copy-link').textContent = copied ? 'Link copied' : 'Copy the address from the address bar';
+        setTimeout(() => { $('copy-link').textContent = 'Copy link to this view'; }, 2500);
+    });
     $('normalize-shots').addEventListener('change', () => {
         model.hover = [];
         panels.forEach(panel => { panel.querySelector('.court-hover').hidden = true; });
@@ -688,11 +727,10 @@ async function start() {
         $('team').value = 'all';
         $('player').value = 'all';
         $('shot-type').value = 'all';
-        model.metric = 'share';
+        setMetric('share');
         const square = Math.floor((21 - grid.baseline) / grid.size) * grid.cols + Math.floor(grid.cols / 2);
         model.lastSquare = square;
         model.selection = {kind: 'cell', value: square};
-        document.querySelectorAll('[data-metric]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.metric === 'share')));
         refresh();
     });
     panels.forEach(bindCourt);
@@ -700,7 +738,7 @@ async function start() {
     const resize = () => { cancelAnimationFrame(paintFrame); paintFrame = requestAnimationFrame(draw); };
     window.addEventListener('resize', resize);
     new MutationObserver(resize).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
-    await refresh();
+    await refresh(openLink());
     const matches = data => data.manifestSha256 === index.manifestSha256;
     const teamData = json('data/teams.json').catch(() => null);
     Promise.all([json('data/shot-mix.json'), json('data/shot-timing.json').catch(() => null), teamData]).then(([mix, timing, teams]) => {

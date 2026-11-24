@@ -814,10 +814,13 @@ def verify(browser, url):
     js("document.querySelector('#theme-toggle').click()")
     assert js("getComputedStyle(document.documentElement).getPropertyValue('--colour-mid').trim()") != before_colours
     assert js("document.documentElement.dataset.theme") == 'dark'
+    kept = js("location.search")
     browser.call('Page.reload', {'ignoreCache': True})
     browser.wait(ready)
-    assert js("document.documentElement.dataset.theme") == 'dark'
+    assert js("document.documentElement.dataset.theme") == 'dark' and js("location.search") == kept, 'a reload should keep the theme and the selection'
     js("document.querySelector('#theme-toggle').click()")
+    browser.call('Page.navigate', {'url': url})
+    browser.wait(ready + " && location.search === ''")
     for width in [390, 320]:
         browser.call('Emulation.setDeviceMetricsOverride', {'width': width, 'height': 844, 'deviceScaleFactor': 1, 'mobile': True})
         time.sleep(.2)
@@ -892,8 +895,43 @@ def verify(browser, url):
     assert js("window.wnbaCheck.shownAttempts") == 38441
     browser.call('Page.navigate', {'url': urljoin(url, 'meeting/')})
     browser.wait("location.pathname.endsWith('/meeting/') && document.body?.dataset.recoveryReady==='true' && [...document.images].every(i=>i.complete && i.naturalWidth>0)")
+    verify_links(browser, url)
     assert not browser.errors, browser.errors[:3]
     print('ATLAS_BROWSER_VERIFIED', len(seasons), 'seasons, pooled totals, phases, shot types, spatial and event findings, posterior, themes, mobile, original study', flush=True)
+
+
+def verify_links(browser, url):
+    """Open the page from links that carry a selection, and check that the address follows the controls."""
+    js = browser.js
+    season = json.loads((ROOT / 'explore/data/2026.json').read_bytes())
+    team = next(ident for ident, name in season['teams'].items() if name == 'Las Vegas Aces')
+    player = str(next(row[2] for row in season['rows'] if str(row[1]) == team and row[2]))
+    value = lambda ident: js(f"document.getElementById('{ident}').value")
+    settled = "document.body?.dataset.ready === 'true' && document.getElementById('load-state').textContent === ''"
+
+    def visit(query):
+        js("window.leaving = true")
+        browser.call('Page.navigate', {'url': url + query})
+        browser.wait(f"!window.leaving && {settled}")
+
+    visit(f'?season=2026&team={team}&player={player}&games=0&colour=points')
+    assert [value(ident) for ident in ('season', 'team', 'player', 'phase')] == ['2026', team, player, '0']
+    assert js("document.querySelector('[data-metric][aria-pressed=true]').dataset.metric") == 'points'
+    assert js("new URLSearchParams(location.search).get('player')") == player
+    browser.select('player', 'all')
+    browser.wait("!document.getElementById('team-report').hidden && document.getElementById('team-title').textContent === 'Las Vegas Aces in 2026'")
+    assert js("location.search") == f'?season=2026&team={team}&games=0&colour=points'
+    assert js("document.getElementById('copy-link').textContent") == 'Copy link to this view'
+
+    visit(f'?season=2012&compare=2013&side=allowed&team={team}')
+    assert [value('season'), value('compare')] == ['2012', '2013'] and not js("document.getElementById('court-secondary').hidden")
+    assert js("document.querySelector('[data-side][aria-pressed=true]').dataset.side") == 'allowed' and js("document.getElementById('player').disabled")
+    assert value('team') == ('all' if team not in json.loads((ROOT / 'explore/data/against-2012.json').read_bytes())['teams'] else team)
+
+    visit('?season=1890&team=999999&games=7&compare=1890&side=up&colour=none')
+    assert [value(ident) for ident in ('season', 'team', 'player', 'phase', 'compare')] == ['all', 'all', 'all', 'all', 'off']
+    assert js("location.search") == ''
+    print('LINKS_BROWSER_VERIFIED team, player, comparison, shots allowed and unknown values', flush=True)
 
 
 class QuietHandler(SimpleHTTPRequestHandler):

@@ -107,6 +107,8 @@ The site and the studies are organised around questions a WNBA staff could act o
 
 The main page is written for a reader with no statistics background. Team and shooter charts use points a game or makes per 100 shots, with the words better, worse, more and fewer in place of signed numbers. Ranges are called likely ranges. Model names and technical detail live in the Methods lab tab and the research report.
 
+The page address follows the filters, so any view can be shared. The names are `season`, `team`, `player`, `games`, `type`, `compare`, `side` and `colour`. For example, `?season=2026&team=17` opens the 2026 Las Vegas Aces. Values the data do not hold are ignored.
+
 The public files hold shot locations and event order. They hold no passes, cuts, defender positions or lineups on the floor, so they cannot value individual actions or defensive pressure. That needs tracking data from the league or a team.
 
 ## Recount and open data questions
