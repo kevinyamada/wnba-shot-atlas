@@ -577,6 +577,7 @@ function refreshArea() {
 
 async function refresh(opening = {}) {
     const version = ++selectionVersion;
+    $('example-note').hidden = true;
     const primary = $('season').value === 'all' ? 'all' : Number($('season').value);
     const compare = $('compare').value;
     const other = compare === 'prediction' ? 'prediction' : Number(compare);
@@ -752,16 +753,17 @@ async function start() {
         if (example) {
             $('example-team').hidden = false;
             $('example-team').addEventListener('click', async () => {
-                document.querySelector('[data-side=taken]').click();
+                setSide('taken');
                 $('season').value = '2026';
                 $('compare').value = 'off';
                 $('shot-type').value = 'all';
-                await refresh();
-                $('team').value = String(example.id);
-                $('player').value = 'all';
-                await refresh();
-                $('example-note').textContent = teamStory(teams, '2026', example.id);
+                await refresh({team: String(example.id), player: 'all'});
+                $('example-text').textContent = teamStory(teams, '2026', example.id);
                 $('example-note').hidden = false;
+            });
+            $('example-close').addEventListener('click', () => {
+                $('season').value = 'all';
+                refresh({team: 'all', player: 'all'});
             });
         }
         teamControl($('team-control'), teams);

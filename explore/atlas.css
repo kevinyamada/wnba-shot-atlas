@@ -54,8 +54,11 @@ a:focus-visible, button:focus-visible, select:focus-visible, canvas:focus-visibl
 .brand-ball { inline-size: 1.25rem; block-size: 1.25rem; border: 1.5px solid var(--accent); border-radius: 50%; position: relative; transform: rotate(-28deg); }
 .brand-ball::before, .brand-ball::after { content: ''; position: absolute; inset: 0 46%; border-left: 1px solid var(--accent); }
 .brand-ball::after { transform: rotate(90deg); }
-.example { padding: .42rem .7rem; border: 1px solid var(--deep); border-radius: .35rem; background: var(--surface); color: var(--deep); font-size: .875rem; font-weight: 650; }
-.example-note { margin: 0 0 .8rem; padding: .7rem .9rem; border-left: 3px solid var(--accent); background: var(--wash); max-width: 78ch; }
+.text-button { padding: 0; border: 0; background: none; color: var(--deep); font: inherit; font-size: .875rem; text-decoration: underline; text-underline-offset: .18em; cursor: pointer; }
+.text-button:hover { color: var(--accent); }
+.quiet-actions { display: flex; flex-wrap: wrap; gap: .3rem 1.3rem; }
+.example-note { display: flex; flex-wrap: wrap; align-items: baseline; gap: .4rem 1rem; margin: 0 0 .8rem; padding: .7rem .9rem; border-left: 3px solid var(--accent); background: var(--wash); max-width: 78ch; }
+.example-note span { flex: 1 1 22rem; }
 .tabs { display: flex; gap: .2rem; margin-left: .6rem; }
 .tabs a { padding: .35rem .7rem; border-radius: .3rem; color: var(--ink); font-size: .92rem; font-weight: 600; text-decoration: none; }
 .tabs a:hover { background: var(--wash); }

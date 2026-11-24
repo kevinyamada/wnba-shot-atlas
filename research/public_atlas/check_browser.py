@@ -544,6 +544,14 @@ def verify_team_report(browser):
     assert js("document.getElementById('team-title').textContent") == 'Las Vegas Aces in 2026' and js("document.getElementById('season').value") == '2026'
     assert 'Las Vegas Aces, 2026' in js("document.getElementById('example-note').textContent")
     browser.save_image('atlas_example_desktop.png')
+    assert js("document.getElementById('example-team').closest('.view-bar') === null && document.getElementById('copy-link').closest('.view-bar') === null")
+    js("document.getElementById('example-close').click()")
+    browser.wait("document.getElementById('example-note').hidden && document.getElementById('season').value === 'all' && document.getElementById('team').value === 'all' && document.getElementById('load-state').textContent === ''")
+    js("document.getElementById('example-team').click()")
+    browser.wait(f"document.getElementById('team').value === '{aces['id']}' && !document.getElementById('example-note').hidden")
+    browser.select('phase', '0')
+    assert js("document.getElementById('example-note').hidden"), 'changing a filter should put the example note away'
+    browser.select('phase', 'all')
     browser.select('team', 'all')
     browser.select('season', 'all')
     print('TEAM_REPORT_BROWSER_VERIFIED', len(data['seasons']), 'seasons of team tables and one full report', flush=True)

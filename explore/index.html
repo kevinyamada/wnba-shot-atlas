@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Compare WNBA shooting from 1997 to 2026 by season, team, player and position on the court.">
   <title>WNBA Shot Atlas | Explore 1997 to 2026</title>
-  <link rel="stylesheet" href="atlas.css?v=18">
+  <link rel="stylesheet" href="atlas.css?v=19">
   <script src="../theme.js?v=light-default"></script>
-  <script type="module" src="atlas.js?v=19"></script>
+  <script type="module" src="atlas.js?v=20"></script>
 </head>
 <body>
   <a class="skip" href="#explorer">Skip to the shot explorer</a>
@@ -27,6 +27,10 @@
       <div>
         <h1>Where the WNBA shoots</h1>
         <p>Pick a season, team or player to see where the shots come from and what they are worth.</p>
+        <p class="quiet-actions">
+          <button type="button" id="example-team" class="text-button" hidden>See an example: the 2026 Las Vegas Aces</button>
+          <button type="button" id="copy-link" class="text-button">Copy link to this view</button>
+        </p>
       </div>
       <p class="source-credit">ESPN and WNBA Stats via wehoop<br><strong id="total-shots"></strong></p>
     </div>
@@ -50,15 +54,16 @@
           <button type="button" data-side="taken" aria-pressed="true">Shots taken</button>
           <button type="button" data-side="allowed" aria-pressed="false">Shots allowed</button>
         </div>
-        <button type="button" id="example-team" class="example" hidden>See an example: the 2026 Las Vegas Aces</button>
-        <button type="button" id="copy-link" class="example">Copy link to this view</button>
         <label id="compare-units" hidden>
           <input id="normalize-shots" type="checkbox" checked aria-controls="court-pair area-table area-stats history-chart" aria-describedby="metric-note">
           Normalize per 100 shots
         </label>
         <div class="legend"><span id="legend-low">0%</span><span class="legend-strip" aria-hidden="true"></span><span id="legend-high"></span></div>
       </div>
-      <p class="example-note" id="example-note" role="status" hidden></p>
+      <div class="example-note" id="example-note" role="status" hidden>
+        <span id="example-text"></span>
+        <button type="button" id="example-close" class="text-button">Back to all seasons</button>
+      </div>
       <div class="workbench" id="workbench">
         <div class="court-pair" id="court-pair">
           <article class="court-panel" id="court-primary">
