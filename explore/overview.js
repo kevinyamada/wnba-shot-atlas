@@ -84,17 +84,18 @@ function shooterRow(player, limit, chosen) {
     point.style.left = at(player.estimate) + '%';
     track.append(interval, point);
     row.append(el('span', player.name), track, el('em', `${signed(player.estimate)} · ${count.format(player.attempts)} shots`));
-    row.title = `${player.makes} made, ${player.expected} expected. Range ${signed(player.low)} to ${signed(player.high)}.`;
+    row.title = (player.makes == null ? 'Predicted. ' : `${player.makes} made, ${player.expected} expected. `) + `Range ${signed(player.low)} to ${signed(player.high)}.`;
     return row;
 }
 
-export function shooters(target, data) {
+export function shooters(target, data, predicted) {
     const seasons = Object.keys(data.seasons).sort().reverse();
     const first = seasons.at(-1), last = seasons[0];
     const lead = el('p', 'Makes per 100 shots above what an average shooter would make from the same distances and shot types. The line shows the range the data support. Short records are pulled toward the middle.');
     const season = el('select');
     season.id = 'shooter-season';
-    season.append(new Option(`${first} to ${last}`, 'career'), ...seasons.map(year => new Option(year, year)));
+    season.append(new Option(`${first} to ${last}`, 'career'), ...(predicted ? [new Option(`${predicted.season} prediction`, 'prediction')] : []),
+        ...seasons.map(year => new Option(year, year)));
     const who = el('select');
     who.id = 'shooter-player';
     const pickers = el('div', null, 'timing-controls');
@@ -114,6 +115,7 @@ export function shooters(target, data) {
         + `True skill differs between players by about ${data.skillSpread.toFixed(1)} makes per 100 shots. The estimate reflects the shots a player took and cannot separate skill from shot selection or defensive attention.`, 'caption');
 
     function players() {
+        if (season.value === 'prediction') return predicted.shooters;
         return season.value === 'career' ? data.career : data.seasons[season.value];
     }
 
@@ -127,7 +129,9 @@ export function shooters(target, data) {
         if (chosen && !shown.includes(chosen)) shown.push(chosen);
         chart.replaceChildren(key, ...shown.map(player => shooterRow(player, limit, player === chosen)));
         const minimum = season.value === 'career' ? data.minimum.career : data.minimum.season;
-        note.textContent = `Top ten of ${list.length} players with at least ${minimum} eligible attempts` + (chosen && shown.length > 10 ? `, plus ${chosen.name}.` : '.');
+        note.textContent = season.value === 'prediction'
+            ? `Predicted for ${predicted.season} from ${predicted.season - 1}, written on ${predicted.written}. Top ten of ${list.length} players. Shot counts are from ${predicted.season - 1}.`
+            : `Top ten of ${list.length} players with at least ${minimum} eligible attempts` + (chosen && shown.length > 10 ? `, plus ${chosen.name}.` : '.');
     }
 
     function fill() {
@@ -308,4 +312,70 @@ export function teamControl(target, data) {
         + 'For a defence, the shots it allows say more than whether opponents happened to make them. These are descriptions of past seasons and do not show that changing a scheme would move a number.');
     const note = el('p', `${data.repeatability[0].team_seasons} team seasons from 2016 to 2026. Values are correlations with 95% ranges. Spread is one standard deviation in points per 100 shots.`, 'caption');
     target.replaceChildren(lead, wrap, meaning, note);
+}
+
+export function prediction(target, data) {
+    const lead = el('p', `Written on ${data.written}, before any ${data.season} game. Each number is last season’s estimate scaled by how much such estimates carried over to the next season in the past.`);
+    const league = el('ul', null, 'takeaways');
+    for (const row of data.league) {
+        const share = row.measure.startsWith('Share');
+        const show = value => share ? value.toFixed(1) + '%' : value.toFixed(2);
+        league.append(takeaway(show(row.prediction), `${share ? 'of shots from the three point area' : 'field goal points per shot'}. Range ${show(row.low)} to ${show(row.high)}. In ${data.season - 1} it was ${show(row.value_2026)}.`));
+    }
+    const label = el('label', 'Team measure', 'study-picker');
+    const select = el('select');
+    select.id = 'prediction-measure';
+    for (const name of ['net', 'offence_quality', 'offence_making', 'defence_quality', 'defence_making']) select.append(new Option(data.measures[name], name));
+    label.append(select);
+    const chart = el('div', null, 'relative-chart');
+    chart.id = 'prediction-teams';
+    chart.setAttribute('aria-live', 'polite');
+
+    function row(name, value, limit, note) {
+        const line = el('div', null, 'relative-row');
+        const track = el('div', null, 'relative-track');
+        const interval = el('span', null, 'relative-interval');
+        const point = el('span', null, 'relative-point');
+        const at = x => 50 + 50 * Math.max(-1, Math.min(1, x / limit));
+        interval.style.left = at(value.low) + '%';
+        interval.style.width = (at(value.high) - at(value.low)) + '%';
+        point.style.left = at(value.prediction) + '%';
+        track.append(interval, point);
+        line.append(el('span', name), track, el('em', note));
+        return line;
+    }
+
+    function render() {
+        const name = select.value;
+        const better = name.startsWith('defence') ? 1 : -1;
+        const teams = [...data.teams].sort((a, b) => better * (a[name].prediction - b[name].prediction));
+        const limit = Math.ceil(Math.max(...teams.flatMap(team => [Math.abs(team[name].low), Math.abs(team[name].high)])) / 2) * 2;
+        const key = el('div', null, 'relative-key');
+        key.append(el('span', `${limit} below`), el('span', 'League average'), el('span', `${limit} above`));
+        chart.replaceChildren(key, ...teams.map(team => row(team.name, team[name], limit, `${signed(team[name].prediction)} · was ${signed(team[name].last)}`)));
+    }
+
+    const teamNote = el('p', 'Points per 100 shots against the league. The lines are wide because one season says only so much about the next, and the rule knows nothing about trades, injuries, the draft or coaching changes.', 'caption');
+    const shooterTitle = el('h3', 'Shooters most likely to beat expectation');
+    const limit = Math.ceil(Math.max(...data.shooters.slice(0, 10).flatMap(p => [Math.abs(p.low), Math.abs(p.high)])) / 2) * 2;
+    const shooterChart = el('div', null, 'relative-chart');
+    shooterChart.id = 'prediction-shooters';
+    const key = el('div', null, 'relative-key');
+    key.append(el('span', `${limit} fewer`), el('span', 'League expectation'), el('span', `${limit} more`));
+    shooterChart.append(key, ...data.shooters.slice(0, 10).map(p => row(p.name, {prediction: p.estimate, low: p.low, high: p.high}, limit, `${signed(p.estimate)} · was ${signed(p.last)}`)));
+    const shooterNote = el('p', `Makes per 100 shots above expectation, for a season with as many attempts as in ${data.season - 1}. All ${data.shooters.length} predicted players are under “Who makes more shots than expected?”.`, 'caption');
+    const table = el('table');
+    const head = table.createTHead().insertRow();
+    for (const text of ['Past error of each rule', 'League average', 'Same as last season', 'This rule']) head.append(Object.assign(el('th', text), {scope: 'col'}));
+    const body = table.createTBody();
+    for (const item of data.backtest) {
+        const line = body.insertRow();
+        line.append(Object.assign(el('th', item.label), {scope: 'row'}), el('td', item.rmse_league.toFixed(2)), el('td', item.rmse_same.toFixed(2)), el('td', item.rmse_carried.toFixed(2)));
+    }
+    const wrap = el('div', null, 'table-scroll');
+    wrap.append(table);
+    const past = el('p', 'Each season from 2019 to 2026 was predicted from the one before, using only earlier seasons. Lower error is better. These predictions will be scored once against the 2027 season.', 'caption');
+    target.replaceChildren(lead, league, label, chart, teamNote, shooterTitle, shooterChart, shooterNote, wrap, past);
+    select.addEventListener('change', render);
+    render();
 }

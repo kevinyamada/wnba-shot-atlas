@@ -397,7 +397,7 @@ def verify_overview(browser):
     bars = js("[...document.querySelectorAll('.diet-row')].map(r => [...r.querySelectorAll('.diet-bar > div')].map(d => [d.querySelector('strong').textContent, d.querySelector('small').textContent]))")
     for row, share, rate in zip(bars, ('share_before', 'share_after'), ('points_per_shot_before', 'points_per_shot_after'), strict=True):
         assert row == [[f"{round(100 * a[share])}%", f"{a[rate]:.2f} a shot"] for a in areas], row
-    points = js("[...document.querySelectorAll('.takeaways strong')].map(node => node.textContent)")
+    points = js("[...document.querySelectorAll('#headline .takeaways strong')].map(node => node.textContent)")
     groups = timing['scopes']['both']['groups']
     steal = round(100 * groups['Steal']['shots'][timing['mainSeconds']] / groups['Steal']['starts'])
     assert points[:3] == [f"{round(100 * areas[2]['share_after'])}%", f"{change['after']:.2f}", f'{steal}%'], points
@@ -473,9 +473,41 @@ def verify_team_report(browser):
     browser.wait("document.getElementById('team-table') && document.getElementById('team').value === 'all'")
     control = js("[...document.querySelector('#team-control table').tBodies[0].rows].map(r => r.cells[1].textContent.split(' ')[0])")
     assert control == [f"{row['split_half']:.2f}" for row in data['repeatability']]
-    assert js("document.querySelectorAll('.takeaways li').length") == 4
+    assert js("document.querySelectorAll('#headline .takeaways li').length") == 4
     browser.select('season', 'all')
     print('TEAM_REPORT_BROWSER_VERIFIED', len(data['seasons']), 'seasons of team tables and one full report', flush=True)
+
+
+def verify_prediction(browser):
+    """Match the 2027 prediction section and the shooter prediction option with the saved predictions."""
+    js = browser.js
+    data = json.loads((ROOT / 'explore/data/prediction-2027.json').read_bytes())
+    signed = lambda value: ('−' if value < 0 else '+') + f'{abs(value):.1f}'
+    browser.wait("!document.getElementById('more-prediction').hidden")
+    assert js("document.querySelector('#more-prediction summary').textContent").startswith('Prediction')
+    shown = js("[...document.querySelectorAll('#prediction .takeaways strong')].map(node => node.textContent)")
+    assert shown == [f"{row['prediction']:.1f}%" if row['measure'].startswith('Share') else f"{row['prediction']:.2f}" for row in data['league']], shown
+    rows = "[...document.querySelectorAll('#prediction-teams .relative-row')].map(r => [r.querySelector('span').textContent, r.querySelector('em').textContent])"
+    for name in ('net', 'defence_quality'):
+        browser.select('prediction-measure', name)
+        teams = sorted(data['teams'], key=lambda t: t[name]['prediction'] if name.startswith('defence') else -t[name]['prediction'])
+        number = lambda text: float(text.replace('−', '-').replace('+', ''))
+        for (shown_name, text), t in zip(js(rows), teams, strict=True):
+            now, before = text.split(' · was ')
+            assert shown_name == t['name'] and abs(number(now) - t[name]['prediction']) <= .0501 and abs(number(before) - t[name]['last']) <= .0501, (name, shown_name, text)
+        assert all(t[name]['low'] < t[name]['prediction'] < t[name]['high'] and abs(t[name]['prediction']) <= abs(t[name]['last']) + .006 for t in teams)
+    browser.select('prediction-measure', 'net')
+    top = js("[...document.querySelectorAll('#prediction-shooters .relative-row > span:first-child')].map(node => node.textContent)")
+    assert top == [p['name'] for p in data['shooters'][:10]]
+    browser.select('shooter-season', 'prediction')
+    listed = js("[...document.querySelectorAll('#shooter-chart .relative-row')].map(r => [r.querySelector('span').textContent, r.querySelector('em').textContent])")
+    for (shown_name, text), p in zip(listed, data['shooters'][:10], strict=True):
+        assert shown_name == p['name'] and text.endswith(f" · {p['attempts']:,} shots") and abs(number(text.split(' · ')[0]) - p['estimate']) <= .0501, text
+    assert 'Predicted for 2027' in js("document.querySelector('#shooters > p.caption').textContent")
+    browser.select('shooter-season', 'career')
+    js("document.getElementById('more-prediction').scrollIntoView({block:'start'})")
+    browser.save_image('atlas_prediction_desktop.png')
+    print('PREDICTION_BROWSER_VERIFIED', len(data['teams']), 'teams and', len(data['shooters']), 'shooters', flush=True)
 
 
 def verify_shot_timing(browser):
@@ -544,6 +576,7 @@ def verify(browser, url):
     js("document.querySelectorAll('details.more').forEach(node => { node.open = true; })")
     verify_overview(browser)
     verify_team_report(browser)
+    verify_prediction(browser)
     verify_court_areas(browser)
     verify_area_selection(browser)
     verify_comparison_units(browser)

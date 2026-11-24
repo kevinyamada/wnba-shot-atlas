@@ -24,6 +24,10 @@ The fitted shot models are saved in the local cache as `why_distance_models.jobl
 
 A forecast counts as holding up if its interval for the drop in error lies above zero on the regular season. The historical sizes to compare with are about 1.9% for the six step model against distance and about 0.2% for the shooter effect.
 
+## Predictions already written down
+
+`predict_2027.py` wrote predictions on 24 November 2026 for the league shot mix and points per shot, for every team's four measures and their net, and for every shooter with at least 100 eligible attempts in 2026. They are in `research/results/public_atlas/prediction_2027/` and on the site under Prediction. When 2027 is complete, compare each with what happened: the error of the rule against the league average and against repeating 2026, and how many outcomes fall inside their 95% ranges.
+
 ## Rules for the test
 
 - Pin the 2027 files in the source manifest and record its hash before any scoring.

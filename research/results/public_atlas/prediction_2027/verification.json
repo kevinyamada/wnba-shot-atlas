@@ -1,0 +1,13 @@
+{
+  "teams": 15,
+  "shooters": 144,
+  "carry_over": {
+    "defence_making": 0.66,
+    "defence_quality": 0.649,
+    "net": 0.655,
+    "offence_making": 0.685,
+    "offence_quality": 0.541
+  },
+  "shooter_carry_over": 0.878,
+  "manifestSha256": "a3638e383085063601ae6fee398ef9adb0ab99a221ef4e2870105d26f56eb8fa"
+}

@@ -165,6 +165,13 @@ select { width: 100%; min-height: 42px; padding: .45rem 1.8rem .45rem .65rem; bo
 #team-chart .relative-row em { font-style: normal; }
 .team-starts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem 2rem; max-width: 60rem; margin-top: .6rem; }
 @media (max-width: 48rem) { .team-starts { grid-template-columns: minmax(0, 1fr); } #team-table { font-size: .78rem; } #team-table th, #team-table td { padding: .45rem .25rem; } }
+#prediction .takeaways { max-width: 46rem; margin-block: .9rem 1.2rem; }
+#prediction .takeaways li { grid-template-columns: 5.6rem minmax(0, 1fr); }
+#prediction h3 { margin-top: 1.4rem; font-size: 1.25rem; }
+#prediction-teams, #prediction-shooters { max-width: 48rem; margin-top: .6rem; }
+#prediction .relative-row { grid-template-columns: minmax(8rem, .8fr) minmax(4rem, 1fr) minmax(8rem, .65fr); }
+#prediction table { max-width: 46rem; margin-top: 1.2rem; }
+@media (max-width: 36rem) { #prediction .relative-row { grid-template-columns: minmax(5.5rem, .8fr) minmax(3rem, 1fr) minmax(5.8rem, .7fr); } }
 .more-list { margin-top: 2.2rem; border-bottom: 1px solid var(--line); }
 .more { margin: 0; padding: 0; border-top: 1px solid var(--line); }
 .more > summary { padding: .95rem 0; font-size: 1.05rem; font-weight: 650; }

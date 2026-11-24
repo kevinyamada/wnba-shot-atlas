@@ -51,6 +51,8 @@ python research/public_atlas/expected_points.py
 python research/public_atlas/team_value.py
 python research/public_atlas/verify_teams.py
 python research/public_atlas/score_future.py --season 2026
+python research/public_atlas/predict_2027.py
+python research/public_atlas/verify_prediction.py
 python research/public_atlas/check_browser.py
 ```
 
@@ -66,6 +68,7 @@ A separate check compares the ESPN shot tables with the WNBA Stats shot release 
 - [League expected points per shot](../results/public_atlas/expected_points/README.md)
 - [Why distance is hard to beat](../results/public_atlas/why_distance/README.md)
 - [Shooters against expectation, with pooling and intervals](../results/public_atlas/shooters/README.md)
+- [Predictions for 2027, written before the season](../results/public_atlas/prediction_2027/README.md)
 - [The 2027 season as an untouched test](PROSPECTIVE_2027.md)
 - [Recount of games, attempts, makes and points from the raw files](../results/public_atlas/recount/README.md)
 - [Shot mix and conversion across seasons](../results/public_atlas/shot_mix/README.md)

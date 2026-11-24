@@ -16,22 +16,32 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 BOX = ROOT / 'research/data/public_wnba/runner'
 BEAT = BOX / 'heartbeat'
-STEP = re.compile(r'^[a-z_]+\.py$')
+STEP = re.compile(r'^[a-z0-9_]+\.py$')
+STALE = 15
 
 
 def run(step, extra, log):
-    assert STEP.match(step) and (HERE / step).is_file(), f'{step} is not an atlas step'
+    if not STEP.match(step) or not (HERE / step).is_file():
+        print(f'{step} is not an atlas step', flush=True)
+        return 2
     command = [sys.executable, '-u', str(HERE / step), *extra]
     with log.open('w', encoding='utf-8') as file:
         process = subprocess.Popen(command, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding='utf-8', errors='replace')
         for line in process.stdout:
             print(line, end='', flush=True)
             file.write(line)
+            BEAT.write_text(str(time.time()))
         return process.wait()
+
+
+def alive():
+    return BEAT.exists() and time.time() - float(BEAT.read_text() or 0) < STALE
 
 
 def serve():
     BOX.mkdir(parents=True, exist_ok=True)
+    for old in BOX.glob('*.request'):
+        old.unlink()
     print('Runner ready. Steps sent from Claude will appear here. Press Ctrl+C to stop.', flush=True)
     while True:
         BEAT.write_text(str(time.time()))
@@ -39,7 +49,11 @@ def serve():
             step, *extra = request.read_text(encoding='utf-8').split()
             request.unlink()
             print(f'\n=== {step} {" ".join(extra)}', flush=True)
-            code = run(step, extra, BOX / f'{request.stem}.log')
+            try:
+                code = run(step, extra, BOX / f'{request.stem}.log')
+            except Exception as error:
+                print(f'The step could not start: {error}', flush=True)
+                code = 1
             (BOX / f'{request.stem}.done').write_text(str(code))
             print(f'=== {step} finished with exit code {code}', flush=True)
         time.sleep(1)
@@ -49,15 +63,21 @@ def send(step, extra):
     BOX.mkdir(parents=True, exist_ok=True)
     name = f'{Path(step).stem}_{int(time.time())}'
     log = BOX / f'{name}.log'
-    alive = BEAT.exists() and time.time() - float(BEAT.read_text() or 0) < 10
-    if not alive:
+    if not alive():
         print('No runner in VS Code, so the step runs here.', flush=True)
         return run(step, extra, log)
-    (BOX / f'{name}.request').write_text(' '.join([step, *extra]), encoding='utf-8')
-    done = BOX / f'{name}.done'
+    request, done = BOX / f'{name}.request', BOX / f'{name}.done'
+    request.write_text(' '.join([step, *extra]), encoding='utf-8')
+    quiet = time.time()
     while not done.exists():
         time.sleep(1)
-    print(''.join(log.read_text(encoding='utf-8').splitlines(keepends=True)[-15:]), end='')
+        if alive():
+            quiet = time.time()
+        elif time.time() - quiet > 2 * STALE:
+            request.unlink(missing_ok=True)
+            print('The runner in VS Code stopped responding, so the step runs here.', flush=True)
+            return run(step, extra, log)
+    print(''.join(log.read_text(encoding='utf-8').splitlines(keepends=True)[-15:]) if log.exists() else '', end='')
     return int(done.read_text())
 
 
