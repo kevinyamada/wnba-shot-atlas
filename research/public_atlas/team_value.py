@@ -1,4 +1,4 @@
-"""What a team controls: the quality of shots it takes and allows, and how those shots are made.
+"""Which team tendencies repeat: the quality of shots it takes and allows, and how those shots are made.
 
 Shot quality is the league expected points of the shots. Shot making is the
 points scored above that expectation. Both are measured for a team's own shots
@@ -213,13 +213,13 @@ def main():
         return (f"| {row.label} | {row.split_half:.2f} | {row.split_half_low:.2f} to {row.split_half_high:.2f} | "
                 f"{row.next_season:.2f} | {row.next_season_low:.2f} to {row.next_season_high:.2f} | {spread[row.measure]['spread']:.1f} | {100 * spread[row.measure]['share_kept']:.0f}% |")
     best = repeats.sort_values('split_half', ascending=False)
-    lines = ['# What a team controls', '',
+    lines = ['# Which team tendencies repeat', '',
              f"Across {len(table)} team seasons from 2016 to 2026, {best.iloc[0].label.lower()} is the most repeatable of the four measures "
              f"(correlation {best.iloc[0].split_half:.2f} between alternating games of the same season) and {best.iloc[-1].label.lower()} is the least ({best.iloc[-1].split_half:.2f}).", '',
              'Shot quality is the league expected points of the shots a team takes or allows. Shot making is the points scored above that expectation. All four are in points per 100 shots against the rest of the league in that regular season.', '',
              '| Measure | Same season, alternating games | 95% interval | Following season | 95% interval | Spread between teams | Share of an observed gap kept after pooling |',
              '| --- | ---: | --- | ---: | --- | ---: | ---: |', *[line(row) for row in repeats.itertuples()], '',
-             'A higher correlation means the measure reflects something a team does. A correlation near zero means most of what is seen in one stretch of games is chance. '
+             'A higher correlation means the tendency repeated across alternating games. A value near zero indicates little agreement between the two halves. '
              'These are descriptions of past seasons. They do not show that changing a scheme would move a measure.', '',
              '## Adjusting for opponents', '',
              'The values shown on the site come from a model that estimates every offence and every defence together from single games, so a team that met strong defences is not marked down for it. '

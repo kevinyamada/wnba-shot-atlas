@@ -1,0 +1,29 @@
+{
+  "referenceRevision": "7f482ed965d9bac3a1be9a6ce0769be8fc77f759",
+  "originalModelSha256": "f25f866ea78355558e76de44167efa4b6f36bd78ee1819bd6d15074c78dfdab0",
+  "savedPredictionsSha256": "3ae5cf89b33acdc3dd5b60f3aef76bd6c6901ecca2aa348ec491372539517763",
+  "trainingManifestSha256": "a3638e383085063601ae6fee398ef9adb0ab99a221ef4e2870105d26f56eb8fa",
+  "historicalPinsSha256": "873f1005e9dd57d2aac0e09e44de010f0bf27ce028dc964ccfa0185db1caa074",
+  "rehearsal": {
+    "season": 2026,
+    "shots": 47405,
+    "regularSeason": 44478,
+    "playoffs": 2927,
+    "absoluteTolerance": 1e-12
+  },
+  "rehearsalEnvironment": {
+    "python": "3.13.5",
+    "scikit-learn": "1.9.1",
+    "numpy": "2.4.6",
+    "scipy": "1.18.1",
+    "pandas": "3.0.6",
+    "joblib": "1.6.0"
+  },
+  "issuedForecastsSha256": {
+    "court_2027.csv": "07af0ccfd687ca28a7b5c46b7c70f4fb3908fdcb0a23ccd31d7c87e04e86ece8",
+    "league.csv": "4469d69e3b81f8af7a56c8b0ec8ac16a017e8d8c7a507ad3cfe8962ad02c3682",
+    "shooters.csv": "681bc40fd2d270f2da8e4e974ce02b1233ba899d2a3589f43c9f8dddd674bf61",
+    "surface_2027.csv": "81f81b020b3de49a3e0e6961d38dabc38feb547eb54629dd0c67ad19b8541100",
+    "teams.csv": "6512b6917bcd06778567cec81eefa344c9cdb6aa242f10c5299143d02580492d"
+  }
+}

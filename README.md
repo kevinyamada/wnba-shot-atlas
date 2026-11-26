@@ -1,5 +1,7 @@
 # WNBA Shot Atlas
 
+[2025 shot mix and conversion](https://kevinyamada.github.io/wnba-shot-atlas/study/shot-mix/) compares all 13 teams, with regional contributions and whole-game uncertainty ranges.
+
 Read the [research report](REPORT.md) for the questions, methods, findings and limits in one place.
 
 [WNBA Shot Atlas](https://kevinyamada.github.io/wnba-shot-atlas/) covers 1997 to 2026 from public wehoop releases. See the [data pipeline and methods](research/public_atlas/README.md) and the [public results](research/results/public_atlas/study.md). The [shot type comparison](research/results/public_atlas/shot_form/README.md) tests how much a recorded layup, jumper or other shot type adds to distance across 11 seasons. The [WNBA play analysis](research/results/public_atlas/plays/README.md) traces up to ten recorded actions, shot probability and expected points across regular season and playoff games. The [original 2025 study](https://kevinyamada.github.io/wnba-shot-atlas/study/) remains available.

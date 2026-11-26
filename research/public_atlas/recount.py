@@ -353,8 +353,13 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     pins = check_pins()
     print(f'{pins[0]} pinned files hashed, {len(pins[1])} differ', flush=True)
+    if pins[1]:
+        raise SystemExit('Sources differ from their pins: ' + ', '.join(pins[1]))
     seasons, zones, feeds, boxes, excluded, special_games = recount()
     checks = compare(seasons, zones, args.live)
+    differences = checks[checks.difference.ne(0)]
+    if not differences.empty:
+        raise SystemExit('Publication comparison failed:\n' + differences.to_string(index=False))
     seasons.to_csv(OUT / 'season_recount.csv', index=False)
     zones.assign(zone_name=zones.zone.map(dict(enumerate(ZONES))))[['season', 'phase', 'zone', 'zone_name', *COUNTS]].to_csv(OUT / 'zone_recount.csv', index=False)
     feeds.to_csv(OUT / 'feed_rows.csv', index=False)

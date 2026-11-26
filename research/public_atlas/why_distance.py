@@ -15,7 +15,6 @@ from sklearn.metrics import log_loss
 from benchmark import paired_games
 from build import DERIVED, RESULTS, SITE, write_json
 from fetch import RAW, manifest_digest
-from shot_models import dataset
 
 OUT = RESULTS / 'why_distance'
 SEED = 20261123
@@ -66,6 +65,7 @@ def play_context(year):
 def sample(shots=None):
     """Add the play context and coded categories to benchmark shots. Category levels always come from the training seasons."""
     if shots is None:
+        from shot_models import dataset
         shots, _ = dataset()
     shots['repeat'] = shots.groupby(['season'] + KEY, dropna=False).cumcount()
     context = pd.concat([play_context(year) for year in sorted(shots.season.unique())])
@@ -150,8 +150,8 @@ def main():
              f"On {int(shown.attempts.iloc[0]):,} shots from the 2026 regular season, a forecast that gives every shot the league make rate has a Brier error of {league:.4f}. "
              f"Using distance alone brings it to {distance:.4f}. Adding court position, the recorded shot type, the period, clock and score, the previous event and the shooter's record so far brings it to {full:.4f}, "
              f"a further drop of {100 * (1 - full / distance):.1f}%.", '',
-             f"The main reason is chance. A single shot either goes in or it does not. If the full model's make chances were exactly right, the error would still be {noise:.4f}, "
-             f"against the {full:.4f} it actually has. Better information can only spread the predicted chances further apart. "
+             f"If the fitted make probabilities were exact, the expected squared error would be {noise:.4f}, "
+             f"against the {full:.4f} it actually has. The contribution of unobserved shot difficulty is unknown. "
              f"Distance already spreads them with a standard deviation of {100 * test.Distance.std():.1f} percentage points and everything else widens that to {100 * test[best].std():.1f}.", '',
              '| Added information | Brier error | Drop from distance | 95% interval | Drop from previous step | 95% interval |', '| --- | ---: | ---: | --- | ---: | --- |']
     for row in shown.itertuples():

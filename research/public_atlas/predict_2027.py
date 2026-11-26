@@ -65,7 +65,7 @@ def carry(x, y, weight):
     return float(np.sum(weight * x * y) / np.sum(weight * x * x))
 
 
-def predict(history, until):
+def predict(history, until, minimum_weight=0):
     """All four rules for the season `until`, for entities that played the season before it."""
     past = history[history.season.lt(until)]
     forecast, rho, tau2 = season_model(past, until)
@@ -74,18 +74,18 @@ def predict(history, until):
     later = past.assign(season=past.season - 1)[['entity', 'season', 'observed', 'weight']].rename(columns={'observed': 'next', 'weight': 'next_weight'})
     pairs = pooled.merge(later, on=['entity', 'season'])
     slope = carry(pairs.pooled.to_numpy(), pairs.next.to_numpy(), pairs.next_weight.to_numpy())
-    last = pooled[pooled.season.eq(until - 1)].copy()
+    last = pooled[pooled.season.eq(until - 1) & pooled.weight.ge(minimum_weight)].copy()
     last['league'], last['same'], last['carried'] = 0.0, last.pooled, slope * last.pooled
     last['bayes'] = [forecast[key][0] for key in last.entity]
     last['bayes_variance'] = [forecast[key][1] for key in last.entity]
     return last, dict(persistence=rho, spread=float(np.sqrt(tau2)), carry_over=slope)
 
 
-def backtest(history, label):
+def backtest(history, label, minimum_weight=0):
     """Predict each past season from earlier ones and compare the rules with what was then observed."""
     rows = []
     for year in range(FIRST_TEST, TARGET):
-        guess, _ = predict(history, year)
+        guess, _ = predict(history, year, minimum_weight)
         actual = history[history.season.eq(year)][['entity', 'observed', 'noise', 'weight']].rename(columns={'observed': 'actual', 'noise': 'actual_noise', 'weight': 'actual_weight'})
         rows.append(guess.merge(actual, on='entity').assign(target=year))
     rows = pd.concat(rows, ignore_index=True)
@@ -95,7 +95,7 @@ def backtest(history, label):
     picks = rng.integers(0, len(rows), size=(2000, len(rows)))
     gap = (errors['bayes'] - errors['carried']).to_numpy() * weight
     draws = gap[picks].sum(axis=1) / weight[picks].sum(axis=1)
-    inside = (rows.bayes - rows.actual).abs().le(1.96 * np.sqrt(rows.bayes_variance + rows.actual_noise))
+    inside = (rows.bayes - rows.actual).abs().le(1.96 * np.sqrt(rows.bayes_variance + rows.noise))
     result = dict(label=label, predictions=len(rows), **{f'rmse_{rule}': float(np.sqrt(np.average(errors[rule], weights=weight))) for rule in RULES},
                   bayes_minus_carried_low=float(np.quantile(draws, .025)), bayes_minus_carried_high=float(np.quantile(draws, .975)),
                   inside_95=float(np.average(inside, weights=weight)))
@@ -130,9 +130,8 @@ def shooters():
     seasons = pd.read_csv(RESULTS / 'shooters/player_seasons.csv')
     history = pd.DataFrame({'entity': seasons.player_id, 'label': seasons.name, 'team_id': seasons.team_id, 'season': seasons.season, 'attempts': seasons.attempts,
                             'observed': seasons.raw_per_100, 'noise': 1e4 * seasons.chance_variance / seasons.attempts ** 2, 'weight': seasons.attempts.astype(float)})
-    result, _ = backtest(history, 'Shooter makes above expected')
-    guess, fitted = predict(history, TARGET)
-    guess = guess[guess.attempts.ge(SHOOTER_MINIMUM)]
+    result, _ = backtest(history, 'Shooter makes above expected', SHOOTER_MINIMUM)
+    guess, fitted = predict(history, TARGET, SHOOTER_MINIMUM)
     spread = np.sqrt(guess.bayes_variance + guess.noise)
     table = pd.DataFrame({'player_id': guess.entity, 'name': guess.label, 'team_id': guess.team_id, 'attempts_2026': guess.attempts, 'estimate_2026': guess.pooled,
                           'rule_prediction': guess.carried, 'prediction': guess.bayes, 'low': guess.bayes - 1.96 * spread, 'high': guess.bayes + 1.96 * spread,
@@ -174,7 +173,7 @@ def main():
     league_table.to_csv(OUT / 'league.csv', index=False)
     tests.to_csv(OUT / 'backtest.csv', index=False)
     settings.to_csv(OUT / 'season_model.csv', index=False)
-    team_rows[['measure', 'target', 'label', *RULES, 'bayes_variance', 'actual', 'actual_noise']].to_csv(OUT / 'team_backtest_rows.csv', index=False)
+    team_rows[['measure', 'target', 'label', *RULES, 'bayes_variance', 'noise', 'actual', 'actual_noise']].to_csv(OUT / 'team_backtest_rows.csv', index=False)
 
     net = team_table[team_table.measure.eq('net')].sort_values('prediction', ascending=False)
     wins = int((tests.rmse_bayes <= tests.rmse_carried).sum())
@@ -189,7 +188,7 @@ def main():
               '| Player | 2026 estimate | Predicted 2027 | 95% range |', '| --- | ---: | ---: | --- |']
     lines += [f'| {r.name} | {r.estimate_2026:+.1f} | {r.prediction:+.1f} | {r.low:+.1f} to {r.high:+.1f} |' for r in shooter_table.head(10).itertuples()]
     lines += ['', '## How the rules did on past seasons', '',
-              f'Each season from {FIRST_TEST} to 2026 was predicted using only earlier seasons. Error is the root mean squared error against what was then observed. The last column is the share of outcomes inside the Bayesian 95% range.', '',
+              f'Each season from {FIRST_TEST} to 2026 was predicted using only earlier seasons. Error is the root mean squared error against what was then observed. The last column is coverage using prior-season noise. Shooter forecasts require 100 attempts in the preceding season and are weighted by target-season attempts.', '',
               '| Measure | Predictions | League average | Same as last season | Carry over rule | Bayesian season model | Inside 95% range |', '| --- | ---: | ---: | ---: | ---: | ---: | ---: |']
     lines += [f'| {r.label} | {r.predictions:,} | {r.rmse_league:.2f} | {r.rmse_same:.2f} | {r.rmse_carried:.2f} | {r.rmse_bayes:.2f} | {100 * r.inside_95:.0f}% |' for r in tests.itertuples()]
     lines += ['', '## The Bayesian season model', '',

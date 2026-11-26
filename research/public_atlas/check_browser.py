@@ -5,7 +5,6 @@ import csv
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import json
-import os
 from pathlib import Path
 import subprocess
 import tempfile
@@ -15,6 +14,7 @@ import urllib.request
 
 import websocket
 
+from browser_executable import chrome_executable
 from fetch import CACHE, ROOT
 
 
@@ -24,7 +24,7 @@ class Browser:
         self.socket = None
         self.count = 0
         self.errors = []
-        chrome = Path(os.environ['ProgramFiles']) / 'Google/Chrome/Application/chrome.exe'
+        chrome = chrome_executable()
         self.proc = subprocess.Popen([str(chrome), '--headless=new', '--disable-gpu', '--remote-debugging-port=0',
                                       f'--user-data-dir={profile}', '--window-size=1440,1000', 'about:blank'],
                                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -182,6 +182,7 @@ def verify_comparison_units(browser):
     toggle = "document.getElementById('normalize-shots').click()"
 
     def check(filters, normalized):
+        js("document.getElementById('more-history').open = true")
         browser.wait("document.getElementById('history-rows').rows.length > 0 && !document.getElementById('history-status').textContent")
         legend = js("document.getElementById('legend-high').textContent")
         expected_max = 1
@@ -400,6 +401,7 @@ def verify_shots_allowed(browser):
     browser.select('team', team)
     assert js(attempts) == f"{sum(row[5] for row in pack['rows'] if row[1] == team):,}"
     assert js("document.querySelectorAll('.area-result .leaders').length") == 0
+    js("document.getElementById('more-history').open = true")
     browser.wait(f"document.querySelector('#history-rows').rows.length === 30 && !document.getElementById('history-status').textContent")
     browser.save_image('atlas_shots_allowed_desktop.png')
     browser.select('team', 'all')
@@ -770,6 +772,7 @@ def verify(browser, url):
     before = js("document.querySelector('#area-position').textContent")
     js("document.querySelector('#court-primary canvas').dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowUp',bubbles:true,cancelable:true}))")
     assert js("document.querySelector('#area-position').textContent") != before
+    js("document.getElementById('more-history').open = true")
     browser.wait(f"document.querySelector('#history-rows').rows.length==={len(seasons)}")
     assert js("document.querySelector('#court-primary canvas').dataset.selected===document.querySelector('#court-secondary canvas').dataset.selected")
     pick_area(browser, 3)
@@ -785,6 +788,7 @@ def verify(browser, url):
     player = int(js("document.querySelector('#player').options[1].value"))
     browser.select('player', player)
     browser.select('shot-type', 1)
+    js("document.getElementById('more-history').open = true")
     browser.wait(f"document.querySelector('#history-rows').rows.length==={len(seasons)}")
     pack = json.loads((ROOT / 'explore/data/2026.json').read_bytes())
     expected = sum(row[5] for row in pack['rows'] if row[:3] == [0, 5, player] and row[8] == 1)
@@ -987,6 +991,29 @@ def verify_links(browser, url):
     assert js("document.querySelector('[data-side][aria-pressed=true]').dataset.side") == 'allowed' and js("document.getElementById('player').disabled")
     assert value('team') == ('all' if team not in json.loads((ROOT / 'explore/data/against-2012.json').read_bytes())['teams'] else team)
 
+    visit('?season=2025&team=6&compare=2024&area=4&units=counts')
+    assert not js("document.getElementById('normalize-shots').checked")
+    assert js("document.querySelector('#area-rows [data-zone=\"4\"] button').getAttribute('aria-pressed')") == 'true'
+    assert not js("document.getElementById('more-history').open")
+    assert not js("performance.getEntriesByType('resource').some(r => new URL(r.name).pathname.endsWith('/data/1997.json'))")
+    js("window.prompt = () => null; document.getElementById('copy-link').click()")
+    assert 'area=4&units=counts' in js("document.getElementById('copy-link').dataset.link")
+    visit('?season=2025&team=6&cell=0')
+    js("window.prompt = () => null; document.getElementById('copy-link').click()")
+    assert 'cell=0' in js("document.getElementById('copy-link').dataset.link")
+    assert js("document.querySelector('#team-report a[href*=shot-mix]')?.hash") == '#team-6'
+    visit('?season=2025')
+    browser.wait("!!document.getElementById('team-table')")
+    js("Array.from(document.querySelectorAll('#team-report button')).find(b => b.textContent === 'Whole possessions').click()")
+    report = js("document.getElementById('team-report').textContent")
+    assert 'free throws included' in report and 'field goals only' not in report
+    browser.call('Page.navigate', {'url': url + 'study/shot-mix/#team-6'})
+    browser.wait("!!document.querySelector('#team-6 tbody tr')")
+    assert js("document.querySelectorAll('#results tbody tr').length") == 13
+    assert js("[...document.querySelectorAll('section[id^=team-]')].every(s => s.querySelectorAll('tbody tr').length === 7)")
+    browser.call('Emulation.setDeviceMetricsOverride', {'width': 390, 'height': 844, 'deviceScaleFactor': 1, 'mobile': True})
+    assert js('document.documentElement.scrollWidth <= innerWidth')
+    browser.call('Emulation.clearDeviceMetricsOverride')
     visit('?season=1890&team=999999&games=7&compare=1890&side=up&colour=none')
     assert [value(ident) for ident in ('season', 'team', 'player', 'phase', 'compare')] == ['all', 'all', 'all', 'all', 'off']
     assert js("location.search") == ''
@@ -1004,6 +1031,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--url')
     args = parser.parse_args()
+    CACHE.mkdir(parents=True, exist_ok=True)
     server = None
     if not args.url:
         server = ThreadingHTTPServer(('127.0.0.1',0), partial(QuietHandler,directory=ROOT))

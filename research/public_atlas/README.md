@@ -51,7 +51,9 @@ python research/public_atlas/expected_points.py
 python research/public_atlas/team_value.py
 python research/public_atlas/team_possessions.py
 python research/public_atlas/verify_teams.py
+python research/public_atlas/team_regions_2025.py
 python research/public_atlas/score_future.py --season 2026
+python research/public_atlas/test_release_checks.py
 python research/public_atlas/predict_surface.py
 python research/public_atlas/prediction_pack.py
 python research/public_atlas/predict_2027.py

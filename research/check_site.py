@@ -7,7 +7,7 @@ from pathlib import Path
 import argparse
 import base64
 import json
-import os
+from public_atlas.browser_executable import chrome_executable
 import subprocess
 import time
 import urllib.request
@@ -23,7 +23,7 @@ SET_LIGHT="if(document.documentElement.dataset.theme!=='light')document.querySel
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--url',required=True);ap.add_argument('--final',action='store_true');args=ap.parse_args()
     root=HERE/'data/site_check';root.mkdir(parents=True,exist_ok=True)
-    chrome=next(p for p in [Path(os.environ.get('PROGRAMFILES','C:/Program Files'))/'Google/Chrome/Application/chrome.exe',Path('C:/Program Files (x86)/Google/Chrome/Application/chrome.exe')] if p.exists())
+    chrome=chrome_executable()
     process=subprocess.Popen([str(chrome),'--headless=new','--disable-gpu','--remote-debugging-port=9337','--remote-allow-origins=*',f'--user-data-dir={root / "profile"}','--window-size=1440,1000','about:blank'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     ws=None
     try:
@@ -52,7 +52,7 @@ def main():
         call('Network.setCacheDisabled',{'cacheDisabled':True})
         call('Emulation.setEmulatedMedia',{'features':[{'name':'prefers-color-scheme','value':'dark'}]})
         reset=call('Page.addScriptToEvaluateOnNewDocument',{'source':"try{localStorage.removeItem('wnba-theme');}catch{}"})
-        call('Page.navigate',{'url':args.url})
+        call('Page.navigate',{'url':args.url.rstrip('/')+'/study/'})
         for _ in range(100):
             if js('Boolean(document.body && document.body.dataset.ready === "true" && document.body.dataset.recoveryReady === "true")'):break
             time.sleep(.2)
@@ -220,7 +220,7 @@ def main():
         call('Emulation.setEmulatedMedia',{'media':''})
         errors=[e for e in events if e.get('method')=='Runtime.exceptionThrown' or (e.get('method')=='Log.entryAdded' and e.get('params',{}).get('entry',{}).get('level')=='error' and 'favicon' not in (e.get('params',{}).get('entry',{}).get('url','')+e.get('params',{}).get('entry',{}).get('text','')))]
         assert not errors,errors
-        result={'url':args.url,'completed_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'cache_disabled':True,'checks':tests,'all_pass':True,'javascript_errors':0,'viewport_widths':[1440,390],
+        result={'url':args.url,'study_url':args.url.rstrip('/')+'/study/','meeting_url':args.url.rstrip('/')+'/meeting/','completed_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'cache_disabled':True,'checks':tests,'all_pass':True,'javascript_errors':0,'viewport_widths':[1440,390],
                 'stage':'final live verification' if args.final else 'development browser check'}
         out=HERE/'results/data1'/('live_site_checks.json' if args.final else 'development_site_checks.json')
         out.write_text(json.dumps(result,indent=2));print(json.dumps(result,indent=2))

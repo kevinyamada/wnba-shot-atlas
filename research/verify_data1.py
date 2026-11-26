@@ -303,7 +303,7 @@ def main():
                   'observation':'No study apps returned in the current listing; historical stop record retained.' if not study else 'Every currently listed study app is stopped.'}
     live=urllib.request.urlopen(args.live_url+'assets/data.json?verify='+str(int(time.time())),timeout=30).read()
     checked('Live GitHub Pages serves the exact verified data artifact',hashlib.sha256(live).hexdigest()==hashlib.sha256(site_bytes).hexdigest())
-    for name in ['index.html','app.js','style.css']:
+    for name in ['study/index.html','meeting/index.html','app.js','style.css']:
         public=urllib.request.urlopen(args.live_url+name+'?verify='+str(int(time.time())),timeout=30).read().replace(b'\r\n',b'\n')
         local=(HERE.parent/name).read_bytes().replace(b'\r\n',b'\n')
         assert public==local,name
