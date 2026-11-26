@@ -40,6 +40,8 @@ def main():
     starts = starts[starts.scope.eq('all')].set_index('start')
     steal_gap = pd.read_csv(RESULTS / 'plays/starts/steal_gap.csv')
     steal_gap = steal_gap[steal_gap.scope.eq('all')].set_index('part')
+    heldout = json.loads((SITE / 'heldout-spatial.json').read_bytes())
+    heldout_rim = next(r for r in heldout['regions'] if r['region'] == 'Near rim')
     moran = pd.read_csv(RESULTS / 'methods_lab/morans_i.csv').set_index('residual')
     density = pd.read_csv(RESULTS / 'methods_lab/intensity_scores.csv')
     cox, reuse = ((density[name] * density.shots).sum() / density.shots.sum() for name in ('cox_process', 'last_season'))
@@ -161,9 +163,14 @@ def main():
                                  'Change from the distance curve': ['' if m == 'Distance curve' else f'{v:+.2f}%' for m, v in zip(lab.method, lab.drop_vs_distance_pct)],
                                  '95% range': ['' if m == 'Distance curve' else f'{x:+.2f}% to {y:+.2f}%' for m, x, y in zip(lab.method, lab.low_pct, lab.high_pct)]})),
              f"The best method, the {lab.method.iloc[0]}, lowered error by {lab.drop_vs_distance_pct.iloc[0]:.2f}%. Once distance from the rim is known, a detailed map of the court adds very little. "
-             f"Moran's I shows why: neighbouring cells have similar make rates (I = {moran.loc['Observed make rate', 'morans_i']:.2f}), "
+             f"In the training data, neighbouring cells have similar make rates (I = {moran.loc['Observed make rate', 'morans_i']:.2f}), "
              f"the distance curve removes most of that (I = {moran.loc['After the distance curve', 'morans_i']:.2f}) "
              f"and the upper-tail permutation test finds no evidence of positive residual clustering at this neighbour distance after the mesh fit (I = {moran.loc['After the mesh model with trend', 'morans_i']:.3f}, upper-tail p = {moran.loc['After the mesh model with trend', 'p_value']:.3f}).", '',
+             f"On held-out regular seasons from 2024 to 2026, mesh forecast errors clustered modestly across adjacent two-foot cells "
+             f"(Moran’s I = {heldout['pooled']['mesh']['moransI']:.3f}, two-sided permutation p = {heldout['pooled']['mesh']['pTwoSided']:.4f}). "
+             f"Near the rim, teams made {heldout_rim['gap']:.2f} more shots per 100 than forecast "
+             f"(95% whole-game range {heldout_rim['low']:+.2f} to {heldout_rim['high']:+.2f}). "
+             f"[Regional results and test details]({SITE_URL}lab/#forecast-errors).", '',
              f"For where shots come from, a log Gaussian Cox process scored {cox:.4f} in average log score per shot, "
              f"against {reuse:.4f} for reusing last season's shares of shots by cell. Lower is better, so the Cox process {'did' if cox < reuse else 'did not'} beat the simple rule. "
              f"The [Methods lab]({SITE_URL}lab/) shows every surface, the variogram and the ensemble weights.", '',

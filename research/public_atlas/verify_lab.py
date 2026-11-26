@@ -12,6 +12,61 @@ DERIVED = ROOT / 'research/data/public_wnba/derived'
 MEMBERS = ['Distance curve', 'Inverse distance weighting', 'Universal kriging', 'Areal CAR model', 'Gaussian process', 'SPDE mesh with trend']
 
 
+def verify_heldout():
+    from predict_surface import load
+    from court_geometry import zones
+    from scipy.sparse import csr_matrix
+
+    data = json.loads((SITE / 'heldout-spatial.json').read_bytes())
+    cells = pd.read_csv(OUT / 'heldout_cells.csv')
+    assert data['manifestSha256'] == manifest_digest()
+    scored, _ = load()
+    scored = scored[scored.season.isin([2024, 2025, 2026])].copy()
+    assert scored.game_id.nunique() == data['games']
+    scored['region'] = zones(scored.x, scored.y)
+    raw = scored.groupby('region').made.agg(['size','sum'])
+    regions = pd.DataFrame(data['regions']).set_index('region')
+    assert set(raw.index) == set(regions.index)
+    for name, row in regions.iterrows():
+        assert (row.attempts, row.makes) == tuple(raw.loc[name])
+        assert np.isclose(100 * (row.makes - row.expectedMakes) / row.attempts, row.gap)
+        assert row.low <= row.gap <= row.high
+    assert np.isclose(regions.expectedMakes.sum(), cells.mesh_expected.sum())
+
+    keys = ['season','x','y']
+    for key in ['x','y']:
+        scored[key] = 2 * np.floor_divide(scored[key], 2).astype(int) + 1
+    original = scored.groupby(keys).made.agg(attempts='size', made='sum')
+    pd.testing.assert_frame_equal(original, cells.set_index(keys)[['attempts','made']].sort_index(), check_dtype=False)
+    for record in [*data['seasons'], data['pooled']]:
+        pooled = record['season'] == 'pooled'
+        part = cells if pooled else cells[cells.season.eq(record['season'])]
+        grouped = part.groupby(['x','y']).sum(numeric_only=True)
+        assert int(grouped.attempts.sum()) == record['allShots']
+        kept = grouped[grouped.attempts >= data['minShots']]
+        assert len(kept) == record['cells'] and int(kept.attempts.sum()) == record['usedShots']
+        coords = kept.index.to_frame(index=False).to_numpy()
+        delta = np.abs(coords[:,None] - coords[None,:]).sum(axis=2)
+        adjacency = csr_matrix((delta == 2).astype(float))
+        assert adjacency.nnz == 2 * record['pairs']
+        for kind in ['distance','mesh']:
+            residual = ((kept.made - kept[kind+'_expected']) / np.sqrt(kept[kind+'_variance'])).to_numpy()
+            residual = residual - residual.mean()
+            scale = len(kept) / (adjacency.nnz * (residual @ residual))
+            value = scale * (residual @ (adjacency @ residual))
+            np.testing.assert_allclose(value, record[kind]['moransI'], atol=1e-12)
+            if pooled:
+                rng = np.random.default_rng(data['seed'])
+                null = -1 / (len(kept) - 1)
+                extreme = 0
+                for _ in range(data['permutations']):
+                    permuted = rng.permutation(residual)
+                    trial = scale * (permuted @ (adjacency @ permuted))
+                    extreme += abs(trial - null) >= abs(value - null)
+                assert (extreme + 1) / (data['permutations'] + 1) == record[kind]['pTwoSided']
+    return data['pooled']['usedShots']
+
+
 def main():
     scores = pd.read_csv(OUT / 'scores.csv').set_index('method')
     shots = pd.read_csv(DERIVED / 'shot_form_predictions.csv.gz', usecols=['season', 'scope', 'made'])
@@ -47,7 +102,8 @@ def main():
     assert site['manifestSha256'] == manifest_digest() and [row['method'] for row in site['methods']] == list(scores.index)
     for name in scores.index:
         assert np.allclose(site['surfaces'][name], surfaces[name], atol=1e-4)
-    certificate = dict(methods=len(scores), attempts=int(scores.attempts.iloc[0]), best=scores.index[0], league_brier=round(float(errors.mean()), 5), manifestSha256=manifest_digest())
+    heldout_shots = verify_heldout()
+    certificate = dict(heldoutSpatialShots=heldout_shots, methods=len(scores), attempts=int(scores.attempts.iloc[0]), best=scores.index[0], league_brier=round(float(errors.mean()), 5), manifestSha256=manifest_digest())
     (OUT / 'verification.json').write_text(json.dumps(certificate, indent=2) + '\n', encoding='utf-8', newline='\n')
     print('METHODS_LAB_VERIFIED', certificate, flush=True)
 

@@ -941,6 +941,13 @@ def verify(browser, url):
     browser.wait("(() => { const c = document.getElementById('lab-variogram'); return c.width > 100 && c.getContext('2d').getImageData(0, 0, c.width, c.height).data.some(v => v > 0); })()")
     browser.wait("(() => { const c = document.querySelector('#lab-density canvas'); return c.width > 100 && c.getContext('2d').getImageData(0, 0, c.width, c.height).data.some(v => v > 0); })()")
     assert f"{lab['intensity']['scores']['cox_process']:.4f}" in js("document.getElementById('lab-density').parentElement.textContent")
+    heldout = json.loads((ROOT / 'explore/data/heldout-spatial.json').read_bytes())
+    browser.wait("document.querySelectorAll('#forecast-errors table:first-of-type tbody tr').length >= 7")
+    assert js("document.querySelector('#forecast-errors table tbody').rows.length") == len(heldout['regions'])
+    js("document.querySelector('#heldout-neighbours summary').click()")
+    assert js("document.querySelector('#heldout-neighbours').open")
+    assert f"{heldout['pooled']['mesh']['pTwoSided']:.4f}" in js("document.querySelector('#heldout-neighbours').innerText")
+    assert js("document.querySelector('#heldout-neighbours tbody tr:last-child td').textContent") == f"{heldout['pooled']['usedShots']:,}"
     browser.save_image('atlas_lab_desktop.png')
     browser.call('Emulation.setDeviceMetricsOverride', {'width': 390, 'height': 844, 'deviceScaleFactor': 1, 'mobile': True})
     time.sleep(.3)
@@ -951,9 +958,35 @@ def verify(browser, url):
     assert js("window.wnbaCheck.shownAttempts") == 38441
     browser.call('Page.navigate', {'url': urljoin(url, 'meeting/')})
     browser.wait("location.pathname.endsWith('/meeting/') && document.body?.dataset.recoveryReady==='true' && [...document.images].every(i=>i.complete && i.naturalWidth>0)")
+    browser.call('Page.navigate', {'url': url + '#shot-challenge'})
+    verify_challenge(browser, url)
     verify_links(browser, url)
     assert not browser.errors, browser.errors[:3]
     print('ATLAS_BROWSER_VERIFIED', len(seasons), 'seasons, pooled totals, phases, shot types, spatial and event findings, posterior, themes, mobile, original study', flush=True)
+
+
+def verify_challenge(browser, base):
+    data = json.loads((ROOT / 'explore/data/heldout-spatial.json').read_bytes())
+    js = browser.js
+    browser.wait("document.querySelector('#shot-challenge:not([hidden]) .challenge-dots')?.children.length === 100")
+    assert js("document.querySelector('#headline + #shot-challenge + .more-list > details').id") == 'more-history'
+    assert js("document.querySelector('#shot-challenge .challenge-source').href") == base + 'lab/#forecast-errors'
+    for row in data['regions']:
+        region = json.dumps(row['region'])
+        js(f"Array.from(document.querySelectorAll('.challenge-regions button')).find(b => b.textContent === {region}).click()")
+        assert js("document.querySelector('.challenge-region-title').textContent") == row['region']
+        js("document.querySelectorAll('.challenge-dots i')[59].click()")
+        assert js("document.getElementById('challenge-slider').value") == '60'
+        js("document.querySelector('.challenge-action').click()")
+        assert js("document.querySelector('.challenge-value').textContent") == f"{100 * row['makes'] / row['attempts']:.2f}"
+        assert js("document.querySelector('.challenge-model-result').textContent") == f"{100 * row['expectedMakes'] / row['attempts']:.2f}"
+        assert js("document.querySelectorAll('.challenge-dots .forecast-dot').length") == 1
+    js("document.querySelector('.challenge-action').click()")
+    assert js("document.activeElement.id") == 'challenge-slider'
+    browser.call('Input.dispatchKeyEvent', {'type':'keyDown','key':'ArrowRight','code':'ArrowRight','windowsVirtualKeyCode':39})
+    browser.call('Input.dispatchKeyEvent', {'type':'keyUp','key':'ArrowRight','code':'ArrowRight','windowsVirtualKeyCode':39})
+    assert js("document.querySelector('.challenge-value').textContent") == '51'
+    print('SHOT_CHALLENGE_VERIFIED seven regions, exact model and actual rates, dot selection, keyboard, replay and placement', flush=True)
 
 
 def verify_links(browser, url):

@@ -1,7 +1,8 @@
+import { shotChallenge } from './shot-challenge.js?v=1';
 import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=7';
 import { renderStudy } from './study-findings.js?v=6';
 import { shotMix } from './shot-mix.js?v=4';
-import { headline, shooters, ladder, teamReport, teamControl, prediction, teamStory, startPoints } from './overview.js?v=10';
+import { headline, shooters, ladder, teamReport, teamControl, prediction, teamStory, startPoints } from './overview.js?v=11';
 
 const $ = id => document.getElementById(id);
 const controls = ['season', 'team', 'player', 'phase', 'shot-type', 'compare'].map($);
@@ -761,6 +762,9 @@ async function start() {
     await refresh(openLink());
     if (location.search) history.replaceState(null, '', location.pathname + location.hash);
     const matches = data => data.manifestSha256 === index.manifestSha256;
+    json('data/heldout-spatial.json').then(data => {
+        if (matches(data)) shotChallenge($('shot-challenge'), data);
+    }).catch(error => console.warn('The shot challenge could not load.', error));
     const teamData = json('data/teams.json').catch(() => null);
     Promise.all([json('data/shot-mix.json'), json('data/shot-timing.json').catch(() => null), teamData]).then(([mix, timing, teams]) => {
         if (!matches(mix)) return;
