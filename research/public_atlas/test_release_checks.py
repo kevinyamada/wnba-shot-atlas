@@ -49,14 +49,17 @@ class ReleaseChecks(unittest.TestCase):
             self.assertEqual(hashlib.sha256(raw).hexdigest(), expected, name)
 
     def test_future_inputs_required(self):
-        with patch('sys.argv', ['score_future', '--season', '2027']), patch.object(score_future.joblib, 'load') as load:
-            with TemporaryDirectory() as tmp:
-                pins = Path(tmp) / 'pins.json'
-                sources = json.loads(score_future.PIN.read_bytes())
-                pins.write_text(json.dumps([r for r in sources if r['season'] <= 2026]))
-                with patch.object(score_future, 'PIN', pins), self.assertRaisesRegex(SystemExit, 'Pin and build'):
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            sources = [r for r in json.loads(score_future.PIN.read_bytes()) if r['season'] <= 2026]
+            pins = root / 'pins.json'
+            pins.write_text(json.dumps(sources))
+            (root / 'model_registration.json').write_bytes((score_future.OUT / 'model_registration.json').read_bytes())
+            with patch('sys.argv', ['score_future', '--season', '2027']), patch.object(score_future, 'OUT', root), \
+                    patch.object(score_future, 'PIN', pins), patch.object(score_future.joblib, 'load') as load:
+                with self.assertRaisesRegex(SystemExit, 'Pin and build'):
                     score_future.main()
-            load.assert_not_called()
+                load.assert_not_called()
 
 
 if __name__ == '__main__':
