@@ -14,6 +14,7 @@ def table(frame):
 
 
 def main():
+    rehearsal = pd.read_csv(RESULTS / 'prospective/season_2026.csv').set_index('split')
     counts = pd.read_csv(RESULTS / 'recount/season_recount.csv')
     mix = pd.read_csv(RESULTS / 'shot_mix/comparisons.csv').set_index('comparison')
     mix_areas = pd.read_csv(RESULTS / 'shot_mix/comparison_areas.csv')
@@ -62,11 +63,11 @@ def main():
              f'- **The record.** {attempts:,} field goal attempts from 30 WNBA seasons, 1997 to 2026, recounted from the raw public files by code that shares nothing with the build. {mapped:,} have a usable court location.',
              f"- **The league changed its shots.** Threes rose from {100 * three.share_before:.0f}% to {100 * three.share_after:.0f}% of attempts and points per shot from {long.before:.2f} to {long.after:.2f}. "
              f"Over the whole span most of the rise came from scoring more in the same areas. Over the last ten seasons {100 * recent.mix_share:.0f}% of it came from where teams shoot.",
-             f"- **A team controls where it shoots more than anything else.** Between alternating games of a season, the quality of the shots a team takes repeats at {rep.loc['offence_quality', 'split_half']:.2f}. "
+             f"- **Offensive shot quality repeated most across games.** Between alternating games of a season, the quality of the shots a team takes repeats at {rep.loc['offence_quality', 'split_half']:.2f}. "
              f"Opponents' shot making against a defence repeats at only {rep.loc['defence_making', 'split_half']:.2f}.",
              f"- **Shooters differ, and pooling is needed to see it.** True shot making skill spreads by about {shooters['skillSpread']:.1f} makes per 100 shots between players. "
              f"A pooled estimate improved forecasts of the next season by {check.loc[('all shots', 'pooled'), 'drop_pct']:.2f}%. The raw margin made them worse.",
-             f"- **Distance is hard to beat, and the reason is chance.** Everything else in the record lowers shot forecast error by {summary['full_drop_pct']:.1f}% beyond distance alone.",
+             f"- **Distance explains most of the measured improvement.** Everything else in the record lowers shot forecast error by {summary['full_drop_pct']:.1f}% beyond distance alone.",
              f"- **Predictions for 2027 are written down.** A Bayesian season model beat simpler rules on past seasons for every measure, and its 95% ranges held {100 * backtest.inside_95.min():.0f}% to {100 * backtest.inside_95.max():.0f}% of outcomes.", '',
              '## Questions', '',
              'The project asks what a team could learn from data that anyone can download. Four questions organise it.', '',
@@ -75,7 +76,7 @@ def main():
              '3. Which of those numbers reflect something a team does, and which are mostly luck?',
              '4. What can be said about next season before it is played?', '',
              '## Data', '',
-             f'Shots come from the wehoop releases of WNBA Stats (1997 to 2001) and ESPN (2002 to 2026), pinned by checksum. The explorer counts {attempts:,} regular season and playoff attempts, {makes:,} makes and {pts:,} field goal points. '
+             f'Shots come from the wehoop releases of WNBA Stats (1997 to 2001) and ESPN (2002 to 2026), pinned by checksum. The explorer counts {attempts:,} recorded regular season and playoff attempts, {makes:,} makes and {pts:,} field goal points. '
              f'{unknown:,} attempts have no usable location, almost all of them shots recorded exactly at the basket through 2010. Play by play from WNBA Stats gives the order of events for possession work.', '',
              'An independent recount reads the raw files directly and is compared with every published total, including the live site. It found three errors that are now corrected: one team whose 2002 shots carried an ID the schedule did not list, '
              '41 made baskets filed under labels such as turnover, and a mislabelled group of shots with no team. The corrections and what remains open are in the [pipeline notes](research/public_atlas/README.md).', '',
@@ -99,7 +100,8 @@ def main():
              '### The league changed its shots', '',
              '![Share of shots by court area in the first and last five seasons, with points per shot in each](research/results/public_atlas/report/shot_diet.png)', '',
              'Bar width is the share of attempts from each area. Teams traded midrange shots for threes while scoring more near the basket.', '',
-             '### What a team controls', '',
+             '### Which team tendencies repeat', '',
+             '[2025 shot mix and conversion](https://kevinyamada.github.io/wnba-shot-atlas/study/shot-mix/) compares all 13 teams using field-goal points per 100 attempts.', '',
              '![How much each team measure repeats between alternating games](research/results/public_atlas/report/repeatability.png)', '',
              table(pd.DataFrame({'Measure': repeats.label, 'Repeats between alternating games': repeats.split_half.map('{:.2f}'.format),
                                  '95% interval': [f'{a:.2f} to {b:.2f}' for a, b in zip(repeats.split_half_low, repeats.split_half_high)],
@@ -138,8 +140,8 @@ def main():
              f"On {int(full.attempts):,} shots from the 2026 regular season, with models fitted on 2022 to 2024 and tuned on 2025:", '',
              table(pd.DataFrame({'Information': ['League make rate only' if s == 'League rate' else s for s in ladder.step], 'Brier error': ladder.brier.map('{:.5f}'.format),
                                  'Drop from distance': ['' if pd.isna(v) or s == 'Distance' else f'{v:.2f}%' for v, s in zip(ladder.drop_vs_distance_pct, ladder.step)]})),
-             f"A single shot either goes in or it does not. If the full model's make chances were exactly right its error would still be {summary['error_left_if_full_model_were_exact']:.4f}. "
-             f"Better information can only spread predicted chances further apart: distance spreads them by {100 * summary['distance_spread']:.1f} percentage points and everything recorded reaches {100 * summary['full_spread']:.1f}. "
+             f"On 2026 regular-season shots the full model reduced Brier error by {rehearsal.loc['test','drop_pct']:.2f}% relative to distance alone. "
+             f"The playoff reduction was {rehearsal.loc['playoffs','drop_pct']:.2f}% (95% game-resampled interval {rehearsal.loc['playoffs','low_pct']:+.2f}% to {rehearsal.loc['playoffs','high_pct']:+.2f}%). "
              'The files hold no defender positions, passes or movement, so the gain from tracking data cannot be measured here.', '',
              '### Predicting the next season', '',
              '![Past error of four prediction rules, relative to assuming the league average](research/results/public_atlas/report/prediction_error.png)', '',
@@ -161,7 +163,7 @@ def main():
              f"The best method, the {lab.method.iloc[0]}, lowered error by {lab.drop_vs_distance_pct.iloc[0]:.2f}%. Once distance from the rim is known, a detailed map of the court adds very little. "
              f"Moran's I shows why: neighbouring cells have similar make rates (I = {moran.loc['Observed make rate', 'morans_i']:.2f}), "
              f"the distance curve removes most of that (I = {moran.loc['After the distance curve', 'morans_i']:.2f}) "
-             f"and nothing is left after the mesh model with a trend (I = {moran.loc['After the mesh model with trend', 'morans_i']:.2f}, p = {moran.loc['After the mesh model with trend', 'p_value']:.2f}).", '',
+             f"and the upper-tail permutation test finds no evidence of positive residual clustering at this neighbour distance after the mesh fit (I = {moran.loc['After the mesh model with trend', 'morans_i']:.3f}, upper-tail p = {moran.loc['After the mesh model with trend', 'p_value']:.3f}).", '',
              f"For where shots come from, a log Gaussian Cox process scored {cox:.4f} in average log score per shot, "
              f"against {reuse:.4f} for reusing last season's shares of shots by cell. Lower is better, so the Cox process {'did' if cox < reuse else 'did not'} beat the simple rule. "
              f"The [Methods lab]({SITE_URL}lab/) shows every surface, the variogram and the ensemble weights.", '',
@@ -184,7 +186,7 @@ def main():
              '- [Recount from the raw files](research/results/public_atlas/recount/README.md)',
              '- [Shot mix and conversion](research/results/public_atlas/shot_mix/README.md)',
              '- [League expected points](research/results/public_atlas/expected_points/README.md)',
-             '- [What a team controls](research/results/public_atlas/teams/README.md) and [whole possessions](research/results/public_atlas/teams/POSSESSIONS.md)',
+             '- [Which team tendencies repeat](research/results/public_atlas/teams/README.md) and [whole possessions](research/results/public_atlas/teams/POSSESSIONS.md)',
              '- [Where the points come from after each way of getting the ball](research/results/public_atlas/plays/starts/README.md)',
              '- [Shooters against expectation](research/results/public_atlas/shooters/README.md)',
              '- [Why distance is hard to beat](research/results/public_atlas/why_distance/README.md)',

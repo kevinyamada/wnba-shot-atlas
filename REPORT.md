@@ -8,10 +8,10 @@ The interactive atlas is at [https://kevinyamada.github.io/wnba-shot-atlas/](htt
 
 - **The record.** 902,770 field goal attempts from 30 WNBA seasons, 1997 to 2026, recounted from the raw public files by code that shares nothing with the build. 811,678 have a usable court location.
 - **The league changed its shots.** Threes rose from 21% to 34% of attempts and points per shot from 0.91 to 1.00. Over the whole span most of the rise came from scoring more in the same areas. Over the last ten seasons 81% of it came from where teams shoot.
-- **A team controls where it shoots more than anything else.** Between alternating games of a season, the quality of the shots a team takes repeats at 0.84. Opponents' shot making against a defence repeats at only 0.29.
+- **Offensive shot quality repeated most across games.** Between alternating games of a season, the quality of the shots a team takes repeats at 0.84. Opponents' shot making against a defence repeats at only 0.29.
 - **Shooters differ, and pooling is needed to see it.** True shot making skill spreads by about 3.9 makes per 100 shots between players. A pooled estimate improved forecasts of the next season by 0.23%. The raw margin made them worse.
-- **Distance is hard to beat, and the reason is chance.** Everything else in the record lowers shot forecast error by 1.9% beyond distance alone.
-- **Predictions for 2027 are written down.** A Bayesian season model beat simpler rules on past seasons for every measure, and its 95% ranges held 93% to 97% of outcomes.
+- **Distance explains most of the measured improvement.** Everything else in the record lowers shot forecast error by 1.9% beyond distance alone.
+- **Predictions for 2027 are written down.** A Bayesian season model beat simpler rules on past seasons for every measure, and its 95% ranges held 93% to 96% of outcomes.
 
 ## Questions
 
@@ -24,7 +24,7 @@ The project asks what a team could learn from data that anyone can download. Fou
 
 ## Data
 
-Shots come from the wehoop releases of WNBA Stats (1997 to 2001) and ESPN (2002 to 2026), pinned by checksum. The explorer counts 902,770 regular season and playoff attempts, 389,257 makes and 859,086 field goal points. 89,631 attempts have no usable location, almost all of them shots recorded exactly at the basket through 2010. Play by play from WNBA Stats gives the order of events for possession work.
+Shots come from the wehoop releases of WNBA Stats (1997 to 2001) and ESPN (2002 to 2026), pinned by checksum. The explorer counts 902,770 recorded regular season and playoff attempts, 389,257 makes and 859,086 field goal points. 89,631 attempts have no usable location, almost all of them shots recorded exactly at the basket through 2010. Play by play from WNBA Stats gives the order of events for possession work.
 
 An independent recount reads the raw files directly and is compared with every published total, including the live site. It found three errors that are now corrected: one team whose 2002 shots carried an ID the schedule did not list, 41 made baskets filed under labels such as turnover, and a mislabelled group of shots with no team. The corrections and what remains open are in the [pipeline notes](research/public_atlas/README.md).
 
@@ -54,7 +54,9 @@ An independent recount reads the raw files directly and is compared with every p
 
 Bar width is the share of attempts from each area. Teams traded midrange shots for threes while scoring more near the basket.
 
-### What a team controls
+### Which team tendencies repeat
+
+[2025 shot mix and conversion](https://kevinyamada.github.io/wnba-shot-atlas/study/shot-mix/) compares all 13 teams using field-goal points per 100 attempts.
 
 ![How much each team measure repeats between alternating games](research/results/public_atlas/report/repeatability.png)
 
@@ -145,7 +147,7 @@ On 44,478 shots from the 2026 regular season, with models fitted on 2022 to 2024
 | Previous event | 0.22698 | 1.64% |
 | Shooter record so far | 0.22640 | 1.90% |
 
-A single shot either goes in or it does not. If the full model's make chances were exactly right its error would still be 0.2263. Better information can only spread predicted chances further apart: distance spreads them by 12.5 percentage points and everything recorded reaches 14.6. The files hold no defender positions, passes or movement, so the gain from tracking data cannot be measured here.
+On 2026 regular-season shots the full model reduced Brier error by 1.90% relative to distance alone. The playoff reduction was 0.89% (95% game-resampled interval -0.18% to +1.90%). The files hold no defender positions, passes or movement, so the gain from tracking data cannot be measured here.
 
 ### Predicting the next season
 
@@ -156,11 +158,11 @@ Each season from 2019 to 2026 was predicted using only earlier seasons. Error is
 | Measure | League average | Same as last season | Simple carry over | Bayesian season model | Inside its 95% range |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | Shot quality taken | 2.14 | 1.96 | 1.84 | 1.82 | 95% |
-| Shot making | 5.69 | 5.19 | 4.96 | 4.82 | 94% |
+| Shot making | 5.69 | 5.19 | 4.96 | 4.82 | 93% |
 | Shot quality allowed | 1.59 | 1.36 | 1.33 | 1.25 | 96% |
-| Shot making allowed | 3.60 | 3.51 | 3.47 | 3.41 | 93% |
-| Net | 7.60 | 7.16 | 6.82 | 6.71 | 94% |
-| Shooter makes above expected | 4.72 | 4.07 | 4.03 | 3.81 | 97% |
+| Shot making allowed | 3.60 | 3.51 | 3.47 | 3.41 | 94% |
+| Net | 7.60 | 7.16 | 6.82 | 6.71 | 95% |
+| Shooter makes above expected | 4.53 | 3.77 | 3.73 | 3.54 | 96% |
 
 The model estimates that a shooter keeps 94% of a margin from one season to the next and a team keeps 66% of its net. Team predictions stay uncertain: the model's error on team net was 6.7 points per 100 shots against 7.6 for assuming every team is average.
 
@@ -186,7 +188,7 @@ Eleven methods were given the same task: learn the make chance at each court spo
 | Inverse distance weighting | Interpolation | 0.23136 | -0.22% | -0.31% to -0.14% |
 | League rate | Baseline | 0.24697 | -6.98% | -7.31% to -6.65% |
 
-The best method, the Gaussian process, lowered error by 0.09%. Once distance from the rim is known, a detailed map of the court adds very little. Moran's I shows why: neighbouring cells have similar make rates (I = 0.53), the distance curve removes most of that (I = 0.07) and nothing is left after the mesh model with a trend (I = -0.08, p = 0.97).
+The best method, the Gaussian process, lowered error by 0.09%. Once distance from the rim is known, a detailed map of the court adds very little. Moran's I shows why: neighbouring cells have similar make rates (I = 0.53), the distance curve removes most of that (I = 0.07) and the upper-tail permutation test finds no evidence of positive residual clustering at this neighbour distance after the mesh fit (I = -0.078, upper-tail p = 0.974).
 
 For where shots come from, a log Gaussian Cox process scored 5.0628 in average log score per shot, against 5.0612 for reusing last season's shares of shots by cell. Lower is better, so the Cox process did not beat the simple rule. The [Methods lab](https://kevinyamada.github.io/wnba-shot-atlas/lab/) shows every surface, the variogram and the ensemble weights.
 
@@ -217,7 +219,7 @@ The [pipeline notes](research/public_atlas/README.md) list every command. Each s
 - [Recount from the raw files](research/results/public_atlas/recount/README.md)
 - [Shot mix and conversion](research/results/public_atlas/shot_mix/README.md)
 - [League expected points](research/results/public_atlas/expected_points/README.md)
-- [What a team controls](research/results/public_atlas/teams/README.md) and [whole possessions](research/results/public_atlas/teams/POSSESSIONS.md)
+- [Which team tendencies repeat](research/results/public_atlas/teams/README.md) and [whole possessions](research/results/public_atlas/teams/POSSESSIONS.md)
 - [Where the points come from after each way of getting the ball](research/results/public_atlas/plays/starts/README.md)
 - [Shooters against expectation](research/results/public_atlas/shooters/README.md)
 - [Why distance is hard to beat](research/results/public_atlas/why_distance/README.md)

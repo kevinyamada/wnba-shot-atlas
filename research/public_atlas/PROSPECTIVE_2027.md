@@ -13,7 +13,7 @@ Written on 23 November 2026, before any 2027 game. Every season through 2026 has
 
 The data rules are frozen too: one shot feed per season, the field goal and special game rules in `build.py`, and the eligibility rule that a game needs both team boxes to match its shot records.
 
-The fitted shot models are saved in the local cache as `why_distance_models.joblib`. They are also reproducible from the pinned files with a fixed seed. Record the Git commit that holds this file before scoring.
+The [original model registration](../results/public_atlas/prospective/model_registration.json) records the fitted model and prediction-file hashes, original source pins, repository reference, rehearsal environment and hashes of the five issued forecast CSVs. On 26 November 2026, the original Windows checkout reproduced both models’ predictions on all 47,405 eligible 2026 shots within an absolute tolerance of 1e-12 and matched the published regular-season and playoff score tables.
 
 ## What will be reported
 
@@ -44,6 +44,6 @@ Add 2027 to the season range in `fetch.py` and the last season of the current co
 python research/public_atlas/score_future.py --season 2027
 ```
 
-The script loads the frozen models, applies the benchmark sample rules to 2027 and writes the results to `research/results/public_atlas/prospective/`. Run on 2026, it reproduces all 47,405 saved predictions exactly, which is the check that the frozen rule is the one being scored. It refuses to run for a season that has not been built.
+The script loads the frozen models, applies the benchmark sample rules to 2027 and atomically archives the CSV and JSON under `research/results/public_atlas/prospective/season_2027/`. Existing results are protected from replacement. Run on 2026, it checks the 47,405 original predictions and reads the existing score table without rewriting it, which is the check that the frozen rule is the one being scored. It refuses to run for a season that has not been built.
 
 The shooter, league expectation and first shot forecasts are rolling rules in `shooters.py`, `shot_form.py` and `shot_timing.py`. Extend their season ranges by one year and run them once. Their code must not change first.

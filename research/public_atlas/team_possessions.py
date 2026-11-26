@@ -182,7 +182,7 @@ def main():
 
     lines = ['# Whole possessions: what each team does and allows', '',
              f"Across {len(table)} team seasons from 2016 to 2026 and {int(table.possessions.sum()):,} complete regular season possessions, these are the correlations between alternating games of the same team season. "
-             'A value near 1 means the team controls the number. A value near 0 means it is mostly chance.', '',
+             'A value near 1 means the tendency repeated across alternating games. A value near zero means the two halves showed little agreement.', '',
              '| Measure | Same season, alternating games | 95% interval | Spread between teams |', '| --- | ---: | --- | ---: |']
     lines += [f'| {r.label} | {r.split_half:.2f} | {r.split_half_low:.2f} to {r.split_half_high:.2f} | {spread[r.measure]:.1f} |' for r in repeats.itertuples()]
     lines += ['', 'Possessions come from the play by play reconstruction, which keeps only possessions whose start, events and end could be confirmed. Points include free throws. '

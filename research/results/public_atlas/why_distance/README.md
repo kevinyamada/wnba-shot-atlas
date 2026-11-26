@@ -2,7 +2,7 @@
 
 On 44,478 shots from the 2026 regular season, a forecast that gives every shot the league make rate has a Brier error of 0.2480. Using distance alone brings it to 0.2308. Adding court position, the recorded shot type, the period, clock and score, the previous event and the shooter's record so far brings it to 0.2264, a further drop of 1.9%.
 
-The main reason is chance. A single shot either goes in or it does not. If the full model's make chances were exactly right, the error would still be 0.2263, against the 0.2264 it actually has. Better information can only spread the predicted chances further apart. Distance already spreads them with a standard deviation of 12.5 percentage points and everything else widens that to 14.6.
+If the fitted make probabilities were exact, the expected squared error would be 0.2263, against the 0.2264 it actually has. The contribution of unobserved shot difficulty is unknown. Distance already spreads them with a standard deviation of 12.5 percentage points and everything else widens that to 14.6.
 
 | Added information | Brier error | Drop from distance | 95% interval | Drop from previous step | 95% interval |
 | --- | ---: | ---: | --- | ---: | --- |

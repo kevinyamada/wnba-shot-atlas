@@ -225,7 +225,7 @@ function structure(data) {
         line.append(el('span', row.residual), track, el('em', `${row.morans_i.toFixed(2)} · p ${row.p_value < .002 ? 'below 0.002' : row.p_value.toFixed(2)}`));
         moran.append(line);
     }
-    section.append(moran, el('p', `Raw make rates are strongly alike between neighbours. The distance curve removes most of that, and the mesh model with a trend removes the rest. ${data.moran[0].cells} cells of 2 ft with at least 20 shots, tested with 999 permutations.`, 'caption'));
+    section.append(moran, el('p', `Raw make rates are strongly alike between neighbours. The distance curve removes most of that, and the one-sided permutation test found no evidence of positive residual clustering at this neighbour distance after fitting the mesh. ${data.moran[0].cells} cells of 2 ft with at least 20 shots, tested with 999 permutations.`, 'caption'));
 
     const pattern = data.pattern;
     section.append(el('h3', 'Are shot locations random?'),

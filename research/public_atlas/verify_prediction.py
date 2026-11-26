@@ -74,6 +74,16 @@ def main():
     shooters = pd.read_csv(OUT / 'shooters.csv').set_index('player_id')
     history = pd.DataFrame({'entity': seasons.player_id, 'season': seasons.season, 'observed': seasons.raw_per_100,
                             'noise': 1e4 * seasons.chance_variance / seasons.attempts ** 2}).sort_values('season')
+    eligible = seasons.loc[seasons.attempts.ge(100), ['player_id', 'season']].copy()
+    eligible['season'] += 1
+    rows = seasons.merge(eligible, on=['player_id', 'season'], validate='one_to_one')
+    rows = rows[rows.season.between(2019, 2026)]
+    assert len(rows) == backtest.loc['shooter', 'predictions']
+    assert np.isclose(np.sqrt(np.average(rows.raw_per_100 ** 2, weights=rows.attempts)), backtest.loc['shooter', 'rmse_league'])
+    historical = pd.read_csv(OUT / 'team_backtest_rows.csv')
+    for measure, sample in historical.groupby('measure'):
+        inside = (sample.bayes - sample.actual).abs() <= 1.96 * np.sqrt(sample.bayes_variance + sample.noise)
+        assert np.isclose(inside.mean(), backtest.loc[measure, 'inside_95'])
     last = seasons[seasons.season.eq(2026) & seasons.attempts.ge(100)]
     assert check_series(history, settings.loc['shooter'], shooters, 'shooter') == len(shooters) == len(last)
     assert shooters.prediction.is_monotonic_decreasing and (shooters.low < shooters.prediction).all() and (shooters.prediction < shooters.high).all()

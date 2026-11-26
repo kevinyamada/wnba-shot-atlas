@@ -52,16 +52,16 @@ Makes per 100 shots above the league expectation, for players with at least 100 
 
 ## How the rules did on past seasons
 
-Each season from 2019 to 2026 was predicted using only earlier seasons. Error is the root mean squared error against what was then observed. The last column is the share of outcomes inside the Bayesian 95% range.
+Each season from 2019 to 2026 was predicted using only earlier seasons. Error is the root mean squared error against what was then observed. The last column is coverage using prior-season noise. Shooter forecasts require 100 attempts in the preceding season and are weighted by target-season attempts.
 
 | Measure | Predictions | League average | Same as last season | Carry over rule | Bayesian season model | Inside 95% range |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Shot quality taken | 97 | 2.14 | 1.96 | 1.84 | 1.82 | 95% |
-| Shot making | 97 | 5.69 | 5.19 | 4.96 | 4.82 | 94% |
+| Shot making | 97 | 5.69 | 5.19 | 4.96 | 4.82 | 93% |
 | Shot quality allowed | 97 | 1.59 | 1.36 | 1.33 | 1.25 | 96% |
-| Shot making allowed | 97 | 3.60 | 3.51 | 3.47 | 3.41 | 93% |
-| Net | 97 | 7.60 | 7.16 | 6.82 | 6.71 | 94% |
-| Shooter makes above expected | 933 | 4.72 | 4.07 | 4.03 | 3.81 | 97% |
+| Shot making allowed | 97 | 3.60 | 3.51 | 3.47 | 3.41 | 94% |
+| Net | 97 | 7.60 | 7.16 | 6.82 | 6.71 | 95% |
+| Shooter makes above expected | 710 | 4.53 | 3.77 | 3.73 | 3.54 | 96% |
 
 ## The Bayesian season model
 

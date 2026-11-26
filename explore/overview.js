@@ -218,7 +218,7 @@ export function ladder(target, data) {
     }
     const legend = el('p', null, 'diet-key');
     legend.append(...parts.map(([name, , tone]) => el('span', name, tone)));
-    const why = el('p', `One shot either goes in or it does not, so most of the error is chance that no forecast can remove. To do 10% better than distance, a forecast would have to tell easy shots from hard ones much more sharply: on a typical shot its make chance would sit about ${(100 * data.ceiling.find(row => row.target_drop_pct === 10).spread_needed).toFixed(0)} percentage points from the average. `
+    const why = el('p', `Adding the other recorded features reduced 2026 regular-season Brier error by ${summary.full_drop_pct.toFixed(1)}%. To do 10% better than distance, a forecast would have to tell easy shots from hard ones much more sharply: on a typical shot its make chance would sit about ${(100 * data.ceiling.find(row => row.target_drop_pct === 10).spread_needed).toFixed(0)} percentage points from the average. `
         + `Distance manages ${(100 * summary.distance_spread).toFixed(1)} and everything recorded today reaches ${(100 * summary.full_spread).toFixed(1)}. `
         + 'These files have no defender positions, passes or movement, so the gain from tracking data cannot be measured here.');
     const table = el('table');
@@ -366,13 +366,20 @@ export function teamReport(target, data, shooterData, {season, team, pick}, poss
     trust.id = 'team-consistency';
     const scope = el('p', (String(season) === year ? '' : `Showing ${year}. Team reports cover ${years[0]} to ${years.at(-1)}. `)
         + 'Regular season, field goals only. Each value compares the team with the rest of the league, with small samples pulled toward average.', 'caption');
+    const regionalLinks = [];
+    if (year === '2025') {
+        const link = el('a', chosen ? 'See the seven-region breakdown for ' + chosen.name : 'Compare 2025 shot mix and conversion for all 13 teams');
+        link.href = new URL('../study/shot-mix/' + (chosen ? '#team-' + chosen.id : ''), import.meta.url);
+        regionalLinks.push(link);
+    }
     if (!chosen) {
         const factors = possessionData?.seasons[year];
         if (factors && teamView === 'possessions') {
             const title = el('h2', `What each team did with its possessions in ${year}`);
             title.id = 'team-title';
             const key = el('p', 'Each bar compares the team with the rest of the league. Blue to the right helps the team and orange to the left hurts it. The columns use different units, so compare bars within a column. Overall is points per 100 possessions scored minus allowed, free throws included.', 'caption');
-            target.replaceChildren(title, viewSwitch(redraw), possessionTable(factors, year, pick), key, scope);
+            scope.textContent = (String(season) === year ? '' : 'Showing ' + year + '. ') + 'Regular season. Rates use reconstructed possessions.';
+            target.replaceChildren(title, viewSwitch(redraw), possessionTable(factors, year, pick), key, scope, ...regionalLinks);
             target.hidden = false;
             return;
         }
@@ -408,7 +415,7 @@ export function teamReport(target, data, shooterData, {season, team, pick}, poss
         const wrap = el('div', null, 'table-scroll');
         wrap.append(table);
         const key = el('p', 'Each bar is field goal points a game against an average team. A blue bar to the right helps the team. An orange bar to the left hurts it. Overall adds the four. Pick a team for its full report.', 'caption');
-        target.replaceChildren(title, ...(factors ? [viewSwitch(redraw)] : []), wrap, key, trust, scope);
+        target.replaceChildren(title, ...(factors ? [viewSwitch(redraw)] : []), wrap, key, trust, scope, ...regionalLinks);
         target.hidden = false;
         return;
     }
@@ -459,12 +466,13 @@ export function teamReport(target, data, shooterData, {season, team, pick}, poss
     back.type = 'button';
     back.id = 'team-back';
     back.addEventListener('click', () => pick('all', year));
-    target.replaceChildren(...parts, back, scope);
+    scope.textContent = 'The shot chart uses regular-season field-goal points per game, adjusted for opponents. The whole-possession table includes free throws.';
+    target.replaceChildren(...parts, back, scope, ...regionalLinks);
     target.hidden = false;
 }
 
 export function teamControl(target, data) {
-    const lead = el('p', 'Take one team’s season and deal its games into two piles, like dealing cards. If a number comes out about the same in both piles, it is consistent: it reflects how the team plays. If the two piles disagree, the number swings from game to game and one stretch of games says little.');
+    const lead = el('p', 'Take one team’s season and deal its games into two piles, like dealing cards. If a number comes out about the same in both piles, the tendency repeated across those games. If the two piles disagree, the number swings from game to game and one stretch of games says little.');
     const table = el('table');
     const head = table.createTHead().insertRow();
     for (const text of ['Measure', 'Match between the two piles', 'Match with the next season', 'In words']) head.append(Object.assign(el('th', text), {scope: 'col'}));

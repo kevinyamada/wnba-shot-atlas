@@ -1,4 +1,4 @@
-# What a team controls
+# Which team tendencies repeat
 
 Across 136 team seasons from 2016 to 2026, shot quality taken is the most repeatable of the four measures (correlation 0.84 between alternating games of the same season) and shot making allowed is the least (0.29).
 
@@ -11,7 +11,7 @@ Shot quality is the league expected points of the shots a team takes or allows. 
 | Shot quality allowed | 0.67 | 0.56 to 0.76 | 0.52 | 0.35 to 0.67 | 1.5 | 82% |
 | Shot making allowed | 0.29 | 0.10 to 0.46 | 0.37 | 0.22 to 0.51 | 2.7 | 55% |
 
-A higher correlation means the measure reflects something a team does. A correlation near zero means most of what is seen in one stretch of games is chance. These are descriptions of past seasons. They do not show that changing a scheme would move a measure.
+A higher correlation means the tendency repeated across alternating games. A value near zero indicates little agreement between the two halves. These are descriptions of past seasons. They do not show that changing a scheme would move a measure.
 
 ## Adjusting for opponents
 

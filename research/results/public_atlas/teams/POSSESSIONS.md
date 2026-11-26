@@ -1,6 +1,6 @@
 # Whole possessions: what each team does and allows
 
-Across 136 team seasons from 2016 to 2026 and 358,901 complete regular season possessions, these are the correlations between alternating games of the same team season. A value near 1 means the team controls the number. A value near 0 means it is mostly chance.
+Across 136 team seasons from 2016 to 2026 and 358,901 complete regular season possessions, these are the correlations between alternating games of the same team season. A value near 1 means the tendency repeated across alternating games. A value near zero means the two halves showed little agreement.
 
 | Measure | Same season, alternating games | 95% interval | Spread between teams |
 | --- | ---: | --- | ---: |

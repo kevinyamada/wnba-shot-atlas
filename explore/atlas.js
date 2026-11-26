@@ -1,7 +1,7 @@
 import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=7';
 import { renderStudy } from './study-findings.js?v=6';
 import { shotMix } from './shot-mix.js?v=4';
-import { headline, shooters, ladder, teamReport, teamControl, prediction, teamStory, startPoints } from './overview.js?v=9';
+import { headline, shooters, ladder, teamReport, teamControl, prediction, teamStory, startPoints } from './overview.js?v=10';
 
 const $ = id => document.getElementById(id);
 const controls = ['season', 'team', 'player', 'phase', 'shot-type', 'compare'].map($);
@@ -9,7 +9,7 @@ const panels = ['court-primary', 'court-secondary'].map($);
 const number = new Intl.NumberFormat('en-CA', {maximumFractionDigits: 0});
 const percent = new Intl.NumberFormat('en-CA', {style: 'percent', maximumFractionDigits: 1});
 const decimal = new Intl.NumberFormat('en-CA', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-const dataRelease = 'r10';
+const dataRelease = 'r11';
 const extras = {teams: null, shooters: null, possessions: null};
 const sampleFloor = 12;
 const mappedAreas = 5;
@@ -60,6 +60,9 @@ function shareLink() {
     }
     if (model.side !== 'taken') link.searchParams.set('side', model.side);
     if (model.metric !== 'share') link.searchParams.set('colour', model.metric);
+    if (model.selection.kind === 'zone') link.searchParams.set('area', model.selection.value);
+    else if (model.selection.value !== model.defaultSquare) link.searchParams.set('cell', model.selection.value);
+    if (!$('normalize-shots').checked) link.searchParams.set('units', 'counts');
     return link;
 }
 
@@ -77,6 +80,15 @@ function setMetric(metric) {
 
 function openLink() {
     const wanted = new URLSearchParams(location.search);
+    for (const [key, kind, limit] of [['area', 'zone', index.zones.length], ['cell', 'cell', index.grid.rows * index.grid.cols]]) {
+        const raw = wanted.get(key);
+        if (raw !== null && /^\d+$/.test(raw) && Number(raw) < limit) {
+            model.selection = {kind, value: Number(raw)};
+            if (kind === 'cell') model.lastSquare = Number(raw);
+            break;
+        }
+    }
+    $('normalize-shots').checked = wanted.get('units') !== 'counts';
     if (['taken', 'allowed'].includes(wanted.get('side'))) setSide(wanted.get('side'));
     if (['share', 'rate', 'points'].includes(wanted.get('colour'))) setMetric(wanted.get('colour'));
     options($('compare'), 'No comparison', [...index.seasons.map(year => [String(year), year]), ['prediction', '2027 prediction']], wanted.get('compare'));
@@ -534,6 +546,7 @@ function renderHistoryRows() {
 
 async function historySeries() {
     const version = ++historyVersion;
+    if (!$('more-history').open || !model.views.length) return;
     const filters = searchFilters();
     const selection = {...model.selection};
     const league = filters.player === 'all' && filters.team === 'all' && filters.type === 'all' && model.side === 'taken';
@@ -690,6 +703,7 @@ async function start() {
     $('phase').value = 'all';
     const grid = index.grid;
     model.lastSquare = Math.floor((1 - grid.baseline) / grid.size) * grid.cols + Math.floor(index.court.width / grid.size / 2);
+    model.defaultSquare = model.lastSquare;
     model.selection.value = model.lastSquare;
     $('shot-type').append(...index.shotTypes.map((name, i) => new Option(name, i)));
     controls.forEach(control => {
@@ -734,6 +748,10 @@ async function start() {
         model.lastSquare = square;
         model.selection = {kind: 'cell', value: square};
         refresh();
+    });
+    $('more-history').addEventListener('toggle', () => {
+        if (!$('more-history').open) ++historyVersion;
+        else if (!model.history.length) historySeries();
     });
     panels.forEach(bindCourt);
     let paintFrame;
