@@ -59,6 +59,7 @@ python research/public_atlas/prediction_pack.py
 python research/public_atlas/predict_2027.py
 python research/public_atlas/verify_prediction.py
 python research/public_atlas/methods_lab.py
+python research/public_atlas/heldout_spatial.py
 python research/public_atlas/verify_lab.py
 python research/public_atlas/start_points.py
 python research/public_atlas/verify_starts.py
@@ -130,3 +131,5 @@ Three corrections came out of the recount on 23 November 2026.
 Before these corrections the totals were 902,729 attempts, 389,216 makes and 858,999 points, with 810,416 mapped, 1,459 on the other half and 90,854 unknown.
 
 Still open: 34 completed games in the ESPN schedule from 2002 on have no shot rows, and on games from 2003 on where both teams have a box the shot feed has about 0.5% fewer attempts than the boxes. The 2026 benchmark forecasts were trained on 2022 to 2024 and predict makes about one percentage point too low in 2026, when the league shot better. The longer play histories did not beat the last recorded event on the 2026 regular season next shot test.
+
+The held-out court diagnostic replays the published training settings for 2024–26 and checks each model’s seasonal Brier score. In a two-foot cell, its standardized error is observed minus expected makes divided by the square root of the sum of p(1−p) over shots. The two-sided Moran test compares absolute departures from the cell-permutation mean −1/(n−1), using edge-sharing cells and 9,999 shuffles. The pooled mesh result is the primary test. Annual values describe each season. Regional calibration uses every eligible shot and holds the forecasts fixed while resampling complete games within seasons. The regional intervals are pointwise.

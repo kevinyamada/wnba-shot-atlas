@@ -72,7 +72,7 @@ export function headline(target, mix, timing, teams) {
     const {title, figure, points} = headlineParts(mix, timing);
     if (teams) {
         const repeat = Object.fromEntries(teams.repeatability.map(row => [row.measure, row.split_half]));
-        points.append(takeaway('Steady', `is the word for where a team shoots from: it looks ${steadiness(repeat.offence_quality)} from game to game. Whether opponents make their shots against a team is ${steadiness(repeat.defence_making)}.`));
+        points.append(takeaway(repeat.offence_quality.toFixed(2), `correlation in offensive shot quality between alternating games. Opponents’ shot making repeated less (${repeat.defence_making.toFixed(2)}).`));
     }
     const grid = el('div', null, 'headline-grid');
     grid.append(figure, points);

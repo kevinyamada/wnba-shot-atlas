@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Compare WNBA shooting from 1997 to 2026 by season, team, player and position on the court.">
   <title>WNBA Shot Atlas | Explore 1997 to 2026</title>
-  <link rel="stylesheet" href="explore/atlas.css?v=21">
+  <link rel="stylesheet" href="explore/atlas.css?v=22">
   <script src="theme.js?v=light-default"></script>
-  <script type="module" src="explore/atlas.js?v=24"></script>
+  <script type="module" src="explore/atlas.js?v=25"></script>
 </head>
 <body>
   <a class="skip" href="#explorer">Skip to the shot explorer</a>
@@ -116,6 +116,33 @@
       <p class="caption" id="metric-note"></p>
       <section class="headline" id="team-report" aria-labelledby="team-title" hidden></section>
       <section class="headline" id="headline" aria-labelledby="headline-title" hidden></section>
+      <section id="shot-challenge" class="shot-challenge" aria-labelledby="challenge-title" hidden>
+        <div class="challenge-intro">
+          <p class="challenge-period">2024–26 regular seasons</p>
+          <h2 id="challenge-title">Can you beat the shot model?</h2>
+          <p>Pick a region. Guess how many of 100 shots went in, then see who was closer.</p>
+          <div class="challenge-regions" role="group" aria-label="Pick a shot region"></div>
+        </div>
+        <div class="challenge-visual">
+          <div class="challenge-viz-head"><strong class="challenge-region-title"></strong><span class="challenge-location"></span></div>
+          <div class="challenge-dots" aria-hidden="true"></div>
+          <span class="challenge-grid-key"></span><span class="challenge-sample"></span>
+        </div>
+        <div class="challenge-play">
+          <div class="challenge-score"><strong class="challenge-value"></strong><span class="challenge-value-label"></span></div>
+          <div class="challenge-guess"><label for="challenge-slider">Set your guess</label>
+            <input type="range" id="challenge-slider" min="0" max="100" step="1" value="50">
+            <div class="challenge-scale" aria-hidden="true"><span>0</span><span>100</span></div>
+          </div>
+          <div class="challenge-comparison" hidden>
+            <dl><div><dt>Your guess</dt><dd class="challenge-your-result"></dd></div><div><dt>Model</dt><dd class="challenge-model-result"></dd></div></dl>
+            <p class="challenge-range"></p>
+          </div>
+          <p class="challenge-message" role="status"></p>
+          <button class="challenge-action" type="button">Reveal result</button>
+          <a class="challenge-source" href="lab/#forecast-errors">How we scored it</a>
+        </div>
+      </section>
       <div class="more-list">
         <details class="more" id="more-history"><summary>How has this spot changed over the years?</summary>
           <section aria-labelledby="history-title">

@@ -235,6 +235,40 @@ function structure(data) {
     return section;
 }
 
+function forecastErrors(data) {
+    const section = el('section', null, 'headline');
+    section.id = 'forecast-errors';
+    const pooled = data.pooled;
+    const rim = data.regions.find(row => row.region === 'Near rim');
+    const signed = value => (value > 0 ? '+' : '') + value.toFixed(2).replace('-', '−');
+    section.append(el('h2', 'Where did the court model miss?'),
+        el('p', `In the 2024–26 regular seasons, players made ${Math.abs(rim.gap).toFixed(2)} ${rim.gap >= 0 ? 'more' : 'fewer'} shots per 100 near the rim than the court model predicted. Each season’s forecasts used only the three preceding seasons.`));
+    const order = ['Near rim', 'Short interior', 'Middle interior', 'Long interior', 'Near the line', 'Outside corner', 'Outside arc'];
+    const rows = order.map(name => data.regions.find(r => r.region === name));
+    section.append(table(['Court region', 'Shots', 'Made per 100', 'Expected per 100', 'Gap (95% range)'],
+        rows.map(r => [r.region, count.format(r.attempts), (100 * r.makes / r.attempts).toFixed(2),
+            (100 * r.expectedMakes / r.attempts).toFixed(2), `${signed(r.gap)} (${signed(r.low)} to ${signed(r.high)})`])),
+        el('p', `Positive gaps mean players made more shots than forecast. Ranges resample whole games within each season ${count.format(data.gameDraws)} times and hold the forecasts fixed. Each range describes one region. All ${count.format(pooled.allShots)} eligible shots in ${count.format(data.games)} games enter this table.`, 'caption'));
+    const details = el('details');
+    details.id = 'heldout-neighbours';
+    details.append(el('summary', 'Did neighbouring spots miss in the same direction?'),
+        el('p', `Across the three seasons, neighbouring forecast errors tended to point in the same direction. For the mesh model, Moran’s I was ${pooled.mesh.moransI.toFixed(3)} (two-sided permutation p = ${pooled.mesh.pTwoSided.toFixed(4)}). For the distance curve it was ${pooled.distance.moransI.toFixed(3)} (p = ${pooled.distance.pTwoSided.toFixed(4)}).`),
+        table(['Season', 'Shots in test', '2 ft cells', 'Distance I', 'Mesh I'], [...data.seasons, pooled].map(r =>
+            [r.season === 'pooled' ? 'Pooled' : String(r.season), count.format(r.usedShots), count.format(r.cells), r.distance.moransI.toFixed(3), r.mesh.moransI.toFixed(3)])),
+        el('p', `The pooled test covers ${count.format(pooled.usedShots)} shots and ${count.format(pooled.pairs)} pairs of edge-sharing cells. Each retained cell has at least ${data.minShots} shots in the period shown. We scale its total error by the model’s expected sampling variation, then shuffle those errors across cells ${count.format(data.permutations)} times. The test treats the cell errors as exchangeable and does not model game dependence. The annual figures describe variation across seasons.`, 'caption'));
+    const links = el('p');
+    const cells = el('a', 'Download cell totals (CSV)');
+    cells.download = 'heldout_cells.csv';
+    cells.href = '../research/results/public_atlas/methods_lab/heldout_cells.csv';
+    const result = el('a', 'Download regional results (JSON)');
+    result.download = 'heldout-spatial.json';
+    result.href = '../explore/data/heldout-spatial.json';
+    links.append(cells, ' · ', result);
+    details.append(links);
+    section.append(details);
+    return section;
+}
+
 function density(data, rules) {
     const section = el('section', null, 'headline');
     const scores = data.intensity.scores;
@@ -284,12 +318,23 @@ async function start() {
         if (!response.ok) throw new Error(`Could not load ${name}`);
         return response.json();
     });
+    const heldoutRequest = read('heldout-spatial').catch(() => null);
     const [index, data] = await Promise.all([read('index'), read('methods-lab')]);
     if (data.manifestSha256 !== index.manifestSha256) throw new Error('The lab results differ from the atlas snapshot');
-    $('lab-content').replaceChildren(scoreboard(data), surfaces(data, index.court), ensemble(data), structure(data), density(data, index.court));
+    const pending = el('p', 'Loading historical forecast errors…');
+    pending.id = 'forecast-errors';
+    $('lab-content').replaceChildren(scoreboard(data), surfaces(data, index.court), pending, ensemble(data), structure(data), density(data, index.court));
     $('lab-content').hidden = false;
     $('lab-status').textContent = '';
     document.body.dataset.ready = 'true';
+    const heldout = await heldoutRequest;
+    if (heldout?.manifestSha256 === index.manifestSha256) {
+        const section = forecastErrors(heldout);
+        pending.replaceWith(section);
+        if (location.hash === '#forecast-errors') section.scrollIntoView();
+    } else {
+        pending.textContent = 'The historical forecast error table could not load. Reload to try again.';
+    }
 }
 
 start().catch(error => {

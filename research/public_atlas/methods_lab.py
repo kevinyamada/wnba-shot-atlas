@@ -146,11 +146,19 @@ def car_model(train):
     return AreaCAR(tau).fit(train), tau
 
 
+def distance_curve(train):
+    curve = train.assign(feet=np.rint(np.hypot(train.x, train.y)).clip(0, 40)).groupby('feet').made.agg(['sum', 'count'])
+    curve = ((curve['sum'] + 4 * train.made.mean()) / (curve['count'] + 4)).reindex(range(41)).interpolate().bfill().ffill().to_numpy()
+    def predict(frame):
+        feet = np.rint(np.hypot(frame.x, frame.y)).clip(0, 40).astype(int)
+        return curve[feet]
+    return predict
+
+
 def fit_all(scored, year):
     """Fit every method on the three seasons before `year` and return a prediction function for each."""
     train = window(scored, year)
-    curve = train.assign(feet=np.rint(np.hypot(train.x, train.y)).clip(0, 40)).groupby('feet').made.agg(['sum', 'count'])
-    curve = ((curve['sum'] + 4 * train.made.mean()) / (curve['count'] + 4)).reindex(range(41)).interpolate().bfill().ffill().to_numpy()
+    curve = distance_curve(train)
     rate = train.made.mean()
     ordinary, universal = Kriging(False).fit(train), Kriging(True).fit(train)
     car, tau = car_model(train)
@@ -159,7 +167,7 @@ def fit_all(scored, year):
     process = MaternLaplace(8, .5).fit(train)
     idw = IDW(3).fit(train)
     models = {'League rate': lambda f: np.full(len(f), rate),
-              'Distance curve': lambda f: curve[np.rint(np.hypot(f.x, f.y)).clip(0, 40).astype(int)],
+              'Distance curve': curve,
               'Inverse distance weighting': idw.predict, 'Ordinary kriging': ordinary.predict, 'Universal kriging': universal.predict,
               'Areal CAR model': car.predict, 'Gaussian process': process.predict, 'SPDE mesh field': field.predict, 'SPDE mesh with trend': trend.predict}
     settings = dict(season=year, car_tau=tau, mesh_range_ft=range_ft, mesh_sigma=sigma, variogram_sill=float(universal.sill), variogram_range_ft=float(universal.scale))
@@ -305,7 +313,7 @@ def main():
               'The Gaussian process and the mesh models use exact shot locations. Bayesian models use a Laplace approximation at the posterior mode. '
               'Kriging, the Gaussian process and inverse distance weighting use the settings chosen in the earlier benchmark. The areal and mesh models choose theirs on the last training season. '
               "Moran's I uses cells with at least 20 shots and neighbours one cell apart, with 999 permutations. Ripley's K uses 4,000 sampled shots moved by up to half a foot, a border correction and 39 random patterns.", '',
-              "[Scores](scores.csv) · [Scores by season](scores_by_season.csv) · [Stacking weights](stacking_weights.csv) · [Settings](settings.csv) · [Variograms](variogram.csv) · [Moran's I](morans_i.csv) · [K function](k_function.csv) · [Surfaces for 2027](surfaces_2027.csv) · [Shot density scores](intensity_scores.csv) · [Shot density for 2027](intensity_2027.csv)", '']
+              "[Held-out forecast errors and regional calibration](https://kevinyamada.github.io/wnba-shot-atlas/lab/#forecast-errors) · [Held-out cell totals](heldout_cells.csv) · [Scores](scores.csv) · [Scores by season](scores_by_season.csv) · [Stacking weights](stacking_weights.csv) · [Settings](settings.csv) · [Variograms](variogram.csv) · [Moran's I](morans_i.csv) · [K function](k_function.csv) · [Surfaces for 2027](surfaces_2027.csv) · [Shot density scores](intensity_scores.csv) · [Shot density for 2027](intensity_2027.csv)", '']
     (OUT / 'README.md').write_text('\n'.join(lines), encoding='utf-8', newline='\n')
     write_json(SITE / 'methods-lab.json', dict(
         manifestSha256=manifest_digest(), season=TARGET, tested=list(REPORTED), attempts=len(reported),
