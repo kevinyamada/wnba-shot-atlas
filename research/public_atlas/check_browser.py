@@ -997,8 +997,18 @@ def verify_matchup_scout(browser, base):
             assert js("[...document.querySelectorAll('.scout-players li button')].map(n=>n.textContent)") == [r['name'] for r in a['players']]
             assert js("[...document.querySelectorAll('.scout-plays a')].map(n=>n.href.split('/').pop())") == [str(r[0]) for r in a['plays']]
             assert f"{a['met'][0]} of {card['shots'][3]}" in js("document.querySelector('.scout-met').textContent")
+            rounded = [int(100*n/total + .5) for n, total in zip(
+                [a['off'][0], a['allowed'][0], a['league']], card['shots'])]
+            assert js("[...document.querySelectorAll('.scout-bars b')].map(n=>Number(n.textContent))") == rounded
             if a['players']:
                 player = a['players'][0]
+                assert js("document.querySelector('.scout-star').textContent") == player['name']
+                cues = player['plays'] or a['plays']
+                if cues:
+                    game, period, clock, *_ = cues[0]
+                    assert js("document.querySelector('.scout-cue a').href").endswith('/' + str(game))
+                    period_label = f'Q{period}' if period <= 4 else f'OT{period-4}'
+                    assert js("document.querySelector('.scout-cue a').textContent").endswith(f'{period_label} · {clock}')
                 js("document.querySelector('.scout-players button').click()")
                 assert js("document.querySelector('.scout-film-title').textContent").endswith(player['name'])
                 assert js("[...document.querySelectorAll('.scout-plays a')].map(n=>n.href.split('/').pop())") == [str(r[0]) for r in player['plays']]

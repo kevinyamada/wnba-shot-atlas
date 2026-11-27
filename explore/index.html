@@ -118,16 +118,24 @@
       <section class="headline" id="team-report" aria-labelledby="team-title" hidden></section>
       <section class="headline" id="headline" aria-labelledby="headline-title" hidden></section>
       <section id="matchup-scout" class="scout" aria-labelledby="scout-title">
-        <div class="scout-intro"><div><h2 id="scout-title">Opponent scout</h2>
-          <p>Prepare for a matchup. Find the shots both teams tend to produce, the players taking them, and the game clocks to pull for film.</p></div>
-          <label class="scout-year-label">Regular season<select id="scout-year"><option>2026</option><option>2025</option></select></label></div>
+        <div class="scout-intro"><h2 id="scout-title">Opponent scout</h2></div>
         <p class="scout-status" role="status">Loading matchup data…</p><button type="button" class="scout-retry" hidden>Try again</button>
-        <div class="scout-board" hidden>
+        <details class="scout-picker"><summary>Change matchup</summary><div class="scout-board" hidden>
+          <label>Season<select id="scout-year"><option>2026</option><option>2025</option></select></label>
           <label>Your team<select id="scout-us"></select></label><label>Opponent<select id="scout-them"></select></label>
           <div class="scout-sides" role="group" aria-label="Side of the ball"><button type="button" data-scout-side="defend">When we defend</button><button type="button" data-scout-side="attack">When we attack</button></div>
-        </div>
+        </div></details>
         <div class="scout-result" hidden>
-          <div class="scout-summary"><p class="scout-period"></p><h3 class="scout-match"></h3><p class="scout-lead" aria-live="polite"></p></div>
+          <p class="scout-period"></p><h3 class="scout-match"></h3>
+          <div class="scout-brief">
+            <div><h4 class="scout-lead" aria-live="polite"></h4><p class="scout-reason"></p></div>
+            <figure class="scout-bars"><figcaption></figcaption><div></div></figure>
+          </div>
+          <div class="scout-next">
+            <div><h4>Player to watch</h4><strong class="scout-star"></strong><p class="scout-star-note"></p></div>
+            <div><h4>Play to review</h4><p class="scout-cue"></p><p class="scout-cue-note"></p></div>
+          </div>
+          <details class="scout-details"><summary>Explore shot areas, shooters and game logs</summary>
           <div class="scout-grid"><div class="scout-chart">
             <h4>Where the shots come from</h4>
             <div class="scout-key"><span class="scout-off-key"></span><span class="scout-def-key"></span><span>League</span></div>
@@ -138,8 +146,8 @@
             <p class="scout-question"></p><h4 class="scout-personnel-title"></h4><p class="scout-player-prompt">Select a shooter to filter the film list.</p><ul class="scout-players"></ul>
             <p class="scout-volume"></p></div></div>
           <div class="scout-film"><div><h4 class="scout-film-title" aria-live="polite">Pull these plays</h4><p class="scout-met"></p><p class="scout-player-met"></p><p class="scout-film-note">One shot per game from the three latest meetings with a matching attempt. Links open the game play-by-play.</p><button type="button" class="scout-clear text-button" hidden>Show all shooters</button></div><ul class="scout-plays"></ul></div>
-          <div class="scout-footer"><div class="scout-actions"><button type="button" class="scout-print">Print scout sheet</button><button type="button" class="scout-share">Copy matchup link</button></div>
-            <div class="scout-sources"><a href="https://github.com/kevinyamada/wnba-shot-atlas/blob/main/research/public_atlas/README.md#opponent-scout">Method</a><a class="scout-data">Season data</a></div></div>
+            <div class="scout-sources"><a href="https://github.com/kevinyamada/wnba-shot-atlas/blob/main/research/public_atlas/README.md#opponent-scout">Method</a><a class="scout-data">Season data</a></div></details>
+          <div class="scout-footer"><div class="scout-actions"><button type="button" class="scout-print">Print scout sheet</button><button type="button" class="scout-share">Copy matchup link</button></div></div>
           <p class="scout-action-status" role="status"></p><input class="scout-url" aria-label="Shareable matchup link" readonly hidden>
         </div>
       </section>

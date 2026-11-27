@@ -64,9 +64,49 @@ export function matchupScout(section, load) {
         find('.scout-off-key').textContent = offName + ' took';
         find('.scout-def-key').textContent = defName + ' allowed';
         find('.scout-scale').textContent = '0–' + ceiling + '% of shots';
-        find('.scout-lead').textContent = shared
-            ? 'Start with ' + ['rim attempts', 'short twos', 'midrange shots', 'the corners', 'shots above the break'][focus.z] + '. ' + offName + ' took ' + pct(focus.off) + ' of shots there and ' + defName + ' allowed ' + pct(focus.allowed) + ', both above the ' + pct(focus.league) + ' league rate.'
-            : 'No area is above league average for both teams. Their largest difference is ' + pack.zones[focus.z].toLowerCase() + ' (' + pct(focus.off) + ' taken and ' + pct(focus.allowed) + ' allowed).';
+        const area = areas[selected];
+        const place = ['at the rim', 'on short twos', 'from midrange', 'from the corners', 'on threes above the break'][selected];
+        const gap = area.off - area.allowed;
+        let headline;
+        if (area.overlap >= 3) {
+            headline = side === 'defend' ? ['Protect the rim.', 'Be ready to contest short twos.', 'Be ready to contest midrange shots.', 'Stay close to corner shooters.', 'Pick up shooters above the break.'][selected] : 'Look for chances ' + place + '.';
+        } else if (Math.abs(gap) >= 3) {
+            headline = gap > 0
+                ? offName + ' shoot ' + place + ' more often than ' + defName + ' opponents usually do.'
+                : defName + ' opponents shoot ' + place + ' more often than ' + offName + ' usually do.';
+        } else if (Math.max(area.off, area.allowed) <= area.league - 3) {
+            headline = 'Both teams see fewer shots ' + place + ' than usual.';
+        } else {
+            headline = 'No clear matchup edge ' + place + '.';
+        }
+        find('.scout-lead').textContent = headline;
+        find('.scout-reason').textContent = 'Against other teams, ' + offName + ' took about ' + Math.round(area.off) + ' of every 100 shots ' + place + '. The league took about ' + Math.round(area.league) + '.';
+        find('.scout-bars figcaption').textContent = 'Shots ' + place + ' per 100 attempts';
+        const bars = find('.scout-bars div');
+        bars.replaceChildren();
+        for (const [label, value] of [[offName + ' took', area.off], [defName + ' allowed', area.allowed], ['League', area.league]]) {
+            const row = el('div'), track = el('span', undefined, 'scout-bar-track'), bar = el('i');
+            bar.style.width = value + '%';
+            track.append(bar);
+            row.append(el('span',label),track,el('b',String(Math.round(value))));
+            bars.append(row);
+        }
+        const star = activePlayer || current.players[0];
+        find('.scout-star').textContent = star?.name || 'No shooter recorded';
+        find('.scout-star-note').textContent = star ? star.attempts + ' of the team’s ' + number.format(current.off[0]) + ' shots ' + place + ' against other opponents.' : '';
+        const cue = star?.plays[0] || (!activePlayer && current.plays[0]);
+        const cueBox = find('.scout-cue');
+        cueBox.replaceChildren();
+        find('.scout-cue-note').textContent = '';
+        if (cue) {
+            const [game, period, clock, shooter, play, points] = cue;
+            const link = el('a', 'Game log · ' + pack.games[game][0] + ' · ' + (period <= 4 ? 'Q' + period : 'OT' + (period - 4)) + ' · ' + clock);
+            link.href = 'https://www.espn.com/wnba/playbyplay/_/gameId/' + game;
+            cueBox.append(link);
+            find('.scout-cue-note').textContent = shooter + ' · ' + play + ' · ' + (points ? points + ' points' : 'miss');
+        } else {
+            cueBox.textContent = 'No matching shot in their meetings.';
+        }
         for (const button of section.querySelectorAll('[data-scout-side]')) button.setAttribute('aria-pressed', String(button.dataset.scoutSide === side));
         for (const a of areas) {
             const row = rows.children[a.z];
@@ -187,7 +227,13 @@ export function matchupScout(section, load) {
     });
     find('.scout-print').addEventListener('click',() => {
         document.body.classList.add('printing-scout');
-        try { window.print(); } finally { document.body.classList.remove('printing-scout'); }
+        const details = find('.scout-details');
+        const wasOpen = details.open;
+        details.open = true;
+        try { window.print(); } finally {
+            details.open = wasOpen;
+            document.body.classList.remove('printing-scout');
+        }
     });
     const initial = () => open(saved() || {year:'2026'}, true);
     window.addEventListener('hashchange',() => { if (location.hash.startsWith('#matchup-scout/')) initial(); });
