@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Compare WNBA shooting from 1997 to 2026 by season, team, player and position on the court.">
   <title>WNBA Shot Atlas | Explore 1997 to 2026</title>
-  <link rel="stylesheet" href="explore/atlas.css?v=23">
+  <link rel="stylesheet" href="explore/atlas.css?v=24">
   <script src="theme.js?v=light-default"></script>
-  <script type="module" src="explore/atlas.js?v=26"></script>
+  <script type="module" src="explore/atlas.js?v=27"></script>
 </head>
 <body>
   <a class="skip" href="#explorer">Skip to the shot explorer</a>
@@ -142,6 +142,23 @@
           <p class="challenge-message" role="status"></p>
           <button class="challenge-action" type="button">Reveal result</button>
           <a class="challenge-source" href="lab/#forecast-errors">How we scored it</a>
+        </div>
+      </section>
+      <section id="team-mix-map" class="mix-map" aria-labelledby="mix-map-title" hidden>
+        <div class="mix-head"><p class="challenge-period">2025 regular season</p><h2 id="mix-map-title">Where did each team gain or lose points?</h2>
+          <p>Each dot is a team. Farther right means a more valuable shot mix. Higher means the team scored more than expected from those locations.</p></div>
+        <div class="mix-layout">
+          <div class="mix-figure"><svg viewBox="0 0 420 288" role="img" aria-label="Team shot mix against scoring within locations, in field-goal points per 100 shots. Choose any team below for exact values."></svg>
+            <p class="caption">The lines through the selected team show its 95% game-resampled ranges. Both axes use field-goal points per 100 shots.</p></div>
+          <div class="mix-panel"><label for="mix-team">Choose a team</label><select id="mix-team"></select>
+            <fieldset><legend>Set the benchmark</legend>
+              <label><input id="mix-grid" type="checkbox" checked> Use four-foot squares</label>
+              <label><input id="mix-peers" type="checkbox" checked> Use only the other 12 teams</label></fieldset>
+            <div class="mix-result" aria-live="polite" aria-atomic="true"><h3></h3><dl>
+              <div class="mix-mix"><dt>Shot mix</dt><dd><strong></strong><small></small></dd></div>
+              <div class="mix-within"><dt>Scoring within locations</dt><dd><strong></strong><small></small></dd></div>
+            </dl><p class="mix-observed"></p></div>
+            <a href="study/shot-mix/#other-teams">How the benchmarks work and chart data</a></div>
         </div>
       </section>
       <div class="more-list">

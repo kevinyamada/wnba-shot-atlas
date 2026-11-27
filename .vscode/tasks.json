@@ -57,6 +57,15 @@
       "problemMatcher": []
     },
     {
+      "label": "WNBA public: 2025 team shot mix benchmarks",
+      "type": "process",
+      "command": "py",
+      "args": ["-3.13", "-u", "${workspaceFolder}/research/public_atlas/team_regions_2025.py"],
+      "options": {"cwd": "${workspaceFolder}", "env": {"PYTHONUTF8": "1", "OPENBLAS_NUM_THREADS": "1"}},
+      "presentation": {"reveal": "always", "panel": "dedicated"},
+      "problemMatcher": []
+    },
+    {
       "label": "WNBA public: verify shot mix from raw files",
       "type": "process",
       "command": "py",

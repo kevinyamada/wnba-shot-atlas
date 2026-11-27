@@ -969,6 +969,7 @@ def verify(browser, url):
     browser.wait("location.pathname.endsWith('/meeting/') && document.body?.dataset.recoveryReady==='true' && [...document.images].every(i=>i.complete && i.naturalWidth>0)")
     browser.call('Page.navigate', {'url': url + '#shot-challenge'})
     verify_challenge(browser, url)
+    verify_mix_map(browser, url)
     verify_links(browser, url)
     assert not browser.errors, browser.errors[:3]
     print('ATLAS_BROWSER_VERIFIED', len(seasons), 'seasons, pooled totals, phases, shot types, spatial and event findings, posterior, themes, mobile, original study', flush=True)
@@ -978,7 +979,7 @@ def verify_challenge(browser, base):
     data = json.loads((ROOT / 'explore/data/heldout-spatial.json').read_bytes())
     js = browser.js
     browser.wait("document.querySelector('#shot-challenge:not([hidden]) .challenge-dots')?.children.length === 100")
-    assert js("document.querySelector('#headline + #shot-challenge + .more-list > details').id") == 'more-history'
+    assert js("document.querySelector('#headline + #shot-challenge + #team-mix-map + .more-list > details').id") == 'more-history'
     assert js("document.querySelector('#shot-challenge .challenge-source').href") == base + 'lab/#forecast-errors'
     outcomes = set()
     for period, rows in [('All three', data['regions']), *((str(s['season']), s['regions']) for s in data['seasons'])]:
@@ -1009,6 +1010,31 @@ def verify_challenge(browser, base):
     browser.call('Input.dispatchKeyEvent', {'type':'keyUp','key':'ArrowRight','code':'ArrowRight','windowsVirtualKeyCode':39})
     assert js("document.querySelector('.challenge-value').textContent") == '51'
     print('SHOT_CHALLENGE_VERIFIED 28 season/region combinations, wins, losses, ties and full model rates, dot selection, keyboard, replay and placement', flush=True)
+
+
+def verify_mix_map(browser, base):
+    teams = json.loads((ROOT / 'explore/data/team-mix-2025.json').read_bytes())['teams']
+    js = browser.js
+    browser.wait("document.querySelectorAll('#team-mix-map:not([hidden]) [data-team]').length === 13")
+    assert js("document.querySelector('#team-mix-map a').href") == base + 'study/shot-mix/#other-teams'
+    assert js("document.getElementById('mix-team').value") == '6'
+    for grid, peers, key in [(True, True, 'gridPeers'), (False, True, 'regionsPeers'),
+                             (False, False, 'regionsLeague'), (True, False, 'gridLeague')]:
+        for control, checked in [('mix-grid', grid), ('mix-peers', peers)]:
+            js(f"if (document.getElementById('{control}').checked !== {json.dumps(checked)}) document.getElementById('{control}').click()")
+        for team in teams:
+            browser.select('mix-team', team['id'])
+            view = team['views'][key]
+            assert js("document.querySelector('.mix-dot.selected').dataset.team") == str(team['id'])
+            assert js("document.querySelector('.mix-result h3').textContent") == team['name']
+            for metric in ['mix', 'within']:
+                values = [f'{n:+.2f}'.replace('-', '−') for n in view[metric]]
+                assert js(f"document.querySelector('.mix-{metric} strong').textContent") == values[0]
+                assert js(f"document.querySelector('.mix-{metric} small').textContent") == ' to '.join(values[1:])
+            assert f"{view['baseline']:.2f} benchmark" in js("document.querySelector('.mix-observed').textContent")
+    js("document.querySelector('.mix-dot[data-team=\"8\"] circle').dispatchEvent(new MouseEvent('click', {bubbles:true}))")
+    assert js("document.getElementById('mix-team').value") == '8'
+    print('TEAM_MIX_BROWSER_VERIFIED 13 teams, four benchmarks, exact ranges, chart selection', flush=True)
 
 
 def verify_links(browser, url):
