@@ -730,7 +730,7 @@ def verify(browser, url):
     browser.call('Page.navigate', {'url': url})
     browser.wait(ready)
     assert js("document.documentElement.dataset.theme") == 'light'
-    assert js("[...document.querySelectorAll('.tabs a')].map(a => a.textContent)") == ['Atlas', 'Methods lab']
+    assert js("[...document.querySelectorAll('.tabs a')].map(a => a.textContent)") == ['Atlas', 'Opponent scout', 'Methods lab']
     assert js("document.querySelector('#season').value") == 'all'
     combined_first = "document.getElementById('phase').selectedIndex === 0 && document.getElementById('phase').options[0].value === 'all'"
     assert js(combined_first)
@@ -970,16 +970,51 @@ def verify(browser, url):
     browser.call('Page.navigate', {'url': url + '#shot-challenge'})
     verify_challenge(browser, url)
     verify_mix_map(browser, url)
+    verify_matchup_scout(browser, url)
     verify_links(browser, url)
     assert not browser.errors, browser.errors[:3]
     print('ATLAS_BROWSER_VERIFIED', len(seasons), 'seasons, pooled totals, phases, shot types, spatial and event findings, posterior, themes, mobile, original study', flush=True)
+
+
+def verify_matchup_scout(browser, base):
+    js = browser.js
+    for year, us, them, side, zone in [(2026,131935,19,'defend',0), (2025,6,8,'attack',4)]:
+        data = json.loads((ROOT / f'explore/data/matchup-scout-{year}.json').read_bytes())
+        link = f'#matchup-scout/{year}/{us}/{them}/{side}/{zone}'
+        browser.call('Page.navigate', {'url':base + link})
+        browser.wait(f"document.querySelector('#scout-year')?.value === '{year}' && document.querySelector('#scout-us')?.value === '{us}' && document.querySelector('#scout-them')?.value === '{them}' && document.querySelector('.scout-result')?.hidden === false && document.querySelector('[data-scout-side][aria-pressed=true]')?.dataset.scoutSide === '{side}'")
+        off, defense = (them, us) if side == 'defend' else (us, them)
+        card = data['cards'][f'{off}-{defense}']
+        assert ' vs. ' in js("document.querySelector('.scout-match').textContent")
+        ids = js("[...document.querySelector('#scout-them').options].map(o=>o.value)")
+        assert str(us) not in ids and len(ids) == len(data['teams'])-1
+        assert js("document.querySelector('.scout-row[aria-pressed=true] .scout-zone').textContent") == data['zones'][zone]
+        for z, a in enumerate(card['areas']):
+            js(f"document.querySelectorAll('.scout-row')[{z}].click()")
+            values = js(f"[...document.querySelectorAll('.scout-row')[{z}].querySelectorAll('[class^=val-]')].map(n=>n.textContent)")
+            for value, n, total in zip(values,[a['off'][0], a['allowed'][0], a['league']], card['shots']):
+                assert abs(float(value[:-1]) - 100*n/total) <= .050001, (year, side, z, value, n, total)
+            assert js("[...document.querySelectorAll('.scout-players li button')].map(n=>n.textContent)") == [r['name'] for r in a['players']]
+            assert js("[...document.querySelectorAll('.scout-plays a')].map(n=>n.href.split('/').pop())") == [str(r[0]) for r in a['plays']]
+            assert f"{a['met'][0]} of {card['shots'][3]}" in js("document.querySelector('.scout-met').textContent")
+            if a['players']:
+                player = a['players'][0]
+                js("document.querySelector('.scout-players button').click()")
+                assert js("document.querySelector('.scout-film-title').textContent").endswith(player['name'])
+                assert js("[...document.querySelectorAll('.scout-plays a')].map(n=>n.href.split('/').pop())") == [str(r[0]) for r in player['plays']]
+                assert js("location.hash").endswith(f"/{z}/{player['id']}")
+                js("document.querySelector('.scout-clear').click()")
+        before = js("document.querySelector('.scout-match').textContent")
+        js("document.querySelector('[data-scout-side][aria-pressed=false]').click()")
+        assert before != js("document.querySelector('.scout-match').textContent")
+    print('MATCHUP_SCOUT_VERIFIED both seasons, both sides, ten area samples, personnel and play links', flush=True)
 
 
 def verify_challenge(browser, base):
     data = json.loads((ROOT / 'explore/data/heldout-spatial.json').read_bytes())
     js = browser.js
     browser.wait("document.querySelector('#shot-challenge:not([hidden]) .challenge-dots')?.children.length === 100")
-    assert js("document.querySelector('#headline + #shot-challenge + #team-mix-map + .more-list > details').id") == 'more-history'
+    assert js("document.querySelector('#headline + #matchup-scout + #shot-challenge + #team-mix-map + .more-list > details').id") == 'more-history'
     assert js("document.querySelector('#shot-challenge .challenge-source').href") == base + 'lab/#forecast-errors'
     outcomes = set()
     for period, rows in [('All three', data['regions']), *((str(s['season']), s['regions']) for s in data['seasons'])]:

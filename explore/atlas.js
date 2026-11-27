@@ -1,3 +1,4 @@
+import { matchupScout } from './matchup-scout.js?v=1';
 import { teamMixMap } from './team-mix-map.js?v=1';
 import { shotChallenge } from './shot-challenge.js?v=2';
 import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=7';
@@ -763,6 +764,11 @@ async function start() {
     await refresh(openLink());
     if (location.search) history.replaceState(null, '', location.pathname + location.hash);
     const matches = data => data.manifestSha256 === index.manifestSha256;
+    matchupScout($('matchup-scout'), async year => {
+        const data = await json('data/matchup-scout-' + year + '.json');
+        if (!matches(data)) throw new Error('Matchup source has changed');
+        return data;
+    });
     json('data/team-mix-2025.json').then(data => {
         if (matches(data)) teamMixMap($('team-mix-map'), data);
     }).catch(error => console.warn('The team shot mix chart could not load.', error));
