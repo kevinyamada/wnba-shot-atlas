@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Compare WNBA shooting from 1997 to 2026 by season, team, player and position on the court.">
   <title>WNBA Shot Atlas | Explore 1997 to 2026</title>
-  <link rel="stylesheet" href="atlas.css?v=24">
+  <link rel="stylesheet" href="atlas.css?v=25">
   <script src="../theme.js?v=light-default"></script>
-  <script type="module" src="atlas.js?v=27"></script>
+  <script type="module" src="atlas.js?v=28"></script>
 </head>
 <body>
   <a class="skip" href="#explorer">Skip to the shot explorer</a>
@@ -16,6 +16,7 @@
       <span class="brand"><span class="brand-ball" aria-hidden="true"></span> WNBA Shot Atlas</span>
       <nav class="tabs" aria-label="Sections">
         <a href="../" aria-current="page">Atlas</a>
+        <a href="#matchup-scout">Opponent scout</a>
         <a href="../lab/">Methods lab</a>
       </nav>
       <span class="masthead-years">1997 to 2026</span>
@@ -116,6 +117,32 @@
       <p class="caption" id="metric-note"></p>
       <section class="headline" id="team-report" aria-labelledby="team-title" hidden></section>
       <section class="headline" id="headline" aria-labelledby="headline-title" hidden></section>
+      <section id="matchup-scout" class="scout" aria-labelledby="scout-title">
+        <div class="scout-intro"><div><h2 id="scout-title">Opponent scout</h2>
+          <p>Prepare for a matchup. Find the shots both teams tend to produce, the players taking them, and the game clocks to pull for film.</p></div>
+          <label class="scout-year-label">Regular season<select id="scout-year"><option>2026</option><option>2025</option></select></label></div>
+        <p class="scout-status" role="status">Loading matchup data…</p><button type="button" class="scout-retry" hidden>Try again</button>
+        <div class="scout-board" hidden>
+          <label>Your team<select id="scout-us"></select></label><label>Opponent<select id="scout-them"></select></label>
+          <div class="scout-sides" role="group" aria-label="Side of the ball"><button type="button" data-scout-side="defend">When we defend</button><button type="button" data-scout-side="attack">When we attack</button></div>
+        </div>
+        <div class="scout-result" hidden>
+          <div class="scout-summary"><p class="scout-period"></p><h3 class="scout-match"></h3><p class="scout-lead" aria-live="polite"></p></div>
+          <div class="scout-grid"><div class="scout-chart">
+            <h4>Where the shots come from</h4>
+            <div class="scout-key"><span class="scout-off-key"></span><span class="scout-def-key"></span><span>League</span></div>
+            <div class="scout-row-head" aria-hidden="true"><span>Shot area</span><span class="scout-scale"></span><span>Took</span><span>Allowed</span><span>League</span></div>
+            <div class="scout-rows" role="group" aria-label="Select a shot area to scout"></div>
+            <p class="scout-sample"></p>
+          </div><div class="scout-watch"><p class="scout-area-title" aria-live="polite"></p><h4>Film question</h4>
+            <p class="scout-question"></p><h4 class="scout-personnel-title"></h4><p class="scout-player-prompt">Select a shooter to filter the film list.</p><ul class="scout-players"></ul>
+            <p class="scout-volume"></p></div></div>
+          <div class="scout-film"><div><h4 class="scout-film-title" aria-live="polite">Pull these plays</h4><p class="scout-met"></p><p class="scout-player-met"></p><p class="scout-film-note">One shot per game from the three latest meetings with a matching attempt. Links open the game play-by-play.</p><button type="button" class="scout-clear text-button" hidden>Show all shooters</button></div><ul class="scout-plays"></ul></div>
+          <div class="scout-footer"><div class="scout-actions"><button type="button" class="scout-print">Print scout sheet</button><button type="button" class="scout-share">Copy matchup link</button></div>
+            <div class="scout-sources"><a href="https://github.com/kevinyamada/wnba-shot-atlas/blob/main/research/public_atlas/README.md#opponent-scout">Method</a><a class="scout-data">Season data</a></div></div>
+          <p class="scout-action-status" role="status"></p><input class="scout-url" aria-label="Shareable matchup link" readonly hidden>
+        </div>
+      </section>
       <section id="shot-challenge" class="shot-challenge" aria-labelledby="challenge-title" hidden>
         <div class="challenge-intro">
           <p class="challenge-period">2024–26 regular seasons</p>
