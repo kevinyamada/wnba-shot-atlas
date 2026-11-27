@@ -42,6 +42,7 @@ def main():
     steal_gap = steal_gap[steal_gap.scope.eq('all')].set_index('part')
     heldout = json.loads((SITE / 'heldout-spatial.json').read_bytes())
     heldout_rim = next(r for r in heldout['regions'] if r['region'] == 'Near rim')
+    joint_regions = [r for r in heldout['regions'] if r['jointLow'] > 0 or r['jointHigh'] < 0]
     moran = pd.read_csv(RESULTS / 'methods_lab/morans_i.csv').set_index('residual')
     density = pd.read_csv(RESULTS / 'methods_lab/intensity_scores.csv')
     cox, reuse = ((density[name] * density.shots).sum() / density.shots.sum() for name in ('cox_process', 'last_season'))
@@ -170,7 +171,9 @@ def main():
              f"(Moran’s I = {heldout['pooled']['mesh']['moransI']:.3f}, two-sided permutation p = {heldout['pooled']['mesh']['pTwoSided']:.4f}). "
              f"Near the rim, teams made {heldout_rim['gap']:.2f} more shots per 100 than forecast "
              f"(95% whole-game range {heldout_rim['low']:+.2f} to {heldout_rim['high']:+.2f}). "
-             f"[Regional results and test details]({SITE_URL}lab/#forecast-errors).", '',
+             f"Accounting for all seven regional comparisons together, the 95% ranges that exclude zero are "
+             + ", ".join(f"{r['region'].lower()} ({r['jointLow']:+.2f} to {r['jointHigh']:+.2f})" for r in joint_regions) + ". "
+             + f"[Regional results and test details]({SITE_URL}lab/#forecast-errors).", '',
              f"For where shots come from, a log Gaussian Cox process scored {cox:.4f} in average log score per shot, "
              f"against {reuse:.4f} for reusing last season's shares of shots by cell. Lower is better, so the Cox process {'did' if cox < reuse else 'did not'} beat the simple rule. "
              f"The [Methods lab]({SITE_URL}lab/) shows every surface, the variogram and the ensemble weights.", '',

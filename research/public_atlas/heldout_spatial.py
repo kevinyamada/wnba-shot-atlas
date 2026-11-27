@@ -1,6 +1,4 @@
 """Check neighbouring shot forecast errors on three previously scored seasons."""
-import json
-
 import numpy as np
 import pandas as pd
 from scipy.spatial import cKDTree
@@ -82,26 +80,46 @@ def summary(cells, pooled=False):
     return row
 
 
+def calibration_rows(regions, totals, draws, joint=False):
+    point = 100 * (totals[:, 1] - totals[:, 2]) / totals[:, 0]
+    gaps = 100 * (draws[:, :, 1] - draws[:, :, 2]) / draws[:, :, 0]
+    if not np.isfinite(gaps).all():
+        raise ValueError('A regional bootstrap sample has no attempts.')
+    limits = np.quantile(gaps, [.025, .975], axis=0)
+    if joint:
+        scale = gaps.std(axis=0, ddof=1)
+        if (scale <= 0).any():
+            raise ValueError('The joint band requires variation in every region.')
+        maxima = np.max(np.abs(gaps - point) / scale, axis=1)
+        half_width = np.quantile(maxima, .95) * scale
+    rows = []
+    for i, (attempts, made, expected) in enumerate(totals):
+        row = dict(region=regions[i], attempts=int(attempts), makes=int(made), expectedMakes=float(expected),
+                   gap=float(point[i]), low=float(limits[0, i]), high=float(limits[1, i]))
+        if joint:
+            row.update(jointLow=float(point[i] - half_width[i]), jointHigh=float(point[i] + half_width[i]))
+        rows.append(row)
+    return rows
+
+
 def region_calibration(games):
     regions = sorted(games.region.unique())
     totals = np.zeros((len(regions), 3))
     draws = np.zeros((GAME_DRAWS, len(regions), 3))
+    by_season = {}
     rng = np.random.default_rng(SEED + 1)
-    for _, season in games.groupby('season'):
+    for year, season in games.groupby('season'):
         ids = sorted(season.game_id.unique())
-        index = pd.MultiIndex.from_product([ids, regions], names=['game_id','region'])
-        values = season.set_index(['game_id','region'])[['attempts','made','mesh_expected']].reindex(index, fill_value=0)
+        index = pd.MultiIndex.from_product([ids, regions], names=['game_id', 'region'])
+        values = season.set_index(['game_id', 'region'])[['attempts', 'made', 'mesh_expected']].reindex(index, fill_value=0)
         cube = values.to_numpy().reshape(len(ids), len(regions), 3)
-        totals += cube.sum(axis=0)
+        year_total = cube.sum(axis=0)
         weights = rng.multinomial(len(ids), np.full(len(ids), 1 / len(ids)), size=GAME_DRAWS)
-        draws += (weights @ cube.reshape(len(ids), -1)).reshape(GAME_DRAWS, len(regions), 3)
-    gaps = 100 * (draws[:,:,1] - draws[:,:,2]) / draws[:,:,0]
-    limits = np.quantile(gaps, [.025,.975], axis=0)
-    rows = []
-    for i, (attempts, made, expected) in enumerate(totals):
-        rows.append(dict(region=regions[i], attempts=int(attempts), makes=int(made), expectedMakes=float(expected),
-                         gap=float(100 * (made-expected) / attempts), low=float(limits[0,i]), high=float(limits[1,i])))
-    return rows
+        year_draws = (weights @ cube.reshape(len(ids), -1)).reshape(GAME_DRAWS, len(regions), 3)
+        by_season[int(year)] = calibration_rows(regions, year_total, year_draws)
+        totals += year_total
+        draws += year_draws
+    return calibration_rows(regions, totals, draws, joint=True), by_season
 
 
 def main():
@@ -111,10 +129,16 @@ def main():
     check = summary(pooled, pooled=True)
     seasons = [summary(year) for _, year in cells.groupby('season')]
     cells.to_csv(OUT / 'heldout_cells.csv', index=False, lineterminator='\n')
-    regions = region_calibration(games)
+    regions, by_season = region_calibration(games)
+    for row in seasons:
+        row['regions'] = by_season[row['season']]
+    games.sort_values(['season', 'game_id', 'region']).to_csv(OUT / 'heldout_game_regions.csv', index=False, lineterminator='\n')
     write_json(SITE / 'heldout-spatial.json', dict(manifestSha256=manifest_digest(), minShots=MIN_SHOTS,
                permutations=SHUFFLES, seed=SEED, pooled=check, seasons=seasons, regions=regions, games=int(games.game_id.nunique()), gameDraws=GAME_DRAWS))
-    print('HELDOUT_SPATIAL', json.dumps([check,*seasons,regions]), flush=True)
+    for row in regions:
+        annual = [item['gap'] for year in REPORTED for item in by_season[year] if item['region'] == row['region']]
+        print(row['region'], 'pooled', round(row['gap'], 2), 'joint range', round(row['jointLow'], 2), round(row['jointHigh'], 2), 'annual', [round(v, 2) for v in annual])
+    print('HELDOUT_SPATIAL', check['allShots'], 'shots,', len(regions), 'regions,', len(seasons), 'seasons', flush=True)
 
 
 if __name__ == '__main__':

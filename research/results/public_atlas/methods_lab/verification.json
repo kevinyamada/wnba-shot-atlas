@@ -1,5 +1,15 @@
 {
   "heldoutSpatialShots": 115051,
+  "regionalRangeSensitivity": {
+    "draws": 10000,
+    "seed": 20261128,
+    "regionsExcludingZero": [
+      "Long interior",
+      "Near rim"
+    ],
+    "agreesWithPublished": true,
+    "maxEndpointDifferencePer100": 0.047
+  },
   "methods": 11,
   "attempts": 115908,
   "best": "Gaussian process",

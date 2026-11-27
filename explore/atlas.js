@@ -1,4 +1,4 @@
-import { shotChallenge } from './shot-challenge.js?v=1';
+import { shotChallenge } from './shot-challenge.js?v=2';
 import { paintCourt, paintHistory, canvasSquare, metricValue as value, per100 } from './drawing.js?v=7';
 import { renderStudy } from './study-findings.js?v=6';
 import { shotMix } from './shot-mix.js?v=4';
@@ -10,7 +10,7 @@ const panels = ['court-primary', 'court-secondary'].map($);
 const number = new Intl.NumberFormat('en-CA', {maximumFractionDigits: 0});
 const percent = new Intl.NumberFormat('en-CA', {style: 'percent', maximumFractionDigits: 1});
 const decimal = new Intl.NumberFormat('en-CA', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-const dataRelease = 'r11';
+const dataRelease = 'r12';
 const extras = {teams: null, shooters: null, possessions: null};
 const sampleFloor = 12;
 const mappedAreas = 5;

@@ -944,6 +944,15 @@ def verify(browser, url):
     heldout = json.loads((ROOT / 'explore/data/heldout-spatial.json').read_bytes())
     browser.wait("document.querySelectorAll('#forecast-errors table:first-of-type tbody tr').length >= 7")
     assert js("document.querySelector('#forecast-errors table tbody').rows.length") == len(heldout['regions'])
+    for i, (lower, upper) in enumerate([('jointLow','jointHigh'), ('low','high')]):
+        js(f"document.querySelectorAll('.region-band-controls button')[{i}].click()")
+        plotted = js("[...document.querySelectorAll('.region-band-row')].map(row => [row.firstChild.textContent,row.lastChild.textContent])")
+        assert len(plotted) == 7
+        sources = {r['region']: r for r in heldout['regions']}
+        for name, text in plotted:
+            r = sources[name]
+            expected = f"{r['gap']:+.2f} ({r[lower]:+.2f} to {r[upper]:+.2f})".replace('-', '−')
+            assert text == expected, (name, text, expected)
     js("document.querySelector('#heldout-neighbours summary').click()")
     assert js("document.querySelector('#heldout-neighbours').open")
     assert f"{heldout['pooled']['mesh']['pTwoSided']:.4f}" in js("document.querySelector('#heldout-neighbours').innerText")
@@ -971,22 +980,35 @@ def verify_challenge(browser, base):
     browser.wait("document.querySelector('#shot-challenge:not([hidden]) .challenge-dots')?.children.length === 100")
     assert js("document.querySelector('#headline + #shot-challenge + .more-list > details').id") == 'more-history'
     assert js("document.querySelector('#shot-challenge .challenge-source').href") == base + 'lab/#forecast-errors'
-    for row in data['regions']:
-        region = json.dumps(row['region'])
-        js(f"Array.from(document.querySelectorAll('.challenge-regions button')).find(b => b.textContent === {region}).click()")
-        assert js("document.querySelector('.challenge-region-title').textContent") == row['region']
-        js("document.querySelectorAll('.challenge-dots i')[59].click()")
-        assert js("document.getElementById('challenge-slider').value") == '60'
-        js("document.querySelector('.challenge-action').click()")
-        assert js("document.querySelector('.challenge-value').textContent") == f"{100 * row['makes'] / row['attempts']:.2f}"
-        assert js("document.querySelector('.challenge-model-result').textContent") == f"{100 * row['expectedMakes'] / row['attempts']:.2f}"
-        assert js("document.querySelectorAll('.challenge-dots .forecast-dot').length") == 1
+    outcomes = set()
+    for period, rows in [('All three', data['regions']), *((str(s['season']), s['regions']) for s in data['seasons'])]:
+        js(f"Array.from(document.querySelectorAll('.challenge-seasons button')).find(b => b.textContent === {json.dumps(period)}).click()")
+        for row in rows:
+            region = json.dumps(row['region'])
+            exact = 100 * row['expectedMakes'] / row['attempts']
+            model = int(exact + .5)
+            nearest_actual = int(100 * row['makes'] / row['attempts'] + .5)
+            for guess in dict.fromkeys((60, nearest_actual, model)):
+                js(f"Array.from(document.querySelectorAll('.challenge-regions button')).find(b => b.textContent === {region}).click()")
+                assert js("document.querySelector('.challenge-region-title').textContent") == row['region']
+                js(f"document.querySelectorAll('.challenge-dots i')[{guess - 1}].click()")
+                assert js("document.getElementById('challenge-slider').value") == str(guess)
+                js("document.querySelector('.challenge-action').click()")
+                assert js("document.querySelector('.challenge-value').textContent") == f"{100 * row['makes'] / row['attempts']:.2f}"
+                assert js("document.querySelector('.challenge-model-result').textContent") == str(model)
+                assert f"{exact:.2f}" in js("document.querySelector('.challenge-range').textContent")
+                assert js("document.querySelectorAll('.challenge-dots .forecast-dot').length") == 1
+                delta = abs(guess * row['attempts'] - 100 * row['makes']) - abs(model * row['attempts'] - 100 * row['makes'])
+                winner = 'You were closer.' if delta < 0 else 'The model was closer.' if delta > 0 else 'You and the model tied.'
+                assert js("document.querySelector('.challenge-message').textContent") == winner
+                outcomes.add(winner)
+    assert len(outcomes) == 3
     js("document.querySelector('.challenge-action').click()")
     assert js("document.activeElement.id") == 'challenge-slider'
     browser.call('Input.dispatchKeyEvent', {'type':'keyDown','key':'ArrowRight','code':'ArrowRight','windowsVirtualKeyCode':39})
     browser.call('Input.dispatchKeyEvent', {'type':'keyUp','key':'ArrowRight','code':'ArrowRight','windowsVirtualKeyCode':39})
     assert js("document.querySelector('.challenge-value').textContent") == '51'
-    print('SHOT_CHALLENGE_VERIFIED seven regions, exact model and actual rates, dot selection, keyboard, replay and placement', flush=True)
+    print('SHOT_CHALLENGE_VERIFIED 28 season/region combinations, wins, losses, ties and full model rates, dot selection, keyboard, replay and placement', flush=True)
 
 
 def verify_links(browser, url):
