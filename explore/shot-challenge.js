@@ -19,16 +19,18 @@ export function shotChallenge(section, data) {
     const dots = find('.challenge-dots');
     const bars = find('.challenge-comparison');
     const live = find('.challenge-message');
-    const records = new Map(data.regions.map(row => [row.region, row]));
+    const periods = [['All three', data.regions], ...data.seasons.map(s => [String(s.season), s.regions])];
+    const records = new Map(periods.map(([season, rows]) => [season, new Map(rows.map(row => [row.region, row]))]));
     const names = Object.keys(descriptions);
-    if (names.some(name => !records.has(name))) return;
+    if (Array.from(records.values()).some(rows => names.some(name => !rows.has(name)))) return;
     for (let i = 0; i < 100; i++) dots.append(document.createElement('i'));
-    let current = names[0], revealed = false;
+    let current = names[0], season = 'All three', revealed = false;
 
     function draw() {
-        const row = records.get(current);
+        const row = records.get(season).get(current);
         const actual = 100 * row.makes / row.attempts;
         const model = 100 * row.expectedMakes / row.attempts;
+        const modelGuess = Math.round(model);
         const guess = Number(slider.value);
         const shown = revealed ? actual : guess;
         find('.challenge-region-title').textContent = current;
@@ -38,22 +40,24 @@ export function shotChallenge(section, data) {
         Array.from(dots.children).forEach((dot, i) => {
             const fill = Math.max(0, Math.min(1, shown - i));
             dot.style.setProperty('--fill', (100 * fill).toFixed(2) + '%');
-            dot.classList.toggle('forecast-dot', revealed && i === Math.ceil(model) - 1);
+            dot.classList.toggle('forecast-dot', revealed && i === modelGuess - 1);
         });
-        find('.challenge-grid-key').textContent = revealed ? 'Ring = model forecast' : 'Tap a dot or move the slider';
+        find('.challenge-grid-key').textContent = revealed ? 'Ring = model guess' : 'Tap a dot or move the slider';
         bars.hidden = !revealed;
         find('.challenge-guess').hidden = revealed;
-        find('.challenge-sample').textContent = count.format(row.attempts) + ' recorded shots';
+        find('.challenge-sample').textContent = count.format(row.attempts) + ' shots · ' + (season === 'All three' ? '2024–26' : season);
         action.textContent = revealed ? 'Next region' : 'Reveal result';
         section.dataset.revealed = String(revealed);
         for (const button of buttons.children) button.setAttribute('aria-pressed', String(button.dataset.region === current));
+        for (const button of find('.challenge-seasons').children) button.setAttribute('aria-pressed', String(button.textContent === season));
         if (revealed) {
-            const guessError = Math.round(100 * Math.abs(guess - actual));
-            const modelError = Math.round(100 * Math.abs(model - actual));
+            const actualNumerator = 100 * row.makes;
+            const guessError = Math.abs(guess * row.attempts - actualNumerator);
+            const modelError = Math.abs(modelGuess * row.attempts - actualNumerator);
             find('.challenge-your-result').textContent = String(guess);
-            find('.challenge-model-result').textContent = model.toFixed(2);
+            find('.challenge-model-result').textContent = String(modelGuess);
             live.textContent = guessError < modelError ? 'You were closer.' : guessError > modelError ? 'The model was closer.' : 'You and the model tied.';
-            find('.challenge-range').textContent = 'Gap: ' + signed(row.gap) + ' per 100. 95% game-resampled range: ' + signed(row.low) + ' to ' + signed(row.high) + '.';
+            find('.challenge-range').textContent = 'Full model estimate: ' + model.toFixed(2) + ' makes per 100. Observed gap: ' + signed(row.gap) + '. 95% game-resampled range: ' + signed(row.low) + ' to ' + signed(row.high) + '.';
         } else {
             live.textContent = '';
         }
@@ -64,6 +68,16 @@ export function shotChallenge(section, data) {
         revealed = false;
         slider.value = '50';
         draw();
+    }
+    for (const period of records.keys()) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = period;
+        button.addEventListener('click', () => {
+            season = period;
+            select(current);
+        });
+        find('.challenge-seasons').append(button);
     }
     for (const name of names) {
         const button = document.createElement('button');

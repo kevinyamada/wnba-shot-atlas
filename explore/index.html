@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Compare WNBA shooting from 1997 to 2026 by season, team, player and position on the court.">
   <title>WNBA Shot Atlas | Explore 1997 to 2026</title>
-  <link rel="stylesheet" href="atlas.css?v=22">
+  <link rel="stylesheet" href="atlas.css?v=23">
   <script src="../theme.js?v=light-default"></script>
-  <script type="module" src="atlas.js?v=25"></script>
+  <script type="module" src="atlas.js?v=26"></script>
 </head>
 <body>
   <a class="skip" href="#explorer">Skip to the shot explorer</a>
@@ -120,7 +120,8 @@
         <div class="challenge-intro">
           <p class="challenge-period">2024–26 regular seasons</p>
           <h2 id="challenge-title">Can you beat the shot model?</h2>
-          <p>Pick a region. Guess how many of 100 shots went in, then see who was closer.</p>
+          <p>Pick a season and a region. How many makes per 100 shots? You and the model both get a whole-number guess.</p>
+          <div class="challenge-seasons" role="group" aria-label="Pick a challenge season"></div>
           <div class="challenge-regions" role="group" aria-label="Pick a shot region"></div>
         </div>
         <div class="challenge-visual">
@@ -135,7 +136,7 @@
             <div class="challenge-scale" aria-hidden="true"><span>0</span><span>100</span></div>
           </div>
           <div class="challenge-comparison" hidden>
-            <dl><div><dt>Your guess</dt><dd class="challenge-your-result"></dd></div><div><dt>Model</dt><dd class="challenge-model-result"></dd></div></dl>
+            <dl><div><dt>Your guess</dt><dd class="challenge-your-result"></dd></div><div><dt>Model guess</dt><dd class="challenge-model-result"></dd></div></dl>
             <p class="challenge-range"></p>
           </div>
           <p class="challenge-message" role="status"></p>

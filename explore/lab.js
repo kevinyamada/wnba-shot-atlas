@@ -245,10 +245,49 @@ function forecastErrors(data) {
         el('p', `In the 2024–26 regular seasons, players made ${Math.abs(rim.gap).toFixed(2)} ${rim.gap >= 0 ? 'more' : 'fewer'} shots per 100 near the rim than the court model predicted. Each season’s forecasts used only the three preceding seasons.`));
     const order = ['Near rim', 'Short interior', 'Middle interior', 'Long interior', 'Near the line', 'Outside corner', 'Outside arc'];
     const rows = order.map(name => data.regions.find(r => r.region === name));
-    section.append(table(['Court region', 'Shots', 'Made per 100', 'Expected per 100', 'Gap (95% range)'],
-        rows.map(r => [r.region, count.format(r.attempts), (100 * r.makes / r.attempts).toFixed(2),
-            (100 * r.expectedMakes / r.attempts).toFixed(2), `${signed(r.gap)} (${signed(r.low)} to ${signed(r.high)})`])),
-        el('p', `Positive gaps mean players made more shots than forecast. Ranges resample whole games within each season ${count.format(data.gameDraws)} times and hold the forecasts fixed. Each range describes one region. All ${count.format(pooled.allShots)} eligible shots in ${count.format(data.games)} games enter this table.`, 'caption'));
+    const plot = el('div', null, 'region-proof');
+    const controls = el('div', null, 'region-band-controls');
+    controls.setAttribute('role', 'group');
+    controls.setAttribute('aria-label', '95% range calculation');
+    const series = el('div', null, 'region-band-series');
+    const reading = el('p', null, 'caption');
+    reading.setAttribute('role', 'status');
+    const extent = Math.ceil(Math.max(...rows.flatMap(r => [Math.abs(r.low), Math.abs(r.high), Math.abs(r.jointLow), Math.abs(r.jointHigh)])));
+    const position = value => (50 + 50 * value / extent) + '%';
+    const buttons = ['Across all seven', 'One region at a time'].map((label, i) => {
+        const btn = el('button', label);
+        btn.type = 'button';
+        btn.addEventListener('click', () => show(i === 0));
+        controls.append(btn);
+        return btn;
+    });
+    function show(joint) {
+        buttons.forEach((btn, i) => btn.setAttribute('aria-pressed', String(joint === (i === 0))));
+        const outside = [];
+        series.replaceChildren(...rows.map(r => {
+            const low = joint ? r.jointLow : r.low;
+            const high = joint ? r.jointHigh : r.high;
+            if (low > 0 || high < 0) outside.push(r.region.toLowerCase());
+            const item = el('div', null, 'region-band-row');
+            const track = el('span', null, 'region-band-track');
+            track.setAttribute('aria-hidden', 'true');
+            const band = el('i'), estimate = el('b');
+            band.style.left = position(low);
+            band.style.width = (50 * (high - low) / extent) + '%';
+            estimate.style.left = position(r.gap);
+            track.append(band, estimate);
+            item.append(el('span', r.region), track, el('span', signed(r.gap) + ' (' + signed(low) + ' to ' + signed(high) + ')'));
+            return item;
+        }));
+        const lead = joint ? 'The joint ranges account for examining all seven regions together.' : 'Each range describes a single region.';
+        reading.textContent = lead + ' Ranges that exclude zero: ' + (outside.join(', ') || 'none') + '.';
+    }
+    show(true);
+    plot.append(el('h3', 'Which gaps stand out?'), el('p', 'The dot is the observed gap in makes per 100 shots. The line is its 95% range. The vertical mark is zero. Positive gaps mean players beat the forecast.'), controls, series, reading);
+    const countsTable = el('details');
+    countsTable.append(el('summary', 'Observed makes, forecasts and shot counts'), table(['Court region', 'Shots', 'Made per 100', 'Expected per 100'],
+        rows.map(r => [r.region, count.format(r.attempts), (100 * r.makes / r.attempts).toFixed(2), (100 * r.expectedMakes / r.attempts).toFixed(2)])));
+    section.append(plot, countsTable, el('p', `Ranges resample entire games within each season ${count.format(data.gameDraws)} times, holding forecasts fixed. All ${count.format(pooled.allShots)} eligible shots from ${count.format(data.games)} games enter the regional comparison.`, 'caption'));
     const details = el('details');
     details.id = 'heldout-neighbours';
     details.append(el('summary', 'Did neighbouring spots miss in the same direction?'),
@@ -263,7 +302,10 @@ function forecastErrors(data) {
     const result = el('a', 'Download regional results (JSON)');
     result.download = 'heldout-spatial.json';
     result.href = '../explore/data/heldout-spatial.json';
-    links.append(cells, ' · ', result);
+    const games = el('a', 'Download game-by-region totals (CSV)');
+    games.download = 'heldout_game_regions.csv';
+    games.href = '../research/results/public_atlas/methods_lab/heldout_game_regions.csv';
+    links.append(cells, ' · ', games, ' · ', result);
     details.append(links);
     section.append(details);
     return section;
@@ -314,7 +356,7 @@ function ensemble(data) {
 }
 
 async function start() {
-    const read = name => fetch(new URL(`data/${name}.json?lab=1`, import.meta.url)).then(response => {
+    const read = name => fetch(new URL(`data/${name}.json?lab=2`, import.meta.url)).then(response => {
         if (!response.ok) throw new Error(`Could not load ${name}`);
         return response.json();
     });

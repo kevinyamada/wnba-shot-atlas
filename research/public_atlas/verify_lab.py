@@ -12,6 +12,68 @@ DERIVED = ROOT / 'research/data/public_wnba/derived'
 MEMBERS = ['Distance curve', 'Inverse distance weighting', 'Universal kriging', 'Areal CAR model', 'Gaussian process', 'SPDE mesh with trend']
 
 
+def verify_regional_ranges(scored, data):
+    games = pd.read_csv(OUT / 'heldout_game_regions.csv')
+    keys = ['season', 'game_id', 'region']
+    original = scored.groupby(keys).made.agg(attempts='size', made='sum')
+    published = games.set_index(keys).sort_index()
+    pd.testing.assert_frame_equal(original, published[['attempts', 'made']], check_dtype=False)
+    assert published.mesh_expected.between(0, published.attempts).all()
+    annual = {row['season']: row['regions'] for row in data['seasons']}
+    names = sorted(games.region.unique())
+    draws = data['gameDraws']
+    rng = np.random.default_rng(data['seed'] + 1)
+    pooled_count = np.zeros((draws, len(names)))
+    pooled_error = np.zeros_like(pooled_count)
+    audit_draws = 10000
+    audit_seed = data['seed'] + 2
+    second_rng = np.random.default_rng(audit_seed)
+    audit_count = np.zeros((audit_draws, len(names)))
+    audit_error = np.zeros_like(audit_count)
+
+    def check_rows(frame, rows, counts, errors):
+        stats = pd.DataFrame(rows).set_index('region').loc[names]
+        totals = frame.groupby('region')[['attempts', 'made', 'mesh_expected']].sum().loc[names]
+        np.testing.assert_allclose(stats[['attempts', 'makes', 'expectedMakes']], totals)
+        observed = 100 * (totals.made - totals.mesh_expected) / totals.attempts
+        simulated = 100 * errors / counts
+        np.testing.assert_allclose(stats.gap, observed, rtol=0, atol=1e-9)
+        np.testing.assert_allclose(stats[['low', 'high']], np.quantile(simulated, [.025, .975], axis=0).T, atol=1e-9)
+        return simulated, observed.to_numpy()
+
+    for year, season in games.groupby('season'):
+        counts = season.pivot(index='game_id', columns='region', values='attempts').reindex(columns=names).fillna(0)
+        residuals = season.assign(error=season.made - season.mesh_expected).pivot(index='game_id', columns='region', values='error').reindex_like(counts).fillna(0)
+        n = len(counts)
+        weights = rng.multinomial(n, np.repeat(1 / n, n), size=draws)
+        simulated_n = weights @ counts.to_numpy()
+        simulated_error = weights @ residuals.to_numpy()
+        check_rows(season, annual[year], simulated_n, simulated_error)
+        pooled_count += simulated_n
+        pooled_error += simulated_error
+        count_matrix, error_matrix = counts.to_numpy(), residuals.to_numpy()
+        for start in range(0, audit_draws, 128):
+            end = min(start + 128, audit_draws)
+            sampled_games = second_rng.integers(n, size=(end - start, n))
+            audit_count[start:end] += count_matrix[sampled_games].sum(axis=1)
+            audit_error[start:end] += error_matrix[sampled_games].sum(axis=1)
+    simulated, observed = check_rows(games, data['regions'], pooled_count, pooled_error)
+    intervals = pd.DataFrame(data['regions']).set_index('region').loc[names]
+    se = np.std(simulated, axis=0, ddof=1)
+    critical = np.quantile(np.max(np.abs((simulated - observed) / se), axis=1), .95)
+    np.testing.assert_allclose(intervals.jointLow, observed - critical * se, atol=1e-9)
+    np.testing.assert_allclose(intervals.jointHigh, observed + critical * se, atol=1e-9)
+    audit = 100 * audit_error / audit_count
+    sd = audit.std(axis=0, ddof=1)
+    multiplier = np.quantile(np.max(np.abs(audit - observed) / sd, axis=1), .95)
+    low, high = observed - multiplier * sd, observed + multiplier * sd
+    outside = intervals.index[(low > 0) | (high < 0)].tolist()
+    published_outside = intervals.index[(intervals.jointLow > 0) | (intervals.jointHigh < 0)].tolist()
+    movement = max(np.max(np.abs(low - intervals.jointLow)), np.max(np.abs(high - intervals.jointHigh)))
+    return dict(draws=audit_draws, seed=audit_seed, regionsExcludingZero=outside, agreesWithPublished=outside == published_outside,
+                maxEndpointDifferencePer100=round(float(movement), 3))
+
+
 def verify_heldout():
     from predict_surface import load
     from court_geometry import zones
@@ -24,6 +86,7 @@ def verify_heldout():
     scored = scored[scored.season.isin([2024, 2025, 2026])].copy()
     assert scored.game_id.nunique() == data['games']
     scored['region'] = zones(scored.x, scored.y)
+    regional_audit = verify_regional_ranges(scored, data)
     raw = scored.groupby('region').made.agg(['size','sum'])
     regions = pd.DataFrame(data['regions']).set_index('region')
     assert set(raw.index) == set(regions.index)
@@ -64,7 +127,7 @@ def verify_heldout():
                     trial = scale * (permuted @ (adjacency @ permuted))
                     extreme += abs(trial - null) >= abs(value - null)
                 assert (extreme + 1) / (data['permutations'] + 1) == record[kind]['pTwoSided']
-    return data['pooled']['usedShots']
+    return data['pooled']['usedShots'], regional_audit
 
 
 def main():
@@ -102,8 +165,8 @@ def main():
     assert site['manifestSha256'] == manifest_digest() and [row['method'] for row in site['methods']] == list(scores.index)
     for name in scores.index:
         assert np.allclose(site['surfaces'][name], surfaces[name], atol=1e-4)
-    heldout_shots = verify_heldout()
-    certificate = dict(heldoutSpatialShots=heldout_shots, methods=len(scores), attempts=int(scores.attempts.iloc[0]), best=scores.index[0], league_brier=round(float(errors.mean()), 5), manifestSha256=manifest_digest())
+    heldout_shots, regional_audit = verify_heldout()
+    certificate = dict(heldoutSpatialShots=heldout_shots, regionalRangeSensitivity=regional_audit, methods=len(scores), attempts=int(scores.attempts.iloc[0]), best=scores.index[0], league_brier=round(float(errors.mean()), 5), manifestSha256=manifest_digest())
     (OUT / 'verification.json').write_text(json.dumps(certificate, indent=2) + '\n', encoding='utf-8', newline='\n')
     print('METHODS_LAB_VERIFIED', certificate, flush=True)
 
